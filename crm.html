@@ -1,0 +1,1192 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Agii CRM — Full Business Management</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<script src="https://cdn.socket.io/4.7.2/socket.io.min.js"></script>
+<style>
+*{margin:0;padding:0;box-sizing:border-box;}
+:root{--primary:#6366f1;--accent:#06b6d4;--gold:#f59e0b;--green:#10b981;--red:#ef4444;--orange:#f97316;--pink:#ec4899;--dark:#0f172a;--darker:#020617;--card:rgba(255,255,255,.05);--border:rgba(255,255,255,.08);}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--darker);color:#fff;min-height:100vh;}
+.app{display:flex;min-height:100vh;}
+.sidebar{width:260px;background:var(--dark);border-right:1px solid var(--border);padding:20px;position:fixed;height:100vh;overflow-y:auto;z-index:100;}
+.main{margin-left:260px;flex:1;padding:24px;min-height:100vh;}
+.sidebar-toggle{display:none;position:fixed;top:16px;left:16px;z-index:200;background:var(--primary);border:none;color:#fff;padding:10px 14px;border-radius:10px;font-size:1.2em;cursor:pointer;}
+
+/* Sidebar */
+.logo{display:flex;align-items:center;gap:10px;margin-bottom:30px;padding-bottom:20px;border-bottom:1px solid var(--border);}
+.logo img{height:30px;}
+.logo h1{font-size:1.1em;font-weight:700;background:linear-gradient(135deg,var(--primary),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent;}
+.nav-section{font-size:.7em;text-transform:uppercase;color:#475569;letter-spacing:1px;margin:20px 0 8px 16px;}
+.nav-item{display:flex;align-items:center;gap:12px;padding:11px 16px;border-radius:12px;cursor:pointer;margin-bottom:2px;transition:all .2s;color:#94a3b8;font-size:.9em;}
+.nav-item:hover{background:rgba(255,255,255,.05);color:#fff;}
+.nav-item.active{background:rgba(99,102,241,.15);color:var(--primary);}
+.nav-item .icon{font-size:1.1em;width:24px;text-align:center;}
+.nav-item .badge{margin-left:auto;background:var(--primary);color:#fff;font-size:.7em;padding:2px 8px;border-radius:100px;min-width:20px;text-align:center;}
+.sync-status{text-align:center;padding:10px;margin-top:20px;font-size:.75em;color:#64748b;}
+.sync-dot{display:inline-block;width:8px;height:8px;border-radius:50%;margin-right:6px;}
+.sync-dot.online{background:var(--green);box-shadow:0 0 8px var(--green);}
+.sync-dot.offline{background:var(--red);}
+
+/* Main */
+.view-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:24px;flex-wrap:wrap;gap:16px;}
+.view-title{font-size:1.8em;font-weight:700;}
+.view-subtitle{color:#64748b;font-size:.9em;}
+.header-actions{display:flex;gap:10px;}
+
+/* Stats */
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:3px;border-radius:3px 3px 0 0;}
+.stat-card.purple::before{background:var(--primary);}
+.stat-card.cyan::before{background:var(--accent);}
+.stat-card.gold::before{background:var(--gold);}
+.stat-card.green::before{background:var(--green);}
+.stat-card.orange::before{background:var(--orange);}
+.stat-card.pink::before{background:var(--pink);}
+.stat-label{font-size:.8em;color:#64748b;margin-bottom:8px;}
+.stat-value{font-size:1.8em;font-weight:700;}
+.stat-sub{font-size:.75em;color:#64748b;margin-top:4px;}
+
+/* Cards & Tables */
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:16px;}
+.card-title{font-size:1.05em;font-weight:600;}
+.table{width:100%;border-collapse:collapse;}
+.table th{text-align:left;padding:12px 16px;font-size:.75em;text-transform:uppercase;color:#64748b;border-bottom:1px solid var(--border);background:rgba(0,0,0,.2);}
+.table td{padding:14px 16px;border-bottom:1px solid var(--border);font-size:.88em;}
+.table tr:hover{background:rgba(255,255,255,.02);}
+.table tr:last-child td{border-bottom:none;}
+
+/* Status badges */
+.badge{padding:4px 12px;border-radius:100px;font-size:.75em;font-weight:500;display:inline-block;}
+.badge-lead{background:rgba(100,116,139,.2);color:#94a3b8;}
+.badge-contacted{background:rgba(245,158,11,.15);color:var(--gold);}
+.badge-qualified{background:rgba(99,102,241,.15);color:var(--primary);}
+.badge-proposal{background:rgba(6,182,212,.15);color:var(--accent);}
+.badge-negotiation{background:rgba(139,92,246,.15);color:#a78bfa;}
+.badge-won{background:rgba(16,185,129,.15);color:var(--green);}
+.badge-lost{background:rgba(239,68,68,.15);color:var(--red);}
+.badge-pending{background:rgba(245,158,11,.15);color:var(--gold);}
+.badge-in_progress{background:rgba(99,102,241,.15);color:var(--primary);}
+.badge-completed{background:rgba(16,185,129,.15);color:var(--green);}
+.badge-high{background:rgba(239,68,68,.15);color:var(--red);}
+.badge-normal{background:rgba(245,158,11,.15);color:var(--gold);}
+.badge-low{background:rgba(16,185,129,.15);color:var(--green);}
+
+/* Pipeline */
+.pipeline{display:flex;gap:12px;overflow-x:auto;padding-bottom:12px;-webkit-overflow-scrolling:touch;}
+.pipeline-stage{min-width:220px;max-width:250px;flex-shrink:0;background:rgba(0,0,0,.3);border-radius:16px;padding:14px;}
+.stage-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:12px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+.stage-name{font-weight:600;font-size:.85em;}
+.stage-count{background:rgba(255,255,255,.1);padding:2px 10px;border-radius:100px;font-size:.7em;}
+.stage-value{font-size:.7em;color:var(--gold);margin-top:4px;}
+.deal-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:12px;margin-bottom:8px;cursor:pointer;transition:all .2s;}
+.deal-card:hover{border-color:var(--primary);transform:translateY(-2px);box-shadow:0 8px 20px rgba(0,0,0,.3);}
+.deal-company{font-weight:600;font-size:.85em;}
+.deal-contact{font-size:.75em;color:#64748b;margin-top:2px;}
+.deal-value{font-size:.85em;color:var(--gold);font-weight:600;margin-top:8px;}
+.deal-meta{display:flex;gap:6px;margin-top:6px;flex-wrap:wrap;}
+.deal-tag{font-size:.65em;padding:3px 8px;border-radius:6px;background:rgba(99,102,241,.15);color:var(--primary);}
+
+/* Buttons */
+.btn{padding:10px 20px;border:none;border-radius:10px;font-weight:600;cursor:pointer;transition:all .2s;font-size:.88em;font-family:inherit;}
+.btn:active{transform:scale(.97);}
+.btn-primary{background:var(--primary);color:#fff;}
+.btn-primary:hover{background:var(--primary-dark);}
+.btn-secondary{background:rgba(255,255,255,.08);color:#fff;}
+.btn-secondary:hover{background:rgba(255,255,255,.12);}
+.btn-success{background:var(--green);color:#fff;}
+.btn-danger{background:var(--red);color:#fff;}
+.btn-sm{padding:6px 14px;font-size:.8em;}
+.btn-icon{padding:8px 12px;}
+
+/* Modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.75);z-index:1000;display:none;align-items:center;justify-content:center;backdrop-filter:blur(4px);}
+.modal-overlay.active{display:flex;}
+.modal{background:var(--dark);border:1px solid var(--border);border-radius:20px;padding:28px;width:92%;max-width:520px;max-height:90vh;overflow-y:auto;animation:modalIn .2s ease;}
+@keyframes modalIn{from{opacity:0;transform:scale(.95);}to{opacity:1;transform:scale(1);}}
+.modal h2{margin-bottom:20px;font-size:1.3em;}
+.form-group{margin-bottom:16px;}
+.form-group label{display:block;font-size:.82em;color:#94a3b8;margin-bottom:6px;font-weight:500;}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:12px 14px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;color:#fff;font-size:.92em;font-family:inherit;transition:border-color .2s;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--primary);}
+.form-group select option{background:var(--dark);color:#fff;}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px;}
+.form-actions{display:flex;gap:10px;justify-content:flex-end;margin-top:24px;padding-top:16px;border-top:1px solid var(--border);}
+
+/* Search */
+.search-box{display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:12px;padding:10px 16px;margin-bottom:20px;}
+.search-box input{flex:1;background:none;border:none;color:#fff;font-size:.92em;outline:none;}
+.search-box input::placeholder{color:#475569;}
+
+/* Activity feed */
+.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-icon{width:36px;height:36px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:1em;flex-shrink:0;}
+.activity-text{flex:1;font-size:.88em;}
+.activity-time{font-size:.72em;color:#64748b;margin-top:3px;}
+
+/* Analytics charts */
+.chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;}
+.chart-card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:20px;}
+.chart-title{font-size:.9em;font-weight:600;margin-bottom:16px;}
+.bar-chart{display:flex;flex-direction:column;gap:10px;}
+.bar-row{display:flex;align-items:center;gap:12px;}
+.bar-label{width:100px;font-size:.8em;color:#94a3b8;text-align:right;}
+.bar-container{flex:1;height:24px;background:rgba(255,255,255,.05);border-radius:6px;overflow:hidden;}
+.bar-fill{height:100%;border-radius:6px;transition:width .5s ease;}
+.bar-value{width:60px;font-size:.85em;font-weight:600;text-align:right;}
+
+/* Quick Actions */
+.quick-actions{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:24px;}
+.quick-action{display:flex;flex-direction:column;align-items:center;gap:8px;padding:20px;background:var(--card);border:1px solid var(--border);border-radius:14px;cursor:pointer;transition:all .2s;}
+.quick-action:hover{border-color:var(--primary);transform:translateY(-2px);}
+.quick-action .icon{font-size:1.8em;}
+.quick-action .label{font-size:.85em;font-weight:500;}
+
+/* Tabs */
+.tabs{display:flex;gap:6px;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px;overflow-x:auto;}
+.tab{padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.88em;color:#64748b;transition:all .2s;white-space:nowrap;}
+.tab:hover{color:#fff;background:rgba(255,255,255,.05);}
+.tab.active{background:rgba(99,102,241,.15);color:var(--primary);}
+
+/* Responsive */
+@media(max-width:768px){
+  .sidebar{transform:translateX(-100%);transition:transform .3s;z-index:999;}
+  .sidebar.open{transform:translateX(0);}
+  .main{margin-left:0;padding:16px;padding-top:60px;}
+  .sidebar-toggle{display:block;}
+  .pipeline{flex-direction:column;}
+  .pipeline-stage{min-width:100%;max-width:100%;}
+  .form-row{grid-template-columns:1fr;}
+  .stats-grid{grid-template-columns:1fr 1fr;}
+  .view-header{flex-direction:column;align-items:flex-start;}
+}
+</style>
+</head>
+<body>
+
+<button class="sidebar-toggle" onclick="toggleSidebar()">☰</button>
+
+<div class="app">
+<!-- Sidebar -->
+<aside class="sidebar" id="sidebar">
+  <div class="logo">
+    <img src="https://agii.ca/img/Logo2_White2.png" alt="Agii" onerror="this.style.display='none'">
+    <h1>Agii CRM</h1>
+  </div>
+  
+  <div class="nav-section">Dashboard</div>
+  <div class="nav-item active" onclick="showView('dashboard')"><span class="icon">📊</span> Overview</div>
+  <div class="nav-item" onclick="showView('analytics')"><span class="icon">📈</span> Analytics</div>
+  
+  <div class="nav-section">Sales Pipeline</div>
+  <div class="nav-item" onclick="showView('pipeline')"><span class="icon">🔄</span> Pipeline</div>
+  <div class="nav-item" onclick="showView('deals')"><span class="icon">💼</span> Deals <span class="badge" id="deals-count">0</span></div>
+  <div class="nav-item" onclick="showView('contacts')"><span class="icon">👤</span> Contacts <span class="badge" id="contacts-count">0</span></div>
+  <div class="nav-item" onclick="showView('companies')"><span class="icon">🏢</span> Companies <span class="badge" id="companies-count">0</span></div>
+  <div class="nav-item" onclick="showView('emails')"><span class="icon">✉️</span> Email Tracking</div>
+  
+  <div class="nav-section">Project Management</div>
+  <div class="nav-item" onclick="showView('tasks')"><span class="icon">✅</span> Tasks <span class="badge" id="tasks-count">0</span></div>
+  <div class="nav-item" onclick="showView('notes')"><span class="icon">📝</span> Notes</div>
+  <div class="nav-item" onclick="showView('activity')"><span class="icon">⏱️</span> Activity Log</div>
+  
+  <div class="nav-section">Projects</div>
+  <div class="nav-item" onclick="showView('project-agii')"><span class="icon">🏢</span> Agilitas</div>
+  <div class="nav-item" onclick="showView('project-questmind')"><span class="icon">🎮</span> QuestMind</div>
+  <div class="nav-item" onclick="showView('project-content')"><span class="icon">📱</span> Content</div>
+  
+  <div class="nav-section">Tools</div>
+  <div class="nav-item" onclick="showView('import')"><span class="icon">📥</span> Import Data</div>
+  <div class="nav-item" onclick="exportAllData()"><span class="icon">📤</span> Export Backup</div>
+  
+  <div class="sync-status">
+    <span class="sync-dot" id="sync-dot"></span>
+    <span id="sync-status">Connecting...</span>
+  </div>
+</aside>
+
+<!-- Main Content -->
+<main class="main">
+
+<!-- DASHBOARD VIEW -->
+<div id="view-dashboard" class="view">
+  <div class="view-header">
+    <div>
+      <div class="view-title">Dashboard</div>
+      <div class="view-subtitle">Welcome back, Arfeen</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="openModal('deal')">+ New Deal</button>
+      <button class="btn btn-secondary" onclick="openModal('contact')">+ New Contact</button>
+    </div>
+  </div>
+  
+  <div class="stats-grid" id="dashboard-stats"></div>
+  
+  <div class="quick-actions">
+    <div class="quick-action" onclick="openModal('deal')"><span class="icon">💼</span><span class="label">New Deal</span></div>
+    <div class="quick-action" onclick="openModal('contact')"><span class="icon">👤</span><span class="label">New Contact</span></div>
+    <div class="quick-action" onclick="openModal('task')"><span class="icon">✅</span><span class="label">New Task</span></div>
+    <div class="quick-action" onclick="openModal('meeting')"><span class="icon">📅</span><span class="label">Log Meeting</span></div>
+    <div class="quick-action" onclick="openModal('email')"><span class="icon">✉️</span><span class="label">Log Email</span></div>
+    <div class="quick-action" onclick="openModal('note')"><span class="icon">📝</span><span class="label">Add Note</span></div>
+  </div>
+  
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">🔥 Hot Deals</div>
+        <button class="btn btn-sm btn-secondary" onclick="showView('deals')">View All</button>
+      </div>
+      <div id="hot-deals"></div>
+    </div>
+    <div class="card">
+      <div class="card-header">
+        <div class="card-title">⏰ Recent Activity</div>
+        <button class="btn btn-sm btn-secondary" onclick="showView('activity')">View All</button>
+      </div>
+      <div id="recent-activity"></div>
+    </div>
+  </div>
+</div>
+
+<!-- PIPELINE VIEW -->
+<div id="view-pipeline" class="view" style="display:none;">
+  <div class="view-header">
+    <div>
+      <div class="view-title">Sales Pipeline</div>
+      <div class="view-subtitle" id="pipeline-total">$0 total value</div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="openModal('deal')">+ New Deal</button>
+    </div>
+  </div>
+  <div class="pipeline" id="pipeline-view"></div>
+</div>
+
+<!-- DEALS VIEW -->
+<div id="view-deals" class="view" style="display:none;">
+  <div class="view-header">
+    <div>
+      <div class="view-title">All Deals</div>
+      <div class="view-subtitle" id="deals-subtitle"></div>
+    </div>
+    <div class="header-actions">
+      <button class="btn btn-primary" onclick="openModal('deal')">+ New Deal</button>
+    </div>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="filterDeals('all',this)">All</div>
+    <div class="tab" onclick="filterDeals('lead',this)">Lead</div>
+    <div class="tab" onclick="filterDeals('contacted',this)">Contacted</div>
+    <div class="tab" onclick="filterDeals('qualified',this)">Qualified</div>
+    <div class="tab" onclick="filterDeals('proposal',this)">Proposal</div>
+    <div class="tab" onclick="filterDeals('won',this)">Won</div>
+  </div>
+  <div class="search-box"><span>🔍</span><input type="text" placeholder="Search deals..." id="deal-search" oninput="searchDeals()"></div>
+  <div class="card" style="padding:0;overflow-x:auto;">
+    <table class="table"><thead><tr>
+      <th>Company</th><th>Contact</th><th>Value</th><th>Stage</th><th>Source</th><th>Created</th><th>Actions</th>
+    </tr></thead><tbody id="deals-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- CONTACTS VIEW -->
+<div id="view-contacts" class="view" style="display:none;">
+  <div class="view-header">
+    <div><div class="view-title">Contacts</div><div class="view-subtitle">All people in your pipeline</div></div>
+    <button class="btn btn-primary" onclick="openModal('contact')">+ New Contact</button>
+  </div>
+  <div class="search-box"><span>🔍</span><input type="text" placeholder="Search contacts..." id="contact-search" oninput="searchContacts()"></div>
+  <div class="card" style="padding:0;overflow-x:auto;">
+    <table class="table"><thead><tr>
+      <th>Name</th><th>Title</th><th>Company</th><th>Email</th><th>Phone</th><th>Actions</th>
+    </tr></thead><tbody id="contacts-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- COMPANIES VIEW -->
+<div id="view-companies" class="view" style="display:none;">
+  <div class="view-header">
+    <div><div class="view-title">Companies</div><div class="view-subtitle">Target accounts</div></div>
+    <button class="btn btn-primary" onclick="openModal('company')">+ New Company</button>
+  </div>
+  <div class="search-box"><span>🔍</span><input type="text" placeholder="Search companies..." id="company-search" oninput="searchCompanies()"></div>
+  <div class="card" style="padding:0;overflow-x:auto;">
+    <table class="table"><thead><tr>
+      <th>Company</th><th>Industry</th><th>Size</th><th>Website</th><th>Deals</th><th>Contacts</th><th>Actions</th>
+    </tr></thead><tbody id="companies-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- EMAILS VIEW -->
+<div id="view-emails" class="view" style="display:none;">
+  <div class="view-header">
+    <div><div class="view-title">Email Tracking</div><div class="view-subtitle">Track all outreach</div></div>
+    <button class="btn btn-primary" onclick="openModal('email')">+ Log Email</button>
+  </div>
+  <div class="stats-grid" id="email-stats"></div>
+  <div class="card" style="padding:0;overflow-x:auto;">
+    <table class="table"><thead><tr>
+      <th>To</th><th>Subject</th><th>Sent</th><th>Status</th><th>Actions</th>
+    </tr></thead><tbody id="emails-tbody"></tbody></table>
+  </div>
+</div>
+
+<!-- TASKS VIEW -->
+<div id="view-tasks" class="view" style="display:none;">
+  <div class="view-header">
+    <div><div class="view-title">Tasks</div><div class="view-subtitle">Track all action items</div></div>
+    <button class="btn btn-primary" onclick="openModal('task')">+ New Task</button>
+  </div>
+  <div class="tabs">
+    <div class="tab active" onclick="filterTasks('all',this)">All</div>
+    <div class="tab" onclick="filterTasks('pending',this)">Pending</div>
+    <div class="tab" onclick="filterTasks('in_progress',this)">In Progress</div>
+    <div class="tab" onclick="filterTasks('completed',this)">Completed</div>
+  </div>
+  <div id="tasks-list"></div>
+</div>
+
+<!-- NOTES VIEW -->
+<div id="view-notes" class="view" style="display:none;">
+  <div class="view-header">
+    <div><div class="view-title">Notes</div><div class="view-subtitle">Meeting notes, ideas, reference</div></div>
+    <button class="btn btn-primary" onclick="openModal('note')">+ New Note</button>
+  </div>
+  <div id="notes-list"></div>
+</div>
+
+<!-- ACTIVITY VIEW -->
+<div id="view-activity" class="view" style="display:none;">
+  <div class="view-header"><div><div class="view-title">Activity Log</div><div class="view-subtitle">Complete history of all actions</div></div></div>
+  <div class="card" id="activity-list"></div>
+</div>
+
+<!-- ANALYTICS VIEW -->
+<div id="view-analytics" class="view" style="display:none;">
+  <div class="view-header"><div><div class="view-title">Analytics</div><div class="view-subtitle">Performance insights</div></div></div>
+  <div class="stats-grid" id="analytics-stats"></div>
+  <div class="chart-grid" id="analytics-charts"></div>
+</div>
+
+<!-- PROJECT VIEWS -->
+<div id="view-project-agii" class="view" style="display:none;"></div>
+<div id="view-project-questmind" class="view" style="display:none;"></div>
+<div id="view-project-content" class="view" style="display:none;"></div>
+
+<!-- IMPORT VIEW -->
+<div id="view-import" class="view" style="display:none;">
+  <div class="view-header"><div><div class="view-title">Import Data</div><div class="view-subtitle">Bulk import from CSV or JSON</div></div></div>
+  <div class="card">
+    <h3 style="margin-bottom:16px;">Import Deals</h3>
+    <p style="color:#64748b;font-size:.9em;margin-bottom:16px;">Paste CSV data (Company,Contact,Email,Value,Stage,Source):</p>
+    <textarea id="import-deals-csv" rows="6" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:12px;color:#fff;font-family:monospace;font-size:.85em;" placeholder="Royal Bank of Canada,John Smith,john@rbc.com,250000,proposal,Cold Email
+Manulife,Lisa Chen,lisa@manulife.com,150000,qualified,LinkedIn"></textarea>
+    <button class="btn btn-primary" style="margin-top:12px;" onclick="importDeals()">Import Deals</button>
+  </div>
+  <div class="card">
+    <h3 style="margin-bottom:16px;">Import Contacts</h3>
+    <p style="color:#64748b;font-size:.9em;margin-bottom:16px;">Paste CSV data (First,Last,Email,Phone,Company,Title):</p>
+    <textarea id="import-contacts-csv" rows="6" style="width:100%;background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:10px;padding:12px;color:#fff;font-family:monospace;font-size:.85em;" placeholder="John,Smith,john@rbc.com,416-555-0100,Royal Bank,CTO"></textarea>
+    <button class="btn btn-primary" style="margin-top:12px;" onclick="importContacts()">Import Contacts</button>
+  </div>
+</div>
+
+</main>
+</div>
+
+<!-- ============ MODALS ============ -->
+<div class="modal-overlay" id="modal-deal">
+  <div class="modal">
+    <h2>💼 New Deal</h2>
+    <div class="form-group"><label>Company *</label><input id="f-deal-company" placeholder="Company name"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Contact Name</label><input id="f-deal-contact" placeholder="Contact person"></div>
+      <div class="form-group"><label>Contact Email</label><input id="f-deal-email" type="email" placeholder="email@company.com"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Value ($)</label><input id="f-deal-value" type="number" placeholder="50000"></div>
+      <div class="form-group"><label>Source</label><select id="f-deal-source"><option>Cold Email</option><option>LinkedIn</option><option>Referral</option><option>Inbound</option><option>Event</option><option>Website</option></select></div>
+    </div>
+    <div class="form-group"><label>Stage</label><select id="f-deal-stage"><option value="lead">New Lead</option><option value="contacted">Contacted</option><option value="qualified">Qualified</option><option value="proposal">Proposal Sent</option><option value="negotiation">Negotiation</option><option value="won">Won</option><option value="lost">Lost</option></select></div>
+    <div class="form-group"><label>Notes</label><textarea id="f-deal-notes" rows="3" placeholder="Notes about this deal..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('deal')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveDeal()">Save Deal</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-contact">
+  <div class="modal">
+    <h2>👤 New Contact</h2>
+    <div class="form-row">
+      <div class="form-group"><label>First Name *</label><input id="f-contact-first" placeholder="John"></div>
+      <div class="form-group"><label>Last Name *</label><input id="f-contact-last" placeholder="Smith"></div>
+    </div>
+    <div class="form-group"><label>Email *</label><input id="f-contact-email" type="email" placeholder="email@company.com"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Phone</label><input id="f-contact-phone" placeholder="+1 (416) 555-0100"></div>
+      <div class="form-group"><label>Company</label><input id="f-contact-company" placeholder="Company name"></div>
+    </div>
+    <div class="form-group"><label>Job Title</label><input id="f-contact-title" placeholder="CTO, VP IT, Director..."></div>
+    <div class="form-group"><label>LinkedIn URL</label><input id="f-contact-linkedin" placeholder="https://linkedin.com/in/..."></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('contact')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveContact()">Save Contact</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-company">
+  <div class="modal">
+    <h2>🏢 New Company</h2>
+    <div class="form-group"><label>Company Name *</label><input id="f-company-name" placeholder="Royal Bank of Canada"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Industry</label><select id="f-company-industry"><option>Banking</option><option>Insurance</option><option>Energy</option><option>Telecom</option><option>Logistics</option><option>Healthcare</option><option>Retail</option><option>Government</option><option>Technology</option><option>Other</option></select></div>
+      <div class="form-group"><label>Company Size</label><select id="f-company-size"><option>1-50</option><option>51-200</option><option>201-500</option><option>501-1000</option><option>1001-5000</option><option>5000+</option></select></div>
+    </div>
+    <div class="form-group"><label>Website</label><input id="f-company-website" placeholder="https://company.com"></div>
+    <div class="form-group"><label>Notes</label><textarea id="f-company-notes" rows="3" placeholder="Tech stack, pain points, opportunities..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('company')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveCompany()">Save Company</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-task">
+  <div class="modal">
+    <h2>✅ New Task</h2>
+    <div class="form-group"><label>Task Title *</label><input id="f-task-title" placeholder="What needs to be done?"></div>
+    <div class="form-row">
+      <div class="form-group"><label>Project</label><select id="f-task-project"><option value="agii">🏢 Agilitas</option><option value="questmind">🎮 QuestMind</option><option value="content">📱 Content Brand</option><option value="general">📋 General</option></select></div>
+      <div class="form-group"><label>Priority</label><select id="f-task-priority"><option value="high">🔴 High</option><option value="normal">🟡 Normal</option><option value="low">🟢 Low</option></select></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Due Date</label><input id="f-task-due" type="date"></div>
+      <div class="form-group"><label>Status</label><select id="f-task-status"><option value="pending">Pending</option><option value="in_progress">In Progress</option></select></div>
+    </div>
+    <div class="form-group"><label>Notes</label><textarea id="f-task-notes" rows="2" placeholder="Additional details..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('task')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveTask()">Save Task</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-email">
+  <div class="modal">
+    <h2>✉️ Log Email</h2>
+    <div class="form-group"><label>To (Email) *</label><input id="f-email-to" type="email" placeholder="email@company.com"></div>
+    <div class="form-group"><label>Subject *</label><input id="f-email-subject" placeholder="Email subject"></div>
+    <div class="form-group"><label>Related Company</label><input id="f-email-company" placeholder="Company name"></div>
+    <div class="form-group"><label>Template Used</label><select id="f-email-template"><option value="">None</option><option>Oracle Integration Pain</option><option>Digital Transformation</option><option>Referral</option><option>Problem-Based</option><option>Industry Value</option><option>Follow-up</option></select></div>
+    <div class="form-group"><label>Notes</label><textarea id="f-email-notes" rows="2" placeholder="Email notes..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('email')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveEmail()">Log Email</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-meeting">
+  <div class="modal">
+    <h2>📅 Log Meeting</h2>
+    <div class="form-group"><label>Meeting Title *</label><input id="f-meeting-title" placeholder="Discovery call with..."></div>
+    <div class="form-row">
+      <div class="form-group"><label>Attendee</label><input id="f-meeting-attendee" placeholder="Contact name"></div>
+      <div class="form-group"><label>Company</label><input id="f-meeting-company" placeholder="Company name"></div>
+    </div>
+    <div class="form-row">
+      <div class="form-group"><label>Date</label><input id="f-meeting-date" type="date"></div>
+      <div class="form-group"><label>Duration (min)</label><input id="f-meeting-duration" type="number" value="30"></div>
+    </div>
+    <div class="form-group"><label>Outcome</label><select id="f-meeting-outcome"><option value="scheduled">Scheduled</option><option value="completed">Completed</option><option value="no_show">No Show</option><option value="follow_up">Follow-up Needed</option></select></div>
+    <div class="form-group"><label>Notes</label><textarea id="f-meeting-notes" rows="3" placeholder="Meeting notes, action items..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('meeting')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveMeeting()">Save Meeting</button>
+    </div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modal-note">
+  <div class="modal">
+    <h2>📝 New Note</h2>
+    <div class="form-group"><label>Title *</label><input id="f-note-title" placeholder="Note title"></div>
+    <div class="form-group"><label>Project</label><select id="f-note-project"><option value="agii">🏢 Agilitas</option><option value="questmind">🎮 QuestMind</option><option value="content">📱 Content Brand</option><option value="general">📋 General</option></select></div>
+    <div class="form-group"><label>Content *</label><textarea id="f-note-content" rows="6" placeholder="Write your note..."></textarea></div>
+    <div class="form-actions">
+      <button class="btn btn-secondary" onclick="closeModal('note')">Cancel</button>
+      <button class="btn btn-primary" onclick="saveNote()">Save Note</button>
+    </div>
+  </div>
+</div>
+
+<!-- ============ JAVASCRIPT ============ -->
+<script>
+// ============ CONFIG ============
+const API_URL = window.location.origin;
+let socket = null;
+let CRM = { deals: [], contacts: [], companies: [], tasks: [], notes: [], emails: [], meetings: [], activities: [] };
+let currentFilter = 'all';
+
+// ============ INIT ============
+async function init() {
+  await loadAllData();
+  connectSocket();
+  renderDashboard();
+}
+
+function connectSocket() {
+  socket = io(API_URL);
+  
+  socket.on('connect', () => {
+    document.getElementById('sync-dot').className = 'sync-dot online';
+    document.getElementById('sync-status').textContent = 'Connected • Syncing in real-time';
+  });
+  
+  socket.on('disconnect', () => {
+    document.getElementById('sync-dot').className = 'sync-dot offline';
+    document.getElementById('sync-status').textContent = 'Offline — changes saved locally';
+  });
+  
+  socket.on('sync', (data) => {
+    CRM = data;
+    renderCurrentView();
+  });
+  
+  // Real-time updates
+  socket.on('deal:created', (deal) => { CRM.deals.push(deal); renderCurrentView(); });
+  socket.on('deal:updated', (deal) => { const i = CRM.deals.findIndex(d=>d.id===deal.id); if(i>=0) CRM.deals[i]=deal; renderCurrentView(); });
+  socket.on('deal:deleted', ({id}) => { CRM.deals = CRM.deals.filter(d=>d.id!==id); renderCurrentView(); });
+  socket.on('contact:created', (c) => { CRM.contacts.push(c); renderCurrentView(); });
+  socket.on('contact:updated', (c) => { const i = CRM.contacts.findIndex(x=>x.id===c.id); if(i>=0) CRM.contacts[i]=c; renderCurrentView(); });
+  socket.on('task:created', (t) => { CRM.tasks.push(t); renderCurrentView(); });
+  socket.on('task:updated', (t) => { const i = CRM.tasks.findIndex(x=>x.id===t.id); if(i>=0) CRM.tasks[i]=t; renderCurrentView(); });
+  socket.on('activity:new', (a) => { CRM.activities.unshift(a); renderCurrentView(); });
+}
+
+async function loadAllData() {
+  try {
+    const [deals, contacts, companies, tasks, notes, emails, activities] = await Promise.all([
+      fetch(API_URL+'/api/deals').then(r=>r.json()),
+      fetch(API_URL+'/api/contacts').then(r=>r.json()),
+      fetch(API_URL+'/api/companies').then(r=>r.json()),
+      fetch(API_URL+'/api/tasks').then(r=>r.json()),
+      fetch(API_URL+'/api/notes').then(r=>r.json()),
+      fetch(API_URL+'/api/emails').then(r=>r.json()),
+      fetch(API_URL+'/api/activities?limit=100').then(r=>r.json())
+    ]);
+    CRM = { deals, contacts, companies, tasks, notes, emails, activities };
+  } catch(e) {
+    console.error('Failed to load data:', e);
+  }
+}
+
+// ============ VIEW MANAGEMENT ============
+let currentView = 'dashboard';
+function showView(view) {
+  document.querySelectorAll('.view').forEach(v=>v.style.display='none');
+  document.getElementById('view-'+view).style.display='block';
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  event?.target?.closest('.nav-item')?.classList.add('active');
+  currentView = view;
+  renderCurrentView();
+  // Close sidebar on mobile
+  document.getElementById('sidebar').classList.remove('open');
+}
+
+function renderCurrentView() {
+  const renderers = {
+    dashboard: renderDashboard,
+    pipeline: renderPipeline,
+    deals: renderDeals,
+    contacts: renderContacts,
+    companies: renderCompanies,
+    emails: renderEmails,
+    tasks: renderTasks,
+    notes: renderNotes,
+    activity: renderActivity,
+    analytics: renderAnalytics,
+    'project-agii': () => renderProject('agii', 'Agilitas Innovations', '$10M Revenue', '🏢'),
+    'project-questmind': () => renderProject('questmind', 'QuestMind: Wizard Academy', 'App Store Launch', '🎮'),
+    'project-content': () => renderProject('content', 'Content Creator Brand', '$5M Personal Income', '📱')
+  };
+  (renderers[currentView] || renderDashboard)();
+}
+
+// ============ DASHBOARD ============
+function renderDashboard() {
+  const pipeline = CRM.deals.filter(d=>!['won','lost'].includes(d.stage)).reduce((s,d)=>s+(d.value||0),0);
+  const openDeals = CRM.deals.filter(d=>!['won','lost'].includes(d.stage)).length;
+  const wonThisMonth = CRM.deals.filter(d=>d.stage==='won').reduce((s,d)=>s+(d.value||0),0);
+  const pendingTasks = CRM.tasks.filter(t=>t.status!=='completed').length;
+  const emailsSent = CRM.emails.length;
+  const replyRate = emailsSent > 0 ? Math.round((CRM.emails.filter(e=>e.replied).length/emailsSent)*100) : 0;
+  
+  document.getElementById('dashboard-stats').innerHTML = `
+    <div class="stat-card purple"><div class="stat-label">💰 Pipeline Value</div><div class="stat-value">${fmt$(pipeline)}</div><div class="stat-sub">${openDeals} active deals</div></div>
+    <div class="stat-card green"><div class="stat-label">✅ Won This Month</div><div class="stat-value">${fmt$(wonThisMonth)}</div><div class="stat-sub">${CRM.deals.filter(d=>d.stage==='won').length} total won</div></div>
+    <div class="stat-card gold"><div class="stat-label">👤 Contacts</div><div class="stat-value">${CRM.contacts.length}</div><div class="stat-sub">${CRM.companies.length} companies</div></div>
+    <div class="stat-card orange"><div class="stat-label">✅ Tasks Pending</div><div class="stat-value">${pendingTasks}</div><div class="stat-sub">${CRM.tasks.filter(t=>t.status==='completed').length} completed</div></div>
+    <div class="stat-card cyan"><div class="stat-label">✉️ Emails Sent</div><div class="stat-value">${emailsSent}</div><div class="stat-sub">${replyRate}% reply rate</div></div>
+    <div class="stat-card pink"><div class="stat-label">📅 Meetings</div><div class="stat-value">${CRM.meetings.length}</div><div class="stat-sub">${CRM.meetings.filter(m=>m.outcome==='follow_up').length} follow-ups</div></div>
+  `;
+  
+  // Hot deals (top 5 by value)
+  const hotDeals = CRM.deals.filter(d=>!['won','lost'].includes(d.stage)).sort((a,b)=>(b.value||0)-(a.value||0)).slice(0,5);
+  document.getElementById('hot-deals').innerHTML = hotDeals.length ? hotDeals.map(d=>`
+    <div style="display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid var(--border);">
+      <div><div style="font-weight:600;">${d.company}</div><div style="font-size:.8em;color:#64748b;">${d.contact||'No contact'} • <span class="badge badge-${d.stage}">${d.stage}</span></div></div>
+      <div style="text-align:right;"><div style="color:var(--gold);font-weight:600;">${fmt$(d.value)}</div><button class="btn btn-sm btn-secondary" onclick="editDeal('${d.id}')" style="margin-top:4px;">Edit</button></div>
+    </div>
+  `).join('') : '<p style="color:#64748b;padding:10px 0;">No active deals. Add your first deal!</p>';
+  
+  // Recent activity
+  document.getElementById('recent-activity').innerHTML = CRM.activities.slice(0,5).map(a=>`
+    <div class="activity-item">
+      <div class="activity-icon" style="background:rgba(99,102,241,.15)">${a.type?.includes('deal')?'💼':a.type?.includes('contact')?'👤':a.type?.includes('task')?'✅':a.type?.includes('email')?'✉️':'📋'}</div>
+      <div><div class="activity-text">${a.text}</div><div class="activity-time">${timeAgo(a.timestamp)}</div></div>
+    </div>
+  `).join('') || '<p style="color:#64748b;padding:10px 0;">No activity yet.</p>';
+  
+  // Update sidebar badges
+  document.getElementById('deals-count').textContent = openDeals;
+  document.getElementById('contacts-count').textContent = CRM.contacts.length;
+  document.getElementById('tasks-count').textContent = pendingTasks;
+}
+
+// ============ PIPELINE ============
+function renderPipeline() {
+  const stages = [
+    {id:'lead',name:'New Lead',color:'#64748b'},
+    {id:'contacted',name:'Contacted',color:'#f59e0b'},
+    {id:'qualified',name:'Qualified',color:'#6366f1'},
+    {id:'proposal',name:'Proposal',color:'#06b6d4'},
+    {id:'negotiation',name:'Negotiation',color:'#a78bfa'},
+    {id:'won',name:'Won 🎉',color:'#10b981'},
+    {id:'lost',name:'Lost',color:'#ef4444'}
+  ];
+  
+  const total = CRM.deals.filter(d=>!['won','lost'].includes(d.stage)).reduce((s,d)=>s+(d.value||0),0);
+  document.getElementById('pipeline-total').textContent = fmt$(total)+' total pipeline value';
+  
+  document.getElementById('pipeline-view').innerHTML = stages.map(s => {
+    const deals = CRM.deals.filter(d=>d.stage===s.id);
+    const val = deals.reduce((sum,d)=>sum+(d.value||0),0);
+    return `
+      <div class="pipeline-stage">
+        <div class="stage-header">
+          <div><div class="stage-name" style="color:${s.color}">${s.name}</div><div class="stage-value">${fmt$(val)}</div></div>
+          <span class="stage-count">${deals.length}</span>
+        </div>
+        ${deals.map(d=>`
+          <div class="deal-card" onclick="editDeal('${d.id}')">
+            <div class="deal-company">${d.company}</div>
+            <div class="deal-contact">${d.contact||'No contact'}</div>
+            <div class="deal-value">${fmt$(d.value)}</div>
+            <div class="deal-meta"><span class="deal-tag">${d.source}</span></div>
+          </div>
+        `).join('')}
+      </div>
+    `;
+  }).join('');
+}
+
+// ============ DEALS ============
+function renderDeals() {
+  let deals = currentFilter === 'all' ? CRM.deals : CRM.deals.filter(d=>d.stage===currentFilter);
+  document.getElementById('deals-subtitle').textContent = deals.length + ' deals • ' + fmt$(deals.reduce((s,d)=>s+(d.value||0),0)) + ' total';
+  
+  document.getElementById('deals-tbody').innerHTML = deals.map(d=>`
+    <tr>
+      <td><strong>${d.company}</strong></td>
+      <td>${d.contact||'-'}</td>
+      <td style="color:var(--gold);font-weight:600;">${fmt$(d.value)}</td>
+      <td><span class="badge badge-${d.stage}">${d.stage}</span></td>
+      <td>${d.source||'-'}</td>
+      <td style="font-size:.8em;color:#64748b;">${d.createdAt?new Date(d.createdAt).toLocaleDateString():'-'}</td>
+      <td>
+        <select onchange="updateDealStage('${d.id}',this.value)" style="background:rgba(255,255,255,.05);border:1px solid var(--border);border-radius:6px;color:#fff;padding:4px 8px;font-size:.8em;">
+          ${['lead','contacted','qualified','proposal','negotiation','won','lost'].map(s=>`<option value="${s}" ${d.stage===s?'selected':''}>${s}</option>`).join('')}
+        </select>
+        <button class="btn btn-sm btn-danger" onclick="deleteDeal('${d.id}')" style="margin-left:5px;padding:4px 8px;">🗑️</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:30px;">No deals found</td></tr>';
+}
+
+function filterDeals(stage, el) {
+  currentFilter = stage;
+  document.querySelectorAll('#view-deals .tab').forEach(t=>t.classList.remove('active'));
+  el?.classList.add('active');
+  renderDeals();
+}
+
+function searchDeals() {
+  const q = document.getElementById('deal-search').value.toLowerCase();
+  document.querySelectorAll('#deals-tbody tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+}
+
+async function saveDeal() {
+  const deal = {
+    company: document.getElementById('f-deal-company').value,
+    contact: document.getElementById('f-deal-contact').value,
+    email: document.getElementById('f-deal-email').value,
+    value: parseInt(document.getElementById('f-deal-value').value) || 0,
+    stage: document.getElementById('f-deal-stage').value,
+    source: document.getElementById('f-deal-source').value,
+    notes: document.getElementById('f-deal-notes').value
+  };
+  if (!deal.company) return alert('Company is required');
+  
+  const res = await fetch(API_URL+'/api/deals', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(deal) });
+  const saved = await res.json();
+  closeModal('deal');
+  ['f-deal-company','f-deal-contact','f-deal-email','f-deal-value','f-deal-notes'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function updateDealStage(id, stage) {
+  await fetch(API_URL+'/api/deals/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({stage}) });
+}
+
+async function deleteDeal(id) {
+  if (!confirm('Delete this deal?')) return;
+  await fetch(API_URL+'/api/deals/'+id, { method:'DELETE' });
+}
+
+function editDeal(id) {
+  const d = CRM.deals.find(x=>x.id===id);
+  if (!d) return;
+  document.getElementById('f-deal-company').value = d.company||'';
+  document.getElementById('f-deal-contact').value = d.contact||'';
+  document.getElementById('f-deal-email').value = d.email||'';
+  document.getElementById('f-deal-value').value = d.value||'';
+  document.getElementById('f-deal-stage').value = d.stage||'lead';
+  document.getElementById('f-deal-source').value = d.source||'Cold Email';
+  document.getElementById('f-deal-notes').value = d.notes||'';
+  openModal('deal');
+}
+
+// ============ CONTACTS ============
+function renderContacts() {
+  document.getElementById('contacts-tbody').innerHTML = CRM.contacts.map(c=>`
+    <tr>
+      <td><strong>${c.first} ${c.last}</strong></td>
+      <td>${c.title||'-'}</td>
+      <td>${c.company||'-'}</td>
+      <td><a href="mailto:${c.email}" style="color:var(--accent);text-decoration:none;">${c.email}</a></td>
+      <td>${c.phone||'-'}</td>
+      <td><button class="btn btn-sm btn-danger" onclick="deleteContact('${c.id}')">🗑️</button></td>
+    </tr>
+  `).join('') || '<tr><td colspan="6" style="text-align:center;color:#64748b;padding:30px;">No contacts yet</td></tr>';
+}
+
+function searchContacts() {
+  const q = document.getElementById('contact-search').value.toLowerCase();
+  document.querySelectorAll('#contacts-tbody tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+}
+
+async function saveContact() {
+  const contact = {
+    first: document.getElementById('f-contact-first').value,
+    last: document.getElementById('f-contact-last').value,
+    email: document.getElementById('f-contact-email').value,
+    phone: document.getElementById('f-contact-phone').value,
+    company: document.getElementById('f-contact-company').value,
+    title: document.getElementById('f-contact-title').value,
+    linkedin: document.getElementById('f-contact-linkedin').value
+  };
+  if (!contact.first || !contact.email) return alert('Name and email required');
+  
+  await fetch(API_URL+'/api/contacts', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(contact) });
+  closeModal('contact');
+  ['f-contact-first','f-contact-last','f-contact-email','f-contact-phone','f-contact-company','f-contact-title','f-contact-linkedin'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function deleteContact(id) {
+  if (!confirm('Delete this contact?')) return;
+  await fetch(API_URL+'/api/contacts/'+id, { method:'DELETE' });
+}
+
+// ============ COMPANIES ============
+function renderCompanies() {
+  document.getElementById('companies-tbody').innerHTML = CRM.companies.map(c=>{
+    const deals = CRM.deals.filter(d=>d.company===c.name).length;
+    const contacts = CRM.contacts.filter(x=>x.company===c.name).length;
+    return `
+      <tr>
+        <td><strong>${c.name}</strong></td>
+        <td>${c.industry||'-'}</td>
+        <td>${c.size||'-'}</td>
+        <td>${c.website?`<a href="${c.website}" target="_blank" style="color:var(--accent);">${c.website.replace('https://','')}</a>`:'-'}</td>
+        <td>${deals}</td>
+        <td>${contacts}</td>
+        <td><button class="btn btn-sm btn-danger" onclick="deleteCompany('${c.id}')">🗑️</button></td>
+      </tr>
+    `;
+  }).join('') || '<tr><td colspan="7" style="text-align:center;color:#64748b;padding:30px;">No companies yet</td></tr>';
+}
+
+function searchCompanies() {
+  const q = document.getElementById('company-search').value.toLowerCase();
+  document.querySelectorAll('#companies-tbody tr').forEach(r => { r.style.display = r.textContent.toLowerCase().includes(q) ? '' : 'none'; });
+}
+
+async function saveCompany() {
+  const company = {
+    name: document.getElementById('f-company-name').value,
+    industry: document.getElementById('f-company-industry').value,
+    size: document.getElementById('f-company-size').value,
+    website: document.getElementById('f-company-website').value,
+    notes: document.getElementById('f-company-notes').value
+  };
+  if (!company.name) return alert('Company name required');
+  
+  await fetch(API_URL+'/api/companies', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(company) });
+  closeModal('company');
+  ['f-company-name','f-company-website','f-company-notes'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function deleteCompany(id) {
+  if (!confirm('Delete this company?')) return;
+  await fetch(API_URL+'/api/companies/'+id, { method:'DELETE' });
+}
+
+// ============ EMAILS ============
+function renderEmails() {
+  const sent = CRM.emails.length;
+  const opened = CRM.emails.filter(e=>e.opened).length;
+  const replied = CRM.emails.filter(e=>e.replied).length;
+  
+  document.getElementById('email-stats').innerHTML = `
+    <div class="stat-card purple"><div class="stat-label">Sent</div><div class="stat-value">${sent}</div></div>
+    <div class="stat-card cyan"><div class="stat-label">Opened</div><div class="stat-value">${opened}</div><div class="stat-sub">${sent?Math.round(opened/sent*100):0}% open rate</div></div>
+    <div class="stat-card green"><div class="stat-label">Replied</div><div class="stat-value">${replied}</div><div class="stat-sub">${sent?Math.round(replied/sent*100):0}% reply rate</div></div>
+  `;
+  
+  document.getElementById('emails-tbody').innerHTML = CRM.emails.map(e=>`
+    <tr>
+      <td>${e.to}</td>
+      <td>${e.subject}</td>
+      <td style="font-size:.8em;color:#64748b;">${e.sentAt?new Date(e.sentAt).toLocaleDateString():'-'}</td>
+      <td><span class="badge ${e.replied?'badge-won':e.opened?'badge-qualified':'badge-pending'}">${e.replied?'Replied':e.opened?'Opened':'Sent'}</span></td>
+      <td>
+        <button class="btn btn-sm btn-secondary" onclick="markEmailOpened('${e.id}')" title="Mark Opened">👁️</button>
+        <button class="btn btn-sm btn-secondary" onclick="markEmailReplied('${e.id}')" title="Mark Replied" style="margin-left:4px;">↩️</button>
+      </td>
+    </tr>
+  `).join('') || '<tr><td colspan="5" style="text-align:center;color:#64748b;padding:30px;">No emails logged yet</td></tr>';
+}
+
+async function saveEmail() {
+  const email = {
+    to: document.getElementById('f-email-to').value,
+    subject: document.getElementById('f-email-subject').value,
+    company: document.getElementById('f-email-company').value,
+    template: document.getElementById('f-email-template').value,
+    notes: document.getElementById('f-email-notes').value,
+    opened: false,
+    replied: false
+  };
+  if (!email.to || !email.subject) return alert('To and Subject required');
+  
+  await fetch(API_URL+'/api/emails', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(email) });
+  closeModal('email');
+  ['f-email-to','f-email-subject','f-email-company','f-email-notes'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function markEmailOpened(id) {
+  await fetch(API_URL+'/api/emails/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({opened:true}) });
+}
+
+async function markEmailReplied(id) {
+  await fetch(API_URL+'/api/emails/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({opened:true,replied:true}) });
+}
+
+// ============ TASKS ============
+function renderTasks(filter='all') {
+  let tasks = CRM.tasks;
+  if (filter !== 'all') tasks = tasks.filter(t=>t.status===filter);
+  
+  document.getElementById('tasks-list').innerHTML = tasks.map(t=>`
+    <div class="card" style="display:flex;align-items:center;gap:16px;padding:16px;">
+      <input type="checkbox" ${t.status==='completed'?'checked':''} onchange="toggleTask('${t.id}')" style="width:20px;height:20px;cursor:pointer;">
+      <div style="flex:1;">
+        <div style="font-weight:600;${t.status==='completed'?'text-decoration:line-through;opacity:.5;':''}">${t.title}</div>
+        <div style="font-size:.8em;color:#64748b;margin-top:4px;">
+          ${t.project==='agii'?'🏢 Agilitas':t.project==='questmind'?'🎮 QuestMind':t.project==='content'?'📱 Content':'📋 General'}
+          ${t.due?' • Due: '+t.due:''}
+        </div>
+      </div>
+      <span class="badge badge-${t.priority}">${t.priority}</span>
+      <span class="badge badge-${t.status}">${t.status}</span>
+      <button class="btn btn-sm btn-danger" onclick="deleteTask('${t.id}')">🗑️</button>
+    </div>
+  `).join('') || '<div class="card" style="text-align:center;color:#64748b;">No tasks found</div>';
+}
+
+function filterTasks(status, el) {
+  document.querySelectorAll('#view-tasks .tab').forEach(t=>t.classList.remove('active'));
+  el?.classList.add('active');
+  renderTasks(status);
+}
+
+async function toggleTask(id) {
+  const task = CRM.tasks.find(t=>t.id===id);
+  if (!task) return;
+  const newStatus = task.status==='completed' ? 'pending' : 'completed';
+  await fetch(API_URL+'/api/tasks/'+id, { method:'PUT', headers:{'Content-Type':'application/json'}, body:JSON.stringify({status:newStatus}) });
+}
+
+async function saveTask() {
+  const task = {
+    title: document.getElementById('f-task-title').value,
+    project: document.getElementById('f-task-project').value,
+    priority: document.getElementById('f-task-priority').value,
+    status: document.getElementById('f-task-status').value,
+    due: document.getElementById('f-task-due').value,
+    notes: document.getElementById('f-task-notes').value
+  };
+  if (!task.title) return alert('Task title required');
+  
+  await fetch(API_URL+'/api/tasks', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(task) });
+  closeModal('task');
+  ['f-task-title','f-task-due','f-task-notes'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function deleteTask(id) {
+  if (!confirm('Delete this task?')) return;
+  await fetch(API_URL+'/api/tasks/'+id, { method:'DELETE' });
+}
+
+// ============ NOTES ============
+function renderNotes() {
+  document.getElementById('notes-list').innerHTML = CRM.notes.map(n=>`
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:start;">
+        <div>
+          <div style="font-weight:600;font-size:1.05em;">${n.title}</div>
+          <div style="font-size:.8em;color:var(--primary);margin-top:4px;">
+            ${n.project==='agii'?'🏢 Agilitas':n.project==='questmind'?'🎮 QuestMind':n.project==='content'?'📱 Content':'📋 General'}
+            • ${n.createdAt?new Date(n.createdAt).toLocaleDateString():''}
+          </div>
+        </div>
+        <button class="btn btn-sm btn-danger" onclick="deleteNote('${n.id}')">🗑️</button>
+      </div>
+      <pre style="white-space:pre-wrap;font-size:.88em;color:#94a3b8;margin-top:12px;font-family:inherit;background:rgba(0,0,0,.2);padding:12px;border-radius:8px;">${n.content}</pre>
+    </div>
+  `).join('') || '<div class="card" style="text-align:center;color:#64748b;">No notes yet</div>';
+}
+
+async function saveNote() {
+  const note = {
+    title: document.getElementById('f-note-title').value,
+    project: document.getElementById('f-note-project').value,
+    content: document.getElementById('f-note-content').value
+  };
+  if (!note.title || !note.content) return alert('Title and content required');
+  
+  await fetch(API_URL+'/api/notes', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(note) });
+  closeModal('note');
+  ['f-note-title','f-note-content'].forEach(id=>document.getElementById(id).value='');
+}
+
+async function deleteNote(id) {
+  if (!confirm('Delete this note?')) return;
+  await fetch(API_URL+'/api/notes/'+id, { method:'DELETE' });
+}
+
+// ============ ACTIVITY ============
+function renderActivity() {
+  document.getElementById('activity-list').innerHTML = CRM.activities.map(a=>`
+    <div class="activity-item">
+      <div class="activity-icon" style="background:rgba(99,102,241,.15)">${a.type?.includes('deal')?'💼':a.type?.includes('contact')?'👤':a.type?.includes('task')?'✅':a.type?.includes('email')?'✉️':a.type?.includes('meeting')?'📅':'📋'}</div>
+      <div><div class="activity-text">${a.text}</div><div class="activity-time">${a.timestamp?new Date(a.timestamp).toLocaleString():''}</div></div>
+    </div>
+  `).join('') || '<p style="color:#64748b;">No activity yet.</p>';
+}
+
+// ============ ANALYTICS ============
+function renderAnalytics() {
+  const pipeline = CRM.deals.filter(d=>!['won','lost'].includes(d.stage)).reduce((s,d)=>s+(d.value||0),0);
+  const won = CRM.deals.filter(d=>d.stage==='won').reduce((s,d)=>s+(d.value||0),0);
+  const avgDeal = CRM.deals.length ? Math.round(CRM.deals.reduce((s,d)=>s+(d.value||0),0)/CRM.deals.length) : 0;
+  const winRate = CRM.deals.length ? Math.round(CRM.deals.filter(d=>d.stage==='won').length/CRM.deals.length*100) : 0;
+  
+  document.getElementById('analytics-stats').innerHTML = `
+    <div class="stat-card purple"><div class="stat-label">Pipeline</div><div class="stat-value">${fmt$(pipeline)}</div></div>
+    <div class="stat-card green"><div class="stat-label">Total Won</div><div class="stat-value">${fmt$(won)}</div></div>
+    <div class="stat-card gold"><div class="stat-label">Avg Deal Size</div><div class="stat-value">${fmt$(avgDeal)}</div></div>
+    <div class="stat-card cyan"><div class="stat-label">Win Rate</div><div class="stat-value">${winRate}%</div></div>
+  `;
+  
+  // Stage distribution chart
+  const stages = ['lead','contacted','qualified','proposal','negotiation','won','lost'];
+  const stageData = stages.map(s => ({ stage: s, count: CRM.deals.filter(d=>d.stage===s).length, value: CRM.deals.filter(d=>d.stage===s).reduce((sum,d)=>sum+(d.value||0),0) }));
+  const maxStageCount = Math.max(...stageData.map(s=>s.count), 1);
+  
+  // Source performance
+  const sources = {};
+  CRM.deals.forEach(d => {
+    if (!d.source) return;
+    if (!sources[d.source]) sources[d.source] = { count: 0, value: 0 };
+    sources[d.source].count++;
+    sources[d.source].value += d.value || 0;
+  });
+  const maxSourceValue = Math.max(...Object.values(sources).map(s=>s.value), 1);
+  
+  document.getElementById('analytics-charts').innerHTML = `
+    <div class="chart-card">
+      <div class="chart-title">📊 Pipeline by Stage</div>
+      <div class="bar-chart">
+        ${stageData.map(s => `
+          <div class="bar-row">
+            <div class="bar-label">${s.stage}</div>
+            <div class="bar-container"><div class="bar-fill" style="width:${(s.count/maxStageCount)*100}%;background:${s.stage==='won'?'var(--green)':s.stage==='lost'?'var(--red)':'var(--primary)'}"></div></div>
+            <div class="bar-value">${s.count}</div>
+          </div>
+        `).join('')}
+      </div>
+    </div>
+    <div class="chart-card">
+      <div class="chart-title">📈 Revenue by Source</div>
+      <div class="bar-chart">
+        ${Object.entries(sources).map(([name, data]) => `
+          <div class="bar-row">
+            <div class="bar-label">${name}</div>
+            <div class="bar-container"><div class="bar-fill" style="width:${(data.value/maxSourceValue)*100}%;background:var(--accent)"></div></div>
+            <div class="bar-value">${fmt$(data.value)}</div>
+          </div>
+        `).join('') || '<p style="color:#64748b;">No data yet</p>'}
+      </div>
+    </div>
+  `;
+}
+
+// ============ PROJECTS ============
+function renderProject(key, name, goal, icon) {
+  const tasks = CRM.tasks.filter(t=>t.project===key);
+  const notes = CRM.notes.filter(n=>n.project===key);
+  const done = tasks.filter(t=>t.status==='completed').length;
+  const total = tasks.length;
+  const pct = total ? Math.round(done/total*100) : 0;
+  
+  document.getElementById('view-project-'+key).innerHTML = `
+    <div class="view-header">
+      <div><div class="view-title">${icon} ${name}</div><div class="view-subtitle">${goal}</div></div>
+      <div class="header-actions">
+        <button class="btn btn-primary" onclick="document.getElementById('f-task-project').value='${key}';openModal('task')">+ Task</button>
+        <button class="btn btn-secondary" onclick="document.getElementById('f-note-project').value='${key}';openModal('note')">+ Note</button>
+      </div>
+    </div>
+    
+    <div class="stats-grid" style="grid-template-columns:repeat(3,1fr);">
+      <div class="stat-card purple">
+        <div class="stat-label">Tasks</div>
+        <div class="stat-value">${done}/${total}</div>
+        <div style="background:rgba(255,255,255,.1);height:6px;border-radius:3px;margin-top:10px;overflow:hidden;">
+          <div style="background:linear-gradient(90deg,var(--primary),var(--accent));height:100%;width:${pct}%;"></div>
+        </div>
+      </div>
+      <div class="stat-card green"><div class="stat-label">Progress</div><div class="stat-value">${pct}%</div></div>
+      <div class="stat-card gold"><div class="stat-label">Goal</div><div class="stat-value" style="font-size:1.2em;">${goal}</div></div>
+    </div>
+    
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:16px;">
+      <div class="card">
+        <div class="card-header"><div class="card-title">✅ Tasks</div></div>
+        ${tasks.map(t=>`
+          <div style="display:flex;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--border);">
+            <input type="checkbox" ${t.status==='completed'?'checked':''} onchange="toggleTask('${t.id}')" style="cursor:pointer;">
+            <span style="flex:1;${t.status==='completed'?'text-decoration:line-through;opacity:.5;':''}font-size:.9em;">${t.title}</span>
+            <span class="badge badge-${t.priority}">${t.priority}</span>
+          </div>
+        `).join('') || '<p style="color:#64748b;padding:10px 0;">No tasks yet</p>'}
+      </div>
+      <div class="card">
+        <div class="card-header"><div class="card-title">📝 Notes</div></div>
+        ${notes.map(n=>`
+          <div style="padding:10px 0;border-bottom:1px solid var(--border);">
+            <div style="font-weight:600;font-size:.9em;">${n.title}</div>
+            <pre style="white-space:pre-wrap;font-size:.8em;color:#94a3b8;margin-top:6px;font-family:inherit;">${n.content.substring(0,200)}${n.content.length>200?'...':''}</pre>
+          </div>
+        `).join('') || '<p style="color:#64748b;padding:10px 0;">No notes yet</p>'}
+      </div>
+    </div>
+  `;
+}
+
+// ============ IMPORT ============
+async function importDeals() {
+  const csv = document.getElementById('import-deals-csv').value.trim();
+  if (!csv) return alert('Paste CSV data first');
+  
+  const deals = csv.split('\n').map(line => {
+    const [company, contact, email, value, stage, source] = line.split(',').map(s=>s.trim());
+    return { company, contact, email, value: parseInt(value)||0, stage: stage||'lead', source: source||'Import' };
+  });
+  
+  const res = await fetch(API_URL+'/api/import/deals', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(deals) });
+  const result = await res.json();
+  alert(`Imported ${result.imported} deals!`);
+  document.getElementById('import-deals-csv').value = '';
+}
+
+async function importContacts() {
+  const csv = document.getElementById('import-contacts-csv').value.trim();
+  if (!csv) return alert('Paste CSV data first');
+  
+  const contacts = csv.split('\n').map(line => {
+    const [first, last, email, phone, company, title] = line.split(',').map(s=>s.trim());
+    return { first, last, email, phone, company, title };
+  });
+  
+  const res = await fetch(API_URL+'/api/import/contacts', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(contacts) });
+  const result = await res.json();
+  alert(`Imported ${result.imported} contacts!`);
+  document.getElementById('import-contacts-csv').value = '';
+}
+
+// ============ EXPORT ============
+function exportAllData() {
+  const blob = new Blob([JSON.stringify(CRM,null,2)], {type:'application/json'});
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = 'crm-backup-'+new Date().toISOString().slice(0,10)+'.json';
+  a.click();
+}
+
+// ============ MODALS ============
+function openModal(type) { document.getElementById('modal-'+type).classList.add('active'); }
+function closeModal(type) { document.getElementById('modal-'+type).classList.remove('active'); }
+document.querySelectorAll('.modal-overlay').forEach(m => {
+  m.addEventListener('click', e => { if(e.target===m) m.classList.remove('active'); });
+});
+
+// ============ UTILITIES ============
+function fmt$(n) { return '$'+(n||0).toLocaleString(); }
+function timeAgo(ts) {
+  if (!ts) return '';
+  const diff = Date.now() - ts;
+  if (diff < 60000) return 'just now';
+  if (diff < 3600000) return Math.floor(diff/60000) + 'm ago';
+  if (diff < 86400000) => Math.floor(diff/3600000) + 'h ago';
+  return Math.floor(diff/86400000) + 'd ago';
+}
+function toggleSidebar() { document.getElementById('sidebar').classList.toggle('open'); }
+
+// ============ START ============
+init();
+</script>
+</body>
+</html>

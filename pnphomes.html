@@ -1,0 +1,449 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>PNP Homes — Your Trusted Real Estate Partner in Canada</title>
+<meta name="description" content="PNP Homes — Expert real estate services in the GTA. Buying, selling, renting, and property management. Your trusted partner for finding the perfect home.">
+<meta name="keywords" content="PNP Homes, real estate, GTA, Toronto, Mississauga, Brampton, property management, homes for sale, homes for rent, Canada real estate">
+<meta property="og:title" content="PNP Homes — Your Trusted Real Estate Partner">
+<meta property="og:description" content="Expert real estate services in the GTA. Buy, sell, rent, or manage properties with confidence.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://pnphomes.ca">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--pri:#1a365d;--pri2:#2d4a7c;--gold:#c9a84c;--gold2:#e8c96a;--white:#ffffff;--light:#f7f5f0;--txt:#2d3748;--txt2:#718096;--green:#2d6a4f}
+body{font-family:'Inter',sans-serif;color:var(--txt);line-height:1.6}
+h1,h2,h3,h4{font-family:'Playfair Display',serif}
+
+/* NAV */
+nav{position:fixed;top:0;width:100%;z-index:1000;padding:15px 0;transition:all .3s}
+nav.scrolled{background:rgba(26,54,93,.97);backdrop-filter:blur(10px);padding:10px 0;box-shadow:0 2px 20px rgba(0,0,0,.1)}
+.nav-inner{max-width:1200px;margin:0 auto;padding:0 24px;display:flex;justify-content:space-between;align-items:center}
+.nav-logo{font-family:'Playfair Display',serif;font-size:1.5em;font-weight:700;color:var(--white);text-decoration:none}
+.nav-logo span{color:var(--gold)}
+.nav-links{display:flex;gap:28px;align-items:center}
+.nav-links a{color:rgba(255,255,255,.85);text-decoration:none;font-size:.9em;font-weight:500;transition:color .2s}
+.nav-links a:hover{color:var(--gold)}
+.nav-cta{background:var(--gold);color:var(--pri);padding:10px 24px;border-radius:6px;font-weight:600;transition:all .2s}
+.nav-cta:hover{background:var(--gold2);transform:translateY(-1px)}
+.menu-toggle{display:none;background:none;border:none;color:white;font-size:1.5em;cursor:pointer}
+
+/* HERO */
+.hero{height:100vh;background:linear-gradient(135deg,rgba(26,54,93,.85),rgba(45,74,124,.75)),url('https://images.unsplash.com/photo-1600596542815-ffad4c1539a9?w=1920') center/cover;display:flex;align-items:center;justify-content:center;text-align:center;color:var(--white)}
+.hero-content{max-width:800px;padding:0 24px}
+.hero h1{font-size:3.5em;margin-bottom:16px;line-height:1.15;text-shadow:0 2px 20px rgba(0,0,0,.3)}
+.hero h1 span{color:var(--gold)}
+.hero p{font-size:1.2em;opacity:.9;margin-bottom:30px}
+.hero-btns{display:flex;gap:16px;justify-content:center;flex-wrap:wrap}
+.btn{padding:14px 32px;border-radius:6px;font-size:.95em;font-weight:600;text-decoration:none;transition:all .2s;cursor:pointer;display:inline-flex;align-items:center;gap:8px;border:none}
+.btn:hover{transform:translateY(-2px)}
+.btn-g{background:var(--gold);color:var(--pri)}
+.btn-g:hover{background:var(--gold2)}
+.btn-o{background:transparent;color:var(--white);border:2px solid rgba(255,255,255,.5)}
+.btn-o:hover{border-color:var(--white);background:rgba(255,255,255,.1)}
+
+/* SECTIONS */
+section{padding:80px 0}
+.container{max-width:1200px;margin:0 auto;padding:0 24px}
+.section-title{text-align:center;margin-bottom:50px}
+.section-title h2{font-size:2.2em;margin-bottom:10px;color:var(--pri)}
+.section-title p{color:var(--txt2);font-size:1.05em}
+.section-title .line{width:60px;height:3px;background:var(--gold);margin:15px auto 0}
+
+/* STATS */
+.stats{background:var(--pri);padding:50px 0;color:var(--white)}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:30px;text-align:center}
+.stat-item h3{font-size:2.5em;color:var(--gold);margin-bottom:5px}
+.stat-item p{font-size:.9em;opacity:.8}
+
+/* SERVICES */
+.services-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.service-card{background:var(--white);border-radius:12px;padding:35px;text-align:center;box-shadow:0 4px 20px rgba(0,0,0,.06);transition:all .3s;border:1px solid #eee}
+.service-card:hover{transform:translateY(-5px);box-shadow:0 8px 30px rgba(0,0,0,.1)}
+.service-card .icon{font-size:2.5em;margin-bottom:15px}
+.service-card h3{font-size:1.15em;margin-bottom:10px;color:var(--pri)}
+.service-card p{font-size:.9em;color:var(--txt2)}
+
+/* PROPERTIES */
+.props-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.prop-card{background:var(--white);border-radius:12px;overflow:hidden;box-shadow:0 4px 20px rgba(0,0,0,.06);transition:all .3s}
+.prop-card:hover{transform:translateY(-5px);box-shadow:0 8px 30px rgba(0,0,0,.12)}
+.prop-img{height:220px;background-size:cover;background-position:center;position:relative}
+.prop-badge{position:absolute;top:12px;left:12px;background:var(--gold);color:var(--pri);padding:4px 14px;border-radius:4px;font-size:.8em;font-weight:600}
+.prop-price{position:absolute;bottom:12px;right:12px;background:rgba(26,54,93,.9);color:var(--white);padding:6px 16px;border-radius:4px;font-weight:700;font-size:1.1em}
+.prop-info{padding:20px}
+.prop-info h3{font-size:1.1em;margin-bottom:6px;color:var(--pri)}
+.prop-info .addr{font-size:.85em;color:var(--txt2);margin-bottom:12px}
+.prop-features{display:flex;gap:16px;font-size:.82em;color:var(--txt2)}
+.prop-features span{display:flex;align-items:center;gap:4px}
+
+/* ABOUT */
+.about-content{display:grid;grid-template-columns:1fr 1fr;gap:50px;align-items:center}
+.about-img{border-radius:12px;overflow:hidden;box-shadow:0 10px 40px rgba(0,0,0,.15)}
+.about-img img{width:100%;height:400px;object-fit:cover}
+.about-text h2{font-size:2em;color:var(--pri);margin-bottom:16px}
+.about-text p{color:var(--txt2);margin-bottom:16px}
+.about-features{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-top:20px}
+.about-features .feat{display:flex;align-items:center;gap:8px;font-size:.9em}
+.about-features .feat span{color:var(--gold);font-size:1.2em}
+
+/* TESTIMONIALS */
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:24px}
+.test-card{background:var(--white);border-radius:12px;padding:30px;box-shadow:0 4px 20px rgba(0,0,0,.06);border-left:4px solid var(--gold)}
+.test-card .stars{color:var(--gold);margin-bottom:12px;font-size:1.1em}
+.test-card p{font-style:italic;color:var(--txt2);margin-bottom:16px;font-size:.92em}
+.test-card .author{font-weight:600;color:var(--pri);font-size:.9em}
+
+/* CONTACT */
+.contact-section{background:var(--light)}
+.contact-grid{display:grid;grid-template-columns:1fr 1fr;gap:50px}
+.contact-info h3{font-size:1.3em;color:var(--pri);margin-bottom:20px}
+.contact-item{display:flex;gap:16px;margin-bottom:20px}
+.contact-item .icon{font-size:1.5em;width:50px;height:50px;background:var(--pri);color:var(--gold);border-radius:10px;display:flex;align-items:center;justify-content:center;flex-shrink:0}
+.contact-item h4{font-size:.95em;color:var(--pri);margin-bottom:2px}
+.contact-item p{font-size:.85em;color:var(--txt2)}
+.contact-form{background:var(--white);padding:35px;border-radius:12px;box-shadow:0 4px 20px rgba(0,0,0,.06)}
+.contact-form input,.contact-form select,.contact-form textarea{width:100%;padding:12px 16px;border:1px solid #e2e8f0;border-radius:8px;margin-bottom:14px;font-size:.9em;font-family:inherit}
+.contact-form textarea{min-height:120px;resize:vertical}
+.contact-form .btn{width:100%;justify-content:center}
+
+/* FOOTER */
+footer{background:var(--pri);color:var(--white);padding:50px 0 20px}
+.footer-grid{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:40px;margin-bottom:40px}
+.footer-col h4{color:var(--gold);margin-bottom:16px;font-size:1em}
+.footer-col p,.footer-col a{color:rgba(255,255,255,.7);font-size:.88em;text-decoration:none;display:block;margin-bottom:8px}
+.footer-col a:hover{color:var(--gold)}
+.footer-bottom{text-align:center;padding-top:20px;border-top:1px solid rgba(255,255,255,.1);font-size:.82em;color:rgba(255,255,255,.5)}
+
+/* RESPONSIVE */
+@media(max-width:968px){
+  .nav-links{display:none}
+  .menu-toggle{display:block}
+  .hero h1{font-size:2.5em}
+  .stats-grid,.services-grid,.props-grid,.test-grid{grid-template-columns:1fr 1fr}
+  .about-content,.contact-grid{grid-template-columns:1fr}
+  .footer-grid{grid-template-columns:1fr 1fr}
+}
+@media(max-width:600px){
+  .stats-grid,.services-grid,.props-grid,.test-grid{grid-template-columns:1fr}
+  .hero h1{font-size:2em}
+  .footer-grid{grid-template-columns:1fr}
+}
+</style>
+</head>
+<body>
+
+<!-- NAV -->
+<nav id="nav">
+  <div class="nav-inner">
+    <a href="#" class="nav-logo">PNP <span>Homes</span></a>
+    <div class="nav-links">
+      <a href="#services">Services</a>
+      <a href="#listings">Listings</a>
+      <a href="#about">About</a>
+      <a href="#testimonials">Reviews</a>
+      <a href="#contact">Contact</a>
+      <a href="#contact" class="nav-cta">Get Started</a>
+    </div>
+    <button class="menu-toggle" onclick="toggleMenu()">☰</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero">
+  <div class="hero-content">
+    <h1>Your <span>Trusted</span> Real Estate Partner</h1>
+    <p>Expert guidance for buying, selling, and managing properties across the Greater Toronto Area. Let us help you find your dream home or maximize your investment.</p>
+    <div class="hero-btns">
+      <a href="#listings" class="btn btn-g">🏠 View Listings</a>
+      <a href="#contact" class="btn btn-o">📞 Free Consultation</a>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<section class="stats">
+  <div class="container">
+    <div class="stats-grid">
+      <div class="stat-item"><h3>500+</h3><p>Homes Sold</p></div>
+      <div class="stat-item"><h3>15+</h3><p>Years Experience</p></div>
+      <div class="stat-item"><h3>$500M+</h3><p>Total Sales Volume</p></div>
+      <div class="stat-item"><h3>98%</h3><p>Client Satisfaction</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- SERVICES -->
+<section id="services" style="background:var(--light)">
+  <div class="container">
+    <div class="section-title">
+      <h2>Our Services</h2>
+      <p>Comprehensive real estate solutions tailored to your needs</p>
+      <div class="line"></div>
+    </div>
+    <div class="services-grid">
+      <div class="service-card">
+        <div class="icon">🏡</div>
+        <h3>Buying a Home</h3>
+        <p>Find your dream home with our expert guidance. We'll help you navigate the market, negotiate the best price, and close with confidence.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">💰</div>
+        <h3>Selling Your Home</h3>
+        <p>Get top dollar for your property with our proven marketing strategies, professional staging advice, and expert negotiation.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">🏢</div>
+        <h3>Property Management</h3>
+        <p>Hassle-free property management for landlords. Tenant screening, rent collection, maintenance, and legal compliance — we handle it all.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">📊</div>
+        <h3>Investment Properties</h3>
+        <p>Build wealth through real estate. We identify high-ROI opportunities and help you build a profitable property portfolio.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">🔑</div>
+        <h3>Rental Services</h3>
+        <p>Quality rental properties in the GTA. Whether you're a tenant looking for the perfect home or a landlord filling vacancies.</p>
+      </div>
+      <div class="service-card">
+        <div class="icon">📋</div>
+        <h3>Legal & Documentation</h3>
+        <p>Proper paperwork protects your interests. We handle contracts, compliance notices, and ensure everything is legally sound.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- LISTINGS -->
+<section id="listings">
+  <div class="container">
+    <div class="section-title">
+      <h2>Featured Listings</h2>
+      <p>Discover our latest properties available for sale and rent</p>
+      <div class="line"></div>
+    </div>
+    <div class="props-grid">
+      <div class="prop-card">
+        <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1600585154340-be6161a56a0c?w=600')">
+          <span class="prop-badge">For Sale</span>
+          <span class="prop-price">$899,000</span>
+        </div>
+        <div class="prop-info">
+          <h3>Spacious Family Home</h3>
+          <div class="addr">📍 Mississauga, ON</div>
+          <div class="prop-features"><span>🛏️ 4 Beds</span><span>🚿 3 Baths</span><span>📐 2,500 sqft</span></div>
+        </div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1600607687939-ce8a6c25118c?w=600')">
+          <span class="prop-badge">For Rent</span>
+          <span class="prop-price">$3,200/mo</span>
+        </div>
+        <div class="prop-info">
+          <h3>Modern Condo Downtown</h3>
+          <div class="addr">📍 Toronto, ON</div>
+          <div class="prop-features"><span>🛏️ 2 Beds</span><span>🚿 2 Baths</span><span>📐 1,100 sqft</span></div>
+        </div>
+      </div>
+      <div class="prop-card">
+        <div class="prop-img" style="background-image:url('https://images.unsplash.com/photo-1600566753190-17f0baa2a6c3?w=600')">
+          <span class="prop-badge">For Sale</span>
+          <span class="prop-price">$1,250,000</span>
+        </div>
+        <div class="prop-info">
+          <h3>Luxury Detached Home</h3>
+          <div class="addr">📍 Brampton, ON</div>
+          <div class="prop-features"><span>🛏️ 5 Beds</span><span>🚿 4 Baths</span><span>📐 3,200 sqft</span></div>
+        </div>
+      </div>
+    </div>
+    <div style="text-align:center;margin-top:40px">
+      <a href="#contact" class="btn btn-g">View All Listings →</a>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about" style="background:var(--light)">
+  <div class="container">
+    <div class="about-content">
+      <div class="about-img">
+        <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?w=600" alt="PNP Homes Team">
+      </div>
+      <div class="about-text">
+        <h2>Why Choose PNP Homes?</h2>
+        <p>With over 15 years of experience in the Greater Toronto Area real estate market, PNP Homes has built a reputation for integrity, expertise, and results.</p>
+        <p>We're not just real estate agents — we're your partners in one of life's biggest decisions. Whether you're buying your first home, selling a property, or building an investment portfolio, we provide personalized service that gets results.</p>
+        <div class="about-features">
+          <div class="feat"><span>✓</span> Expert GTA Market Knowledge</div>
+          <div class="feat"><span>✓</span> Multilingual Team</div>
+          <div class="feat"><span>✓</span> 24/7 Client Support</div>
+          <div class="feat"><span>✓</span> Transparent Pricing</div>
+          <div class="feat"><span>✓</span> Full-Service Solutions</div>
+          <div class="feat"><span>✓</span> Proven Track Record</div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section id="testimonials">
+  <div class="container">
+    <div class="section-title">
+      <h2>What Our Clients Say</h2>
+      <p>Real stories from real homeowners</p>
+      <div class="line"></div>
+    </div>
+    <div class="test-grid">
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p>"PNP Homes made buying our first home so easy. They found us exactly what we were looking for within our budget. Highly recommended!"</p>
+        <div class="author">— The Singh Family, Mississauga</div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p>"As a landlord, I was struggling with problem tenants. PNP Homes took over my property management and transformed everything. Best decision ever."</p>
+        <div class="author">— Michael T., Toronto</div>
+      </div>
+      <div class="test-card">
+        <div class="stars">★★★★★</div>
+        <p>"Sold my home above asking price in just 5 days! Their marketing strategy and negotiation skills are outstanding. Thank you PNP Homes!"</p>
+        <div class="author">— Priya K., Brampton</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact" class="contact-section">
+  <div class="container">
+    <div class="section-title">
+      <h2>Get In Touch</h2>
+      <p>Ready to make your next move? Let's talk.</p>
+      <div class="line"></div>
+    </div>
+    <div class="contact-grid">
+      <div class="contact-info">
+        <h3>Contact Information</h3>
+        <div style="margin:15px 0;border-radius:12px;overflow:hidden;height:200px;background:#e2e8f0;"><iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d115459.16751249758!2d-79.7092288!3d43.589045!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x882b6a0f42f3c59d%3A0x5e45c2e8e99c2b0e!2sMississauga%2C%20ON!5e0!3m2!1sen!2sca!4v1" width="100%" height="200" style="border:0;" allowfullscreen="" loading="lazy"></iframe></div>
+        <div class="contact-item">
+          <div class="icon">📍</div>
+          <div><h4>Office Address</h4><p>Suite 100, Mississauga, ON, Canada</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="icon">📞</div>
+          <div><h4>Phone</h4><p>(416) 555-HOME</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="icon">✉️</div>
+          <div><h4>Email</h4><p>info@pnphomes.ca</p></div>
+        </div>
+        <div class="contact-item">
+          <div class="icon">🕐</div>
+          <div><h4>Office Hours</h4><p>Mon–Fri: 9AM–6PM | Sat: 10AM–4PM | Sun: By Appointment</p></div>
+        </div>
+      </div>
+      <div class="contact-form">
+        <form onsubmit="handleSubmit(event)">
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+            <input type="text" placeholder="First Name *" required>
+            <input type="text" placeholder="Last Name *" required>
+          </div>
+          <input type="email" placeholder="Email Address *" required>
+          <input type="tel" placeholder="Phone Number">
+          <select>
+            <option value="">What are you looking for?</option>
+            <option>Buy a Home</option>
+            <option>Sell a Home</option>
+            <option>Rent a Property</option>
+            <option>Property Management</option>
+            <option>Investment Properties</option>
+            <option>Other</option>
+          </select>
+          <textarea placeholder="Tell us about your needs..."></textarea>
+          <button type="submit" class="btn btn-g">Send Message →</button>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="container">
+    <div class="footer-grid">
+      <div class="footer-col">
+        <h4 style="font-size:1.3em;font-family:'Playfair Display',serif">PNP <span style="color:var(--gold)">Homes</span></h4>
+        <p style="margin-top:10px">Your trusted real estate partner in the Greater Toronto Area. Expert guidance for buying, selling, renting, and managing properties.</p>
+      </div>
+      <div class="footer-col">
+        <h4>Quick Links</h4>
+        <a href="#services">Our Services</a>
+        <a href="#listings">Listings</a>
+        <a href="#about">About Us</a>
+        <a href="#contact">Contact</a>
+      </div>
+      <div class="footer-col">
+        <h4>Services</h4>
+        <a href="#">Buy a Home</a>
+        <a href="#">Sell a Home</a>
+        <a href="#">Property Management</a>
+        <a href="#">Rental Services</a>
+      </div>
+      <div class="footer-col">
+        <h4>Connect</h4>
+        <a href="#">Facebook</a>
+        <a href="#">Instagram</a>
+        <a href="#">LinkedIn</a>
+        <a href="#">YouTube</a>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© 2026 PNP Homes. All rights reserved. | Real Estate Brokerage | Privacy Policy</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+// Navbar scroll effect
+window.addEventListener('scroll',()=>{
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>50);
+});
+
+// Smooth scroll
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{
+    e.preventDefault();
+    const t=document.querySelector(a.getAttribute('href'));
+    if(t) t.scrollIntoView({behavior:'smooth',block:'start'});
+  });
+});
+
+// Mobile menu
+function toggleMenu(){
+  const links=document.querySelector('.nav-links');
+  links.style.display=links.style.display==='flex'?'none':'flex';
+  links.style.flexDirection='column';
+  links.style.position='absolute';
+  links.style.top='100%';
+  links.style.left='0';
+  links.style.right='0';
+  links.style.background='var(--pri)';
+  links.style.padding='20px';
+}
+
+// Form submit
+function handleSubmit(e){
+  e.preventDefault();
+  alert('Thank you for your inquiry! We will get back to you within 24 hours.');
+  e.target.reset();
+}
+</script>
+</body>
+</html>
