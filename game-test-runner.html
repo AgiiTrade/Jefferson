@@ -138,11 +138,19 @@
         }
         
         function openGame(game) {
+            const baseUrl = 'https://agiitrade.github.io/Jefferson/';
             const urls = {
-                vocab: 'vocab_prototype.html',
-                quest: 'questmind.html'
+                vocab: baseUrl + 'vocab_prototype.html',
+                quest: baseUrl + 'questmind-game.html'
             };
-            window.open(urls[game], '_blank');
+            try {
+                const newWindow = window.open(urls[game], '_blank');
+                if (!newWindow) {
+                    alert('Please allow pop-ups to open the game. Check your browser settings.');
+                }
+            } catch (e) {
+                alert('Error opening game: ' + e.message);
+            }
         }
         
         function resetTests(game) {
