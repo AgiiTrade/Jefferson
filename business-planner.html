@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Small Business Planner</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600&display=swap');
+  
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  
+  body {
+    font-family: 'Inter', sans-serif;
+    color: #2d3436;
+    background: white;
+  }
+  
+  .page {
+    width: 8.5in;
+    min-height: 11in;
+    padding: 0.5in;
+    margin: 0 auto;
+    page-break-after: always;
+    background: white;
+  }
+  
+  @media print {
+    .page { margin: 0; padding: 0.4in; page-break-after: always; }
+  }
+  
+  .cover {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    min-height: 11in;
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+  }
+  
+  .cover-icon { font-size: 4em; margin-bottom: 20px; }
+  
+  .cover h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: 2.8em;
+    color: white;
+    margin-bottom: 10px;
+  }
+  
+  .cover-subtitle {
+    font-size: 1.1em;
+    color: rgba(255,255,255,0.8);
+    margin-bottom: 30px;
+  }
+  
+  .divider {
+    width: 60px;
+    height: 3px;
+    background: rgba(255,255,255,0.5);
+    margin: 20px auto;
+    border-radius: 2px;
+  }
+  
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 1.4em;
+    color: #667eea;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 2px solid #dfe6e9;
+  }
+  
+  .form-group {
+    margin-bottom: 15px;
+  }
+  
+  .form-label {
+    font-size: 0.85em;
+    font-weight: 600;
+    color: #636e72;
+    margin-bottom: 5px;
+    display: block;
+  }
+  
+  .form-line {
+    border: none;
+    border-bottom: 1px solid #dfe6e9;
+    padding: 8px 0;
+    width: 100%;
+    font-size: 0.95em;
+  }
+  
+  .form-box {
+    border: 2px solid #dfe6e9;
+    border-radius: 8px;
+    padding: 10px;
+    min-height: 80px;
+    width: 100%;
+  }
+  
+  .two-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+  }
+  
+  .three-col {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 15px;
+  }
+  
+  .metric-card {
+    background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    color: white;
+    border-radius: 12px;
+    padding: 15px;
+    text-align: center;
+  }
+  
+  .metric-label {
+    font-size: 0.75em;
+    opacity: 0.8;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+  
+  .metric-value {
+    font-size: 1.8em;
+    font-weight: 700;
+    margin: 5px 0;
+  }
+  
+  .tracker-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-bottom: 15px;
+  }
+  
+  .tracker-table th {
+    background: #667eea;
+    color: white;
+    padding: 8px;
+    font-size: 0.8em;
+    text-transform: uppercase;
+  }
+  
+  .tracker-table td {
+    border: 1px solid #dfe6e9;
+    padding: 8px;
+    height: 35px;
+  }
+  
+  .goal-section {
+    background: #f8f9fa;
+    border-radius: 12px;
+    padding: 15px;
+    margin-bottom: 15px;
+  }
+  
+  .goal-title {
+    font-weight: 600;
+    color: #667eea;
+    margin-bottom: 10px;
+    font-size: 0.95em;
+  }
+  
+  .goal-item {
+    display: flex;
+    align-items: center;
+    padding: 8px 0;
+    border-bottom: 1px dashed #dfe6e9;
+  }
+  
+  .goal-checkbox {
+    width: 18px;
+    height: 18px;
+    border: 2px solid #667eea;
+    border-radius: 4px;
+    margin-right: 10px;
+  }
+  
+  .footer {
+    text-align: center;
+    font-size: 0.75em;
+    color: #b2bec3;
+    margin-top: 20px;
+  }
+</style>
+</head>
+<body>
+
+<!-- COVER -->
+<div class="page cover">
+  <div class="cover-icon">💼</div>
+  <h1>Small Business Planner</h1>
+  <div class="divider"></div>
+  <p class="cover-subtitle">Plan. Track. Grow your business.</p>
+  <p style="margin-top:40px;font-size:0.9em;color:rgba(255,255,255,0.6);">Year: _________________</p>
+</div>
+
+<!-- BUSINESS INFO & GOALS -->
+<div class="page">
+  <h2 class="section-title">🎯 Business Goals</h2>
+  
+  <div style="margin-bottom:20px;">
+    <div class="form-group">
+      <label class="form-label">Business Name</label>
+      <div class="form-line"></div>
+    </div>
+    <div class="two-col">
+      <div class="form-group">
+        <label class="form-label">Owner(s)</label>
+        <div class="form-line"></div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">Date Started</label>
+        <div class="form-line"></div>
+      </div>
+    </div>
+    <div class="form-group">
+      <label class="form-label">Business Description</label>
+      <div class="form-box" style="min-height:60px;"></div>
+    </div>
+  </div>
+  
+  <h3 style="color:#667eea;font-size:1.1em;margin:15px 0 10px;">Annual Goals (S.M.A.R.T.)</h3>
+  <div class="three-col">
+    <div class="metric-card">
+      <div class="metric-label">Revenue Goal</div>
+      <div class="metric-value">$_________</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Customer Goal</div>
+      <div class="metric-value">_________</div>
+    </div>
+    <div class="metric-card">
+      <div class="metric-label">Growth %</div>
+      <div class="metric-value">______%</div>
+    </div>
+  </div>
+  
+  <div class="two-col">
+    <div class="goal-section">
+      <div class="goal-title">📌 Q1 Goals (Jan-Mar)</div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+    </div>
+    <div class="goal-section">
+      <div class="goal-title">📌 Q2 Goals (Apr-Jun)</div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+    </div>
+    <div class="goal-section">
+      <div class="goal-title">📌 Q3 Goals (Jul-Sep)</div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+    </div>
+    <div class="goal-section">
+      <div class="goal-title">📌 Q4 Goals (Oct-Dec)</div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+      <div class="goal-item"><div class="goal-checkbox"></div><span></span></div>
+    </div>
+  </div>
+</div>
+
+<!-- MONTHLY TRACKER -->
+<div class="page">
+  <h2 class="section-title">💰 Monthly Revenue Tracker</h2>
+  
+  <table class="tracker-table">
+    <thead>
+      <tr>
+        <th>Month</th>
+        <th>Revenue</th>
+        <th>Expenses</th>
+        <th>Profit</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td>January</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>February</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>March</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>April</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>May</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>June</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>July</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>August</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>September</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>October</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>November</td><td></td><td></td><td></td><td></td></tr>
+      <tr><td>December</td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+  
+  <h2 class="section-title">👥 Client Tracker</h2>
+  
+  <table class="tracker-table">
+    <thead>
+      <tr>
+        <th>Client Name</th>
+        <th>Service</th>
+        <th>Start Date</th>
+        <th>Value</th>
+        <th>Status</th>
+        <th>Notes</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+      <tr><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+    </tbody>
+  </table>
+</div>
+
+<!-- EXPENSES & NOTES -->
+<div class="page">
+  <h2 class="section-title">📊 Expense Categories</h2>
+  
+  <div class="three-col">
+    <div>
+      <h3 style="font-size:0.95em;color:#667eea;margin-bottom:10px;">🏢 Operations</h3>
+      <div class="form-line" style="margin:5px 0;">Rent: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Utilities: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Insurance: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Supplies: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Other: $_________</div>
+    </div>
+    <div>
+      <h3 style="font-size:0.95em;color:#667eea;margin-bottom:10px;">📱 Marketing</h3>
+      <div class="form-line" style="margin:5px 0;">Advertising: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Social Media: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Website: $_________</div>
+      <div class="form-line" style="margin:5px 0;">SEO: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Other: $_________</div>
+    </div>
+    <div>
+      <h3 style="font-size:0.95em;color:#667eea;margin-bottom:10px;">💼 Team</h3>
+      <div class="form-line" style="margin:5px 0;">Salaries: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Contractors: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Benefits: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Training: $_________</div>
+      <div class="form-line" style="margin:5px 0;">Other: $_________</div>
+    </div>
+  </div>
+  
+  <h2 class="section-title">📝 Notes & Ideas</h2>
+  
+  <div class="form-box" style="min-height:200px;"></div>
+  
+  <p class="footer">Made with ❤️ for small business owners</p>
+</div>
+
+</body>
+</html>
