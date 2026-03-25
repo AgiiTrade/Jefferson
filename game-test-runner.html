@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🎮 Game Test Runner</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 20px; }
+        h1 { text-align: center; color: #60a5fa; margin-bottom: 20px; }
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 1200px; margin: 0 auto; }
+        .card { background: #1e293b; border-radius: 12px; padding: 20px; border: 1px solid #334155; }
+        .card h2 { color: #60a5fa; margin-bottom: 15px; }
+        .checklist { list-style: none; }
+        .checklist li { padding: 8px 0; border-bottom: 1px solid #334155; display: flex; align-items: center; gap: 10px; }
+        .checklist li:last-child { border-bottom: none; }
+        .checklist input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
+        .checklist label { cursor: pointer; flex: 1; }
+        .pass { color: #4ade80; }
+        .fail { color: #f87171; }
+        .pending { color: #94a3b8; }
+        button { background: #3b82f6; color: white; border: none; padding: 10px 20px; border-radius: 8px; cursor: pointer; font-size: 14px; margin: 5px; }
+        button:hover { background: #2563eb; }
+        button.danger { background: #ef4444; }
+        button.danger:hover { background: #dc2626; }
+        .bug-form { margin-top: 15px; }
+        .bug-form input, .bug-form textarea, .bug-form select { width: 100%; padding: 8px; margin: 5px 0; border-radius: 6px; border: 1px solid #475569; background: #0f172a; color: #e2e8f0; }
+        .bug-list { margin-top: 15px; }
+        .bug-item { background: #0f172a; padding: 10px; border-radius: 8px; margin: 5px 0; border-left: 3px solid #f87171; }
+        .score { font-size: 24px; text-align: center; padding: 20px; }
+        .score .number { font-size: 48px; font-weight: bold; }
+        .tabs { display: flex; gap: 10px; margin-bottom: 20px; justify-content: center; }
+        .tabs button { min-width: 120px; }
+        .tabs button.active { background: #2563eb; }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+    <h1>🎮 Game Test Runner</h1>
+    
+    <div class="tabs">
+        <button onclick="switchTab('vocab')" class="active" id="tab-vocab">📚 Vocab Master</button>
+        <button onclick="switchTab('quest')" id="tab-quest">🏰 QuestMind</button>
+        <button onclick="switchTab('bugs')" id="tab-bugs">🐛 Bug Log</button>
+    </div>
+    
+    <!-- Vocab Master Pro -->
+    <div id="vocab-section">
+        <div class="grid">
+            <div class="card">
+                <h2>📚 Vocab Master Pro Tests</h2>
+                <ul class="checklist" id="vocab-checklist">
+                    <li><input type="checkbox" id="v1"><label for="v1">App loads without errors</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v2"><label for="v2">All 2,540 words load</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v3"><label for="v3">5 difficulty levels work</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v4"><label for="v4">Score counter works</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v5"><label for="v5">Progress saves (localStorage)</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v6"><label for="v6">No duplicate words in session</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v7"><label for="v7">Banner ad displays</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v8"><label for="v8">Interstitial ad shows</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v9"><label for="v9">Offline mode works</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="v10"><label for="v10">All buttons clickable</label><span class="pending">Pending</span></li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>📊 Vocab Master Score</h2>
+                <div class="score">
+                    <div class="number" id="vocab-score">0/10</div>
+                    <div>Tests Passed</div>
+                </div>
+                <button onclick="openGame('vocab')">🚀 Open Game</button>
+                <button onclick="resetTests('vocab')" class="danger">🔄 Reset Tests</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- QuestMind -->
+    <div id="quest-section" class="hidden">
+        <div class="grid">
+            <div class="card">
+                <h2>🏰 QuestMind Tests</h2>
+                <ul class="checklist" id="quest-checklist">
+                    <li><input type="checkbox" id="q1"><label for="q1">App loads without errors</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q2"><label for="q2">All 3,103 questions load</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q3"><label for="q3">4 categories work</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q4"><label for="q4">Grades 1-8 selection works</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q5"><label for="q5">Score counter works</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q6"><label for="q6">No duplicate questions</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q7"><label for="q7">Banner ad displays</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q8"><label for="q8">Interstitial ad shows</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q9"><label for="q9">Offline mode works</label><span class="pending">Pending</span></li>
+                    <li><input type="checkbox" id="q10"><label for="q10">All buttons clickable</label><span class="pending">Pending</span></li>
+                </ul>
+            </div>
+            <div class="card">
+                <h2>📊 QuestMind Score</h2>
+                <div class="score">
+                    <div class="number" id="quest-score">0/10</div>
+                    <div>Tests Passed</div>
+                </div>
+                <button onclick="openGame('quest')">🚀 Open Game</button>
+                <button onclick="resetTests('quest')" class="danger">🔄 Reset Tests</button>
+            </div>
+        </div>
+    </div>
+    
+    <!-- Bug Log -->
+    <div id="bugs-section" class="hidden">
+        <div class="card" style="max-width: 800px; margin: 0 auto;">
+            <h2>🐛 Bug Log</h2>
+            <div class="bug-form">
+                <select id="bug-game">
+                    <option value="vocab">Vocab Master Pro</option>
+                    <option value="quest">QuestMind</option>
+                </select>
+                <select id="bug-severity">
+                    <option value="Critical">Critical</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+                <input type="text" id="bug-desc" placeholder="Bug description">
+                <textarea id="bug-steps" placeholder="Steps to reproduce"></textarea>
+                <button onclick="logBug()">➕ Log Bug</button>
+            </div>
+            <div class="bug-list" id="bug-list"></div>
+        </div>
+    </div>
+    
+    <script>
+        let bugs = JSON.parse(localStorage.getItem('gameBugs') || '[]');
+        
+        function switchTab(tab) {
+            document.querySelectorAll('[id$="-section"]').forEach(s => s.classList.add('hidden'));
+            document.querySelectorAll('.tabs button').forEach(b => b.classList.remove('active'));
+            document.getElementById(`${tab}-section`).classList.remove('hidden');
+            document.getElementById(`tab-${tab}`).classList.add('active');
+        }
+        
+        function openGame(game) {
+            const urls = {
+                vocab: 'vocab_prototype.html',
+                quest: 'questmind.html'
+            };
+            window.open(urls[game], '_blank');
+        }
+        
+        function resetTests(game) {
+            const prefix = game === 'vocab' ? 'v' : 'q';
+            for (let i = 1; i <= 10; i++) {
+                const cb = document.getElementById(`${prefix}${i}`);
+                cb.checked = false;
+                cb.parentElement.querySelector('span').textContent = 'Pending';
+                cb.parentElement.querySelector('span').className = 'pending';
+            }
+            updateScore(game);
+        }
+        
+        function logBug() {
+            const bug = {
+                id: bugs.length + 1,
+                game: document.getElementById('bug-game').value,
+                severity: document.getElementById('bug-severity').value,
+                description: document.getElementById('bug-desc').value,
+                steps: document.getElementById('bug-steps').value,
+                timestamp: new Date().toISOString()
+            };
+            bugs.push(bug);
+            localStorage.setItem('gameBugs', JSON.stringify(bugs));
+            renderBugs();
+            document.getElementById('bug-desc').value = '';
+            document.getElementById('bug-steps').value = '';
+        }
+        
+        function renderBugs() {
+            const list = document.getElementById('bug-list');
+            list.innerHTML = bugs.map(b => `
+                <div class="bug-item">
+                    <strong>#${b.id} [${b.severity}]</strong> ${b.game === 'vocab' ? '📚' : '🏰'} ${b.description}
+                    <br><small>${b.steps}</small>
+                </div>
+            `).join('');
+        }
+        
+        function updateScore(game) {
+            const prefix = game === 'vocab' ? 'v' : 'q';
+            let passed = 0;
+            for (let i = 1; i <= 10; i++) {
+                if (document.getElementById(`${prefix}${i}`).checked) passed++;
+            }
+            document.getElementById(`${game}-score`).textContent = `${passed}/10`;
+        }
+        
+        // Add event listeners to checkboxes
+        document.querySelectorAll('.checklist input[type="checkbox"]').forEach(cb => {
+            cb.addEventListener('change', function() {
+                const span = this.parentElement.querySelector('span');
+                if (this.checked) {
+                    span.textContent = '✅ Pass';
+                    span.className = 'pass';
+                } else {
+                    span.textContent = 'Pending';
+                    span.className = 'pending';
+                }
+                const game = this.id.startsWith('v') ? 'vocab' : 'quest';
+                updateScore(game);
+            });
+        });
+        
+        renderBugs();
+    </script>
+</body>
+</html>
