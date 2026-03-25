@@ -489,9 +489,6 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
   <div style="position:fixed;bottom:10px;left:10px;">
     <button class="btn btn-o btn-sm" onclick="fleeBattle()">🏃 Flee</button>
   </div>
-  <div style="position:fixed;bottom:10px;right:10px;" id="next-btn-container" style="display:none;">
-    <button class="btn btn-p btn-sm" onclick="manualNextQuestion()" id="next-btn">Next →</button>
-  </div>
 </div>
 
 <!-- RESULTS -->
@@ -1468,10 +1465,6 @@ function answer(idx){
     return;
   }
   
-  // Show next button after answering
-  const nextBtnContainer = document.getElementById('next-btn-container');
-  if(nextBtnContainer) nextBtnContainer.style.display = 'block';
-  
   // Next question
   B.answered = false;
   B.spell = null;
@@ -1479,21 +1472,8 @@ function answer(idx){
     if(B.active){
       B.canAct = true;
       showQuestion();
-      // Hide next button after loading next question
-      if(nextBtnContainer) nextBtnContainer.style.display = 'none';
     }
   }, 1200);
-}
-
-
-function manualNextQuestion(){
-  console.log('Manual next question clicked');
-  if(B.active){
-    B.answered = false;
-    B.spell = null;
-    B.canAct = true;
-    showQuestion();
-  }
 }
 
 function winBattle(){
