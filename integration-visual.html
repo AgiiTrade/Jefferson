@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>StudynCanada + UniPrep Integration</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;padding:40px}
+.container{max-width:1100px;margin:0 auto}
+h1{text-align:center;font-size:28pt;margin-bottom:8px}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:50px}
+.funnel{display:flex;flex-direction:column;align-items:center;gap:0}
+.funnel-stage{width:100%;padding:30px;border-radius:16px;text-align:center;position:relative}
+.funnel-stage::after{content:'';position:absolute;bottom:-20px;left:50%;transform:translateX(-50%);border:10px solid transparent;border-top-color:inherit}
+.stage1{background:linear-gradient(135deg,#16a34a,#15803d);width:100%;border-top-color:#16a34a}
+.stage2{background:linear-gradient(135deg,#2563eb,#1d4ed8);width:80%;border-top-color:#2563eb}
+.stage3{background:linear-gradient(135deg,#dc2626,#b91c1c);width:60%;border-top-color:#dc2626}
+.stage4{background:linear-gradient(135deg,#d97706,#b45309);width:40%;border-top-color:#d97706}
+.funnel-stage h3{font-size:16pt;margin-bottom:8px}
+.funnel-stage p{opacity:0.9;font-size:10pt}
+.arrow{font-size:24pt;color:#64748b;margin:5px 0}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:30px;margin-top:50px}
+.card{background:#1e293b;border-radius:16px;padding:30px;border:1px solid #334155}
+.card h3{font-size:16pt;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.card ul{list-style:none;display:flex;flex-direction:column;gap:10px}
+.card li{padding:10px 16px;background:#0f172a;border-radius:8px;font-size:10pt}
+.card li .tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:8pt;font-weight:600;margin-right:8px}
+.tag-free{background:#16a34a;color:white}
+.tag-paid{background:#dc2626;color:white}
+.flow{display:flex;align-items:center;justify-content:center;gap:20px;margin:50px 0;flex-wrap:wrap}
+.flow-step{background:#1e293b;padding:20px 30px;border-radius:12px;text-align:center;min-width:150px}
+.flow-step .icon{font-size:28pt;margin-bottom:8px}
+.flow-step h4{font-size:10pt;margin-bottom:4px}
+.flow-step p{font-size:8pt;color:#94a3b8}
+.flow-arrow{font-size:20pt;color:#dc2626}
+.stats-row{display:grid;grid-template-columns:repeat(5,1fr);gap:16px;margin:40px 0}
+.stat{background:#1e293b;padding:20px;border-radius:12px;text-align:center}
+.stat .num{font-size:22pt;font-weight:800;color:#dc2626}
+.stat .lbl{font-size:8pt;color:#94a3b8;margin-top:4px}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🍁 StudynCanada + UniPrep</h1>
+<p class="subtitle">One Unified Education Platform — The Integration Vision</p>
+
+<h2 style="text-align:center;margin-bottom:20px">📊 The Student Funnel</h2>
+<div class="funnel">
+<div class="funnel-stage stage1">
+<h3>🔍 DISCOVERY — Free UniPrep Tools</h3>
+<p>GPA Calculator • SAT Prep • Essay Guides • College Match • Timeline</p>
+</div>
+<div class="funnel-stage stage2">
+<h3>📧 ENGAGEMENT — Account Creation</h3>
+<p>Save progress • Get weekly tips • Access all free tools • Email captured</p>
+</div>
+<div class="funnel-stage stage3">
+<h3>📞 CONSIDERATION — Free Consultation</h3>
+<p>"Need help applying?" • Book 30-min call • Personalized assessment</p>
+</div>
+<div class="funnel-stage stage4">
+<h3>💰 CONVERSION — Paid Services</h3>
+<p>Application Package • Study Permit • Premium Bundle</p>
+</div>
+</div>
+
+<div class="grid">
+<div class="card">
+<h3>🟢 Free Tier (UniPrep)</h3>
+<ul>
+<li><span class="tag tag-free">FREE</span> GPA Tracker & Calculator</li>
+<li><span class="tag tag-free">FREE</span> SAT/ACT Practice Questions</li>
+<li><span class="tag tag-free">FREE</span> Essay Writing Guides</li>
+<li><span class="tag tag-free">FREE</span> College Matching Tool</li>
+<li><span class="tag tag-free">FREE</span> Application Timeline</li>
+<li><span class="tag tag-free">FREE</span> Activity Tracker</li>
+<li><span class="tag tag-free">FREE</span> Application Checklist</li>
+</ul>
+</div>
+<div class="card">
+<h3>🔴 Paid Services (StudynCanada)</h3>
+<ul>
+<li><span class="tag tag-paid">$0</span> Free 30-min Consultation</li>
+<li><span class="tag tag-paid">$500+</span> Application Assistance (1-3 schools)</li>
+<li><span class="tag tag-paid">$300+</span> Study Permit & Visa Support</li>
+<li><span class="tag tag-paid">$99</span> Career Counselling Session</li>
+<li><span class="tag tag-paid">$250</span> Airport Pickup & Settlement</li>
+<li><span class="tag tag-paid">$1,500+</span> Premium Full Bundle</li>
+</ul>
+</div>
+</div>
+
+<h2 style="text-align:center;margin:50px 0 20px">🔄 Student Journey</h2>
+<div class="flow">
+<div class="flow-step"><div class="icon">🔍</div><h4>Discover</h4><p>Searches "GPA calculator" → Finds UniPrep</p></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="icon">📊</div><h4>Use</h4><p>Calculates GPA, uses SAT prep</p></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="icon">📧</div><h4>Sign Up</h4><p>Creates account to save data</p></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="icon">📞</div><h4>Consult</h4><p>Books free consultation</p></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="icon">💰</div><h4>Convert</h4><p>Purchases application package</p></div>
+<div class="flow-arrow">→</div>
+<div class="flow-step"><div class="icon">🎉</div><h4>Success</h4><p>Gets accepted, refers friends</p></div>
+</div>
+
+<h2 style="text-align:center;margin:40px 0 20px">📈 Revenue Projections</h2>
+<div class="stats-row">
+<div class="stat"><div class="num">$5K</div><div class="lbl">Month 3</div></div>
+<div class="stat"><div class="num">$20K</div><div class="lbl">Month 6</div></div>
+<div class="stat"><div class="num">$60K</div><div class="lbl">Month 12</div></div>
+<div class="stat"><div class="num">$150K</div><div class="lbl">Year 2</div></div>
+<div class="stat"><div class="num">$500K</div><div class="lbl">Year 3</div></div>
+</div>
+</div>
+</body>
+</html>

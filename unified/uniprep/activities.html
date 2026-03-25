@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Activities — UniPrep</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--secondary:#2563eb;--accent:#d4af37;--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--success:#10b981}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--card);padding:20px}
+.logo{font-size:20pt;font-weight:800;color:var(--accent);margin-bottom:30px}
+.nav{list-style:none;display:flex;flex-direction:column;gap:8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:10pt;font-weight:500;transition:all 0.3s}
+.nav a:hover,.nav a.active{background:var(--secondary);color:white}
+.main{margin-left:260px;padding:30px}
+.header h1{font-size:24pt;margin-bottom:10px}
+.cards{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin-bottom:30px}
+.card{background:var(--card);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,0.1)}
+.card .label{font-size:9pt;color:var(--muted);text-transform:uppercase}
+.card .value{font-size:32pt;font-weight:700;color:var(--accent);margin:8px 0}
+.activity{background:var(--card);border-radius:12px;padding:20px;margin-bottom:12px;border:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}
+.activity .info{flex:1}
+.activity .name{font-weight:600;font-size:12pt}
+.activity .role{color:var(--accent);font-size:10pt}
+.activity .desc{color:var(--muted);font-size:9pt;margin-top:4px}
+.activity .hours{background:var(--secondary);padding:8px 16px;border-radius:8px;font-weight:600}
+.tier{display:inline-block;padding:4px 10px;border-radius:12px;font-size:8pt;font-weight:600;text-transform:uppercase}
+.tier-1{background:#fef3c7;color:#92400e}
+.tier-2{background:#dbeafe;color:#1e40af}
+.tier-3{background:#d1fae5;color:#065f46}
+.tier-4{background:#f3f4f6;color:#374151}
+</style>
+</head>
+<body>
+<div class="sidebar">
+<div class="logo">🎓 UniPrep</div>
+<ul class="nav">
+<li><a href="index.html"><span>📊</span> Dashboard</a></li>
+<li><a href="timeline.html"><span>📅</span> Timeline</a></li>
+<li><a href="gpa-tracker.html"><span>📈</span> GPA Tracker</a></li>
+<li><a href="sat-prep.html"><span>📝</span> SAT/ACT Prep</a></li>
+<li><a href="activities.html" class="active"><span>🎭</span> Activities</a></li>
+<li><a href="essay-guide.html"><span>✍️</span> Essay Guide</a></li>
+<li><a href="colleges.html"><span>🎯</span> College Match</a></li>
+<li><a href="checklist.html"><span>✅</span> Checklist</a></li>
+</ul>
+</div>
+<div class="main">
+<div class="header"><h1>🎭 Extracurricular Activities</h1></div>
+<div class="cards">
+<div class="card"><div class="label">Total Hours</div><div class="value">320</div></div>
+<div class="card"><div class="label">Leadership Roles</div><div class="value">3</div></div>
+<div class="card"><div class="label">Activities</div><div class="value">6</div></div>
+</div>
+
+<h2 style="margin-bottom:16px">🏆 Your Activities</h2>
+
+<div class="activity">
+<div class="info">
+<div class="name">🏆 Varsity Debate Team</div>
+<div class="role">Captain (2 years) • <span class="tier tier-1">Tier 1</span></div>
+<div class="desc">Led team to State Championships, mentored 15 junior debaters, organized practice sessions</div>
+</div>
+<div class="hours">150 hrs</div>
+</div>
+
+<div class="activity">
+<div class="info">
+<div class="name">🔬 Research Internship</div>
+<div class="role">Lab Assistant • <span class="tier tier-1">Tier 1</span></div>
+<div class="desc">Conducted cancer research at local hospital, co-authored paper submitted to journal</div>
+</div>
+<div class="hours">80 hrs</div>
+</div>
+
+<div class="activity">
+<div class="info">
+<div class="name">🎨 Art Club</div>
+<div class="role">President • <span class="tier tier-2">Tier 2</span></div>
+<div class="desc">Organized school art shows, raised $2,000 for art supplies, taught painting workshops</div>
+</div>
+<div class="hours">60 hrs</div>
+</div>
+
+<div class="activity">
+<div class="info">
+<div class="name">🤝 Community Tutoring</div>
+<div class="role">Volunteer Tutor • <span class="tier tier-3">Tier 3</span></div>
+<div class="desc">Tutored underprivileged students in math and science weekly</div>
+</div>
+<div class="hours">30 hrs</div>
+</div>
+
+<div class="activity">
+<div class="info">
+<div class="name">🏊 Varsity Swimming</div>
+<div class="role">Team Member • <span class="tier tier-3">Tier 3</span></div>
+<div class="desc">Varsity swimmer for 3 years, competed at regional level</div>
+</div>
+<div class="hours">200 hrs</div>
+</div>
+
+<div class="activity">
+<div class="info">
+<div class="name">📰 School Newspaper</div>
+<div class="role">Editor • <span class="tier tier-2">Tier 2</span></div>
+<div class="desc">Wrote 20+ articles, edited junior writers' work, redesigned layout</div>
+</div>
+<div class="hours">100 hrs</div>
+</div>
+</div>
+</body>
+</html>

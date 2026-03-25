@@ -1,0 +1,144 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>College Match — UniPrep</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--secondary:#2563eb;--accent:#d4af37;--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--success:#10b981}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--card);padding:20px}
+.logo{font-size:20pt;font-weight:800;color:var(--accent);margin-bottom:30px}
+.nav{list-style:none;display:flex;flex-direction:column;gap:8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:10pt;font-weight:500;transition:all 0.3s}
+.nav a:hover,.nav a.active{background:var(--secondary);color:white}
+.main{margin-left:260px;padding:30px}
+.header h1{font-size:24pt;margin-bottom:10px}
+.filters{display:flex;gap:12px;margin-bottom:20px;flex-wrap:wrap}
+.filter{background:var(--card);border:1px solid rgba(255,255,255,0.1);padding:8px 16px;border-radius:8px;color:var(--text);font-family:inherit;cursor:pointer}
+.filter.active{background:var(--secondary);border-color:var(--secondary)}
+.college-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:16px}
+.college{background:var(--card);border-radius:12px;padding:20px;border:1px solid rgba(255,255,255,0.1)}
+.college h3{font-size:14pt;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.college .stats{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-top:12px}
+.college .stat{text-align:center}
+.college .stat .label{font-size:8pt;color:var(--muted);text-transform:uppercase}
+.college .stat .value{font-size:14pt;font-weight:700;color:var(--accent)}
+.college .match{display:inline-block;padding:4px 10px;border-radius:12px;font-size:8pt;font-weight:600}
+.reach{background:#fee2e2;color:#991b1b}
+.match-school{background:#dbeafe;color:#1e40af}
+.safety{background:#d1fae5;color:#065f46}
+</style>
+</head>
+<body>
+<div class="sidebar">
+<div class="logo">🎓 UniPrep</div>
+<ul class="nav">
+<li><a href="index.html"><span>📊</span> Dashboard</a></li>
+<li><a href="timeline.html"><span>📅</span> Timeline</a></li>
+<li><a href="gpa-tracker.html"><span>📈</span> GPA Tracker</a></li>
+<li><a href="sat-prep.html"><span>📝</span> SAT/ACT Prep</a></li>
+<li><a href="activities.html"><span>🎭</span> Activities</a></li>
+<li><a href="essay-guide.html"><span>✍️</span> Essay Guide</a></li>
+<li><a href="colleges.html" class="active"><span>🎯</span> College Match</a></li>
+<li><a href="checklist.html"><span>✅</span> Checklist</a></li>
+</ul>
+</div>
+<div class="main">
+<div class="header"><h1>🎯 College Matching</h1></div>
+<p style="color:var(--muted);margin-bottom:20px">Based on your GPA (3.85) and SAT (1450)</p>
+
+<div class="filters">
+<button class="filter active">All Schools</button>
+<button class="filter">Reach</button>
+<button class="filter">Match</button>
+<button class="filter">Safety</button>
+</div>
+
+<div class="college-grid">
+<div class="college">
+<h3>🏛️ Harvard University <span class="match reach">REACH</span></h3>
+<p style="color:var(--muted);font-size:10pt">Cambridge, MA • Private • 6,700 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">3.4%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1460-1580</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">4.0</div></div>
+</div>
+</div>
+
+<div class="college">
+<h3>🌲 Stanford University <span class="match reach">REACH</span></h3>
+<p style="color:var(--muted);font-size:10pt">Stanford, CA • Private • 7,600 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">3.7%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1500-1570</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">3.96</div></div>
+</div>
+</div>
+
+<div class="college">
+<h3>⚙️ MIT <span class="match reach">REACH</span></h3>
+<p style="color:var(--muted);font-size:10pt">Cambridge, MA • Private • 4,500 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">3.9%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1520-1580</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">3.96</div></div>
+</div>
+</div>
+
+<div class="college">
+<h3>🦁 Yale University <span class="match reach">REACH</span></h3>
+<p style="color:var(--muted);font-size:10pt">New Haven, CT • Private • 6,500 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">4.4%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1460-1570</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">3.95</div></div>
+</div>
+</div>
+
+<div class="college">
+<h3>🐯 Princeton University <span class="match reach">REACH</span></h3>
+<p style="color:var(--muted);font-size:10pt">Princeton, NJ • Private • 5,400 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">3.7%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1450-1570</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">3.95</div></div>
+</div>
+</div>
+
+<div class="college">
+<h3>🐻 UCLA <span class="match match-school">MATCH</span></h3>
+<p style="color:var(--muted);font-size:10pt">Los Angeles, CA • Public • 31,600 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">8.6%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1290-1520</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">3.9</div></div>
+</div>
+</div>
+
+<div class="college">
+<h3>🐻 UC Berkeley <span class="match match-school">MATCH</span></h3>
+<p style="color:var(--muted);font-size:10pt">Berkeley, CA • Public • 31,000 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">11.4%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1300-1520</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">3.89</div></div>
+</div>
+</div>
+
+<div class="college">
+<h3>〽️ University of Michigan <span class="match safety">SAFETY</span></h3>
+<p style="color:var(--muted);font-size:10pt">Ann Arbor, MI • Public • 31,000 undergrads</p>
+<div class="stats">
+<div class="stat"><div class="label">Acceptance</div><div class="value">17.7%</div></div>
+<div class="stat"><div class="label">SAT Range</div><div class="value">1340-1530</div></div>
+<div class="stat"><div class="label">GPA Avg</div><div class="value">3.88</div></div>
+</div>
+</div>
+</div>
+
+</div>
+</body>
+</html>

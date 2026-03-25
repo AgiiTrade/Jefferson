@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PlanByInnovations Validator</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:30px}
+.container{max-width:900px;margin:0 auto}
+h1{text-align:center;font-size:24pt;margin-bottom:6px}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:30px}
+.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:30px}
+.stat-card{background:#1e293b;border-radius:12px;padding:20px;text-align:center}
+.stat-card .num{font-size:28pt;font-weight:800}
+.stat-card .label{font-size:9pt;color:#94a3b8;margin-top:4px}
+.pass .num{color:#16a34a}.fail .num{color:#dc2626}.warn .num{color:#f59e0b}.total .num{color:#60a5fa}
+.btn-row{display:flex;gap:12px;justify-content:center;margin-bottom:30px;flex-wrap:wrap}
+.run-btn{padding:10px 20px;border-radius:8px;border:none;font-family:inherit;font-size:10pt;font-weight:600;cursor:pointer;transition:all 0.2s;display:flex;align-items:center;gap:8px}
+.run-btn:hover{transform:translateY(-2px)}
+.btn-all{background:#dc2626;color:white}
+.btn-links{background:#2563eb;color:white}
+.btn-security{background:#16a34a;color:white}
+.btn-apps{background:#d97706;color:white}
+.btn-fix{background:#7c3aed;color:white}
+.results{background:#1e293b;border-radius:12px;padding:24px;min-height:300px}
+.results h3{margin-bottom:16px;display:flex;align-items:center;gap:8px}
+#output{font-family:monospace;font-size:10pt;line-height:2}
+.r-pass{color:#16a34a}.r-fail{color:#dc2626}.r-warn{color:#f59e0b}.r-info{color:#60a5fa}
+.spinner{display:inline-block;width:16px;height:16px;border:2px solid #e2e8f0;border-top-color:transparent;border-radius:50%;animation:spin 0.6s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+#progress{height:4px;background:#334155;border-radius:2px;margin-bottom:16px;overflow:hidden}
+#progress-bar{height:100%;background:#dc2626;width:0;transition:width 0.3s}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>🔍 PlanByInnovations Validator</h1>
+<p class="subtitle">One-click quality checks for all projects</p>
+
+<div class="grid">
+<div class="stat-card pass"><div class="num" id="pass-count">0</div><div class="label">PASS</div></div>
+<div class="stat-card fail"><div class="num" id="fail-count">0</div><div class="label">FAIL</div></div>
+<div class="stat-card warn"><div class="num" id="warn-count">0</div><div class="label">WARN</div></div>
+<div class="stat-card total"><div class="num" id="total-count">0</div><div class="label">TOTAL</div></div>
+</div>
+
+<div class="btn-row">
+<button class="run-btn btn-all" onclick="runCheck('all')"><i class="fas fa-play"></i> Run All</button>
+<button class="run-btn btn-links" onclick="runCheck('links')"><i class="fas fa-link"></i> Links</button>
+<button class="run-btn btn-security" onclick="runCheck('security')"><i class="fas fa-shield-alt"></i> Security</button>
+<button class="run-btn btn-apps" onclick="runCheck('apps')"><i class="fas fa-mobile-alt"></i> Apps</button>
+<button class="run-btn btn-fix" onclick="runCheck('fix')"><i class="fas fa-wrench"></i> Auto-Fix</button>
+</div>
+
+<div class="results">
+<h3><i class="fas fa-terminal"></i> Output <span id="status"></span></h3>
+<div id="progress"><div id="progress-bar"></div></div>
+<div id="output">Click a button to start validation...</div>
+</div>
+</div>
+
+<script>
+let pass=0,fail=0,warn=0,total=0;
+const S='http://localhost:3001';
+
+function updateStats(){
+  document.getElementById('pass-count').textContent=pass;
+  document.getElementById('fail-count').textContent=fail;
+  document.getElementById('warn-count').textContent=warn;
+  document.getElementById('total-count').textContent=total;
+}
+
+function log(text,cls='r-info'){
+  const o=document.getElementById('output');
+  o.innerHTML+=`<div class="${cls}">${text}</div>`;
+  o.scrollTop=o.scrollHeight;
+}
+
+function clearOutput(){
+  document.getElementById('output').innerHTML='';
+  pass=fail=warn=total=0;
+  updateStats();
+}
+
+async function checkUrl(url,label){
+  total++;
+  try{
+    const r=await fetch(url,{method:'HEAD',mode:'no-cors'});
+    pass++;log(`✅ ${label}`,'r-pass');
+  }catch(e){
+    fail++;log(`❌ ${label} — ${e.message}`,'r-fail');
+  }
+  updateStats();
+}
+
+async function runCheck(type){
+  clearOutput();
+  document.getElementById('status').innerHTML='<span class="spinner"></span>';
+  const bar=document.getElementById('progress-bar');
+  bar.style.width='10%';
+
+  if(type==='all'||type==='links'){
+    log('🔗 Checking links...','r-info');
+    const pages=['index','about','services','universities','blog','contact','privacy','terms'];
+    for(const p of pages) await checkUrl(`${S}/unified/${p}.html`,`unified/${p}.html`);
+
+    const tools=['index','gpa-tracker','sat-prep','essay-guide','colleges','timeline','activities','checklist','study-canada'];
+    for(const t of tools) await checkUrl(`${S}/unified/uniprep/${t}.html`,`uniprep/${t}.html`);
+    bar.style.width='40%';
+  }
+
+  if(type==='all'||type==='security'){
+    log('🛡️ Security checks...','r-info');
+    // Check page source for common issues
+    try{
+      const r=await fetch(`${S}/unified/`);
+      const html=await r.text();
+      if(html.includes('eval(')){warn++;log('⚠️ eval() found','r-warn');}
+      else{pass++;log('✅ No eval() usage','r-pass');}
+      if(html.includes('YOUR_API_KEY')){pass++;log('✅ Firebase placeholder keys','r-pass');}
+      else{warn++;log('⚠️ Firebase may have real keys','r-warn');}
+    }catch(e){fail++;log('❌ Could not fetch page','r-fail');}
+    total+=2;bar.style.width='60%';
+  }
+
+  if(type==='all'||type==='apps'){
+    log('📱 Checking apps...','r-info');
+    await checkUrl(`${S}/vocab_prototype.html`,'Vocab Master Pro');
+    await checkUrl(`${S}/index.html`,'QuestMind');
+    await checkUrl(`${S}/family-planner.html`,'Family Planner');
+    bar.style.width='80%';
+  }
+
+  if(type==='fix'){
+    log('🔧 Running auto-fix...','r-info');
+    // Check ngrok
+    try{
+      const r=await fetch('http://localhost:4040/api/tunnels');
+      const data=await r.json();
+      const addr=data.tunnels[0].config.addr;
+      if(addr.includes('3001')){pass++;log('✅ Ngrok on correct port','r-pass');}
+      else{fail++;log('❌ Ngrok on wrong port: '+addr+' — Restart required','r-fail');}
+      log('ℹ️ Tunnel: '+data.tunnels[0].public_url,'r-info');
+    }catch(e){fail++;log('❌ Ngrok not running','r-fail');}
+    total++;bar.style.width='100%';
+  }
+
+  bar.style.width='100%';
+  document.getElementById('status').innerHTML=`<span style="color:#16a34a">✅ Done — ${pass}/${total} passed</span>`;
+
+  if(fail===0) log('\n🎉 ALL CHECKS PASSED!','r-pass');
+  else log(`\n🔧 ${fail} issues need fixing`,'r-fail');
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Timeline — UniPrep</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--primary:#1e3a5f;--secondary:#2563eb;--accent:#d4af37;--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--success:#10b981}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--card);border-right:1px solid rgba(255,255,255,0.1);padding:20px}
+.logo{font-size:20pt;font-weight:800;color:var(--accent);margin-bottom:30px;display:flex;align-items:center;gap:10px}
+.nav{list-style:none;display:flex;flex-direction:column;gap:8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:10pt;font-weight:500;transition:all 0.3s}
+.nav a:hover,.nav a.active{background:var(--secondary);color:white}
+.main{margin-left:260px;padding:30px}
+.header h1{font-size:24pt;font-weight:700;margin-bottom:10px}
+.subtitle{color:var(--muted);margin-bottom:30px}
+.year{background:var(--card);border-radius:12px;padding:24px;margin-bottom:20px;border:1px solid rgba(255,255,255,0.1)}
+.year h2{font-size:18pt;margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.year h2 .badge{background:var(--secondary);padding:4px 12px;border-radius:20px;font-size:9pt}
+.tasks{display:grid;grid-template-columns:repeat(2,1fr);gap:12px}
+.task{background:rgba(255,255,255,0.05);padding:16px;border-radius:10px}
+.task .label{font-size:9pt;color:var(--accent);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px}
+.task .text{font-size:11pt}
+.task .done{color:var(--success)}
+</style>
+</head>
+<body>
+<div class="sidebar">
+<div class="logo">🎓 UniPrep</div>
+<ul class="nav">
+<li><a href="index.html"><span>📊</span> Dashboard</a></li>
+<li><a href="timeline.html" class="active"><span>📅</span> Timeline</a></li>
+<li><a href="gpa-tracker.html"><span>📈</span> GPA Tracker</a></li>
+<li><a href="sat-prep.html"><span>📝</span> SAT/ACT Prep</a></li>
+<li><a href="activities.html"><span>🎭</span> Activities</a></li>
+<li><a href="essay-guide.html"><span>✍️</span> Essay Guide</a></li>
+<li><a href="colleges.html"><span>🎯</span> College Match</a></li>
+<li><a href="checklist.html"><span>✅</span> Checklist</a></li>
+</ul>
+</div>
+<div class="main">
+<div class="header"><h1>📅 College Prep Timeline</h1></div>
+<p class="subtitle">Year-by-year roadmap to admission at top universities</p>
+
+<div class="year"><h2>🟢 Freshman Year (9th Grade) <span class="badge">Foundation</span></h2>
+<div class="tasks">
+<div class="task"><div class="label">Fall</div><div class="text">✓ Take challenging courses (Honors if available)<br>✓ Join 2-3 clubs that interest you<br>✓ Meet your school counselor</div></div>
+<div class="task"><div class="label">Spring</div><div class="text">✓ Explore extracurricular activities<br>✓ Start building study habits<br>✓ Begin thinking about potential majors</div></div>
+<div class="task"><div class="label">Summer</div><div class="text">✓ Read widely in your areas of interest<br>✓ Consider summer programs or volunteering<br>✓ Start a personal project</div></div>
+<div class="task"><div class="label">Key Goals</div><div class="text">✓ GPA: 3.7+ (unweighted)<br>✓ Establish 2-3 strong activities<br>✓ Develop good study habits</div></div>
+</div></div>
+
+<div class="year"><h2>🔵 Sophomore Year (10th Grade) <span class="badge">Building</span></h2>
+<div class="tasks">
+<div class="task"><div class="label">Fall</div><div class="text">✓ Take PSAT (practice)<br>✓ Start AP courses (1-2)<br>✓ Take leadership roles in activities</div></div>
+<div class="task"><div class="label">Spring</div><div class="text">✓ Take SAT Subject Tests if applicable<br>✓ Deepen involvement in activities<br>✓ Begin SAT/ACT prep</div></div>
+<div class="task"><div class="label">Summer</div><div class="text">✓ SAT/ACT prep course or self-study<br>✓ Summer program or internship<br>✓ Visit college campuses</div></div>
+<div class="task"><div class="label">Key Goals</div><div class="text">✓ GPA: 3.8+ (unweighted)<br>✓ Take 2-3 AP courses<br>✓ SAT practice: 1300+</div></div>
+</div></div>
+
+<div class="year"><h2>🟡 Junior Year (11th Grade) <span class="badge">Critical Year</span></h2>
+<div class="tasks">
+<div class="task"><div class="label">Fall</div><div class="text">✓ Take PSAT/NMSQT (National Merit)<br>✓ Take 3-4 AP courses<br>✓ Begin SAT/ACT serious prep</div></div>
+<div class="task"><div class="label">Spring</div><div class="text">✓ Take SAT/ACT (first official attempt)<br>✓ Build college list (reach/match/safety)<br>✓ Ask teachers for recommendations</div></div>
+<div class="task"><div class="label">Summer</div><div class="text">✓ Retake SAT/ACT if needed<br>✓ Start Common App essay<br>✓ Visit top choice colleges<br>✓ Research scholarships</div></div>
+<div class="task"><div class="label">Key Goals</div><div class="text">✓ GPA: 3.9+ (unweighted)<br>✓ SAT: 1450+ or ACT: 33+<br>✓ Strong leadership roles<br>✓ College list: 8-12 schools</div></div>
+</div></div>
+
+<div class="year"><h2>🔴 Senior Year (12th Grade) <span class="badge">Application Time</span></h2>
+<div class="tasks">
+<div class="task"><div class="label">Fall (Sep-Nov)</div><div class="text">✓ Finalize college list<br>✓ Complete Common App<br>✓ Submit Early Decision/Action apps<br>✓ Request recommendation letters</div></div>
+<div class="task"><div class="label">Winter (Dec-Feb)</div><div class="text">✓ Submit Regular Decision apps<br>✓ Complete FAFSA (Oct 1)<br>✓ Apply for scholarships<br>✓ Send mid-year reports</div></div>
+<div class="task"><div class="label">Spring (Mar-Apr)</div><div class="text">✓ Receive decisions<br>✓ Compare financial aid offers<br>✓ Visit accepted schools<br>✓ Make final decision (May 1)</div></div>
+<div class="task"><div class="label">Summer</div><div class="text">✓ Send final transcripts<br>✓ Attend orientation<br>✓ Prepare for college life!</div></div>
+</div></div>
+
+</div>
+</body>
+</html>

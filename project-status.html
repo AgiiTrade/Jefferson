@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Project Status | PlanByInnovations</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#0f172a;color:#e2e8f0;min-height:100vh;padding:40px}
+.container{max-width:1200px;margin:0 auto}
+h1{font-size:32pt;text-align:center;margin-bottom:8px}
+.subtitle{text-align:center;color:#94a3b8;margin-bottom:40px}
+table{width:100%;border-collapse:collapse;margin-bottom:40px}
+th{background:#1e293b;padding:14px 16px;text-align:left;font-size:9pt;text-transform:uppercase;color:#94a3b8;border-bottom:2px solid #dc2626}
+td{padding:14px 16px;border-bottom:1px solid #334155;font-size:10pt}
+tr:hover{background:#1e293b}
+.project-name{font-weight:600;display:flex;align-items:center;gap:8px}
+.progress-bar{width:120px;height:8px;background:#334155;border-radius:4px;overflow:hidden;display:inline-block;vertical-align:middle}
+.progress-fill{height:100%;border-radius:4px}
+.p100{background:#16a34a}.p90{background:#22c55e}.p80{background:#84cc16}.p70{background:#eab308}.p60{background:#f97316}.p50{background:#dc2626}
+.pct{font-weight:700;margin-left:8px}
+.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:8pt;font-weight:600}
+.badge-done{background:#16a34a;color:white}
+.badge-progress{background:#f59e0b;color:#0f172a}
+.badge-todo{background:#64748b;color:white}
+.category-header{background:#0f172a!important}
+.category-header td{font-size:14pt;font-weight:700;color:#dc2626;padding:20px 16px 10px;border:none}
+</style>
+</head>
+<body>
+<div class="container">
+<h1>📊 Project Status Dashboard</h1>
+<p class="subtitle">PlanByInnovations — Updated: March 24, 2026</p>
+
+<table>
+<thead>
+<tr>
+<th>Project</th>
+<th>Component</th>
+<th>Status</th>
+<th>Progress</th>
+<th>Notes</th>
+</tr>
+</thead>
+<tbody>
+<!-- FAMILY PLANNER -->
+<tr class="category-header"><td colspan="5">📋 Family Planner (Etsy/Amazon)</td></tr>
+<tr><td class="project-name">Family Planner</td><td>PDF (75 pages)</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>2026-2027 with Jan 2027 bonus</td></tr>
+<tr><td class="project-name"></td><td>Etsy Listing</td><td><span class="badge badge-done">LIVE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Photos, AI disclosure, materials filled</td></tr>
+<tr><td class="project-name"></td><td>Screenshots</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>6 mockup pages captured</td></tr>
+<tr><td class="project-name"></td><td>Amazon KDP Listing</td><td><span class="badge badge-todo">TODO</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:30%"></div></div><span class="pct">30%</span></td><td>PDF ready, need to upload</td></tr>
+<tr><td class="project-name"></td><td>Marketing Plan</td><td><span class="badge badge-progress">BUILDING</span></td><td><div class="progress-bar"><div class="progress-fill p70" style="width:60%"></div></div><span class="pct">60%</span></td><td>Rebuilding now</td></tr>
+
+<!-- VOCAB MASTER PRO -->
+<tr class="category-header"><td colspan="5">🎮 Vocab Master Pro</td></tr>
+<tr><td class="project-name">Vocab Master Pro</td><td>Web App</td><td><span class="badge badge-done">LIVE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>2,540 words, 5 levels</td></tr>
+<tr><td class="project-name"></td><td>Capacitor Project</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Android ready, iOS pending Xcode</td></tr>
+<tr><td class="project-name"></td><td>Android Build</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>APK buildable</td></tr>
+<tr><td class="project-name"></td><td>iOS Build</td><td><span class="badge badge-todo">BLOCKED</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:50%"></div></div><span class="pct">50%</span></td><td>Needs Xcode install</td></tr>
+<tr><td class="project-name"></td><td>AdMob Integration</td><td><span class="badge badge-progress">TEST</span></td><td><div class="progress-bar"><div class="progress-fill p80" style="width:80%"></div></div><span class="pct">80%</span></td><td>Test IDs in place, need real IDs</td></tr>
+<tr><td class="project-name"></td><td>App Store Submission</td><td><span class="badge badge-todo">TODO</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:20%"></div></div><span class="pct">20%</span></td><td>Need Apple Dev account ($99)</td></tr>
+<tr><td class="project-name"></td><td>Play Store Submission</td><td><span class="badge badge-todo">TODO</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:20%"></div></div><span class="pct">20%</span></td><td>Need Google Dev account ($25)</td></tr>
+
+<!-- QUESTMIND -->
+<tr class="category-header"><td colspan="5">🏰 QuestMind</td></tr>
+<tr><td class="project-name">QuestMind</td><td>Web App</td><td><span class="badge badge-done">LIVE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>3,103 questions, 4 categories</td></tr>
+<tr><td class="project-name"></td><td>Capacitor Project</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Android ready, iOS pending Xcode</td></tr>
+<tr><td class="project-name"></td><td>Android Build</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>APK buildable</td></tr>
+<tr><td class="project-name"></td><td>iOS Build</td><td><span class="badge badge-todo">BLOCKED</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:50%"></div></div><span class="pct">50%</span></td><td>Needs Xcode install</td></tr>
+<tr><td class="project-name"></td><td>AdMob Integration</td><td><span class="badge badge-progress">TEST</span></td><td><div class="progress-bar"><div class="progress-fill p80" style="width:80%"></div></div><span class="pct">80%</span></td><td>Test IDs in place, need real IDs</td></tr>
+<tr><td class="project-name"></td><td>Offline Mode</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Single player works offline</td></tr>
+
+<!-- UNIPREP -->
+<tr class="category-header"><td colspan="5">🎓 UniPrep Platform</td></tr>
+<tr><td class="project-name">UniPrep</td><td>Dashboard</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Main hub page</td></tr>
+<tr><td class="project-name"></td><td>Timeline (9 pages)</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Grade 9-12 milestones</td></tr>
+<tr><td class="project-name"></td><td>GPA Tracker</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Weighted GPA calculator</td></tr>
+<tr><td class="project-name"></td><td>SAT/ACT Prep</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Practice questions & resources</td></tr>
+<tr><td class="project-name"></td><td>Activities Tracker</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Extracurricular log</td></tr>
+<tr><td class="project-name"></td><td>Essay Guide</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Common App prompts</td></tr>
+<tr><td class="project-name"></td><td>College Match</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>50+ schools database</td></tr>
+<tr><td class="project-name"></td><td>Study in Canada</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Canadian universities & scholarships</td></tr>
+<tr><td class="project-name"></td><td>Checklist</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Application checklist</td></tr>
+<tr><td class="project-name"></td><td>Backend Storage</td><td><span class="badge badge-todo">TODO</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:30%"></div></div><span class="pct">30%</span></td><td>Currently localStorage only</td></tr>
+
+<!-- STUDYNCANADA -->
+<tr class="category-header"><td colspan="5">🇨🇦 StudynCanada.com</td></tr>
+<tr><td class="project-name">StudynCanada</td><td>Home Page</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Hero, services, testimonials</td></tr>
+<tr><td class="project-name"></td><td>About Page</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Story, team, values</td></tr>
+<tr><td class="project-name"></td><td>Services Page</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>6 service categories</td></tr>
+<tr><td class="project-name"></td><td>Universities Page</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>9 partner institutions</td></tr>
+<tr><td class="project-name"></td><td>Blog Page</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>6 article cards</td></tr>
+<tr><td class="project-name"></td><td>Contact Page</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Form + contact info</td></tr>
+<tr><td class="project-name"></td><td>Privacy Policy</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>GDPR compliant</td></tr>
+<tr><td class="project-name"></td><td>Terms of Service</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Full legal terms</td></tr>
+<tr><td class="project-name"></td><td>SSL Certificate</td><td><span class="badge badge-todo">EXPIRED</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:0%"></div></div><span class="pct">0%</span></td><td>Expired 475 days ago</td></tr>
+<tr><td class="project-name"></td><td>DNS Deployment</td><td><span class="badge badge-todo">TODO</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:10%"></div></div><span class="pct">10%</span></td><td>Need GoDaddy access</td></tr>
+
+<!-- SECURITY -->
+<tr class="category-header"><td colspan="5">🛡️ Security & Auth</td></tr>
+<tr><td class="project-name">Security</td><td>Firebase Auth Config</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Google/Facebook/Apple login ready</td></tr>
+<tr><td class="project-name"></td><td>Input Sanitization</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>XSS protection utility</td></tr>
+<tr><td class="project-name"></td><td>Auth UI Component</td><td><span class="badge badge-done">DONE</span></td><td><div class="progress-bar"><div class="progress-fill p100" style="width:100%"></div></div><span class="pct">100%</span></td><td>Reusable login modal</td></tr>
+<tr><td class="project-name"></td><td>Firebase Credentials</td><td><span class="badge badge-todo">TODO</span></td><td><div class="progress-bar"><div class="progress-fill p50" style="width:0%"></div></div><span class="pct">0%</span></td><td>Need user to create Firebase project</td></tr>
+</tbody>
+</table>
+
+<h2 style="margin-bottom:20px">📈 Overall Progress</h2>
+<table>
+<thead><tr><th>Category</th><th>Complete</th><th>Total</th><th>Percentage</th></tr></thead>
+<tbody>
+<tr><td>📋 Family Planner</td><td>4</td><td>5</td><td><div class="progress-bar" style="width:200px"><div class="progress-fill p80" style="width:80%"></div></div> <span class="pct">80%</span></td></tr>
+<tr><td>🎮 Vocab Master Pro</td><td>4</td><td>7</td><td><div class="progress-bar" style="width:200px"><div class="progress-fill p70" style="width:57%"></div></div> <span class="pct">57%</span></td></tr>
+<tr><td>🏰 QuestMind</td><td>5</td><td>7</td><td><div class="progress-bar" style="width:200px"><div class="progress-fill p70" style="width:71%"></div></div> <span class="pct">71%</span></td></tr>
+<tr><td>🎓 UniPrep</td><td>9</td><td>10</td><td><div class="progress-bar" style="width:200px"><div class="progress-fill p90" style="width:90%"></div></div> <span class="pct">90%</span></td></tr>
+<tr><td>🇨🇦 StudynCanada</td><td>8</td><td>10</td><td><div class="progress-bar" style="width:200px"><div class="progress-fill p80" style="width:80%"></div></div> <span class="pct">80%</span></td></tr>
+<tr><td>🛡️ Security</td><td>3</td><td>4</td><td><div class="progress-bar" style="width:200px"><div class="progress-fill p70" style="width:75%"></div></div> <span class="pct">75%</span></td></tr>
+<tr style="background:#1e293b;font-weight:700"><td>📊 TOTAL</td><td>33</td><td>43</td><td><div class="progress-bar" style="width:200px"><div class="progress-fill p80" style="width:77%"></div></div> <span class="pct">77%</span></td></tr>
+</tbody>
+</table>
+</div>
+</body>
+</html>

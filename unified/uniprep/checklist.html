@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Checklist — UniPrep</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--secondary:#2563eb;--accent:#d4af37;--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--success:#10b981}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--card);padding:20px}
+.logo{font-size:20pt;font-weight:800;color:var(--accent);margin-bottom:30px}
+.nav{list-style:none;display:flex;flex-direction:column;gap:8px}
+.nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:10pt;font-weight:500;transition:all 0.3s}
+.nav a:hover,.nav a.active{background:var(--secondary);color:white}
+.main{margin-left:260px;padding:30px}
+.header h1{font-size:24pt;margin-bottom:10px}
+.progress-summary{background:var(--card);border-radius:12px;padding:24px;margin-bottom:30px;border:1px solid rgba(255,255,255,0.1);display:flex;justify-content:space-between;align-items:center}
+.progress-summary .bar{flex:1;height:12px;background:rgba(255,255,255,0.1);border-radius:6px;margin:0 20px;overflow:hidden}
+.progress-summary .fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--secondary),var(--accent))}
+.progress-summary .percent{font-size:24pt;font-weight:700;color:var(--accent)}
+.section{background:var(--card);border-radius:12px;padding:24px;margin-bottom:16px;border:1px solid rgba(255,255,255,0.1)}
+.section h3{margin-bottom:16px;display:flex;align-items:center;gap:10px}
+.checklist{list-style:none;display:flex;flex-direction:column;gap:10px}
+.checklist li{display:flex;align-items:center;gap:12px;padding:12px;border-radius:8px;background:rgba(255,255,255,0.05);cursor:pointer;transition:all 0.3s}
+.checklist li:hover{background:rgba(255,255,255,0.1)}
+.check{width:22px;height:22px;border-radius:6px;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:10pt;transition:all 0.3s;flex-shrink:0}
+.check.done{background:var(--success);border-color:var(--success)}
+.checklist li.done{text-decoration:line-through;color:var(--muted)}
+</style>
+</head>
+<body>
+<div class="sidebar">
+<div class="logo">🎓 UniPrep</div>
+<ul class="nav">
+<li><a href="index.html"><span>📊</span> Dashboard</a></li>
+<li><a href="timeline.html"><span>📅</span> Timeline</a></li>
+<li><a href="gpa-tracker.html"><span>📈</span> GPA Tracker</a></li>
+<li><a href="sat-prep.html"><span>📝</span> SAT/ACT Prep</a></li>
+<li><a href="activities.html"><span>🎭</span> Activities</a></li>
+<li><a href="essay-guide.html"><span>✍️</span> Essay Guide</a></li>
+<li><a href="colleges.html"><span>🎯</span> College Match</a></li>
+<li><a href="checklist.html" class="active"><span>✅</span> Checklist</a></li>
+</ul>
+</div>
+<div class="main">
+<div class="header"><h1>✅ Application Checklist</h1></div>
+
+<div class="progress-summary">
+<span>Overall Progress</span>
+<div class="bar"><div class="fill" style="width:45%"></div></div>
+<span class="percent">45%</span>
+</div>
+
+<div class="section">
+<h3>📝 Standardized Tests</h3>
+<ul class="checklist">
+<li class="done"><div class="check done">✓</div><span>Take SAT (first attempt)</span></li>
+<li class="done"><div class="check done">✓</div><span>Retake SAT for higher score</span></li>
+<li><div class="check"></div><span>Take SAT Subject Tests (if required)</span></li>
+<li class="done"><div class="check done">✓</div><span>Send scores to target schools</span></li>
+</ul>
+</div>
+
+<div class="section">
+<h3>📚 Academics</h3>
+<ul class="checklist">
+<li class="done"><div class="check done">✓</div><span>Maintain GPA above 3.8</span></li>
+<li class="done"><div class="check done">✓</div><span>Take AP courses (8+ total)</span></li>
+<li><div class="check"></div><span>Submit AP scores to colleges</span></li>
+<li><div class="check"></div><span>Request official transcripts</span></li>
+</ul>
+</div>
+
+<div class="section">
+<h3>✍️ Essays</h3>
+<ul class="checklist">
+<li class="done"><div class="check done">✓</div><span>Brainstorm essay topics</span></li>
+<li class="done"><div class="check done">✓</div><span>Write Common App personal essay</span></li>
+<li><div class="check"></div><span>Write supplemental essays for each school</span></li>
+<li><div class="check"></div><span>Get essays reviewed by teachers/counselors</span></li>
+<li><div class="check"></div><span>Final proofread of all essays</span></li>
+</ul>
+</div>
+
+<div class="section">
+<h3>👥 Recommendations</h3>
+<ul class="checklist">
+<li class="done"><div class="check done">✓</div><span>Ask 2 teachers for recommendations</span></li>
+<li class="done"><div class="check done">✓</div><span>Meet with school counselor</span></li>
+<li><div class="check"></div><span>Provide brag sheet to recommenders</span></li>
+<li><div class="check"></div><span>Confirm recommendations submitted</span></li>
+</ul>
+</div>
+
+<div class="section">
+<h3>💰 Financial Aid</h3>
+<ul class="checklist">
+<li><div class="check"></div><span>Complete FAFSA (opens Oct 1)</span></li>
+<li><div class="check"></div><span>Complete CSS Profile</span></li>
+<li><div class="check"></div><span>Apply for external scholarships</span></li>
+<li><div class="check"></div><span>Compare financial aid offers</span></li>
+</ul>
+</div>
+
+<div class="section">
+<h3>📤 Applications</h3>
+<ul class="checklist">
+<li class="done"><div class="check done">✓</div><span>Create Common App account</span></li>
+<li class="done"><div class="check done">✓</div><span>Add colleges to Common App</span></li>
+<li><div class="check"></div><span>Submit Early Decision/Action apps</span></li>
+<li><div class="check"></div><span>Submit Regular Decision apps</span></li>
+<li><div class="check"></div><span>Pay application fees</span></li>
+<li><div class="check"></div><span>Confirm all materials received</span></li>
+</ul>
+</div>
+
+</div>
+
+<script>
+document.querySelectorAll('.checklist li').forEach(li => {
+  li.addEventListener('click', () => {
+    li.classList.toggle('done');
+    const check = li.querySelector('.check');
+    if(li.classList.contains('done')) {
+      check.classList.add('done');
+      check.textContent = '✓';
+    } else {
+      check.classList.remove('done');
+      check.textContent = '';
+    }
+    saveProgress();
+  });
+});
+
+function saveProgress() {
+  const items = [...document.querySelectorAll('.checklist li')].map(li => li.classList.contains('done'));
+  localStorage.setItem('uniprep-checklist', JSON.stringify(items));
+}
+
+function loadProgress() {
+  const saved = JSON.parse(localStorage.getItem('uniprep-checklist') || '[]');
+  document.querySelectorAll('.checklist li').forEach((li, i) => {
+    if(saved[i]) {
+      li.classList.add('done');
+      li.querySelector('.check').classList.add('done');
+      li.querySelector('.check').textContent = '✓';
+    }
+  });
+}
+loadProgress();
+</script>
+</body>
+</html>
