@@ -1,0 +1,75 @@
+{
+  "date": "2026-04-01",
+  "content": {
+    "day": 2,
+    "title": "ABC Phonics Song",
+    "category": "educational",
+    "keywords": [
+      "alphabet",
+      "abc",
+      "learning",
+      "phonics"
+    ]
+  },
+  "metadata": {
+    "title": "ABC Phonics Song | Nursery Rhymes for Kids | Little Star Songs",
+    "description": "\ud83c\udfb5 ABC Phonics Song - Nursery Rhymes for Kids!\n\nSing along with this fun and educational nursery rhyme! Perfect for babies, toddlers, and preschoolers.\n\n\u2728 What's Inside:\n\u2022 Catchy melody kids will love\n\u2022 Colorful animated characters\n\u2022 Educational and entertaining\n\u2022 Safe for all ages\n\n\ud83c\udfaf Perfect For:\n\u2022 Babies and toddlers\n\u2022 Preschool learning\n\u2022 Kindergarten activities\n\u2022 Screen-time entertainment\n\n\ud83d\udd14 SUBSCRIBE for new nursery rhymes every day!\n\ud83d\udc4d LIKE if your child enjoyed this video!\n\ud83d\udcac COMMENT which song you want next!\n\n#nurseryrhymes #kidssongs #childrensmusic #alphabet #abc #learning #phonics\n\n\u00a9 Little Star Songs 2026",
+    "tags": [
+      "nursery rhymes",
+      "kids songs",
+      "children music",
+      "baby songs",
+      "toddler songs",
+      "preschool",
+      "learning songs",
+      "abc song",
+      "counting songs",
+      "lullaby",
+      "alphabet",
+      "abc",
+      "learning",
+      "phonics"
+    ],
+    "category_id": "27",
+    "default_language": "en",
+    "made_for_kids": true
+  },
+  "suno_prompt": {
+    "style": "Upbeat educational kids song, xylophone and ukulele, kids choir, 110-120 BPM, C major, catchy learning melody",
+    "lyrics": "[Verse]\nABC Phonics Song\n[Instrumental]",
+    "title": "ABC Phonics Song",
+    "model": "v3.5"
+  },
+  "steps": [
+    {
+      "step": 1,
+      "action": "Generate lyrics",
+      "tool": "ChatGPT/Claude",
+      "status": "pending"
+    },
+    {
+      "step": 2,
+      "action": "Generate music",
+      "tool": "Suno AI",
+      "status": "pending"
+    },
+    {
+      "step": 3,
+      "action": "Generate animation",
+      "tool": "Runway/Pika",
+      "status": "pending"
+    },
+    {
+      "step": 4,
+      "action": "Combine audio+video",
+      "tool": "DaVinci Resolve",
+      "status": "pending"
+    },
+    {
+      "step": 5,
+      "action": "Upload to YouTube",
+      "tool": "YouTube API",
+      "status": "pending"
+    }
+  ]
+}
