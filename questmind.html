@@ -2,181 +2,1839 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UniPrep — Your Path to Top Universities</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1.0">
+<title>QuestMind: Wizard Academy</title>
 <style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--primary:#1e3a5f;--secondary:#2563eb;--accent:#d4af37;--bg:#0f172a;--card:#1e293b;--text:#f1f5f9;--muted:#94a3b8;--success:#10b981;--warning:#f59e0b;--danger:#ef4444}
-body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-.sidebar{position:fixed;left:0;top:0;width:260px;height:100vh;background:var(--card);border-right:1px solid rgba(255,255,255,0.1);padding:20px;z-index:100}
-.logo{font-size:20pt;font-weight:800;color:var(--accent);margin-bottom:30px;display:flex;align-items:center;gap:10px}
-.logo span{font-size:24px}
-.nav{list-style:none;display:flex;flex-direction:column;gap:8px}
-.nav a{display:flex;align-items:center;gap:12px;padding:12px 16px;border-radius:10px;color:var(--muted);text-decoration:none;font-size:10pt;font-weight:500;transition:all 0.3s}
-.nav a:hover,.nav a.active{background:var(--secondary);color:white}
-.nav a .icon{font-size:18px}
-.main{margin-left:260px;padding:30px}
-.header{display:flex;justify-content:space-between;align-items:center;margin-bottom:30px}
-.header h1{font-size:24pt;font-weight:700}
-.header .user{display:flex;align-items:center;gap:10px;background:var(--card);padding:8px 16px;border-radius:10px}
-.header .avatar{width:36px;height:36px;border-radius:50%;background:var(--secondary);display:flex;align-items:center;justify-content:center;font-weight:700}
-.welcome{text-align:center;margin-bottom:30px}
-.welcome h2{font-size:28pt;color:var(--accent);margin-bottom:10px}
-.welcome p{color:var(--muted);font-size:12pt}
-.quote{background:linear-gradient(135deg,var(--primary),var(--secondary));padding:20px;border-radius:12px;text-align:center;margin-bottom:30px;max-width:600px;margin:0 auto 30px}
-.quote .text{font-size:14pt;font-weight:600;font-style:italic}
-.quote .author{color:var(--muted);margin-top:8px;font-size:10pt}
-.stats{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;margin-bottom:30px}
-.stat{background:var(--card);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,0.1)}
-.stat .label{color:var(--muted);font-size:9pt;text-transform:uppercase;letter-spacing:1px;margin-bottom:8px}
-.stat .value{font-size:24pt;font-weight:700}
-.stat .change{font-size:9pt;margin-top:4px}
-.stat .change.up{color:var(--success)}
-.stat .change.down{color:var(--danger)}
-.progress-bar{height:8px;background:rgba(255,255,255,0.1);border-radius:4px;margin-top:12px;overflow:hidden}
-.progress-bar .fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--secondary),var(--accent))}
-.grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px}
-.card{background:var(--card);border-radius:12px;padding:24px;border:1px solid rgba(255,255,255,0.1)}
-.card h3{font-size:14pt;margin-bottom:16px;display:flex;align-items:center;gap:10px}
-.card h3 .icon{font-size:20px}
-.checklist{list-style:none;display:flex;flex-direction:column;gap:10px}
-.checklist li{display:flex;align-items:center;gap:10px;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05)}
-.checklist li .check{width:20px;height:20px;border-radius:50%;border:2px solid var(--muted);display:flex;align-items:center;justify-content:center;font-size:10pt;cursor:pointer;transition:all 0.3s}
-.checklist li .check.done{background:var(--success);border-color:var(--success)}
-.college-list{display:flex;flex-direction:column;gap:10px}
-.college{display:flex;justify-content:space-between;align-items:center;padding:12px;border-radius:8px;background:rgba(255,255,255,0.05)}
-.college .name{font-weight:600}
-.college .rate{color:var(--accent);font-weight:700}
-.timeline{display:flex;flex-direction:column;gap:12px}
-.timeline-item{display:flex;gap:12px;align-items:flex-start}
-.timeline-item .dot{width:12px;height:12px;border-radius:50%;background:var(--secondary);margin-top:4px;flex-shrink:0}
-.timeline-item .content{flex:1}
-.timeline-item .date{font-size:9pt;color:var(--accent);font-weight:600}
-.timeline-item .text{color:var(--muted);font-size:10pt}
-.activities{display:flex;flex-direction:column;gap:10px}
-.activity{display:flex;justify-content:space-between;padding:10px;border-radius:8px;background:rgba(255,255,255,0.05)}
-.activity .name{font-weight:500}
-.activity .hours{color:var(--accent);font-weight:600}
-.btn{padding:10px 20px;border-radius:8px;border:none;font-family:inherit;font-weight:600;cursor:pointer;transition:all 0.3s}
-.btn-primary{background:var(--secondary);color:white}
-.btn-primary:hover{background:#1d4ed8}
-.footer{text-align:center;margin-top:40px;color:var(--muted);font-size:9pt}
+@import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
+:root{--purple:#7c3aed;--cyan:#06b6d4;--gold:#f59e0b;--red:#ef4444;--green:#10b981;--blue:#3b82f6;--dark:#0f0d24;--card:rgba(255,255,255,.08);}
+body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow:hidden;height:100vh;width:100vw;user-select:none;}
+.screen{display:none;position:absolute;top:0;left:0;width:100%;height:100%;flex-direction:column;align-items:center;justify-content:center;z-index:5;}
+.screen.active{display:flex;}
+.btn{padding:14px 28px;border:none;border-radius:14px;font-family:'Fredoka',sans-serif;font-size:1em;font-weight:600;cursor:pointer;transition:transform .1s;margin:5px;}
+.btn:active{transform:scale(.94);}
+.btn-p{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,.5);}
+.btn-g{background:linear-gradient(135deg,#f59e0b,#fbbf24);color:#1e1b4b;}
+.btn-r{background:linear-gradient(135deg,#ef4444,#f87171);color:#fff;}
+.btn-o{background:transparent;border:2px solid rgba(255,255,255,.25);color:#fff;}
+.btn-sm{padding:10px 18px;font-size:.85em;}
+.card{background:var(--card);border:1px solid rgba(255,255,255,.1);border-radius:24px;padding:25px;width:92%;max-width:400px;backdrop-filter:blur(10px);}
+.card h2{text-align:center;margin-bottom:15px;font-size:1.3em;}
+.in{width:100%;padding:13px 16px;border:2px solid rgba(255,255,255,.15);border-radius:12px;background:rgba(255,255,255,.05);color:#fff;font-family:'Fredoka',sans-serif;font-size:1em;text-align:center;margin:8px 0;outline:none;}
+.in:focus{border-color:var(--purple);}
+.in::placeholder{color:rgba(255,255,255,.25);}
+.err{color:var(--red);font-size:.8em;text-align:center;margin:5px 0;}
+.social-btn{display:flex;align-items:center;justify-content:center;gap:10px;width:100%;padding:12px;border-radius:12px;margin:5px 0;font-weight:600;cursor:pointer;border:none;font-size:.9em;}
+.social-btn:active{transform:scale(.97);}
+.btn-google{background:#fff;color:#333;}
+.btn-apple{background:#000;color:#fff;border:1px solid #333;}
+.grade-btn{display:flex;flex-direction:column;align-items:center;padding:15px;border-radius:16px;border:2px solid rgba(255,255,255,.1);background:var(--card);color:#fff;width:100%;margin:5px 0;cursor:pointer;}
+.grade-btn:active{transform:scale(.97);}
+.grade-btn.selected{border-color:var(--gold);background:rgba(245,158,11,.2);}
+.subject-btn{display:flex;align-items:center;padding:18px;border-radius:16px;border:2px solid rgba(255,255,255,.1);background:var(--card);color:#fff;width:100%;margin:8px 0;cursor:pointer;gap:15px;}
+.subject-btn:active{transform:scale(.97);}
+.subject-btn .icon{font-size:2em;}
+.subject-btn .info{display:flex;flex-direction:column;}
+.subject-btn .name{font-weight:700;font-size:1.1em;}
+.subject-btn .desc{font-size:.75em;opacity:.7;}
+.subject-btn.math{border-color:#3b82f6;}
+.subject-btn.math:active{background:#3b82f6;}
+.subject-btn.english{border-color:#10b981;}
+.subject-btn.english:active{background:#10b981;}
+.subject-btn.science{border-color:#f59e0b;}
+.subject-btn.science:active{background:#f59e0b;}
+.subject-btn.geography{border-color:#8b5cf6;}
+.subject-btn.geography:active{background:#8b5cf6;}
+/* MAP & BATTLE styles remain */
+#map{background:linear-gradient(180deg,#0a1628,#1a2744);z-index:5;}
+.hud{position:fixed;top:0;left:0;width:100%;padding:8px 12px;display:flex;justify-content:space-between;align-items:center;z-index:50;background:linear-gradient(180deg,rgba(0,0,0,.7),transparent);}
+.bar-c{width:80px;height:8px;background:rgba(255,255,255,.1);border-radius:4px;overflow:hidden;}
+.bar-f{height:100%;border-radius:4px;transition:width .3s;}
+.bar-hp{background:linear-gradient(90deg,#ef4444,#f87171);}
+.bar-mp{background:linear-gradient(90deg,#3b82f6,#60a5fa);}
+.bar-xp{background:linear-gradient(90deg,#f59e0b,#fbbf24);}
+.map-wrap{position:relative;width:100%;height:100%;overflow:hidden;}
+.map-canvas{position:relative;width:100%;height:100%;}
+.zone{position:absolute;text-align:center;cursor:pointer;transition:transform .3s;z-index:10;}
+.zone:active{transform:translate(-50%,-50%) scale(.95)!important;}
+.zone-i{font-size:2em;filter:drop-shadow(0 2px 8px rgba(0,0,0,.5));}
+.zone-n{font-size:.7em;font-weight:600;text-shadow:0 2px 4px rgba(0,0,0,.8);white-space:nowrap;}
+.zone-l{font-size:.55em;opacity:.7;}
+.zone.locked{opacity:.4;cursor:default;}
+.map-p{position:absolute;font-size:1.8em;transition:left .6s ease,top .6s ease;z-index:20;filter:drop-shadow(0 4px 10px rgba(0,0,0,.6));}
+.map-nav{position:fixed;bottom:0;left:0;width:100%;padding:10px;display:flex;justify-content:center;gap:8px;z-index:50;background:linear-gradient(0deg,rgba(0,0,0,.7),transparent);}
+#battle{background:linear-gradient(180deg,#1a0a2e,#2e1a4a);z-index:10;}
+.mon{font-size:5em;text-align:center;margin:10px 0;filter:drop-shadow(0 4px 20px rgba(0,0,0,.6));max-width:100%;}
+.mon-hp-c{width:80%;max-width:300px;height:14px;background:rgba(255,255,255,.1);border-radius:7px;margin:0 auto 15px;overflow:hidden;}
+.mon-hp-f{height:100%;background:linear-gradient(90deg,#ef4444,#f87171);transition:width .3s;}
+.spell-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:10px;max-width:320px;width:90%;margin:0 auto;}
+.spell{background:var(--card);border:2px solid rgba(255,255,255,.15);border-radius:16px;padding:14px;text-align:center;cursor:pointer;transition:all .2s;}
+.spell:active{transform:scale(.95);border-color:var(--gold);}
+.spell .s-icon{font-size:1.8em;}
+.spell .s-name{font-size:.8em;font-weight:600;margin-top:3px;}
+.spell .s-cost{font-size:.65em;opacity:.6;}
+.spell.disabled{opacity:.3;pointer-events:none;}
+.q-card{background:var(--card);border:1px solid rgba(255,255,255,.15);border-radius:20px;padding:20px;width:92%;max-width:380px;margin:10px 0;}
+.q-text{font-size:1.1em;text-align:center;margin-bottom:15px;}
+.q-opts{display:grid;gap:8px;}
+.q-opt{background:rgba(255,255,255,.08);border:2px solid rgba(255,255,255,.15);border-radius:12px;padding:12px;cursor:pointer;transition:all .2s;text-align:center;}
+.q-opt:active{transform:scale(.97);}
+.q-opt.correct{background:rgba(16,185,129,.3)!important;border-color:var(--green)!important;}
+.q-opt.wrong{background:rgba(239,68,68,.3)!important;border-color:var(--red)!important;}
+.q-timer{width:100%;height:4px;background:rgba(255,255,255,.1);border-radius:2px;margin-top:10px;}
+.q-timer-f{height:100%;background:var(--gold);border-radius:2px;transition:width .1s linear;}
+/* Results, Shop, Pets */
+.results{background:linear-gradient(180deg,#0f172a,#1e293b);justify-content:center;z-index:15;}
+.res-card{background:var(--card);border-radius:24px;padding:30px;width:90%;max-width:350px;text-align:center;}
+.res-row{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.1);}
+
+/* Enhanced Graphics */
+@keyframes float{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes glow{0%,100%{box-shadow:0 0 5px rgba(124,58,237,.5)}50%{box-shadow:0 0 25px rgba(124,58,237,.8),0 0 50px rgba(124,58,237,.4)}}
+@keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
+@keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes slideUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
+@keyframes sparkle{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1)}}
+@keyframes monsterIdle{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-5px) rotate(-2deg)}75%{transform:translateY(-3px) rotate(2deg)}}
+@keyframes attackSlash{0%{transform:translateX(-100px) rotate(-45deg);opacity:0}50%{transform:translateX(0) rotate(0deg);opacity:1}100%{transform:translateX(100px) rotate(45deg);opacity:0}}
+@keyframes damageFlash{0%,100%{filter:brightness(1)}50%{filter:brightness(2) saturate(0)}}
+@keyframes xpFill{from{width:0}to{width:100%}}
+@keyframes coinSpin{0%{transform:rotateY(0deg)}100%{transform:rotateY(360deg)}}
+@keyframes starFloat{0%{transform:translateY(100vh) rotate(0deg);opacity:0}10%{opacity:1}90%{opacity:1}100%{transform:translateY(-100vh) rotate(720deg);opacity:0}}
+@keyframes breathe{0%,100%{transform:scale(1)}50%{transform:scale(1.03)}}
+@keyframes borderGlow{0%,100%{border-color:rgba(124,58,237,.3)}50%{border-color:rgba(124,58,237,.8)}}
+
+/* Canvas for particles */
+#particle-canvas{position:fixed;top:0;left:0;width:100%;height:100%;pointer-events:none;z-index:0;}
+
+/* Enhanced Home Screen */
+#home{background:linear-gradient(135deg,#0f0d24 0%,#1a1145 50%,#0f2027 100%);overflow:hidden;}
+.home-title{animation:breathe 3s ease-in-out infinite;}
+.home-wizard{font-size:5em;animation:float 3s ease-in-out infinite;filter:drop-shadow(0 10px 30px rgba(124,58,237,.5));}
+.home-subtitle{background:linear-gradient(90deg,#fbbf24,#f59e0b,#ef4444,#f59e0b,#fbbf24);background-size:200%;-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:shimmer 3s linear infinite;}
+@keyframes shimmer{0%{background-position:200% center}100%{background-position:-200% center}}
+
+/* Enhanced Buttons */
+.btn{position:relative;overflow:hidden;transition:all .2s ease;}
+.btn::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.2);border-radius:50%;transform:translate(-50%,-50%);transition:width .3s,height .3s;}
+.btn:active::after{width:200px;height:200px;}
+.btn-p{animation:glow 2s ease-in-out infinite;}
+.btn-g{background:linear-gradient(135deg,#f59e0b,#fbbf24);box-shadow:0 4px 15px rgba(245,158,11,.4);}
+
+/* Enhanced Cards */
+.card{background:linear-gradient(135deg,rgba(255,255,255,.1),rgba(255,255,255,.05));backdrop-filter:blur(20px);border:1px solid rgba(255,255,255,.15);border-radius:24px;padding:25px;width:92%;max-width:400px;animation:fadeIn .5s ease;box-shadow:0 8px 32px rgba(0,0,0,.3);}
+
+/* Enhanced Social Buttons */
+.social-btn{transition:all .2s ease;box-shadow:0 2px 10px rgba(0,0,0,.2);}
+.social-btn:hover{transform:translateY(-2px);box-shadow:0 4px 15px rgba(0,0,0,.3);}
+
+/* Enhanced Grade Buttons */
+.grade-btn{transition:all .2s ease;animation:fadeIn .3s ease backwards;}
+.grade-btn:nth-child(1){animation-delay:.05s}
+.grade-btn:nth-child(2){animation-delay:.1s}
+.grade-btn:nth-child(3){animation-delay:.15s}
+.grade-btn:nth-child(4){animation-delay:.2s}
+.grade-btn:nth-child(5){animation-delay:.25s}
+.grade-btn:nth-child(6){animation-delay:.3s}
+.grade-btn.selected{animation:borderGlow 1.5s ease-in-out infinite;border-color:var(--gold);background:rgba(245,158,11,.2);}
+
+/* Enhanced Subject Buttons */
+.subject-btn{transition:all .2s ease;position:relative;overflow:hidden;}
+.subject-btn::before{content:'';position:absolute;top:0;left:-100%;width:100%;height:100%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.1),transparent);transition:left .5s;}
+.subject-btn:hover::before{left:100%;}
+.subject-btn .icon{transition:transform .3s;}
+.subject-btn:hover .icon{transform:scale(1.2) rotate(10deg);}
+
+/* Enhanced Map */
+#map{background:linear-gradient(180deg,#0a1628 0%,#1a2744 50%,#0f2027 100%);}
+.zone{transition:all .3s ease;animation:float 4s ease-in-out infinite;}
+.zone:hover{transform:translate(-50%,-50%) scale(1.1)!important;z-index:15;}
+.zone.locked{filter:grayscale(1);opacity:.4;}
+.zone.locked:hover{transform:translate(-50%,-50%) scale(1)!important;}
+.map-p{filter:drop-shadow(0 4px 15px rgba(124,58,237,.6));transition:left .4s ease,top .4s ease;}
+
+/* Enhanced Battle */
+#battle{background:linear-gradient(180deg,#1a0a2e 0%,#2e1a4a 50%,#1a0a2e 100%);}
+.mon{animation:monsterIdle 2s ease-in-out infinite;font-size:5em;filter:drop-shadow(0 8px 25px rgba(0,0,0,.7));}
+.mon.hit{animation:damageFlash .3s ease!important;}
+.mon.attacking{animation:attackSlash .5s ease!important;}
+
+/* Enhanced Spells */
+.spell{transition:all .2s ease;position:relative;overflow:hidden;}
+.spell:hover{transform:translateY(-3px);border-color:var(--gold);box-shadow:0 4px 15px rgba(245,158,11,.3);}
+.spell .s-icon{transition:transform .2s;}
+.spell:hover .s-icon{transform:scale(1.2);}
+
+/* Enhanced Question Card */
+.q-card{animation:slideUp .4s ease;box-shadow:0 8px 32px rgba(0,0,0,.4);border:1px solid rgba(255,255,255,.2);}
+.q-opt{transition:all .15s ease;position:relative;overflow:hidden;}
+.q-opt:hover{transform:translateY(-2px);border-color:rgba(255,255,255,.4);background:rgba(255,255,255,.12);}
+.q-opt.correct{animation:pulse .5s ease;}
+.q-opt.wrong{animation:shake .3s ease;}
+
+/* Enhanced Results */
+.res-card{animation:slideUp .5s ease;box-shadow:0 8px 40px rgba(0,0,0,.5);}
+#r-icon{animation:float 2s ease-in-out infinite;}
+.res-row{transition:background .2s;}
+.res-row:hover{background:rgba(255,255,255,.05);}
+
+/* Floating decorations */
+.float-deco{position:fixed;pointer-events:none;z-index:1;opacity:.15;font-size:2em;}
+
+
+/* Enhanced Monster Variety */
+.mon-boss{font-size:6em;filter:drop-shadow(0 8px 30px rgba(239,68,68,.6));animation:monsterIdle 1.5s ease-in-out infinite;}
+.mon-elite{filter:drop-shadow(0 6px 20px rgba(245,158,11,.5));}
+
+/* Attack Effects */
+.attack-fire{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:5em;z-index:100;animation:sparkle .5s ease forwards;pointer-events:none;}
+.attack-ice{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:5em;z-index:100;animation:sparkle .5s ease forwards;pointer-events:none;}
+.attack-lightning{position:fixed;top:50%;left:50%;transform:translate(-50%,-50%);font-size:5em;z-index:100;animation:sparkle .5s ease forwards;pointer-events:none;}
+
+/* Victory Animation */
+@keyframes victoryBounce{0%,100%{transform:translateY(0) scale(1)}25%{transform:translateY(-20px) scale(1.1)}50%{transform:translateY(0) scale(1)}75%{transform:translateY(-10px) scale(1.05)}}
+.victory-bounce{animation:victoryBounce 1s ease-in-out infinite;}
+
+/* Level Up Effect */
+@keyframes levelUp{0%{transform:scale(1);opacity:1}50%{transform:scale(2);opacity:0.8}100%{transform:scale(1);opacity:1}}
+.level-up{animation:levelUp .8s ease;color:#fbbf24;font-size:1.5em;font-weight:700;}
+
+/* Zone specific backgrounds */
+.zone-forest{background:radial-gradient(circle,rgba(16,185,129,.2),transparent);}
+.zone-dungeon{background:radial-gradient(circle,rgba(124,58,237,.2),transparent);}
+.zone-castle{background:radial-gradient(circle,rgba(245,158,11,.2),transparent);}
+.zone-ocean{background:radial-gradient(circle,rgba(6,182,212,.2),transparent);}
+.zone-volcano{background:radial-gradient(circle,rgba(239,68,68,.2),transparent);}
+
+/* Enhanced HUD */
+.hud{backdrop-filter:blur(10px);border-bottom:1px solid rgba(255,255,255,.1);}
+.bar-c{border:1px solid rgba(255,255,255,.15);box-shadow:inset 0 1px 3px rgba(0,0,0,.3);}
+.bar-f{box-shadow:0 0 8px currentColor;}
+
+/* Floating damage numbers */
+.dmg-num{position:fixed;font-weight:700;font-size:1.2em;z-index:200;pointer-events:none;animation:dmgFloat 1s ease forwards;}
+@keyframes dmgFloat{0%{opacity:1;transform:translateY(0) scale(1)}100%{opacity:0;transform:translateY(-60px) scale(1.5);}}
+
+/* Enhanced question reveal */
+.q-text{animation:fadeIn .5s ease;}
+.q-opt{animation:slideUp .3s ease backwards;}
+.q-opt:nth-child(1){animation-delay:.1s}
+.q-opt:nth-child(2){animation-delay:.2s}
+.q-opt:nth-child(3){animation-delay:.3s}
+.q-opt:nth-child(4){animation-delay:.4s}
+
+/* Loading shimmer for cards */
+.loading{background:linear-gradient(90deg,transparent 0%,rgba(255,255,255,.1) 50%,transparent 100%);background-size:200% 100%;animation:loadShimmer 1.5s infinite;}
+@keyframes loadShimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+
+
+/* Enhanced battle background */
+@keyframes battleBgShift{0%{background-position:0% 50%}50%{background-position:100% 50%}100%{background-position:0% 50%}}
+#battle{background:linear-gradient(-45deg,#1a0a2e,#2e1a4a,#0a1628,#2e1a4a);background-size:400% 400%;animation:battleBgShift 8s ease infinite}
+
+/* Floating emojis */
+@keyframes floatEmoji{0%{transform:translateY(0) rotate(0deg);opacity:.3}50%{transform:translateY(-30px) rotate(15deg);opacity:.6}100%{transform:translateY(-60px) rotate(-15deg);opacity:0}}
+.float-emoji{position:absolute;font-size:1.2em;animation:floatEmoji 3s ease-in-out infinite;pointer-events:none;z-index:1}
+
+/* Map floating decorations */
+@keyframes mapFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+.zone{animation:mapFloat 4s ease-in-out infinite}
+.zone:nth-child(2){animation-delay:.5s}
+.zone:nth-child(3){animation-delay:1s}
+.zone:nth-child(4){animation-delay:1.5s}
+.zone:nth-child(5){animation-delay:2s}
+
+/* Enhanced HUD pulse */
+@keyframes hudPulse{0%,100%{box-shadow:0 0 10px rgba(59,130,246,.3)}50%{box-shadow:0 0 25px rgba(59,130,246,.6)}}
+.hud{animation:hudPulse 3s ease-in-out infinite}
+
+/* Gold coin spin */
+@keyframes coinShine{0%{text-shadow:0 0 5px rgba(245,158,11,.3)}50%{text-shadow:0 0 15px rgba(245,158,11,.8),0 0 30px rgba(245,158,11,.4)}100%{text-shadow:0 0 5px rgba(245,158,11,.3)}}
+#h-gd{animation:coinShine 2s ease-in-out infinite}
+
+/* Monster entrance */
+@keyframes monEntrance{0%{transform:scale(0) rotate(-180deg);opacity:0}60%{transform:scale(1.2) rotate(10deg);opacity:1}100%{transform:scale(1) rotate(0deg);opacity:1}}
+.mon-enter{animation:monEntrance .6s ease forwards}
+
+/* Spell card hover glow */
+.spell:hover{box-shadow:0 0 20px rgba(245,158,11,.5);transform:translateY(-3px) scale(1.02)}
+.spell .s-icon{transition:transform .3s}
+.spell:hover .s-icon{transform:scale(1.3) rotate(10deg)}
+
+/* Victory screen confetti */
+@keyframes confettiFall{0%{transform:translateY(-100vh) rotate(0deg);opacity:1}100%{transform:translateY(100vh) rotate(720deg);opacity:0}}
+.confetti{position:fixed;font-size:1.5em;animation:confettiFall 3s linear forwards;pointer-events:none;z-index:100}
+
+/* XP bar glow */
+@keyframes xpGlow{0%,100%{box-shadow:0 0 3px rgba(245,158,11,.4)}50%{box-shadow:0 0 12px rgba(245,158,11,.9)}}
+.bar-xp{animation:xpGlow 1.5s ease-in-out infinite}
+
+/* Button ripple effect */
+.btn-p{position:relative;overflow:hidden}
+.btn-p::after{content:'';position:absolute;top:50%;left:50%;width:0;height:0;background:rgba(255,255,255,.2);border-radius:50%;transform:translate(-50%,-50%);transition:width .4s,height .4s}
+.btn-p:active::after{width:200px;height:200px}
+
+/* Map background stars */
+@keyframes starTwinkle{0%,100%{opacity:.2}50%{opacity:.8}}
+.map-star{position:absolute;width:3px;height:3px;background:#fff;border-radius:50%;animation:starTwinkle 2s ease-in-out infinite}
+
+
+/* Pet animation */
+@keyframes petBounce{0%,100%{transform:translateY(0)}50%{transform:translateY(-5px)}}
+#b-player span{animation:petBounce 1.5s ease-in-out infinite}
+
+/* Attack flash */
+@keyframes attackFlash{0%{filter:brightness(3)}50%{filter:brightness(1)}100%{filter:brightness(3)}}
+.attack-flash{animation:attackFlash .2s ease 2}
+
+
+/* Achievements */
+.ach-card{background:var(--card);border:2px solid var(--border);border-radius:12px;padding:12px;text-align:center;transition:all .2s;}
+.ach-card.unlocked{border-color:var(--gold);background:rgba(245,158,11,.15);}
+.ach-card .ach-icon{font-size:2em;margin-bottom:5px;}
+.ach-card .ach-name{font-size:.85em;font-weight:600;}
+.ach-card .ach-desc{font-size:.7em;opacity:.7;}
+.ach-card.locked{opacity:.4;}
+@keyframes achieveUnlock{0%{transform:scale(0);opacity:0}50%{transform:scale(1.3);opacity:1}100%{transform:scale(1);opacity:1}}
+.ach-unlock{animation:achieveUnlock .5s ease forwards;}
+
+
+/* Walking Map */
+.walk-controls{display:flex;justify-content:center;gap:8px;margin-top:10px}
+.walk-btn{width:50px;height:50px;border:none;border-radius:12px;font-size:1.5em;cursor:pointer;background:rgba(255,255,255,.1);color:#fff;transition:all .1s}
+.walk-btn:active{transform:scale(.9);background:rgba(255,255,255,.3)}
+.walk-btn.up{grid-column:2}
+.walk-btn.left{grid-column:1;grid-row:2}
+.walk-btn.right{grid-column:3;grid-row:2}
+.walk-btn.down{grid-column:2;grid-row:2}
+.walk-obstacle{position:absolute;font-size:1.5em;z-index:2}
+.walk-npc{position:absolute;font-size:1.8em;z-index:8;cursor:pointer}
+.walk-npc:hover::after{content:'💬';position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.8em}
+
 </style>
 </head>
 <body>
+<canvas id="particle-canvas"></canvas>
 
-<div class="sidebar">
-<div class="logo"><span>🎓</span> UniPrep</div>
-<ul class="nav">
-<li><a href="index.html" class="active"><span class="icon">📊</span> Dashboard</a></li>
-<li><a href="timeline.html"><span class="icon">📅</span> Timeline</a></li>
-<li><a href="gpa-tracker.html"><span class="icon">📈</span> GPA Tracker</a></li>
-<li><a href="sat-prep.html"><span class="icon">📝</span> SAT/ACT Prep</a></li>
-<li><a href="activities.html"><span class="icon">🎭</span> Activities</a></li>
-<li><a href="essay-guide.html"><span class="icon">✍️</span> Essay Guide</a></li>
-<li><a href="colleges.html"><span class="icon">🎯</span> College Match</a></li>
-<li><a href="checklist.html"><span class="icon">✅</span> Checklist</a></li>
-</ul>
-</div>
-
-<div class="main">
-<div class="header">
-<h1>Dashboard</h1>
-<div class="user">
-<div class="avatar">A</div>
-<span>Arfeen's Student</span>
-</div>
-</div>
-
-<div class="welcome">
-<h2>🎓 Welcome to Your College Prep Journey</h2>
-<p>Your one-stop platform to prepare for admission to top universities</p>
+<!-- HOME (Login/Signup) -->
+<div id="home" class="screen active">
+  <div style="text-align:center;margin-bottom:30px;">
+    <div class="home-wizard">🧙‍♂️</div>
+    <h1 class="home-title" style="font-size:2.2em;">🧙‍♂️ QuestMind ⚡</h1>
+    <div style="color:rgba(255,255,255,.5);font-size:.9em;">Wizard Academy</div>
+  </div>
+  <div id="auth-options">
+    <button class="btn btn-p" style="width:200px;" onclick="showScreen('login-screen')">🔑 Login</button>
+    <button class="btn btn-g" style="width:200px;margin-top:10px;" onclick="showScreen('signup-screen')">📝 Sign Up</button>
+  </div>
+  <div id="logged-in-options" style="display:none;">
+    <div style="text-align:center;margin-bottom:20px;">
+      <span style="font-size:1.5em">🧙</span><br>
+      <span id="display-name" style="font-weight:700;color:var(--gold);font-size:1.2em;"></span><br>
+      <span id="user-grade" style="font-size:.8em;opacity:.7;"></span>
+    </div>
+    <button class="btn btn-p" style="width:200px;" onclick="showScreen('subjects')">⚡ Start Adventure</button>
+    <button class="btn btn-o btn-sm" style="width:200px;margin-top:10px;" onclick="showAchievements()">🏆 Achievements</button>
+    <button class="btn btn-o btn-sm" style="width:200px;margin-top:10px;" onclick="doLogout()">🚪 Logout</button>
+  </div>
 </div>
 
-<div class="quote">
-<div class="text">"The future belongs to those who believe in the beauty of their dreams."</div>
-<div class="author">— Eleanor Roosevelt</div>
+<!-- LOGIN SCREEN -->
+<div id="login-screen" class="screen">
+  <div class="card">
+    <h2>🔑 Login</h2>
+    <button class="social-btn btn-google" onclick="socialLogin('google')">🔵 Continue with Google</button>
+    <button class="social-btn btn-apple" onclick="socialLogin('apple')">⚫ Continue with Apple</button>
+    <div style="text-align:center;margin:15px 0;opacity:.5;font-size:.85em;">— or login with username —</div>
+    <input class="in" id="login-user" placeholder="Username" maxlength="20">
+    <input class="in" id="login-pass" type="password" placeholder="Password" maxlength="20">
+    <div id="login-err" class="err"></div>
+    <button class="btn btn-p" style="width:100%;margin-top:10px;" onclick="doLogin()">Login</button>
+    <button class="btn btn-o btn-sm" style="width:100%;margin-top:5px;" onclick="showScreen('home')">← Back</button>
+  </div>
 </div>
 
-<div class="stats">
-<div class="stat">
-<div class="label">Current GPA</div>
-<div class="value">3.85</div>
-<div class="change up">↑ 0.05 from last semester</div>
-<div class="progress-bar"><div class="fill" style="width:96%"></div></div>
-</div>
-<div class="stat">
-<div class="label">SAT Score</div>
-<div class="value">1450</div>
-<div class="change up">↑ 50 points</div>
-<div class="progress-bar"><div class="fill" style="width:91%"></div></div>
-</div>
-<div class="stat">
-<div class="label">Activity Hours</div>
-<div class="value">320</div>
-<div class="change up">↑ 15 this week</div>
-<div class="progress-bar"><div class="fill" style="width:64%"></div></div>
-</div>
-<div class="stat">
-<div class="label">College Readiness</div>
-<div class="value">72%</div>
-<div class="change up">↑ 8% this month</div>
-<div class="progress-bar"><div class="fill" style="width:72%"></div></div>
-</div>
+<!-- SIGNUP SCREEN -->
+<div id="signup-screen" class="screen">
+  <div class="card">
+    <h2>📝 Create Account</h2>
+    <button class="social-btn btn-google" onclick="socialLogin('google')">🔵 Continue with Google</button>
+    <button class="social-btn btn-apple" onclick="socialLogin('apple')">⚫ Continue with Apple</button>
+    <div style="text-align:center;margin:15px 0;opacity:.5;font-size:.85em;">— or create with username —</div>
+    <input class="in" id="reg-user" placeholder="Choose username (3+ chars)" maxlength="20">
+    <input class="in" id="reg-pass" type="password" placeholder="Password (4+ chars)" maxlength="20">
+    <input class="in" id="reg-pass2" type="password" placeholder="Confirm password" maxlength="20">
+    <div id="reg-err" class="err"></div>
+    <button class="btn btn-p" style="width:100%;margin-top:10px;" onclick="doSignup()">Create Account</button>
+    <button class="btn btn-o btn-sm" style="width:100%;margin-top:5px;" onclick="showScreen('home')">← Back</button>
+  </div>
 </div>
 
-<div class="grid">
-<div class="card">
-<h3><span class="icon">📅</span> Upcoming Deadlines</h3>
-<div class="timeline">
-<div class="timeline-item"><div class="dot"></div><div class="content"><div class="date">Oct 1</div><div class="text">FAFSA opens — submit early!</div></div></div>
-<div class="timeline-item"><div class="dot"></div><div class="content"><div class="date">Nov 1</div><div class="text">Early Decision/Action deadlines</div></div></div>
-<div class="timeline-item"><div class="dot"></div><div class="content"><div class="date">Dec 1</div><div class="text">Regular Decision essays due</div></div></div>
-<div class="timeline-item"><div class="dot"></div><div class="content"><div class="date">Jan 1</div><div class="text">Regular Decision deadlines</div></div></div>
-</div>
-</div>
-
-<div class="card">
-<h3><span class="icon">🎯</span> Target Schools</h3>
-<div class="college-list">
-<div class="college"><span class="name">Harvard University</span><span class="rate">3.4%</span></div>
-<div class="college"><span class="name">Stanford University</span><span class="rate">3.7%</span></div>
-<div class="college"><span class="name">MIT</span><span class="rate">3.9%</span></div>
-<div class="college"><span class="name">Yale University</span><span class="rate">4.4%</span></div>
-<div class="college"><span class="name">Princeton University</span><span class="rate">3.7%</span></div>
-</div>
+<!-- DISPLAY NAME SCREEN (After signup) -->
+<div id="display-screen" class="screen">
+  <div class="card">
+    <h2>✨ Choose Your Name</h2>
+    <p style="text-align:center;font-size:.85em;opacity:.7;margin-bottom:15px;">This is what other players will see</p>
+    <input class="in" id="display-input" placeholder="Display name (optional)" maxlength="15">
+    <button class="btn btn-g" style="width:100%;margin-top:10px;" onclick="saveDisplayName()">Continue →</button>
+    <button class="btn btn-o btn-sm" style="width:100%;margin-top:5px;" onclick="saveDisplayName()">Skip — use my username</button>
+  </div>
 </div>
 
-<div class="card">
-<h3><span class="icon">✅</span> This Week's Tasks</h3>
-<ul class="checklist">
-<li><div class="check done">✓</div><span>Complete SAT practice test #4</span></li>
-<li><div class="check"></div><span>Draft Common App essay introduction</span></li>
-<li><div class="check"></div><span>Research 3 safety schools</span></li>
-<li><div class="check"></div><span>Schedule teacher recommendation meeting</span></li>
-<li><div class="check done">✓</div><span>Update activity hours log</span></li>
-</ul>
+<!-- GRADE SELECTION -->
+<div id="grade-screen" class="screen">
+  <div class="card">
+    <h2>📚 What Grade Are You In?</h2>
+    <p style="text-align:center;font-size:.8em;opacity:.7;margin-bottom:15px;">Questions will match your level</p>
+    <div id="grade-buttons" style="display:flex;flex-direction:column;gap:5px;"></div>
+    <button class="btn btn-o btn-sm" style="width:100%;margin-top:15px;" onclick="showScreen('display-screen')">← Back</button>
+  </div>
 </div>
 
-<div class="card">
-<h3><span class="icon">🎭</span> Top Activities</h3>
-<div class="activities">
-<div class="activity"><span class="name">🏆 Varsity Debate Team (Captain)</span><span class="hours">150 hrs</span></div>
-<div class="activity"><span class="name">🔬 Research Internship</span><span class="hours">80 hrs</span></div>
-<div class="activity"><span class="name">🎨 Art Club (President)</span><span class="hours">60 hrs</span></div>
-<div class="activity"><span class="name">🤝 Community Tutoring</span><span class="hours">30 hrs</span></div>
-</div>
-</div>
+<!-- SUBJECT SELECTION -->
+<div id="subjects" class="screen">
+  <div style="text-align:center;padding:20px;width:100%;max-width:400px;margin:0 auto;">
+    <h2 style="margin-bottom:20px;">📚 Choose Your Quest</h2>
+    <button class="subject-btn math" onclick="selectSubject('math')">
+      <span class="icon">🔢</span>
+      <div class="info"><span class="name">Math World</span><span class="desc">Numbers, Algebra, Geometry</span></div>
+    </button>
+    <button class="subject-btn english" onclick="selectSubject('english')">
+      <span class="icon">📖</span>
+      <div class="info"><span class="name">English World</span><span class="desc">Grammar, Vocabulary, Reading</span></div>
+    </button>
+    <button class="subject-btn science" onclick="selectSubject('science')">
+      <span class="icon">🔬</span>
+      <div class="info"><span class="name">Science World</span><span class="desc">Biology, Chemistry, Physics</span></div>
+    </button>
+    <button class="subject-btn geography" onclick="selectSubject('geography')">
+      <span class="icon">🌍</span>
+      <div class="info"><span class="name">Geography World</span><span class="desc">Countries, Capitals, Continents</span></div>
+    </button>
+    <button class="btn btn-o" style="margin-top:20px;" onclick="showScreen('home')">← Back</button>
+  </div>
 </div>
 
-<div class="footer">UniPrep by PlanByInnovations — Your Path to Top Universities 🎓</div>
+<!-- MAP -->
+<div id="map" class="screen">
+  <div class="hud">
+    <div style="display:flex;align-items:center;gap:8px;">
+      <span style="font-size:1.5em">🧙</span>
+      <div>
+        <div style="font-weight:600;font-size:.9em;" id="h-nm">Wizard</div>
+        <div style="display:flex;align-items:center;gap:4px"><span style="font-size:.65em">❤️</span><div class="bar-c"><div class="bar-f bar-hp" id="h-hp" style="width:100%"></div></div></div>
+        <div style="display:flex;align-items:center;gap:4px"><span style="font-size:.65em">💧</span><div class="bar-c"><div class="bar-f bar-mp" id="h-mp" style="width:100%"></div></div></div>
+      </div>
+    </div>
+    <div style="text-align:right;">
+      <div style="font-weight:700;color:var(--gold);" id="h-gd">💰 0</div>
+      <div style="font-size:.75em;" id="h-lv">Lv.1</div>
+    </div>
+  </div>
+  <div class="map-wrap">
+    <div class="map-canvas" id="map-canvas"></div>
+    <div class="map-p" id="map-p">🧙‍♂️</div>
+    <div style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:.8em;opacity:.5;">Tap a zone to battle!</div>
+  </div>
+  <div class="map-nav">
+    <button class="btn btn-o btn-sm" onclick="showScreen('subjects')">📚 Change Mode</button>
+    <button class="btn btn-o btn-sm" onclick="showBattleShop()">🛒 Shop</button>
+    <button class="btn btn-o btn-sm" onclick="showBattlePets()">🐾 Pets</button>
+    <button class="btn btn-o btn-sm" onclick="showScreen('home')">🏠 Menu</button>
+  </div>
 </div>
+
+
+<!-- EXPLORATION -->
+<!-- BATTLE -->
+<div id="battle" class="screen">
+  <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 20px;">
+    <!-- Back Button -->
+    <div style="position:absolute;top:10px;left:10px;">
+      <button class="btn btn-o btn-sm" onclick="fleeBattle()">← Back</button>
+    </div>
+    <!-- Player Character -->
+    <div style="text-align:center;min-width:120px;">
+      <div id="b-player" style="font-size:4em;filter:drop-shadow(0 4px 10px rgba(59,130,246,.5));transition:all .3s;">🧙‍♂️</div>
+      <div style="font-weight:600;font-size:.85em;margin-bottom:3px;" id="b-player-nm">Wizard</div>
+      <div style="display:flex;align-items:center;gap:4px;justify-content:center;margin-bottom:2px;">
+        <span style="font-size:.7em">❤️</span>
+        <div class="bar-c" style="width:70px;height:10px;"><div class="bar-f bar-hp" id="b-player-hp" style="width:100%"></div></div>
+        <span style="font-size:.65em" id="b-player-hp-text">100</span>
+      </div>
+      <div style="display:flex;align-items:center;gap:4px;justify-content:center;">
+        <span style="font-size:.7em">💧</span>
+        <div class="bar-c" style="width:70px;height:10px;"><div class="bar-f bar-mp" id="b-player-mp" style="width:100%"></div></div>
+        <span style="font-size:.65em" id="b-player-mp-text">50</span>
+      </div>
+      <div id="b-player-attack" style="font-size:.75em;color:var(--gold);margin-top:4px;height:18px;"></div>
+    </div>
+    
+    <!-- Monster -->
+    <div style="text-align:center;min-width:120px;">
+      <div id="b-mon" class="mon">👹</div>
+      <div style="font-weight:600;font-size:.85em;margin-bottom:3px;" id="b-mon-nm">Monster</div>
+      <div class="mon-hp-c"><div class="mon-hp-f" id="b-mon-hp" style="width:100%"></div></div>
+      <div id="b-mon-attack" style="font-size:.75em;color:var(--red);margin-top:4px;height:18px;"></div>
+    </div>
+  </div>
+  <div id="b-msg" style="font-size:.9em;text-align:center;padding:5px;margin-bottom:5px;min-height:40px;">A wild monster appears!</div>
+  <div class="q-card" id="q-card">
+    <div class="q-text" id="q-text">Loading question...</div>
+    <div class="q-opts" id="q-opts"></div>
+    <div class="q-timer"><div class="q-timer-f" id="q-timer"></div></div>
+  </div>
+  <div class="spell-grid" id="spells"></div>
+  <div style="position:fixed;bottom:10px;left:10px;">
+    <button class="btn btn-o btn-sm" onclick="fleeBattle()">🏃 Flee</button>
+  </div>
+</div>
+
+<!-- RESULTS -->
+<div id="results" class="screen results">
+  <div class="res-card">
+    <h2 id="r-title"> Victory!</h2>
+    <div style="font-size:3em;margin:10px 0;" id="r-icon">🏆</div>
+    <div class="res-row"><span>XP Earned</span><span id="r-xp" style="color:var(--gold);">+0</span></div>
+    <div class="res-row"><span>Gold Earned</span><span id="r-gold" style="color:var(--gold);">+0</span></div>
+    <div class="res-row"><span>Questions</span><span id="r-correct">0/0</span></div>
+    <button class="btn btn-p" onclick="backToMap()" style="margin-top:15px;width:100%;">🗺️ Continue</button>
+  </div>
+</div>
+
+<!-- ACHIEVEMENTS -->
+<div id="achievements" class="screen" style="background:var(--dark);overflow-y:auto;padding:20px;">
+  <div style="text-align:center;margin-bottom:20px;">
+    <h2>🏆 Achievements & Stats</h2>
+    <div style="color:var(--gold);font-weight:600;margin-top:5px;" id="ach-count">0/22 Unlocked</div>
+  </div>
+  <div style="max-width:400px;margin:0 auto;">
+    <div class="card" style="margin-bottom:15px;">
+      <h3 style="margin-bottom:8px;">📊 Your Stats</h3>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.85em;">
+        <div>🔥 Streak: <strong id="s-streak">0</strong> days</div>
+        <div>⚔️ Wins: <strong id="s-wins">0</strong></div>
+        <div>📚 Questions: <strong id="s-questions">0</strong></div>
+        <div>💰 Total Gold: <strong id="s-gold">0</strong></div>
+        <div>🏆 Level: <strong id="s-level">1</strong></div>
+        <div>🔥 Best Streak: <strong id="s-streakbest">0</strong></div>
+      </div>
+    </div>
+    <div id="ach-list" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
+    <button class="btn btn-o btn-sm" style="width:100%;margin-top:15px;" onclick="showScreen('home')">← Back</button>
+  </div>
+</div>
+
 
 <script>
-// Load saved data
-const data = JSON.parse(localStorage.getItem('uniprep') || '{}');
-if(data.name) document.querySelector('.user span').textContent = data.name;
+
+// ============ SCREEN MANAGEMENT ============
+function showScreen(id){
+  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
+  document.getElementById(id).classList.add('active');
+}
+
+// ============ BATTLE FUNCTIONS (early definition) ============
+function updateHUD(){
+  document.getElementById('b-player-hp').style.width = (S.hp/S.maxHp*100)+'%';
+  document.getElementById('b-player-hp-text').textContent = S.hp;
+  document.getElementById('b-player-mp').style.width = (S.mp/S.maxMp*100)+'%';
+  document.getElementById('b-player-mp-text').textContent = S.mp;
+}
+
+function showDmgNum(dmg, isPlayer, isCorrect){
+  // Simple damage number display - can be enhanced later
+  console.log(`Damage: ${dmg}, Player: ${isPlayer}, Correct: ${isCorrect}`);
+}
+
+function startRandomBattle() {
+  const zoneIndex = S.zone || 0;
+  spawnEnemy(zoneIndex);
+}
+
+function backToMap() {
+  showScreen("map");
+}
+
+// ============ PARTICLE SYSTEM ============
+const canvas = document.getElementById('particle-canvas');
+const ctx = canvas.getContext('2d');
+let particles = [];
+let animFrame;
+
+function resizeCanvas(){canvas.width=window.innerWidth;canvas.height=window.innerHeight;}
+window.addEventListener('resize',resizeCanvas);
+resizeCanvas();
+
+class Particle{
+  constructor(){this.reset();}
+  reset(){
+    this.x=Math.random()*canvas.width;
+    this.y=canvas.height+10;
+    this.size=Math.random()*3+1;
+    this.speedY=Math.random()*0.5+0.2;
+    this.speedX=(Math.random()-0.5)*0.3;
+    this.opacity=Math.random()*0.5+0.1;
+    this.color=['#7c3aed','#06b6d4','#f59e0b','#ef4444','#10b981','#3b82f6'][Math.floor(Math.random()*6)];
+    this.twinkle=Math.random()*Math.PI*2;
+  }
+  update(){
+    this.y-=this.speedY;
+    this.x+=this.speedX;
+    this.twinkle+=0.02;
+    this.opacity=0.1+Math.sin(this.twinkle)*0.2;
+    if(this.y<-10)this.reset();
+  }
+  draw(){
+    ctx.beginPath();
+    ctx.arc(this.x,this.y,this.size,0,Math.PI*2);
+    ctx.fillStyle=this.color;
+    ctx.globalAlpha=this.opacity;
+    ctx.fill();
+    ctx.globalAlpha=1;
+  }
+}
+
+// Create particles
+for(let i=0;i<50;i++){const p=new Particle();p.y=Math.random()*canvas.height;particles.push(p);}
+
+function animateParticles(){
+  ctx.clearRect(0,0,canvas.width,canvas.height);
+  particles.forEach(p=>{p.update();p.draw();});
+  animFrame=requestAnimationFrame(animateParticles);
+}
+animateParticles();
+
+// Battle effects
+function spawnBattleParticles(color,count){
+  const cx=canvas.width/2, cy=canvas.height/2;
+  for(let i=0;i<count;i++){
+    const p=new Particle();
+    p.x=cx+(Math.random()-0.5)*200;
+    p.y=cy+(Math.random()-0.5)*100;
+    p.speedY=Math.random()*2-1;
+    p.speedX=Math.random()*4-2;
+    p.color=color;
+    p.size=Math.random()*4+2;
+    p.opacity=0.8;
+    particles.push(p);
+  }
+  setTimeout(()=>{particles=particles.slice(0,50);},1000);
+}
+
+function screenShake(){
+  const b=document.getElementById('battle');
+  if(b){b.style.animation='shake .3s ease';setTimeout(()=>b.style.animation='',300);}
+}
+
+// ============ GAME STATE ============
+const SK = 'qm_save';
+const S = {
+  name:'Wizard',wins:0,streak:0,achievements:[],totalQuestions:0,maxStreak:0,totalGold:50,subjectsPlayed:[],itemsBought:0,highestZone:0, av:'🧙‍♂️', lv:1, xp:0, xpNeed:100,
+  hp:100, maxHp:100, mp:50, maxMp:50, atk:15, def:5,
+  gold:50, zone:0, potions:2,
+  subject:'math', grade:3,
+  username:null, displayName:null, token:null,
+  lastLogin:0
+};
+
+// ============ QUESTIONS (inline for self-contained) ============
+const Q = {
+math: {
+easy: [
+{q:"5 + 3 = ?",a:["8","7","9","6"],c:0},{q:"10 - 4 = ?",a:["6","5","7","8"],c:0},{q:"2 × 3 = ?",a:["6","5","9","4"],c:0},
+{q:"8 ÷ 2 = ?",a:["4","3","5","6"],c:0},{q:"12 + 7 = ?",a:["19","18","20","17"],c:0},{q:"15 - 9 = ?",a:["6","7","5","8"],c:0},
+{q:"3 × 4 = ?",a:["12","10","14","11"],c:0},{q:"20 ÷ 5 = ?",a:["4","3","5","6"],c:0},{q:"7 + 8 = ?",a:["15","14","16","13"],c:0},
+{q:"18 - 6 = ?",a:["12","11","13","10"],c:0},{q:"500 + 250 = ?",a:["750","650","800","700"],c:0},{q:"500 - 125 = ?",a:["375","325","425","275"],c:0},
+{q:"6 × 5 = ?",a:["30","25","35","24"],c:0},{q:"36 ÷ 6 = ?",a:["6","5","7","8"],c:0},{q:"25 + 38 = ?",a:["63","62","64","53"],c:0},
+{q:"14 - 8 = ?",a:["6","7","5","8"],c:0},{q:"4 × 7 = ?",a:["28","24","32","21"],c:0},{q:"45 ÷ 9 = ?",a:["5","4","6","7"],c:0},
+{q:"100 - 47 = ?",a:["53","43","63","57"],c:0},{q:"9 × 3 = ?",a:["27","24","30","21"],c:0},{q:"11 + 19 = ?",a:["30","29","31","20"],c:0},
+{q:"7 × 8 = ?",a:["56","48","64","49"],c:0},{q:"Half of 80 = ?",a:["40","35","45","30"],c:0},{q:"1 dozen = ?",a:["12","10","100","20"],c:0},
+{q:"Which is bigger: 15 or 51?",a:["51","15","Equal","None"],c:0},{q:"Sides of triangle?",a:["3","4","5","6"],c:0},{q:"Shape with 4 equal sides?",a:["Square","Rectangle","Triangle","Circle"],c:0},
+{q:"5, 10, 15, __?",a:["20","25","18","22"],c:0},{q:"10 + 20 + 30 = ?",a:["60","50","70","80"],c:0},{q:"What is 4 × 4?",a:["16","12","20","8"],c:0},
+{q:"What is 9 × 9?",a:["81","72","99","89"],c:0},
+{q:"What is 48 ÷ 8?",a:["6","7","8","5"],c:0},
+{q:"What is 200 + 300?",a:["500","400","600","550"],c:0},
+{q:"What is 1000 - 450?",a:["550","500","600","450"],c:0},
+{q:"What is 15 × 4?",a:["60","55","65","50"],c:0},
+{q:"What is 72 ÷ 9?",a:["8","7","9","6"],c:0},
+{q:"What is 350 + 250?",a:["600","550","650","500"],c:0},
+{q:"What is 500 - 175?",a:["325","375","275","350"],c:0},
+{q:"What is 25 × 6?",a:["150","125","175","140"],c:0},
+{q:"What is 3 × 3 × 3?",a:["27","18","24","21"],c:0},
+{q:"How many sides does a hexagon have?",a:["6","5","7","8"],c:0},
+{q:"What is 1000 ÷ 25?",a:["40","50","35","45"],c:0},
+{q:"What is 8 × 7?",a:["56","48","64","49"],c:0},
+{q:"What is 99 + 1?",a:["100","99","101","110"],c:0},
+{q:"What is half of 200?",a:["100","90","110","80"],c:0},
+{q:"What is 11 × 11?",a:["121","111","132","122"],c:0},
+{q:"What is 64 ÷ 8?",a:["8","7","9","6"],c:0},
+{q:"What shape has 8 sides?",a:["Octagon","Hexagon","Pentagon","Square"],c:0},
+{q:"What is 50 + 50 + 50?",a:["150","100","200","140"],c:0},
+{q:"What is 12 × 12?",a:["144","124","134","154"],c:0},
+{q:"How many sides does a triangle have?",a:["3","4","5","6"],c:0},
+{q:"What shape has 3 sides?",a:["Triangle","Square","Circle","Pentagon"],c:0},
+{q:"What shape has 4 equal sides?",a:["Square","Rectangle","Triangle","Circle"],c:0},
+{q:"How many corners does a square have?",a:["4","3","5","6"],c:0},
+{q:"What is a circle?",a:["Round shape","Square shape","Triangle shape","Rectangle shape"],c:0},
+{q:"How many sides does a pentagon have?",a:["5","4","6","7"],c:0},
+{q:"What shape has 6 sides?",a:["Hexagon","Octagon","Pentagon","Square"],c:0},
+{q:"How many sides does an octagon have?",a:["8","6","7","9"],c:0},
+{q:"What is a rectangle?",a:["4-sided shape with right angles","Round shape","Triangle","3-sided shape"],c:0},
+{q:"How many sides does a quadrilateral have?",a:["4","3","5","6"],c:0},
+{q:"What is the perimeter of a square with side 5?",a:["20","25","10","15"],c:0},
+{q:"What is the area of a rectangle 4×3?",a:["12","7","16","9"],c:0},
+{q:"How many degrees in a right angle?",a:["90","180","45","360"],c:0},
+{q:"What is a straight angle?",a:["180 degrees","90 degrees","45 degrees","360 degrees"],c:0},
+{q:"How many degrees in a full circle?",a:["360","180","90","270"],c:0},
+{q:"What is an acute angle?",a:["Less than 90 degrees","More than 90 degrees","Exactly 90 degrees","180 degrees"],c:0},
+{q:"What is an obtuse angle?",a:["More than 90 degrees","Less than 90 degrees","Exactly 90 degrees","180 degrees"],c:0},
+{q:"What is a right angle?",a:["90 degrees","45 degrees","180 degrees","360 degrees"],c:0},
+{q:"How many triangles can fit in a square?",a:["2","1","3","4"],c:0},
+{q:"What is the longest side of a triangle called?",a:["Hypotenuse","Base","Height","Side"],c:0},
+{q:"What is a right triangle?",a:["Has a 90-degree angle","All sides equal","All angles equal","No right angles"],c:0},
+{q:"How many sides does a cube have?",a:["6","8","12","4"],c:0},
+{q:"How many faces does a cube have?",a:["6","8","12","4"],c:0},
+{q:"How many edges does a cube have?",a:["12","6","8","4"],c:0},
+{q:"What is a sphere?",a:["Round ball shape","Cube shape","Pyramid shape","Cylinder shape"],c:0},
+{q:"What is a cylinder?",a:["Round tube shape","Ball shape","Box shape","Cone shape"],c:0},
+{q:"What is a cone?",a:["Ice cream cone shape","Ball shape","Box shape","Tube shape"],c:0},
+{q:"What is a polygon?",a:["Shape with straight sides","Round shape","Curved shape","3D shape"],c:0},
+{q:"Which word is a noun?",a:["Table","Run","Quickly","Blue"],c:0},
+{q:"What is the past tense of 'walk'?",a:["Walked","Walks","Walking","Walked"],c:0},
+{q:"Plural of 'book'?",a:["Books","Bookes","Book","Book's"],c:0},
+{q:"Which word is an adjective?",a:["Beautiful","Swim","Table","Yesterday"],c:0},
+{q:"Opposite of 'happy'?",a:["Sad","Angry","Excited","Glad"],c:0},
+{q:"Complete: They ___ playing.",a:["are","is","am","were"],c:0},
+{q:"What is a verb?",a:["Action word","Thing","Describing word","Place"],c:0},
+{q:"Plural of 'child'?",a:["Children","Childs","Childes","Child"],c:0},
+{q:"Which word rhymes with 'cat'?",a:["Bat","Car","Can","Cup"],c:0},
+{q:"What does 'enormous' mean?",a:["Very big","Very small","Very fast","Very slow"],c:0},
+{q:"Past tense of 'go'?",a:["Went","Gone","Goed","Goes"],c:0},
+{q:"Which is a proper noun?",a:["Toronto","dog","river","house"],c:0},
+{q:"What is 'they'?",a:["Pronoun","Verb","Adjective","Noun"],c:0},
+{q:"Plural of 'mouse'?",a:["Mice","Mouses","Mouse","Mices"],c:0},
+{q:"Opposite of 'brave'?",a:["Cowardly","Strong","Bold","Bold"],c:0},
+{q:"What does 'ancient' mean?",a:["Very old","Very new","Very big","Very fast"],c:0},
+{q:"Which word is a pronoun?",a:["They","Run","Red","School"],c:0},
+{q:"Past tense of 'eat'?",a:["Ate","Eated","Eaten","Eating"],c:0},
+{q:"Plural of 'foot'?",a:["Feet","Foots","Feets","Foot"],c:0},
+{q:"What does 'rapid' mean?",a:["Very fast","Very slow","Very big","Very small"],c:0},
+{q:"What planet is largest?",a:["Jupiter","Saturn","Earth","Mars"],c:0},
+{q:"What do plants need to make food?",a:["Sunlight","Wind","Darkness","Soil only"],c:0},
+{q:"How many legs do insects have?",a:["6","8","4","10"],c:0},
+{q:"What is the boiling point of water?",a:["100°C","90°C","110°C","120°C"],c:0},
+{q:"What is the chemical symbol for water?",a:["H₂O","O₂","CO₂","NaCl"],c:0},
+{q:"What force keeps planets in orbit?",a:["Gravity","Magnetism","Friction","Inertia"],c:0},
+{q:"What is the largest ocean?",a:["Pacific","Atlantic","Indian","Arctic"],c:0},
+{q:"How many bones does an adult human have?",a:["206","208","200","210"],c:0},
+{q:"What type of animal is a dolphin?",a:["Mammal","Fish","Reptile","Amphibian"],c:0},
+{q:"What gas do we breathe out?",a:["Carbon dioxide","Oxygen","Nitrogen","Hydrogen"],c:0},
+{q:"What is the closest star to Earth?",a:["The Sun","Polaris","Sirius","Alpha Centauri"],c:0},
+{q:"What is the freezing point of water?",a:["0°C","32°C","-10°C","100°C"],c:0},
+{q:"What do we call a baby dog?",a:["Puppy","Kitten","Cub","Calf"],c:0},
+{q:"What is Earth's only natural satellite?",a:["The Moon","Mars","Sun","Venus"],c:0},
+{q:"Which organ pumps blood?",a:["Heart","Brain","Lungs","Liver"],c:0},
+{q:"What is the hardest natural substance?",a:["Diamond","Gold","Iron","Rock"],c:0},
+{q:"How many planets in our solar system?",a:["8","9","7","10"],c:0},
+{q:"What is the main source of energy for Earth?",a:["The Sun","Wind","Water","Coal"],c:0},
+{q:"What do mammals feed their babies?",a:["Milk","Insects","Seeds","Water"],c:0},
+{q:"What is photosynthesis?",a:["Plants making food","Animals breathing","Water evaporating","Rocks forming"],c:0},
+
+],
+medium: [
+{q:"12 × 12 = ?",a:["144","124","134","154"],c:0},{q:"144 ÷ 12 = ?",a:["12","14","11","13"],c:0},{q:"25% of 200 = ?",a:["50","25","75","100"],c:0},
+{q:"Solve: 3x + 5 = 20. x = ?",a:["5","4","6","3"],c:0},{q:"0.75 as fraction = ?",a:["3/4","1/4","2/3","4/5"],c:0},{q:"Area: 5×8 rectangle = ?",a:["40","45","35","13"],c:0},
+{q:"7² = ?",a:["49","14","42","56"],c:0},{q:"Simplify 2/4 = ?",a:["1/2","1/4","2/2","3/4"],c:0},{q:"15% of 100 = ?",a:["15","10","20","5"],c:0},
+{q:"Round 467 to nearest 100",a:["500","460","470","400"],c:0},{q:"8 × 15 = ?",a:["120","115","125","110"],c:0},{q:"Minutes in 2 hours?",a:["120","100","60","90"],c:0},
+{q:"Perimeter of square (side 6)?",a:["24","36","12","18"],c:0},{q:"1000 - 456 = ?",a:["544","554","444","644"],c:0},{q:"3/5 as decimal = ?",a:["0.6","0.35","0.5","0.75"],c:0},
+{q:"11 × 13 = ?",a:["143","133","153","131"],c:0},{q:"If x=4, 3x² = ?",a:["48","24","36","42"],c:0},{q:"LCM of 4 and 6 = ?",a:["12","24","6","8"],c:0},
+{q:"GCF of 12 and 18 = ?",a:["6","12","18","9"],c:0},{q:"3/4 + 1/4 = ?",a:["1","3/8","2/4","4/8"],c:0},{q:"0.5 × 0.5 = ?",a:["0.25","0.10","0.50","1.0"],c:0},
+{q:"Prime after 7 = ?",a:["11","9","10","13"],c:0},{q:"Solve: 2x = 16. x = ?",a:["8","6","4","10"],c:0},{q:"45% as decimal = ?",a:["0.45","4.5","0.045","45"],c:0},
+{q:"Area triangle: b=10, h=5 = ?",a:["25","50","15","20"],c:0},{q:"6³ = ?",a:["216","36","18","126"],c:0},{q:"Simplify 12/16 = ?",a:["3/4","2/4","4/4","3/3"],c:0},
+{q:"200 ÷ 8 = ?",a:["25","20","30","15"],c:0},{q:"Seconds in 5 min = ?",a:["300","250","350","500"],c:0},{q:"Average of 10,20,30 = ?",a:["20","25","15","30"],c:0},
+{q:"Pythagorean theorem: 3-4-5 triangle?",a:["5","7","12","25"],c:0},
+{q:"Area of circle r=4?",a:["16π","8π","4π","32π"],c:0},
+{q:"Volume of cube side 3?",a:["27","9","18","36"],c:0},
+{q:"Perimeter of rectangle 6×8?",a:["28","48","14","24"],c:0},
+{q:"What is a right angle?",a:["90 degrees","45 degrees","180 degrees","360 degrees"],c:0},
+{q:"How many degrees in a triangle?",a:["180","360","90","270"],c:0},
+{q:"What is a parallelogram?",a:["4-sided with parallel sides","3-sided","5-sided","Round"],c:0},
+{q:"Area of triangle base 10 height 5?",a:["25","50","15","20"],c:0},
+{q:"What is a diameter?",a:["Line through center","Half radius","Corner to corner","Side length"],c:0},
+{q:"What is a radius?",a:["Center to edge","Edge to edge","Corner to corner","Side length"],c:0},
+{q:"How many sides does a heptagon have?",a:["7","6","8","9"],c:0},
+{q:"What is a vertex?",a:["Corner point","Side","Face","Edge"],c:0},
+{q:"What is a line segment?",a:["Part of line with two endpoints","Infinite line","Ray","Point"],c:0},
+{q:"What is a ray?",a:["Part of line with one endpoint","Infinite line","Segment","Point"],c:0},
+{q:"What is a perpendicular line?",a:["Lines meeting at 90°","Parallel lines","Intersecting lines","Same line"],c:0},
+{q:"What is a parallel line?",a:["Lines that never meet","Lines meeting at 90°","Intersecting lines","Same line"],c:0},
+{q:"What is a quadrilateral?",a:["4-sided shape","3-sided shape","5-sided shape","6-sided shape"],c:0},
+{q:"What is a trapezoid?",a:["4-sided with one pair parallel sides","4-sided with all sides equal","3-sided","5-sided"],c:0},
+{q:"What is a rhombus?",a:["4-sided with all sides equal","4-sided with right angles","3-sided","5-sided"],c:0},
+{q:"What is a kite?",a:["4-sided with two pairs equal adjacent sides","3-sided","5-sided","6-sided"],c:0},
+{q:"What is a regular polygon?",a:["All sides and angles equal","All sides equal","All angles equal","No sides equal"],c:0},
+{q:"What is an irregular polygon?",a:["Sides and angles not all equal","All sides equal","All angles equal","3-sided"],c:0},
+{q:"What is a convex polygon?",a:["All interior angles less than 180°","Has a dent","3-sided","5-sided"],c:0},
+{q:"What is a concave polygon?",a:["Has at least one interior angle > 180°","All angles < 180°","3-sided","5-sided"],c:0},
+{q:"What is a diagonal?",a:["Line connecting non-adjacent vertices","Side of shape","Corner point","Edge"],c:0},
+{q:"How many diagonals in a pentagon?",a:["5","4","6","3"],c:0},
+{q:"How many diagonals in a hexagon?",a:["9","6","8","7"],c:0},
+{q:"What is a tessellation?",a:["Pattern covering plane without gaps","3D shape","Angle measurement","Side length"],c:0},
+{q:"What is a scale factor?",a:["Ratio of corresponding lengths","Angle measurement","Area ratio","Perimeter ratio"],c:0}
+],
+hard: [
+{q:"x² - 9 = 0. x = ?",a:["±3","3","9","±9"],c:0},{q:"Derivative of x² = ?",a:["2x","x","2","x²"],c:0},{q:"log₁₀(100) = ?",a:["2","10","100","1"],c:0},
+{q:"Slope of y=3x+2 = ?",a:["3","2","5","1"],c:0},{q:"(x+3)(x-3) = ?",a:["x²-9","x²+9","x²-6","x²+6"],c:0},{q:"sin(30°) = ?",a:["0.5","1","0.707","0.866"],c:0},
+{q:"15% of 240 = ?",a:["36","24","30","42"],c:0},{q:"2x+5=3x-7. x = ?",a:["12","-12","7","-7"],c:0},{q:"∫2dx = ?",a:["x²+C","2x²+C","x+C","2+C"],c:0},
+{q:"√169 = ?",a:["13","14","12","11"],c:0},{q:"Factor x²+5x+6 = ?",a:["(x+2)(x+3)","(x+1)(x+6)","(x-2)(x-3)","(x+5)(x+1)"],c:0},
+{q:"Hypotenuse of 3-4-5?",a:["5","7","12","25"],c:0},{q:"cos(0°) = ?",a:["1","0","0.5","-1"],c:0},{q:"x²=49. x = ?",a:["±7","7","49","±49"],c:0},
+{q:"Sum of angles in triangle?",a:["180°","360°","90°","270°"],c:0},{q:"Circle eq (r=5) = ?",a:["x²+y²=25","x²+y²=5","x²+y²=10","x²+y²=15"],c:0},
+{q:"2⁵ = ?",a:["32","16","64","25"],c:0},{q:"log₂(x)=3. x = ?",a:["8","6","4","16"],c:0},{q:"lim(x→∞) 1/x = ?",a:["0","1","∞","undefined"],c:0},
+{q:"y-intercept of y=4x-8 = ?",a:["-8","8","4","-4"],c:0},{q:"45° in radians = ?",a:["π/4","π/2","π/3","π/6"],c:0},
+{q:"det[[1,2],[3,4]] = ?",a:["-2","2","-1","1"],c:0},{q:"Factor x²-16 = ?",a:["(x+4)(x-4)","(x+8)(x-2)","(x+4)(x+4)","(x-4)(x-4)"],c:0},
+{q:"d/dx sin(x) = ?",a:["cos(x)","-sin(x)","-cos(x)","tan(x)"],c:0},{q:"3^x=81. x = ?",a:["4","3","9","27"],c:0},
+{q:"Area circle r=3 = ?",a:["9π","3π","6π","12π"],c:0},{q:"tan(45°) = ?",a:["1","0","√3","1/√3"],c:0},
+{q:"1+2+3+...+100 = ?",a:["5050","1000","5000","10100"],c:0},{q:"10th term: 2,4,6,8... = ?",a:["20","18","22","10"],c:0}
+]},
+english: {
+easy: [
+{q:"Which is a noun?",a:["Dog","Run","Quickly","Happy"],c:0},{q:"Plural of 'child'?",a:["Children","Childs","Childes","Childern"],c:0},
+{q:"Which is a verb?",a:["Jump","Table","Blue","Fast"],c:0},{q:"I ___ to school daily.",a:["go","goes","going","gone"],c:0},
+{q:"Opposite of 'hot'?",a:["Cold","Warm","Cool","Heat"],c:0},{q:"Rhymes with 'cat'?",a:["Hat","Cot","Cut","Cup"],c:0},
+{q:"Correct article: ___ apple",a:["An","A","The","Some"],c:0},{q:"Past tense of 'run'?",a:["Ran","Runned","Running","Runs"],c:0},
+{q:"Plural of 'dog'?",a:["Dogs","Doges","Dogies","Dog's"],c:0},{q:"Correct sentence?",a:["I am happy","I is happy","I are happy","I be happy"],c:0},
+{q:"Opposite of 'up'?",a:["Down","High","Top","Over"],c:0},{q:"Adjective in 'The tall boy ran'?",a:["Tall","Boy","Ran","The"],c:0},
+{q:"Complete: She ___ a book.",a:["reads","read","reading","readed"],c:0},{q:"Singular of 'mice'?",a:["Mouse","Mices","Moose","Mous"],c:0},
+{q:"Opposite of 'old'?",a:["New","Young","Fresh","Modern"],c:0},{q:"Past tense of 'eat'?",a:["Ate","Eated","Eaten","Eating"],c:0},
+{q:"Meaning of 'tiny'?",a:["Very small","Very big","Very fast","Very slow"],c:0},{q:"Group of cats?",a:["Clowder","Pack","Herd","Flock"],c:0},
+{q:"Plural of 'fish'?",a:["Fish","Fishes","Fishies","Fishs"],c:0},{q:"Which is a place?",a:["School","Dog","Run","Blue"],c:0},
+{q:"Complete: The bird ___.",a:["flies","fly","flying","flied"],c:0},{q:"Choose: ___ dogs playing.",a:["The","A","An","Some"],c:0},
+{q:"What color is grass?",a:["Green","Blue","Red","Yellow"],c:0},{q:"Opposite of 'big'?",a:["Small","Tall","Wide","Large"],c:0},
+{q:"Which is an animal?",a:["Cat","Table","Chair","Door"],c:0},{q:"Complete: We ___ happy.",a:["are","is","am","be"],c:0},
+{q:"Past of 'go'?",a:["Went","Goed","Gone","Going"],c:0},{q:"What is 'red'?",a:["Color","Animal","Place","Thing"],c:0},
+{q:"Opposite of 'day'?",a:["Night","Morning","Evening","Noon"],c:0},{q:"Plural of 'box'?",a:["Boxes","Boxs","Boxen","Boxies"],c:0},
+{q:"What is 9 × 9?",a:["81","72","99","89"],c:0},
+{q:"What is 48 ÷ 8?",a:["6","7","8","5"],c:0},
+{q:"What is 200 + 300?",a:["500","400","600","550"],c:0},
+{q:"What is 1000 - 450?",a:["550","500","600","450"],c:0},
+{q:"What is 15 × 4?",a:["60","55","65","50"],c:0},
+{q:"What is 72 ÷ 9?",a:["8","7","9","6"],c:0},
+{q:"What is 350 + 250?",a:["600","550","650","500"],c:0},
+{q:"What is 500 - 175?",a:["325","375","275","350"],c:0},
+{q:"What is 25 × 6?",a:["150","125","175","140"],c:0},
+{q:"What is 3 × 3 × 3?",a:["27","18","24","21"],c:0},
+{q:"How many sides does a hexagon have?",a:["6","5","7","8"],c:0},
+{q:"What is 1000 ÷ 25?",a:["40","50","35","45"],c:0},
+{q:"What is 8 × 7?",a:["56","48","64","49"],c:0},
+{q:"What is 99 + 1?",a:["100","99","101","110"],c:0},
+{q:"What is half of 200?",a:["100","90","110","80"],c:0},
+{q:"What is 11 × 11?",a:["121","111","132","122"],c:0},
+{q:"What is 64 ÷ 8?",a:["8","7","9","6"],c:0},
+{q:"What shape has 8 sides?",a:["Octagon","Hexagon","Pentagon","Square"],c:0},
+{q:"What is 50 + 50 + 50?",a:["150","100","200","140"],c:0},
+{q:"What is 12 × 12?",a:["144","124","134","154"],c:0},
+{q:"Plural of 'book'?",a:["Books","Bookes","Book","Book's"],c:0},
+{q:"Which word is an adjective?",a:["Beautiful","Swim","Table","Yesterday"],c:0},
+{q:"Opposite of 'happy'?",a:["Sad","Angry","Excited","Glad"],c:0},
+{q:"Complete: They ___ playing.",a:["are","is","am","were"],c:0},
+{q:"What is a verb?",a:["Action word","Thing","Describing word","Place"],c:0},
+{q:"Plural of 'child'?",a:["Children","Childs","Childes","Child"],c:0},
+{q:"Which word rhymes with 'cat'?",a:["Bat","Car","Can","Cup"],c:0},
+{q:"What does 'enormous' mean?",a:["Very big","Very small","Very fast","Very slow"],c:0},
+{q:"Past tense of 'go'?",a:["Went","Gone","Goed","Goes"],c:0},
+{q:"Which is a proper noun?",a:["Toronto","dog","river","house"],c:0},
+{q:"What is 'they'?",a:["Pronoun","Verb","Adjective","Noun"],c:0},
+{q:"Plural of 'mouse'?",a:["Mice","Mouses","Mouse","Mices"],c:0},
+{q:"Opposite of 'brave'?",a:["Cowardly","Strong","Bold","Bold"],c:0},
+{q:"What does 'ancient' mean?",a:["Very old","Very new","Very big","Very fast"],c:0},
+{q:"Which word is a pronoun?",a:["They","Run","Red","School"],c:0},
+{q:"Past tense of 'eat'?",a:["Ate","Eated","Eaten","Eating"],c:0},
+{q:"Plural of 'foot'?",a:["Feet","Foots","Feets","Foot"],c:0},
+{q:"What does 'rapid' mean?",a:["Very fast","Very slow","Very big","Very small"],c:0},
+{q:"Complete: He ___ to school.",a:["goes","go","going","gone"],c:0},
+{q:"What is a sentence?",a:["Group of words with meaning","One word","A letter","A number"],c:0},
+{q:"Opposite of 'noisy'?",a:["Quiet","Loud","Fast","Slow"],c:0},
+{q:"Which is a verb?",a:["Sing","Song","Beautiful","Table"],c:0},
+{q:"What does 'enormous' mean?",a:["Very big","Very small","Very fast","Very slow"],c:0},
+{q:"Plural of 'sheep'?",a:["Sheep","Sheeps","Sheepes","Sheepy"],c:0},
+{q:"Which word is an adverb?",a:["Quickly","Quick","Quickness","Quicker"],c:0},
+{q:"What is the opposite of 'inside'?",a:["Outside","Under","Over","Above"],c:0},
+{q:"Complete: We ___ friends.",a:["are","is","am","was"],c:0},
+{q:"Past tense of 'sing'?",a:["Sang","Singed","Singing","Sung"],c:0},
+{q:"Which is a question?",a:["Where are you?","I am here.","Go home.","Be happy."],c:0},
+{q:"What does 'brief' mean?",a:["Short","Long","Fast","Slow"],c:0},
+{q:"Plural of 'woman'?",a:["Women","Womans","Womens","Woman"],c:0},
+{q:"What is a comma?",a:["Punctuation","Letter","Word","Number"],c:0},
+
+],
+
+medium: [
+{q:"Synonym for 'happy'?",a:["Joyful","Sad","Angry","Tired"],c:0},{q:"Verb in 'She quickly ran'?",a:["Ran","Quickly","Home","She"],c:0},
+{q:"Past participle of 'go'?",a:["Gone","Went","Goed","Going"],c:0},{q:"Compound word?",a:["Sunflower","Running","Happy","Quickly"],c:0},
+{q:"Antonym of 'brave'?",a:["Cowardly","Strong","Bold","Fearless"],c:0},{q:"Pronoun in 'She gave him'?",a:["She","Gave","Him","Book"],c:0},
+{q:"'Close the door!' type?",a:["Imperative","Declarative","Interrogative","Exclamatory"],c:0},{q:"Comparative of 'big'?",a:["Bigger","More big","Biggest","Most big"],c:0},
+{q:"Misspelled word?",a:["Recieve","Receive","Believe","Deceive"],c:0},{q:"Simile is?",a:["Like/as comparison","Direct comparison","Exaggeration","Personification"],c:0},
+{q:"Conjunction: 'I like cats ___ dogs'?",a:["And","Like","Cats","Dogs"],c:0},{q:"Superlative of 'fast'?",a:["Fastest","More fast","Faster","Most fast"],c:0},
+{q:"Meaning of 'ancient'?",a:["Very old","Very new","Very big","Very small"],c:0},{q:"Past tense sentence?",a:["She walked home","She walks home","She will walk","She is walking"],c:0},
+{q:"Alliteration is?",a:["Same starting sounds","Rhyming words","Made up words","Short sentences"],c:0},{q:"Object in 'Boy kicked ball'?",a:["Ball","Boy","Kicked","The"],c:0},
+{q:"Synonym for 'brave'?",a:["Courageous","Scared","Weak","Timid"],c:0},{q:"Correct grammar?",a:["She doesn't like it","She don't like it","She not like it","She doesn't likes it"],c:0},
+{q:"Personification is?",a:["Human traits to non-human","Like/as comparison","Exaggeration","Opposite meaning"],c:0},{q:"Plural of 'cactus'?",a:["Cacti","Cactuses","Cactii","Cactus"],c:0},
+{q:"Synonym for 'smart'?",a:["Intelligent","Dumb","Lazy","Brave"],c:0},{q:"Haiku has syllables?",a:["5-7-5","14 lines","4 lines","Free"],c:0},
+{q:"Preposition in 'cat on table'?",a:["On","Cat","Is","Table"],c:0},{q:"Meaning of 'generous'?",a:["Giving freely","Taking","Being mean","Being quiet"],c:0},
+{q:"Proper noun?",a:["Canada","dog","city","river"],c:0},{q:"Synonym for 'angry'?",a:["Furious","Happy","Sad","Tired"],c:0},
+{q:"Subject in 'Dog chased cat'?",a:["Dog","Chased","Cat","The"],c:0},{q:"Correct: Who's/Whose on first?",a:["Who's","Whose","Hoo's","Wose"],c:0},
+{q:"Metaphor is?",a:["Direct comparison w/o like/as","With like/as","Same sounds","Opposite"],c:0},{q:"Antonym of 'happy'?",a:["Sad","Joyful","Excited","Glad"],c:0}
+],
+hard: [
+{q:"Subjunctive mood is for?",a:["Hypotheticals","Facts","Questions","Commands"],c:0},{q:"Dependent clause in 'Because I studied, I passed'?",a:["Because I studied","I passed","Because","I"],c:0},
+{q:"'The wind whispered' uses?",a:["Personification","Simile","Metaphor","Alliteration"],c:0},{q:"Infinitive is?",a:["To + verb","-ing form","-ed form","-ly form"],c:0},
+{q:"Foreshadowing is?",a:["Hinting at future","Recapping past","Direct statement","Comic relief"],c:0},{q:"Passive voice means?",a:["Subject receives action","Subject does action","Question form","Command"],c:0},
+{q:"Gerund in 'Swimming is fun'?",a:["Swimming","Is","Fun","Swimming is"],c:0},{q:"Irony is?",a:["Opposite of expected","Similar words","Exaggeration","Repetition"],c:0},
+{q:"Theme of a story is?",a:["Main message","Plot summary","Character list","Setting"],c:0},{q:"Complex sentence?",a:["Although it rained, we played.","We played.","It rained.","We played and won."],c:0},
+{q:"Subordinate clause?",a:["Cannot stand alone","Can stand alone","Complete sentence","Question"],c:0},{q:"Allusion is?",a:["Reference to other work","Direct comparison","Exaggeration","Repetition"],c:0},
+{q:"Participle in 'Running fast, he tripped'?",a:["Running","Fast","He","Tripped"],c:0},{q:"Hyperbole is?",a:["Extreme exaggeration","Understatement","Literal","Question"],c:0},
+{q:"'I' point of view?",a:["First person","Second person","Third person","Omniscient"],c:0},{q:"Ambiguous means?",a:["Multiple meanings","Very clear","Very short","Big words"],c:0},
+{q:"Antithesis is?",a:["Contrasting parallel ideas","Same sounds","Exaggeration","Hidden meaning"],c:0},{q:"Appositive in 'My dog, a golden retriever, plays'?",a:["A golden retriever","My dog","Plays","My"],c:0},
+{q:"Satire is?",a:["Humor to criticize","Sad story","Serious","Big words"],c:0},{q:"Climax of story?",a:["Peak tension","Beginning","End","Rising action"],c:0},
+{q:"Onomatopoeia is?",a:["Sound-like words","Made up words","Rhyming","Repeated"],c:0},{q:"Parallel structure?",a:["Same grammatical pattern","Different patterns","Random","Simple"],c:0},
+{q:"Dangling modifier?",a:["Unclear subject","Correct modifier","Complete sentence","Verb phrase"],c:0},{q:"Transitive verb in 'She threw ball'?",a:["Threw","She","Ball","The"],c:0},
+{q:"Ethos appeals to?",a:["Credibility","Emotion","Logic","Repetition"],c:0},{q:"Synecdoche is?",a:["Part represents whole","Exaggeration","Understatement","Comparison"],c:0},
+{q:"Denotation means?",a:["Dictionary definition","Connotations","Implied meaning","Associations"],c:0},{q:"Compound-complex sentence?",a:["2+ independent + 1 dependent","Only independent","Only dependent","One clause"],c:0},
+{q:"Euphemism is?",a:["Milder expression","Direct statement","Exaggeration","Rhyming"],c:0},{q:"Dramatic irony?",a:["Audience knows, characters don't","Characters surprise","Plot twist","Direct address"],c:0}
+]},
+science: {
+easy: [
+{q:"Planet closest to Sun?",a:["Mercury","Venus","Earth","Mars"],c:0},{q:"Legs on a spider?",a:["8","6","10","4"],c:0},
+{q:"Gas plants breathe in?",a:["Carbon dioxide","Oxygen","Nitrogen","Helium"],c:0},{q:"Largest organ in body?",a:["Skin","Heart","Brain","Liver"],c:0},
+{q:"Force keeping us on ground?",a:["Gravity","Magnetism","Friction","Wind"],c:0},{q:"H₂O is?",a:["Water","Oxygen","Hydrogen","Salt"],c:0},
+{q:"Planets in solar system?",a:["8","9","7","10"],c:0},{q:"Center of atom?",a:["Nucleus","Electron","Proton","Neutron"],c:0},
+{q:"Caterpillars become?",a:["Butterflies","Bees","Birds","Spiders"],c:0},{q:"Boiling point of water?",a:["100°C","50°C","200°C","0°C"],c:0},
+{q:"Whale is a?",a:["Mammal","Fish","Reptile","Amphibian"],c:0},{q:"The Sun is a?",a:["Star","Planet","Moon","Asteroid"],c:0},
+{q:"Bees make?",a:["Honey","Silk","Milk","Cotton"],c:0},{q:"Bones in adult body?",a:["206","150","300","100"],c:0},
+{q:"Freezing point of water?",a:["0°C","32°C","100°C","-10°C"],c:0},{q:"Which is a reptile?",a:["Snake","Frog","Fish","Bird"],c:0},
+{q:"Plants need ___ to grow?",a:["Sunlight","Wind","Darkness","Salt"],c:0},{q:"Largest planet?",a:["Jupiter","Saturn","Earth","Mars"],c:0},
+{q:"Baby dog is called?",a:["Puppy","Kitten","Cub","Calf"],c:0},{q:"Earth is made of?",a:["Rock","Water","Gas","Metal"],c:0},
+{q:"Colors in rainbow?",a:["7","5","10","6"],c:0},{q:"We breathe out?",a:["Carbon dioxide","Oxygen","Nitrogen","Helium"],c:0},
+{q:"Smallest unit of life?",a:["Cell","Atom","Molecule","Organ"],c:0},{q:"Not a state of matter?",a:["Fire","Solid","Liquid","Gas"],c:0},
+{q:"Group of fish?",a:["School","Pack","Herd","Flock"],c:0},{q:"Days in a year?",a:["365","360","400","100"],c:0},
+{q:"Closest star to Earth?",a:["The Sun","Polaris","Sirius","Vega"],c:0},{q:"What do frogs eat?",a:["Insects","Grass","Fish","Birds"],c:0},
+{q:"Hardest natural substance?",a:["Diamond","Gold","Iron","Rock"],c:0},{q:"Which animal lays eggs?",a:["Chicken","Dog","Cat","Elephant"],c:0},
+{q:"What is lightning made of?",a:["Electricity","Fire","Water","Wind"],c:0},
+{q:"Which animal is a reptile?",a:["Snake","Frog","Fish","Bird"],c:0},
+{q:"What do caterpillars become?",a:["Butterflies","Bees","Birds","Spiders"],c:0},
+{q:"What is a fossil?",a:["Ancient preserved remains","Living plant","Rock crystal","Sand"],c:0},
+{q:"What makes plants green?",a:["Chlorophyll","Sunlight","Water","Soil"],c:0},
+{q:"How many eyes does a spider have?",a:["8","2","4","6"],c:0},
+{q:"What is the tallest animal?",a:["Giraffe","Elephant","Horse","Camel"],c:0},
+{q:"What is steam?",a:["Water gas","Water liquid","Water ice","Smoke"],c:0},
+{q:"Which planet is closest to Earth?",a:["Venus","Mars","Jupiter","Saturn"],c:0},
+{q:"What is the water cycle?",a:["Movement of water","Boiling water","Freezing water","Drinking water"],c:0},
+{q:"Which animal can fly?",a:["Bird","Fish","Dog","Cat"],c:0},
+{q:"What is a habitat?",a:["Place where animals live","Type of food","Animal sound","Plant color"],c:0},
+{q:"What is evaporation?",a:["Liquid to gas","Gas to liquid","Solid to liquid","Liquid to solid"],c:0},
+{q:"What do we call a baby cat?",a:["Kitten","Puppy","Cub","Calf"],c:0},
+
+],
+
+medium: [
+{q:"Photosynthesis is?",a:["Plants making food","Animals breathing","Water evaporating","Rock forming"],c:0},{q:"Symbol for Gold?",a:["Au","Ag","Go","Gd"],c:0},
+{q:"Chromosomes in humans?",a:["46","23","48","44"],c:0},{q:"Speed of light?",a:["300,000 km/s","150,000 km/s","1,000 km/s","Sound speed"],c:0},
+{q:"Rock formed from lava?",a:["Igneous","Sedimentary","Metamorphic","Mineral"],c:0},{q:"Powerhouse of cell?",a:["Mitochondria","Nucleus","Ribosome","Membrane"],c:0},
+{q:"Planet with most moons?",a:["Saturn","Jupiter","Uranus","Neptune"],c:0},{q:"Formula for table salt?",a:["NaCl","KCl","CaCl","NaOH"],c:0},
+{q:"Absolute zero in °C?",a:["-273.15","0","-100","-460"],c:0},{q:"How does sound travel?",a:["Through waves","Through light","Through gravity","Through magnetism"],c:0},
+{q:"Most abundant gas?",a:["Nitrogen","Oxygen","CO₂","Helium"],c:0},{q:"Water → vapor is?",a:["Evaporation","Condensation","Precipitation","Sublimation"],c:0},
+{q:"pH of pure water?",a:["7","0","14","1"],c:0},{q:"Bones in a baby?",a:["~300","206","100","150"],c:0},
+{q:"Closest planet to Earth?",a:["Venus","Mars","Mercury","Jupiter"],c:0},{q:"Newton's 1st Law is about?",a:["Inertia","Gravity","Action-reaction","Speed"],c:0},
+{q:"DNA is?",a:["Genetic info","Protein","Blood type","Cell part"],c:0},{q:"Atmosphere layer we live in?",a:["Troposphere","Stratosphere","Mesosphere","Thermosphere"],c:0},
+{q:"Function of white blood cells?",a:["Fight infection","Carry oxygen","Clot blood","Digest food"],c:0},{q:"Sun produces?",a:["Radiant & thermal","Nuclear only","Chemical","Mechanical"],c:0},
+{q:"Study of earthquakes?",a:["Seismology","Geology","Meteorology","Volcanology"],c:0},{q:"Red blood cells function?",a:["Carry oxygen","Fight disease","Digest food","Send signals"],c:0},
+{q:"Sun is mostly?",a:["Hydrogen & helium","Iron","Carbon","Oxygen"],c:0},{q:"Renewable energy?",a:["Solar","Coal","Natural gas","Oil"],c:0},
+{q:"Unit of resistance?",a:["Ohm","Volt","Ampere","Watt"],c:0},{q:"How do owls hunt?",a:["Night vision","Echolocation","Smell","Traps"],c:0},
+{q:"Water cycle is?",a:["Water movement","Water boiling","Ice melting","Plant drinking"],c:0},{q:"What causes tides?",a:["Moon's gravity","Sun's heat","Earth's rotation","Wind"],c:0},
+{q:"Process plants use to make food?",a:["Photosynthesis","Respiration","Digestion","Fermentation"],c:0}
+],
+hard: [
+{q:"Heisenberg Uncertainty Principle?",a:["Can't know position & momentum","Energy is quantized","Light is wave+particle","Gravity bends space"],c:0},
+{q:"Avogadro's number?",a:["6.022×10²³","3.14×10⁸","9.8×10¹⁰","1.6×10⁻¹⁹"],c:0},{q:"Unit of electric charge?",a:["Coulomb","Volt","Ampere","Ohm"],c:0},
+{q:"Entropy is?",a:["Measure of disorder","Measure of energy","Measure of heat","Measure of mass"],c:0},
+{q:"Function of mRNA?",a:["Carries code to ribosome","Makes proteins","Stores DNA","Replicates cells"],c:0},
+{q:"Gravity on Earth?",a:["9.8 m/s²","10.8 m/s²","8.9 m/s²","11.2 m/s²"],c:0},{q:"Formula for glucose?",a:["C₆H₁₂O₆","CH₄","C₂H₅OH","H₂O"],c:0},
+{q:"Schrödinger's equation?",a:["Quantum wave functions","Gravity","Temperature","Speed"],c:0},
+{q:"Theory of universe origin?",a:["Big Bang","Steady State","String Theory","Oscillating"],c:0},
+{q:"Covalent bond is?",a:["Sharing electrons","Transferring electrons","Magnetic","Nuclear fusion"],c:0},
+{q:"Mitochondria function?",a:["ATP production","Protein synthesis","DNA storage","Cell division"],c:0},
+{q:"Speed of sound (20°C)?",a:["343 m/s","300 m/s","400 m/s","1000 m/s"],c:0},{q:"Isotope is?",a:["Same protons, diff neutrons","Diff protons","Different elements","Same mass"],c:0},
+{q:"SI unit of pressure?",a:["Pascal","Joule","Newton","Watt"],c:0},{q:"Cell division is?",a:["Mitosis","Meiosis","Osmosis","Diffusion"],c:0},
+{q:"Conservation of energy?",a:["Can't create/destroy","Always increases","Always lost","Infinite"],c:0},
+{q:"Catalyst is?",a:["Speeds up, not consumed","Slows down","Gets used up","Changes color"],c:0},
+{q:"Atomic number of Carbon?",a:["6","12","8","14"],c:0},{q:"Dark matter is?",a:["Unseen gravitating matter","Black holes","Empty space","Dark energy"],c:0},
+{q:"Krebs cycle is?",a:["Energy in cells","DNA replication","Protein folding","Cell death"],c:0},
+{q:"EM spectrum (low→high)?",a:["Radio→Gamma","Gamma→Radio","Random","Visible first"],c:0},
+{q:"Half-life means?",a:["Time for half to decay","Half total life","Half energy","Half mass"],c:0},
+{q:"Unit of frequency?",a:["Hertz","Watt","Pascal","Volt"],c:0},{q:"Newton's 3rd Law?",a:["Equal opposite reaction","F=ma","Objects in motion","Gravity proportional"],c:0},
+{q:"Ribosomes function?",a:["Protein synthesis","Energy","Division","DNA"],c:0},{q:"Mass vs weight?",a:["Mass constant, weight varies","Same","Weight constant","Mass varies"],c:0},
+{q:"Homozygous genotype?",a:["Two identical alleles","Two different","Three alleles","No alleles"],c:0},{q:"Symbol for Iron?",a:["Fe","Ir","In","I"],c:0},
+{q:"Transformer principle?",a:["Electromagnetic induction","Gravity","Nuclear fusion","Chemical reaction"],c:0},{q:"Chlorophyll function?",a:["Absorbs light","Produces oxygen","Stores energy","Repels insects"],c:0},
+{q:"Unit of force?",a:["Newton","Joule","Watt","Pascal"],c:0}
+]},
+geography: {
+easy: [
+{q:"What is the capital of Canada?",a:["Ottawa","Toronto","Vancouver","Montreal"],c:0},
+{q:"What is the capital of USA?",a:["Washington DC","New York","Los Angeles","Chicago"],c:0},
+{q:"What is the capital of UK?",a:["London","Manchester","Birmingham","Edinburgh"],c:0},
+{q:"What is the capital of France?",a:["Paris","Lyon","Marseille","Nice"],c:0},
+{q:"What is the capital of Australia?",a:["Canberra","Sydney","Melbourne","Brisbane"],c:0},
+{q:"What is the capital of India?",a:["New Delhi","Mumbai","Kolkata","Bangalore"],c:0},
+{q:"What is the capital of China?",a:["Beijing","Shanghai","Hong Kong","Guangzhou"],c:0},
+{q:"What is the capital of Japan?",a:["Tokyo","Osaka","Kyoto","Yokohama"],c:0},
+{q:"What is the capital of Brazil?",a:["Brasília","Rio de Janeiro","São Paulo","Salvador"],c:0},
+{q:"What is the capital of Egypt?",a:["Cairo","Alexandria","Giza","Luxor"],c:0},
+{q:"What is the largest ocean?",a:["Pacific","Atlantic","Indian","Arctic"],c:0},
+{q:"What is the largest continent?",a:["Asia","Africa","North America","Europe"],c:0},
+{q:"What is the smallest continent?",a:["Australia","Europe","Antarctica","South America"],c:0},
+{q:"What is the longest river in the world?",a:["Nile","Amazon","Yangtze","Mississippi"],c:0},
+{q:"What is the highest mountain in the world?",a:["Mount Everest","K2","Kangchenjunga","Lhotse"],c:0},
+{q:"What country has the most people?",a:["China","India","USA","Indonesia"],c:0},
+{q:"What country is the largest by area?",a:["Russia","Canada","China","USA"],c:0},
+{q:"What is the Sahara Desert in?",a:["Africa","Asia","Australia","South America"],c:0},
+{q:"What is the Great Barrier Reef in?",a:["Australia","Brazil","Indonesia","Philippines"],c:0},
+{q:"What is the capital of Germany?",a:["Berlin","Munich","Hamburg","Frankfurt"],c:0},
+{q:"What is the capital of Italy?",a:["Rome","Milan","Venice","Naples"],c:0},
+{q:"What is the capital of Spain?",a:["Madrid","Barcelona","Seville","Valencia"],c:0},
+{q:"What is the capital of Mexico?",a:["Mexico City","Guadalajara","Monterrey","Cancún"],c:0},
+{q:"What is the capital of South Africa?",a:["Pretoria","Cape Town","Johannesburg","Durban"],c:0},
+{q:"What is the capital of Nigeria?",a:["Abuja","Lagos","Kano","Ibadan"],c:0},
+{q:"What is the capital of Saudi Arabia?",a:["Riyadh","Jeddah","Mecca","Medina"],c:0},
+{q:"What is the capital of UAE?",a:["Abu Dhabi","Dubai","Sharjah","Ajman"],c:0},
+{q:"What is the capital of Singapore?",a:["Singapore","Jakarta","Kuala Lumpur","Bangkok"],c:0},
+{q:"What is the capital of New Zealand?",a:["Wellington","Auckland","Christchurch","Hamilton"],c:0},
+{q:"What is the capital of South Korea?",a:["Seoul","Busan","Incheon","Daegu"],c:0}
+],
+medium: [
+{q:"What is the capital of Turkey?",a:["Ankara","Istanbul","Izmir","Bursa"],c:0},
+{q:"What is the capital of Thailand?",a:["Bangkok","Chiang Mai","Phuket","Pattaya"],c:0},
+{q:"What is the capital of Vietnam?",a:["Hanoi","Ho Chi Minh City","Da Nang","Hue"],c:0},
+{q:"What is the capital of Philippines?",a:["Manila","Cebu","Davao","Quezon City"],c:0},
+{q:"What is the capital of Indonesia?",a:["Jakarta","Bali","Surabaya","Bandung"],c:0},
+{q:"What is the capital of Malaysia?",a:["Kuala Lumpur","George Town","Johor Bahru","Ipoh"],c:0},
+{q:"What is the capital of Pakistan?",a:["Islamabad","Karachi","Lahore","Rawalpindi"],c:0},
+{q:"What is the capital of Bangladesh?",a:["Dhaka","Chittagong","Khulna","Rajshahi"],c:0},
+{q:"What is the capital of Afghanistan?",a:["Kabul","Kandahar","Herat","Mazar-i-Sharif"],c:0},
+{q:"What is the capital of Iran?",a:["Tehran","Mashhad","Isfahan","Shiraz"],c:0},
+{q:"What is the capital of Iraq?",a:["Baghdad","Basra","Mosul","Erbil"],c:0},
+{q:"What is the capital of Israel?",a:["Jerusalem","Tel Aviv","Haifa","Beersheba"],c:0},
+{q:"What is the capital of Jordan?",a:["Amman","Zarqa","Irbid","Aqaba"],c:0},
+{q:"What is the capital of Lebanon?",a:["Beirut","Tripoli","Sidon","Tyre"],c:0},
+{q:"What is the capital of Syria?",a:["Damascus","Aleppo","Homs","Latakia"],c:0},
+{q:"What is the capital of Morocco?",a:["Rabat","Casablanca","Marrakech","Fez"],c:0},
+{q:"What is the capital of Algeria?",a:["Algiers","Oran","Constantine","Annaba"],c:0},
+{q:"What is the capital of Tunisia?",a:["Tunis","Sfax","Sousse","Gabès"],c:0},
+{q:"What is the capital of Libya?",a:["Tripoli","Benghazi","Misrata","Sirte"],c:0},
+{q:"What is the capital of Sudan?",a:["Khartoum","Omdurman","Port Sudan","Kassala"],c:0},
+{q:"What is the capital of Ethiopia?",a:["Addis Ababa","Dire Dawa","Adama","Gondar"],c:0},
+{q:"What is the capital of Kenya?",a:["Nairobi","Mombasa","Kisumu","Nakuru"],c:0},
+{q:"What is the capital of Tanzania?",a:["Dodoma","Dar es Salaam","Arusha","Mwanza"],c:0},
+{q:"What is the capital of Uganda?",a:["Kampala","Gulu","Lira","Jinja"],c:0},
+{q:"What is the capital of Ghana?",a:["Accra","Kumasi","Tamale","Tema"],c:0},
+{q:"What is the capital of Ivory Coast?",a:["Yamoussoukro","Abidjan","Bouaké","San Pedro"],c:0},
+{q:"What is the capital of Senegal?",a:["Dakar","Thiès","Mbour","Ziguinchor"],c:0},
+{q:"What is the capital of Mali?",a:["Bamako","Ségou","Mopti","Kayes"],c:0},
+{q:"What is the capital of Niger?",a:["Niamey","Zinder","Maradi","Agadez"],c:0},
+{q:"What is the capital of Chad?",a:["N'Djamena","Moundou","Sarh","Abéché"],c:0}
+],
+hard: [
+{q:"What is the capital of Kazakhstan?",a:["Astana","Almaty","Shymkent","Karaganda"],c:0},
+{q:"What is the capital of Uzbekistan?",a:["Tashkent","Samarkand","Bukhara","Namangan"],c:0},
+{q:"What is the capital of Turkmenistan?",a:["Ashgabat","Turkmenabat","Mary","Dasoguz"],c:0},
+{q:"What is the capital of Kyrgyzstan?",a:["Bishkek","Osh","Jalal-Abad","Karakol"],c:0},
+{q:"What is the capital of Tajikistan?",a:["Dushanbe","Khujand","Bokhtar","Kulob"],c:0},
+{q:"What is the capital of Mongolia?",a:["Ulaanbaatar","Erdenet","Darkhan","Choibalsan"],c:0},
+{q:"What is the capital of Nepal?",a:["Kathmandu","Pokhara","Lalitpur","Biratnagar"],c:0},
+{q:"What is the capital of Bhutan?",a:["Thimphu","Paro","Punakha","Phuentsholing"],c:0},
+{q:"What is the capital of Sri Lanka?",a:["Colombo","Sri Jayawardenepura Kotte","Kandy","Galle"],c:0},
+{q:"What is the capital of Maldives?",a:["Malé","Addu City","Fuvahmulah","Hithadhoo"],c:0},
+{q:"What is the capital of Myanmar?",a:["Naypyidaw","Yangon","Mandalay","Mawlamyine"],c:0},
+{q:"What is the capital of Laos?",a:["Vientiane","Luang Prabang","Pakse","Savannakhet"],c:0},
+{q:"What is the capital of Cambodia?",a:["Phnom Penh","Siem Reap","Battambang","Sihanoukville"],c:0},
+{q:"What is the capital of Brunei?",a:["Bandar Seri Begawan","Kuala Belait","Seria","Tutong"],c:0},
+{q:"What is the capital of Timor-Leste?",a:["Dili","Baucau","Maliana","Suai"],c:0},
+{q:"What is the capital of Papua New Guinea?",a:["Port Moresby","Lae","Mount Hagen","Madang"],c:0},
+{q:"What is the capital of Fiji?",a:["Suva","Lautoka","Nadi","Labasa"],c:0},
+{q:"What is the capital of Solomon Islands?",a:["Honiara","Gizo","Auki","Tulagi"],c:0},
+{q:"What is the capital of Vanuatu?",a:["Port Vila","Luganville","Santo","Tanna"],c:0},
+{q:"What is the capital of Samoa?",a:["Apia","Leulumoega","Faleolo","Mulifanua"],c:0},
+{q:"What is the capital of Tonga?",a:["Nuku'alofa","Neiafu","Tongatapu","Vava'u"],c:0},
+{q:"What is the capital of Kiribati?",a:["South Tarawa","Betio","Bairiki","Kiritimati"],c:0},
+{q:"What is the capital of Marshall Islands?",a:["Majuro","Kwajalein","Bikini","Enewetak"],c:0},
+{q:"What is the capital of Palau?",a:["Ngerulmud","Koror","Melekeok","Airai"],c:0},
+{q:"What is the capital of Micronesia?",a:["Palikir","Weno","Kolonia","Tofol"],c:0},
+{q:"What is the capital of Nauru?",a:["Yaren","Anibare","Meneng","Denigomodu"],c:0},
+{q:"What is the capital of Tuvalu?",a:["Funafuti","Vaitupu","Nanumea","Nanumaga"],c:0},
+{q:"What is the capital of Iceland?",a:["Reykjavik","Kópavogur","Hafnarfjörður","Akureyri"],c:0},
+{q:"What is the capital of Luxembourg?",a:["Luxembourg City","Esch-sur-Alzette","Differdange","Dudelange"],c:0},
+{q:"What is the capital of Monaco?",a:["Monaco","Monte Carlo","La Condamine","Fontvieille"],c:0}
+]}
+};
+
+// ============ HELPERS ============
+function shuffle(arr){return arr.sort(()=>Math.random()-0.5);}
+
+function getQuestion(){
+  const subject = S.subject || 'math';
+  const grade = S.grade || 3;
+  let pool = [];
+  
+  if(grade <= 2) pool = [...(Q[subject].easy||[]), ...(Q[subject].easy||[]).slice(0,5), ...(Q[subject].medium||[]).slice(0,5)];
+  else if(grade <= 5) pool = [...(Q[subject].easy||[]).slice(0,5), ...(Q[subject].medium||[]), ...(Q[subject].medium||[]).slice(0,5)];
+  else if(grade <= 8) pool = [...(Q[subject].medium||[]).slice(0,5), ...(Q[subject].hard||[]), ...(Q[subject].hard||[]).slice(0,5)];
+  else pool = [...(Q[subject].hard||[]), ...(Q[subject].hard||[]), ...(Q[subject].medium||[]).slice(0,5)];
+  
+  return shuffle(pool)[0] || {q:"What is 2+2?",a:["4","3","5","6"],c:0};
+}
+
+// ============ AUTH ============
+const API = '';
+const AUTO_LOGIN_HOURS = 336; // 14 days
+
+function checkAutoLogin(){
+  const saved = localStorage.getItem(SK);
+  if(saved){
+    const data = JSON.parse(saved);
+    if(data.username && data.lastLogin){
+      const hoursSince = (Date.now() - data.lastLogin) / (1000*60*60);
+      if(hoursSince < AUTO_LOGIN_HOURS){
+        Object.assign(S, data);
+        S.lastLogin = Date.now();
+        doSave();
+        return true;
+      }
+    }
+  }
+  return false;
+}
+
+function doSignup(){
+  const user = document.getElementById('reg-user').value.trim().toLowerCase();
+  const pass = document.getElementById('reg-pass').value;
+  const pass2 = document.getElementById('reg-pass2').value;
+  const err = document.getElementById('reg-err');
+  
+  if(!user || !pass){err.textContent='Username and password required';return;}
+  if(user.length < 3){err.textContent='Username must be 3+ characters';return;}
+  if(pass.length < 4){err.textContent='Password must be 4+ characters';return;}
+  if(pass !== pass2){err.textContent='Passwords don\'t match';return;}
+  
+  S.username = user;
+  S.displayName = user;
+  S.lastLogin = Date.now();
+  doSave();
+  showScreen('display-screen');
+}
+
+function doLogin(){
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const err = document.getElementById('login-err');
+  
+  if(!user || !pass){err.textContent='Enter username and password';return;}
+  
+  // Check local save
+  const saved = localStorage.getItem(SK);
+  if(saved){
+    const data = JSON.parse(saved);
+    if(data.username === user){
+      S.username = user;
+      S.displayName = data.displayName || user;
+      S.grade = data.grade || 3;
+      Object.assign(S, data);
+      S.lastLogin = Date.now();
+      doSave();
+      enterGame();
+      return;
+    }
+  }
+  
+  // Try server
+  fetch(API+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,password:pass})})
+    .then(r=>r.json()).then(data=>{
+      if(data.error){err.textContent=data.error;return;}
+      S.username = data.username;
+      S.displayName = data.displayName;
+      S.token = data.token;
+      S.lastLogin = Date.now();
+      if(data.stats) Object.assign(S, data.stats);
+      doSave();
+      enterGame();
+    }).catch(()=>{
+      // Offline - use local
+      S.username = user;
+      S.displayName = user;
+      S.lastLogin = Date.now();
+      doSave();
+      enterGame();
+    });
+}
+
+function socialLogin(provider){
+  // Simulated social login - just create a guest account
+  const guestId = provider + '_user_' + Math.random().toString(36).substr(2,6);
+  S.username = guestId;
+  S.displayName = provider === 'google' ? 'Google Wizard' : 'Apple Wizard';
+  S.lastLogin = Date.now();
+  doSave();
+  showScreen('display-screen');
+}
+
+function saveDisplayName(){
+  const name = document.getElementById('display-input').value.trim();
+  S.displayName = name || S.username;
+  S.lastLogin = Date.now();
+  doSave();
+  showScreen('grade-screen');
+}
+
+function selectGrade(g){
+  S.grade = g;
+  S.lastLogin = Date.now();
+  doSave();
+  enterGame();
+}
+
+function enterGame(){
+  if(!S.grade){
+    showScreen('grade-screen');
+    return;
+  }
+  showScreen('subjects');
+  saveGame();
+  updateHomeScreen();
+}
+
+function doLogout(){
+  S.username = null;
+  S.displayName = null;
+  S.token = null;
+  localStorage.removeItem(SK);
+  updateHomeScreen();
+  showScreen('home');
+}
+
+function updateHomeScreen(){
+  if(S.username){
+    document.getElementById('auth-options').style.display = 'none';
+    document.getElementById('logged-in-options').style.display = 'block';
+    document.getElementById('display-name').textContent = S.displayName || S.username;
+    document.getElementById('user-grade').textContent = 'Grade ' + (S.grade || '?') + ' | ' + (S.subject || 'math');
+  } else {
+    document.getElementById('auth-options').style.display = 'block';
+    document.getElementById('logged-in-options').style.display = 'none';
+  }
+}
+
+function doSave(){
+  S.lastLogin = Date.now();
+  localStorage.setItem(SK, JSON.stringify(S));
+}
+
+// ============ GRADE BUTTONS ============
+function initGradeButtons(){
+  const container = document.getElementById('grade-buttons');
+  const grades = [
+    {g:1,label:"Grade 1-2",desc:"Basic counting & simple math"},
+    {g:3,label:"Grade 3-5",desc:"Multiplication, fractions, grammar"},
+    {g:6,label:"Grade 6-8",desc:"Algebra, science, literature"},
+    {g:9,label:"Grade 9+",desc:"Advanced everything!"}
+  ];
+  container.innerHTML = grades.map(grade => 
+    `<button class="grade-btn" onclick="selectGrade(${grade.g})"><b>${grade.label}</b><span style="font-size:.75em;opacity:.7">${grade.desc}</span></button>`
+  ).join('');
+}
+
+// ============ MAP ============
+const ZONES = [
+  {nm:"Meadow",ic:"🌿",lv:1},{nm:"Forest",ic:"🌲",lv:3},{nm:"Caves",ic:"🕳️",lv:5},
+  {nm:"Swamp",ic:"🐊",lv:8},{nm:"Mountain",ic:"🏔️",lv:12},{nm:"Tower",ic:"🗼",lv:16},{nm:"Dragon's Lair",ic:"🐉",lv:20}
+];
+const MONS = [
+  {nm:"Slime",ic:"🟢"},{nm:"Goblin",ic:"👺"},{nm:"Ghost",ic:"👻"},
+  {nm:"Golem",ic:"🗿"},{nm:"Wyvern",ic:"🐲"},{nm:"Demon",ic:"👹"},{nm:"Dragon",ic:"🐉"}
+];
+
+function buildMap(){
+  const c = document.getElementById('map-canvas');
+  c.innerHTML = '';
+  const pos = [{x:50,y:85},{x:25,y:70},{x:65,y:55},{x:30,y:40},{x:70,y:30},{x:50,y:18},{x:50,y:5}];
+  
+  ZONES.forEach((z,i)=>{
+    const p = pos[i];
+    const el = document.createElement('div');
+    el.className = 'zone' + (S.lv < z.lv ? ' locked' : '');
+    el.style.cssText = `left:${p.x}%;top:${p.y}%;position:absolute;transform:translate(-50%,-50%);`;
+    el.innerHTML = `<div class="zone-i">${z.ic}</div><div class="zone-n">${z.nm}</div><div class="zone-l">${S.lv<z.lv?'🔒 Lv.'+z.lv:'⚔️ Fight!'}</div>`;
+    if(S.lv >= z.lv) el.onclick = () => startRandomBattle();
+    c.appendChild(el);
+  });
+  
+  document.getElementById('h-nm').textContent = S.displayName || S.name;
+  document.getElementById('h-gd').textContent = '💰 ' + S.gold;
+  document.getElementById('h-lv').textContent = 'Lv.' + S.lv;
+  document.getElementById('h-hp').style.width = (S.hp/S.maxHp*100) + '%';
+  document.getElementById('h-mp').style.width = (S.mp/S.maxMp*100) + '%';
+}
+
+function selectSubject(sub){
+  S.subject = sub;
+  doSave();
+  buildMap();
+  showScreen('map');
+}
+
+// ============ BATTLE ============
+let B = {active:false,mon:null,monHp:100,monMaxHp:100,spell:null,qTimer:null,qTime:15,correct:0,asked:0,canAct:true};
+
+
+function beginBattle(zi){
+  S.zone = zi;
+  const mon = MONS[Math.min(zi, MONS.length-1)];
+  const hpMult = 1 + (zi * 0.5);
+  
+  B = {
+    active:true, mon:mon,
+    monHp: Math.floor(80 * hpMult),
+    monMaxHp: Math.floor(80 * hpMult),
+    spell:null, qTimer:null, qTime:15,
+    correct:0, asked:0, canAct:true
+  };
+  
+  // Set player
+  document.getElementById('b-player').textContent = S.av || '🧙‍♂️';
+  document.getElementById('b-player-nm').textContent = S.name || 'Wizard';
+  document.getElementById('b-player-hp').style.width = (S.hp/S.maxHp*100)+'%';
+  document.getElementById('b-player-hp-text').textContent = S.hp;
+  document.getElementById('b-player-mp').style.width = (S.mp/S.maxMp*100)+'%';
+  document.getElementById('b-player-mp-text').textContent = S.mp;
+  
+  // Set monster
+  document.getElementById('b-mon').textContent = mon.ic;
+  document.getElementById('b-mon-nm').textContent = mon.nm + ' (Lv.' + (zi+1) + ')';
+  document.getElementById('b-mon-hp').style.width = '100%';
+  document.getElementById('b-mon-attack').textContent = '';
+  document.getElementById('b-player-attack').textContent = '';
+  document.getElementById('b-msg').textContent = `A wild ${mon.nm} appears!`;
+  
+  // Update HUD
+  updateHUD();
+  
+  // Build spells
+  const spells = [
+    {id:'fire',icon:'🔥',name:'Fire Bolt',cost:10,sub:'math'},
+    {id:'ice',icon:'❄️',name:'Ice Shard',cost:10,sub:'english'},
+    {id:'thunder',icon:'⚡',name:'Thunder',cost:15,sub:'science'},
+    {id:'heal',icon:'💚',name:'Heal',cost:12,sub:'heal'}
+  ];
+  
+  document.getElementById('spells').innerHTML = spells.map(s => 
+    `<div class="spell" onclick="castSpell('${s.id}')" id="sp-${s.id}">
+      <div class="s-icon">${s.icon}</div>
+      <div class="s-name">${s.name}</div>
+      <div class="s-cost">${s.cost} MP</div>
+    </div>`
+  ).join('');
+  
+  showScreen('battle');
+  setTimeout(()=>showQuestion(), 500);
+}
+
+function castSpell(id){
+  if(!B.canAct || !B.active) return;
+  
+  const costs = {fire:10,ice:10,thunder:15,heal:12};
+  if(S.mp < costs[id]){document.getElementById('b-msg').textContent='Not enough MP!';return;}
+  
+  // Heal is instant, others need question
+  if(id === 'heal'){
+    S.mp -= costs.heal;
+    const heal = 20 + Math.floor(S.lv * 2);
+    S.hp = Math.min(S.maxHp, S.hp + heal);
+    document.getElementById('b-msg').textContent = `You healed ${heal} HP!`;
+    B.canAct = false;
+    setTimeout(()=>{B.canAct=true;showQuestion();}, 1000);
+    return;
+  }
+  
+  S.mp -= costs[id];
+  B.spell = id;
+  showQuestion();
+}
+
+function showQuestion(){
+  if(!B.active) return;
+  
+  const q = getQuestion();
+  B.currentQ = q;
+  B.canAct = false;
+  
+  document.getElementById('q-text').textContent = q.q;
+  // Shuffle answers and track correct index
+  const shuffledIndices = q.a.map((_, i) => i).sort(() => Math.random() - 0.5);
+  const correctShuffledIdx = shuffledIndices.indexOf(q.c);
+  B.shuffledCorrect = correctShuffledIdx;
+  
+  document.getElementById('q-opts').innerHTML = shuffledIndices.map((origIdx, displayIdx) => 
+    `<div class="q-opt" onclick="answer(${displayIdx})">${q.a[origIdx]}</div>`
+  ).join('');
+  
+  // Timer
+  B.qTime = 15;
+  document.getElementById('q-timer').style.width = '100%';
+  clearInterval(B.qTimer);
+  B.qTimer = setInterval(()=>{
+    B.qTime -= 0.1;
+    document.getElementById('q-timer').style.width = (B.qTime/15*100) + '%';
+    if(B.qTime <= 0){
+      clearInterval(B.qTimer);
+      answer(-1); // timeout
+    }
+  }, 100);
+}
+
+function answer(idx){
+  if(B.answered) return;
+  B.answered = true;
+  clearInterval(B.qTimer);
+  
+  const q = B.currentQ;
+  const opts = document.querySelectorAll('.q-opt');
+  // Check if selected option is the correct one (using stored mapping)
+  const isCorrect = idx === B.shuffledCorrect;
+  
+  // Show correct/wrong styling
+  opts.forEach((o,i) => {
+    if(i === B.shuffledCorrect) o.classList.add('correct');
+    else if(i === idx) o.classList.add('wrong');
+    o.style.pointerEvents = 'none';
+  });
+  
+  B.asked++;
+  S.totalQuestions = (S.totalQuestions||0) + 1;
+  if(isCorrect){
+    B.correct++;
+    B.currentStreak = (B.currentStreak||0) + 1;
+    S.maxStreak = Math.max(S.maxStreak||0, B.currentStreak);
+  } else {
+    B.currentStreak = 0;
+  }
+  
+  // Calculate damage
+  let dmg = 0;
+  if(isCorrect){
+    dmg = S.atk + Math.floor(Math.random() * 10);
+    if(B.spell) dmg = Math.floor(dmg * 1.5);
+    B.monHp -= dmg;
+    document.getElementById('b-msg').textContent = `Correct! You dealt ${dmg} damage!`;
+    document.getElementById('b-mon-hp').style.width = Math.max(0, B.monHp/B.monMaxHp*100) + '%';
+    S.xp += 10;
+    document.getElementById('b-player-attack').textContent = '⚔️ ' + dmg + ' damage!';
+    setTimeout(()=>{document.getElementById('b-player-attack').textContent='';},1500);
+  } else {
+    const dmgTaken = Math.max(1, 10 - S.def + Math.floor(Math.random() * 5));
+    S.hp -= dmgTaken;
+    document.getElementById('b-msg').textContent = '❌ Wrong! Monster hits you for ' + dmgTaken + ' damage!';
+    // Show player damage number
+    showDmgNum(dmgTaken, false, true);
+    // Shake player
+    const player = document.getElementById('b-player');
+    if(player){player.style.animation='shake .3s ease';setTimeout(()=>player.style.animation='',300);}
+  }
+  
+  // Update player bars
+  document.getElementById('b-player-hp').style.width = Math.max(0, S.hp/S.maxHp*100)+'%';
+  document.getElementById('b-player-hp-text').textContent = Math.max(0, S.hp);
+  document.getElementById('b-player-mp').style.width = Math.max(0, S.mp/S.maxMp*100)+'%';
+  document.getElementById('b-player-mp-text').textContent = S.mp;
+  
+  // Check win/lose
+  if(B.monHp <= 0){
+    setTimeout(()=>winBattle(), 800);
+    return;
+  }
+  if(S.hp <= 0){
+    setTimeout(()=>loseBattle(), 800);
+    return;
+  }
+  
+  // Next question
+  B.answered = false;
+  B.spell = null;
+  setTimeout(()=>{
+    if(B.active){
+      B.canAct = true;
+      showQuestion();
+    }
+  }, 1200);
+}
+
+function winBattle(){
+  // Spawn confetti
+  const emojis = ['🎉','⭐','✨','🏆','💎','🎊','💫','🌟'];
+  for(let i=0;i<15;i++){
+    setTimeout(()=>{
+      const el=document.createElement('div');
+      el.className='confetti';
+      el.textContent=emojis[Math.floor(Math.random()*emojis.length)];
+      el.style.left=Math.random()*100+'%';
+      el.style.animationDuration=(2+Math.random()*2)+'s';
+      document.body.appendChild(el);
+      setTimeout(()=>el.remove(),4000);
+    },i*100);
+  }
+  B.active = false;
+  const goldEarned = 20 + Math.floor(Math.random() * 30) + (S.zone * 5);
+  S.gold += goldEarned;
+  S.wins = (S.wins||0) + 1;
+  S.highestZone = Math.max(S.highestZone||0, S.zone+1);
+  S.totalGold = (S.totalGold||0) + goldEarned;
+  if(!S.subjectsPlayed) S.subjectsPlayed=[];
+  if(!S.subjectsPlayed.includes(S.subject)) S.subjectsPlayed.push(S.subject);
+  const newAchs = checkAchievements();
+  setTimeout(()=>{newAchs.forEach(a=>showAchievementPopup(a));}, 1000);
+  S.xp += 50;
+  
+  // Level up check
+  while(S.xp >= S.xpNeed){
+    S.xp -= S.xpNeed;
+    S.lv++;
+    S.xpNeed = Math.floor(S.xpNeed * 1.5);
+    S.maxHp += 10;
+    S.hp = S.maxHp;
+    S.maxMp += 5;
+    S.mp = S.maxMp;
+    S.atk += 2;
+    S.def += 1;
+  }
+  
+  S.mp = Math.min(S.maxMp, S.mp + Math.floor(S.maxMp * 0.3));
+  doSave();
+  
+  document.getElementById('r-title').textContent = ' Victory!';
+  document.getElementById('r-icon').textContent = '🏆';
+  document.getElementById('r-xp').textContent = '+' + 50;
+  document.getElementById('r-gold').textContent = '+' + goldEarned;
+  document.getElementById('r-correct').textContent = B.correct + '/' + B.asked;
+  showScreen('results');
+}
+
+function loseBattle(){
+  B.active = false;
+  S.hp = Math.floor(S.maxHp * 0.3);
+  S.mp = Math.floor(S.maxMp * 0.3);
+  S.gold = Math.max(0, S.gold - 10);
+  S.xp += 5;
+  doSave();
+  
+  document.getElementById('r-title').textContent = ' Defeated!';
+  document.getElementById('r-icon').textContent = '💀';
+  document.getElementById('r-xp').textContent = '+5';
+  document.getElementById('r-gold').textContent = '-10';
+  document.getElementById('r-correct').textContent = B.correct + '/' + B.asked;
+  showScreen('results');
+}
+
+function fleeBattle(){
+  B.active = false;
+  S.hp = Math.max(1, S.hp - 5);
+  doSave();
+  showScreen('map');
+}
+
+
+
+
+function showAchievements(){
+  // Update stats
+  document.getElementById('s-streak').textContent = S.streak || 0;
+  document.getElementById('s-wins').textContent = S.wins || 0;
+  document.getElementById('s-questions').textContent = S.totalQuestions || 0;
+  document.getElementById('s-gold').textContent = S.totalGold || S.gold || 0;
+  document.getElementById('s-level').textContent = S.lv || 1;
+  document.getElementById('s-streakbest').textContent = S.maxStreak || 0;
+  
+  // Update achievement list
+  const list = document.getElementById('ach-list');
+  list.innerHTML = ACHIEVEMENTS.map(a => {
+    const unlocked = (S.achievements||[]).includes(a.id);
+    return '<div class="ach-card ' + (unlocked?'unlocked':'locked') + '"><div class="ach-icon">' + a.icon + '</div><div class="ach-name">' + a.name + '</div><div class="ach-desc">' + a.desc + '</div></div>';
+  }).join('');
+  
+  document.getElementById('ach-count').textContent = (S.achievements||[]).length + '/' + ACHIEVEMENTS.length + ' Unlocked';
+  showScreen('achievements');
+}
+
+
+// ============ EXPLORATION SYSTEM ============
+let EXP = {active:false,zone:0,px:50,py:50,enemies:[],spawnTimer:null,moving:false};
+
+const ZONE_THEMES = {
+  0:{name:'Enchanted Forest',bg:'linear-gradient(180deg,#1a3a2a,#2d5a3a)',enemies:['🦇','🕷️','🐍','🐸'],obstacles:['🌲','🌳','🪨','🍄']},
+  1:{name:'Dark Cave',bg:'linear-gradient(180deg,#1a1a2e,#2d2d4a)',enemies:['🦇','🕷️','💀','👻'],obstacles:['🪨','💎','⛏️','⬛']},
+  2:{name:'Dragon Mountain',bg:'linear-gradient(180deg,#3a1a1a,#5a2a2a)',enemies:['🐉','🔥','🦎','🦅'],obstacles:['🌋','⛰️','🪨','🔥']},
+  3:{name:'Mystic Lake',bg:'linear-gradient(180deg,#1a2a3a,#2a4a6a)',enemies:['🐟','🐊','🦦','🦆'],obstacles:['🌊','🪨','🌿','🏝️']},
+  4:{name:'Ancient Castle',bg:'linear-gradient(180deg,#2a2a3a,#4a4a5a)',enemies:['👹','👺','🤖','🦹'],obstacles:['🏰','👑','🗡️','🛡️']},
+  5:{name:'Crystal Cavern',bg:'linear-gradient(180deg,#2a1a3a,#4a2a5a)',enemies:['💎','🔮','👾','✨'],obstacles:['💎','🔮','🪨','💠']},
+  6:{name:'Sky Tower',bg:'linear-gradient(180deg,#1a3a5a,#3a6a9a)',enemies:['🦅','☁️','⚡','🌟'],obstacles:['🗼','⛅','🌤️','☁️']},
+};
+
+
+function spawnEnemy(zone){
+  // Simplified: just start a battle directly
+  const isRare = Math.random() < 0.15;
+  const boost = isRare ? 2 : 1;
+  beginBattle(zone, boost);
+}
+
+// Update beginBattle to accept rarity boost
+const origBeginBattle2 = beginBattle;
+beginBattle = function(zi, boost){
+  origBeginBattle2(zi);
+  if(boost > 1){
+    B.monHp = Math.floor(B.monHp * 1.5);
+    B.monMaxHp = B.monHp;
+    document.getElementById('b-mon').style.filter = 'drop-shadow(0 0 15px gold)';
+    document.getElementById('b-msg').textContent = '⭐ RARE ENEMY appeared! Better rewards!';
+  }
+};
+
+// ============ DAILY STREAK ============
+function checkDailyStreak(){
+  const today = new Date().toDateString();
+  const lastLogin = S.lastLoginDate || "";
+  const yesterday = new Date(Date.now() - 86400000).toDateString();
+  if(lastLogin === today) return { streak: S.streak || 0, bonus: 0 };
+  if(lastLogin === yesterday) S.streak = (S.streak || 0) + 1;
+  else S.streak = 1;
+  S.lastLoginDate = today;
+  const bonus = Math.min((S.streak || 1) * 5, 50);
+  S.gold += bonus;
+  S.totalGold = (S.totalGold || 0) + bonus;
+  saveGame();
+  return { streak: S.streak, bonus };
+}
+
+function showStreakPopup(info){
+  if(!info || info.streak <= 1) return;
+  const popup = document.createElement("div");
+  popup.style.cssText = "position:fixed;top:15%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;padding:15px 25px;border-radius:12px;text-align:center;z-index:200;";
+  popup.innerHTML = "<div style=font-size:2em>🔥</div><div style=font-weight:700>" + info.streak + " Day Streak!</div>" + (info.bonus > 0 ? "<div style=font-size:.85em>+" + info.bonus + " gold!</div>" : "");
+  document.body.appendChild(popup);
+  setTimeout(()=>popup.remove(), 3000);
+}
+
+// ============ BATTLE SHOP ============
+function showBattleShop(){
+  // Build shop overlay
+  let overlay = document.getElementById('battle-shop');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'battle-shop';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:60;display:flex;align-items:center;justify-content:center;';
+    overlay.innerHTML = `
+      <div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:350px;max-height:80vh;overflow-y:auto;">
+        <h2 style="text-align:center;margin-bottom:15px;">🛒 Battle Shop</h2>
+        <div style="text-align:center;margin-bottom:10px;color:var(--gold);font-weight:600;">💰 Gold: ${S.gold}</div>
+        <div style="display:grid;gap:10px;">
+          <div class="spell" onclick="buyItem('potion',20)" style="display:flex;align-items:center;gap:12px;padding:12px;">
+            <span style="font-size:1.8em">🧪</span>
+            <div><div style="font-weight:600;">Health Potion</div><div style="font-size:.75em;opacity:.7;">+30 HP</div></div>
+            <div style="margin-left:auto;color:var(--gold);">20g</div>
+          </div>
+          <div class="spell" onclick="buyItem('mana',20)" style="display:flex;align-items:center;gap:12px;padding:12px;">
+            <span style="font-size:1.8em">💎</span>
+            <div><div style="font-weight:600;">Mana Potion</div><div style="font-size:.75em;opacity:.7;">+25 MP</div></div>
+            <div style="margin-left:auto;color:var(--gold);">20g</div>
+          </div>
+          <div class="spell" onclick="buyItem('sword',50)" style="display:flex;align-items:center;gap:12px;padding:12px;">
+            <span style="font-size:1.8em">⚔️</span>
+            <div><div style="font-weight:600;">Attack Boost</div><div style="font-size:.75em;opacity:.7;">+5 ATK permanently</div></div>
+            <div style="margin-left:auto;color:var(--gold);">50g</div>
+          </div>
+          <div class="spell" onclick="buyItem('shield',50)" style="display:flex;align-items:center;gap:12px;padding:12px;">
+            <span style="font-size:1.8em">🛡️</span>
+            <div><div style="font-weight:600;">Defense Boost</div><div style="font-size:.75em;opacity:.7;">+3 DEF permanently</div></div>
+            <div style="margin-left:auto;color:var(--gold);">50g</div>
+          </div>
+          <div class="spell" onclick="buyItem('revive',100)" style="display:flex;align-items:center;gap:12px;padding:12px;">
+            <span style="font-size:1.8em">✨</span>
+            <div><div style="font-weight:600;">Revive Scroll</div><div style="font-size:.75em;opacity:.7;">Auto-revive if defeated</div></div>
+            <div style="margin-left:auto;color:var(--gold);">100g</div>
+          </div>
+        </div>
+        <button class="btn btn-o" style="width:100%;margin-top:15px;" onclick="closeBattleShop()">Close</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display='flex';
+}
+
+function closeBattleShop(){
+  const el = document.getElementById('battle-shop');
+  if(el) el.style.display='none';
+}
+
+function buyItem(type, cost){
+  if(S.gold < cost){alert('Not enough gold! You need '+cost+' gold but have only '+S.gold+'.');return;}
+  S.gold -= cost;
+  S.totalGoldSpent = (S.totalGoldSpent||0)+cost;
+  updateHUD();
+  switch(type){
+    case 'potion':
+      S.potions = (S.potions||0) + 1;
+      alert('🧪 Bought Health Potion! (' + S.potions + ' in inventory)');
+      break;
+    case 'mana':
+      S.mp = Math.min(S.maxMp, S.mp + 25);
+      alert('💎 Mana restored +25!');
+      break;
+    case 'sword':
+      S.atk += 5;
+      alert('⚔️ Attack increased to ' + S.atk + '!');
+      break;
+    case 'shield':
+      S.def += 3;
+      alert('🛡️ Defense increased to ' + S.def + '!');
+      break;
+    case 'revive':
+      S.hasRevive = true;
+      alert('✨ Revive Scroll activated!');
+      break;
+  }
+  updateHUD(); save();
+  // Update shop
+  const shopGold = document.querySelector('#battle-shop div[style*="text-align:center"]');
+  if(shopGold) shopGold.innerHTML = '<div style="text-align:center;margin-bottom:10px;color:var(--gold);font-weight:600;">💰 Gold: ' + S.gold + '</div>';
+}
+
+// ============ BATTLE PETS ============
+function showBattlePets(){
+  let overlay = document.getElementById('battle-pets');
+  if(!overlay){
+    overlay = document.createElement('div');
+    overlay.id = 'battle-pets';
+    overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:60;display:flex;align-items:center;justify-content:center;';
+    
+    const pets = [
+      {id:'dragon',ic:'🐉',nm:'Fire Dragon',desc:'+10% damage'},
+      {id:'phoenix',ic:'🦅',nm:'Phoenix',desc:'Auto-heal 5 HP/turn'},
+      {id:'wolf',ic:'🐺',nm:'Shadow Wolf',desc:'+15% critical hit'},
+      {id:'fairy',ic:'🧚',nm:'Magic Fairy',desc:'+10 MP'},
+      {id:'cat',ic:'🐱',nm:'Lucky Cat',desc:'+20% gold earned'},
+      {id:'turtle',ic:'🐢',nm:'Stone Turtle',desc:'+15% defense'}
+    ];
+    
+    overlay.innerHTML = `
+      <div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:400px;max-height:80vh;overflow-y:auto;">
+        <h2 style="text-align:center;margin-bottom:15px;">🐾 Battle Pets</h2>
+        <div style="text-align:center;margin-bottom:10px;color:var(--gold);">Active: ${S.activePet ? (pets.find(p=>p.id===S.activePet)?.ic || 'None') : 'None'}</div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          ${pets.map(p => `
+            <div class="spell" onclick="selectPet('${p.id}')" style="text-align:center;padding:12px;${S.activePet===p.id?'border-color:var(--gold);background:rgba(245,158,11,.2);':''}">
+              <div style="font-size:2em">${p.ic}</div>
+              <div style="font-weight:600;font-size:.85em;">${p.nm}</div>
+              <div style="font-size:.7em;opacity:.7;">${p.desc}</div>
+              <div style="font-size:.65em;color:var(--teal);margin-top:4px;">${S.unlockedPets?.includes(p.id)?'✅ Owned':'🔒 Locked'}</div>
+            </div>
+          `).join('')}
+        </div>
+        <button class="btn btn-o" style="width:100%;margin-top:15px;" onclick="closeBattlePets()">Close</button>
+      </div>
+    `;
+    document.body.appendChild(overlay);
+  }
+  overlay.style.display='flex';
+}
+
+function closeBattlePets(){
+  const el = document.getElementById('battle-pets');
+  if(el) el.style.display='none';
+}
+
+function selectPet(id){
+  if(!S.unlockedPets) S.unlockedPets=[];
+  if(!S.unlockedPets.includes(id)){
+    // Unlock pet (cost 30 gold)
+    if(S.gold < 30){alert('Need 30 gold to unlock this pet!');return;}
+    S.gold -= 30;
+    S.unlockedPets.push(id);
+  }
+  S.activePet = id;
+  closeBattlePets();
+  alert('Pet equipped! Your pet will help in battle!');
+}
+
+// ============ PET BONUS IN BATTLE ============
+function applyPetBonus(){
+  if(!S.activePet) return;
+  switch(S.activePet){
+    case 'dragon': B.petDmgBonus = 0.1; break; // +10% damage
+    case 'phoenix': B.petHeal = 5; break; // heal 5 HP per turn
+    case 'wolf': B.petCritBonus = 0.15; break; // +15% crit
+    case 'fairy': S.mp = Math.min(S.maxMp + 10, S.mp); break; // +10 max MP
+    case 'cat': B.petGoldBonus = 0.2; break; // +20% gold
+    case 'turtle': S.def += 2; break; // +2 def
+  }
+}
+
+// Apply pet bonus at start of battle
+const origBeginBattle = beginBattle;
+beginBattle = function(zi, boost){
+  origBeginBattle(zi, boost);
+  applyPetBonus();
+  // Show pet in battle
+  if(S.activePet){
+    const petEmojis = {dragon:'🐉',phoenix:'🦅',wolf:'🐺',fairy:'🧚',cat:'🐱',turtle:'🐢'};
+    const playerDiv = document.getElementById('b-player');
+    if(playerDiv && petEmojis[S.activePet]){
+      const petEl = document.createElement('span');
+      petEl.textContent = petEmojis[S.activePet];
+      petEl.style.cssText = 'font-size:1em;position:absolute;bottom:-5px;right:-10px;';
+      playerDiv.style.position = 'relative';
+      playerDiv.appendChild(petEl);
+    }
+  }
+  // Phoenix auto-heal
+  if(S.activePet === 'phoenix'){
+    const healInterval = setInterval(()=>{
+      if(!B.active){clearInterval(healInterval);return;}
+      S.hp = Math.min(S.maxHp, S.hp + 5);
+      updateHUD();
+    }, 5000);
+  }
+};
+
+// ============ SAVE / LOAD ============
+function saveGame(){
+  try {
+    localStorage.setItem("qm_save", JSON.stringify(S));
+  } catch(e) { console.log("Save failed:", e); }
+}
+
+function loadGame(){
+  try {
+    const saved = localStorage.getItem("qm_save");
+    if(saved) Object.assign(S, JSON.parse(saved));
+  } catch(e) { console.log("Load failed:", e); }
+}
+
+// ============ INITIALIZATION ============
+// Load saved game and check auto-login on page load
+document.addEventListener('DOMContentLoaded', function() {
+  loadGame();
+  checkAutoLogin();
+  initGradeButtons();
+});
+
 </script>
 </body>
 </html>
