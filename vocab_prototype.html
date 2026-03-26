@@ -112,8 +112,8 @@
     </style>
 </head>
 <body>
-        <!-- Debug Display for Mobile -->
-        <div id="debug-display" style="position:fixed;top:0;left:0;right:0;background:#1e293b;color:#f59e0b;padding:10px;font-size:12px;z-index:9999;display:none;max-height:150px;overflow-y:auto;border-bottom:2px solid #f59e0b;">
+        <!-- Debug Display for Mobile --><script>document.addEventListener("DOMContentLoaded",function(){const d=document.getElementById("debug-log");if(d)d.innerHTML="<div>Page loaded. Click a mode to start.</div>";});</script>
+        <div id="debug-display" style="position:fixed;top:0;left:0;right:0;background:#1e293b;color:#f59e0b;padding:10px;font-size:12px;z-index:9999;display:block;max-height:150px;overflow-y:auto;border-bottom:2px solid #f59e0b;">
             <strong>Debug Log:</strong>
             <div id="debug-log"></div>
         </div>
