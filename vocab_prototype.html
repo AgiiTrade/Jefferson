@@ -2848,21 +2848,48 @@ function updateDashboard() {
 
 // ===== GAME =====
 function startGame(mode) {
+    console.log('Starting game with mode:', mode);
+    console.log('User state:', user);
+    
+    if (!user) {
+        alert('Please login first!');
+        showScreen('login-screen');
+        return;
+    }
+    
     currentMode = mode;
     const pool = WORDS.filter(w => {
-        if (mode === 'review') return user.missed.includes(w.w);
+        if (mode === 'review') return user.missed && user.missed.includes(w.w);
         return w.lv <= user.level;
     });
-    if (pool.length < 4) { alert('Not enough words unlocked! Play more to unlock levels.'); return; }
+    
+    console.log('Pool size:', pool.length);
+    
+    if (pool.length < 4) { 
+        alert('Not enough words unlocked! Play more to unlock levels.'); 
+        return; 
+    }
+    
     const count = Math.min(10, pool.length);
     gameWords = shuffle([...pool]).slice(0, count);
+    
     // Ensure no repeats from recently played
-    gameWords = gameWords.filter(w => !user.played[w.w] || mode === 'review');
-    if (gameWords.length < 4) { alert('Need more words unlocked!'); return; }
+    if (user.played) {
+        gameWords = gameWords.filter(w => !user.played[w.w] || mode === 'review');
+    }
+    
+    console.log('Game words selected:', gameWords.length);
+    
+    if (gameWords.length < 4) { 
+        alert('Need more words unlocked!'); 
+        return; 
+    }
+    
     gameIndex = 0;
     gameScore = 0;
     document.getElementById('game-total').textContent = gameWords.length;
     showScreen('game-screen');
+    
     if (mode === 'speed') {
         timeLeft = 60;
         document.getElementById('game-timer').style.display = 'inline';
@@ -2870,6 +2897,7 @@ function startGame(mode) {
     } else {
         document.getElementById('game-timer').style.display = 'none';
     }
+    
     loadQuestion();
 }
 
