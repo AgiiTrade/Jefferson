@@ -87,7 +87,15 @@
         .feedback.wrong { background: rgba(239,68,68,0.15); color: var(--red); }
         .feedback .example { font-size: 0.85em; color: var(--muted); margin-top: 8px; font-style: italic; }
 
-        .next-btn { display: none; }
+                .next-btn { 
+            display: none; 
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            z-index: 100;
+            font-size: 1.2em;
+            padding: 15px 30px;
+        }
 
         /* Stats page */
         .stats-page { padding: 20px 0; }
@@ -2921,6 +2929,9 @@ function selectAnswer(btn, correct, word) {
     }
     document.getElementById('feedback-example').textContent = '📝 ' + word.e;
     document.getElementById('next-btn').style.display = 'block';
+    document.getElementById('next-btn').style.position = 'fixed';
+    document.getElementById('next-btn').style.bottom = '20px';
+    document.getElementById('next-btn').style.right = '20px';
     user.stats.games++;
     user.played[word.w] = Date.now();
     // Level up
@@ -2929,8 +2940,18 @@ function selectAnswer(btn, correct, word) {
 }
 
 function nextQuestion() {
+    console.log('Next question clicked. Current index:', gameIndex, 'Total words:', gameWords.length);
     gameIndex++;
+    if (gameIndex >= gameWords.length) {
+        console.log('End of game reached');
+        endGame();
+        return;
+    }
     loadQuestion();
+    // Force show the next button again after loading
+    setTimeout(() => {
+        document.getElementById('next-btn').style.display = 'block';
+    }, 100);
 }
 
 function startTimer() {
