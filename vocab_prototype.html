@@ -28,6 +28,12 @@
         .btn { padding: 14px 28px; border-radius: 12px; border: none; font-size: 1em; font-weight: 600; cursor: pointer; transition: all 0.2s; width: 100%; }
         .btn-primary { background: linear-gradient(135deg, var(--accent), var(--accent2)); color: white; }
         .btn-primary:hover { transform: scale(1.02); }
+        .btn-primary:active { transform: scale(0.98); }
+        
+        /* iOS Safari fixes */
+        * { -webkit-tap-highlight-color: transparent; }
+        button, .btn, .mode-card, .option-btn, .level-btn { touch-action: manipulation; }
+        .option-btn { min-height: 50px; display: flex; align-items: center; }
         .btn-secondary { background: var(--card); color: var(--text); border: 1px solid var(--border); margin-top: 10px; }
         .btn-small { padding: 10px 20px; font-size: 0.85em; width: auto; }
 
@@ -50,6 +56,7 @@
         .mode-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 24px; }
         .mode-card { background: var(--card); padding: 20px; border-radius: 12px; cursor: pointer; transition: all 0.2s; border: 1px solid transparent; }
         .mode-card:hover { border-color: var(--accent); transform: translateY(-2px); }
+        .mode-card:active { border-color: var(--accent); transform: scale(0.98); }
         .mode-card.locked { opacity: 0.4; cursor: not-allowed; }
         .mode-card .icon { font-size: 1.8em; margin-bottom: 8px; }
         .mode-card .name { font-weight: 600; margin-bottom: 4px; }
@@ -113,7 +120,7 @@
 </head>
 <body>
         <!-- Debug Display for Mobile --><script>document.addEventListener("DOMContentLoaded",function(){const d=document.getElementById("debug-log");if(d)d.innerHTML="<div>Page loaded. Click a mode to start.</div>";});</script>
-        <div id="debug-display" style="position:fixed;top:0;left:0;right:0;background:#1e293b;color:#f59e0b;padding:10px;font-size:12px;z-index:9999;display:block;max-height:150px;overflow-y:auto;border-bottom:2px solid #f59e0b;">
+        <div id="debug-display" style="position:fixed;top:0;left:0;right:0;background:#1e293b;color:#f59e0b;padding:10px;font-size:12px;z-index:9999;display:none;max-height:150px;overflow-y:auto;border-bottom:2px solid #f59e0b;">
             <strong>Debug Log:</strong>
             <div id="debug-log"></div>
         </div>
@@ -149,24 +156,24 @@
                 <div class="bar-bg"><div class="bar-fill" id="xp-fill" style="width:0%"></div></div>
             </div>
             <div class="mode-grid">
-                <div class="mode-card" onclick="startGame('classic')"><div class="icon">🎯</div><div class="name">Classic</div><div class="desc">Match definitions</div></div>
-                <div class="mode-card" onclick="startGame('speed')"><div class="icon">⚡</div><div class="name">Speed Round</div><div class="desc">60 second challenge</div></div>
-                <div class="mode-card" onclick="startGame('sentence')"><div class="icon">📝</div><div class="name">Sentence</div><div class="desc">Fill in the blank</div></div>
-                <div class="mode-card" onclick="startGame('review')"><div class="icon">🔄</div><div class="name">Review</div><div class="desc">Practice missed words</div></div>
+                <div class="mode-card" data-mode="classic"><div class="icon">🎯</div><div class="name">Classic</div><div class="desc">Match definitions</div></div>
+                <div class="mode-card" data-mode="speed"><div class="icon">⚡</div><div class="name">Speed Round</div><div class="desc">60 second challenge</div></div>
+                <div class="mode-card" data-mode="sentence"><div class="icon">📝</div><div class="name">Sentence</div><div class="desc">Fill in the blank</div></div>
+                <div class="mode-card" data-mode="review"><div class="icon">🔄</div><div class="name">Review</div><div class="desc">Practice missed words</div></div>
             </div>
             <div class="level-section">
                 <h3>Select Difficulty</h3>
                 <div class="level-btns" id="level-btns"></div>
             </div>
             <div style="text-align:center; margin-top:16px;">
-                <button class="btn btn-secondary" onclick="showStats()">📊 View Full Stats</button>
+                <button class="btn btn-secondary" id="stats-btn">📊 View Full Stats</button>
             </div>
         </div>
 
         <!-- Game Screen -->
         <div class="screen" id="game-screen">
             <div class="game-header">
-                <span class="back" onclick="backToDash()">← Back</span>
+                <span class="back">← Back</span>
                 <span class="progress" id="game-progress">1/10</span>
                 <span class="timer" id="game-timer" style="display:none">60</span>
             </div>
@@ -180,7 +187,7 @@
                 <div class="text" id="feedback-text"></div>
                 <div class="example" id="feedback-example"></div>
             </div>
-            <button class="btn btn-primary next-btn" id="next-btn" onclick="nextQuestion()">Next →</button>
+            <button class="btn btn-primary next-btn" id="next-btn">Next →</button>
             <div style="text-align:center; margin-top:12px;">
                 <span style="color:var(--muted); font-size:0.85em;">Score: <span id="game-score">0</span> / <span id="game-total">10</span></span>
             </div>
@@ -198,8 +205,8 @@
                     <div class="stat-card"><div class="num" id="res-accuracy">0%</div><div class="label">Accuracy</div></div>
                 </div>
                 <div style="margin-top:24px;">
-                    <button class="btn btn-primary" onclick="playAgain()">Play Again</button>
-                    <button class="btn btn-secondary" onclick="backToDash()">Back to Dashboard</button>
+                    <button class="btn btn-primary">Play Again</button>
+                    <button class="btn btn-secondary">Back to Dashboard</button>
                 </div>
             </div>
         </div>
@@ -209,7 +216,7 @@
             <div class="stats-page">
                 <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:20px;">
                     <h2>📊 Full Stats</h2>
-                    <span class="back" onclick="backToDash()" style="cursor:pointer; color:var(--muted);">← Back</span>
+                    <span class="back" style="cursor:pointer; color:var(--muted);">← Back</span>
                 </div>
                 <div id="stats-content"></div>
             </div>
@@ -2793,6 +2800,68 @@ document.addEventListener('DOMContentLoaded', () => {
     }
     document.getElementById('start-btn').onclick = login;
     document.getElementById('login-existing-btn').onclick = () => login();
+    
+    // Set up mode card event listeners (fix for iOS Safari)
+    document.querySelectorAll('.mode-card[data-mode]').forEach(card => {
+        const mode = card.dataset.mode;
+        const handler = (e) => {
+            e.preventDefault();
+            e.stopPropagation();
+            if (!card.classList.contains('locked')) {
+                startGame(mode);
+            }
+        };
+        card.addEventListener('click', handler);
+        card.addEventListener('touchend', handler);
+        card.style.cursor = 'pointer';
+        card.style.webkitTapHighlightColor = 'transparent';
+    });
+    
+    // Set up other button event listeners
+    const nextBtn = document.getElementById('next-btn');
+    if (nextBtn) {
+        const nextHandler = (e) => { e.preventDefault(); nextQuestion(); };
+        nextBtn.addEventListener('click', nextHandler);
+        nextBtn.addEventListener('touchend', nextHandler);
+    }
+    
+    const backBtn = document.querySelector('.game-header .back');
+    if (backBtn) {
+        const backHandler = (e) => { e.preventDefault(); backToDash(); };
+        backBtn.addEventListener('click', backHandler);
+        backBtn.addEventListener('touchend', backHandler);
+    }
+    
+    // Stats button
+    const statsBtn = document.getElementById('stats-btn');
+    if (statsBtn) {
+        const statsHandler = (e) => { e.preventDefault(); showStats(); };
+        statsBtn.addEventListener('click', statsHandler);
+        statsBtn.addEventListener('touchend', statsHandler);
+    }
+    
+    // Results screen buttons
+    const playAgainBtn = document.querySelector('#results-screen .btn-primary');
+    if (playAgainBtn) {
+        const playHandler = (e) => { e.preventDefault(); playAgain(); };
+        playAgainBtn.addEventListener('click', playHandler);
+        playAgainBtn.addEventListener('touchend', playHandler);
+    }
+    
+    const resultsBackBtn = document.querySelector('#results-screen .btn-secondary');
+    if (resultsBackBtn) {
+        const resultsBackHandler = (e) => { e.preventDefault(); backToDash(); };
+        resultsBackBtn.addEventListener('click', resultsBackHandler);
+        resultsBackBtn.addEventListener('touchend', resultsBackHandler);
+    }
+    
+    // Stats screen back button
+    const statsBackBtn = document.querySelector('#stats-screen .back');
+    if (statsBackBtn) {
+        const statsBackHandler = (e) => { e.preventDefault(); backToDash(); };
+        statsBackBtn.addEventListener('click', statsBackHandler);
+        statsBackBtn.addEventListener('touchend', statsBackHandler);
+    }
 });
 
 
@@ -2880,7 +2949,6 @@ function updateDashboard() {
 
 // ===== GAME =====
 function startGame(mode) {
-    alert('startGame called with mode: ' + mode);
     debugLog('Starting game with mode: ' + mode);
     debugLog('User state: ' + JSON.stringify(user));
     
@@ -2961,7 +3029,12 @@ function loadQuestion() {
         const btn = document.createElement('button');
         btn.className = 'option-btn';
         btn.textContent = opt;
-        btn.onclick = () => selectAnswer(btn, opt === correct, word);
+        const handler = (e) => {
+            e.preventDefault();
+            selectAnswer(btn, opt === correct, word);
+        };
+        btn.addEventListener('click', handler);
+        btn.addEventListener('touchend', handler);
         container.appendChild(btn);
     });
     document.getElementById('game-feedback').classList.remove('show', 'correct', 'wrong');
