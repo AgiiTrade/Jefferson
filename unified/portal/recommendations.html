@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Recommendations - StudyCanada Portal</title>
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="js/portal.js"></script>
+</head>
+<body>
+  <script>
+    if (!localStorage.getItem('portal_user')) window.location.href = 'login.html';
+  </script>
+
+  <div class="portal-wrapper">
+    <aside class="portal-sidebar" id="portalSidebar">
+      <div class="portal-sidebar-header">
+        <a href="../index.html" class="logo">🍁 Study<span>Canada</span></a>
+        <div class="subtitle">Student Portal</div>
+      </div>
+      <nav class="portal-nav">
+        <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html"><span class="nav-icon">👤</span> Profile</a>
+        <a href="recommendations.html" class="active"><span class="nav-icon">🎓</span> Recommendations</a>
+        <a href="services.html"><span class="nav-icon">💎</span> Services</a>
+        <div class="portal-nav-divider"></div>
+        <a href="../uniprep/index.html"><span class="nav-icon">📚</span> UniPrep Tools</a>
+        <a href="../index.html"><span class="nav-icon">🏠</span> Main Site</a>
+      </nav>
+      <div class="portal-sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-details">
+            <div class="user-name" id="userName"></div>
+            <div class="user-email" id="userEmail"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <header class="portal-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="mobile-menu-toggle" id="menuToggle">☰</button>
+          <h1>University Recommendations</h1>
+        </div>
+        <div class="topbar-actions">
+          <a href="../index.html" class="back-to-site">← Main Site</a>
+          <button class="portal-btn portal-btn-outline" onclick="PortalAuth.logout()" style="font-size:12px;padding:8px 16px;">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="portal-content">
+        <!-- Profile warning -->
+        <div id="profileWarning" style="display:none;background:#fff3cd;border:1px solid #ffc107;border-radius:var(--portal-radius);padding:16px 20px;margin-bottom:24px;display:none;">
+          <strong>⚠️ Complete your profile</strong> for more accurate recommendations.
+          <a href="profile.html" style="color:var(--portal-primary);font-weight:600;margin-left:8px;">Update Profile →</a>
+        </div>
+
+        <!-- Summary -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Universities Matched</div>
+            <div class="stat-value" id="totalMatches">0</div>
+            <div class="stat-detail">Based on your profile</div>
+          </div>
+          <div class="stat-card navy">
+            <div class="stat-label">Best Match</div>
+            <div class="stat-value" id="bestMatch">--</div>
+            <div class="stat-detail" id="bestMatchPct"></div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Avg. Tuition</div>
+            <div class="stat-value" id="avgTuition">--</div>
+            <div class="stat-detail">CAD per year</div>
+          </div>
+        </div>
+
+        <!-- Filters -->
+        <div class="filter-bar">
+          <select id="filterProgram">
+            <option value="">All Programs</option>
+            <option value="Computer Science">Computer Science</option>
+            <option value="Engineering">Engineering</option>
+            <option value="Business">Business</option>
+            <option value="Medicine">Medicine / Health</option>
+            <option value="Sciences">Sciences</option>
+            <option value="Arts">Arts & Humanities</option>
+            <option value="Law">Law</option>
+          </select>
+          <select id="filterProvince">
+            <option value="">All Provinces</option>
+            <option value="Ontario">Ontario</option>
+            <option value="British Columbia">British Columbia</option>
+            <option value="Quebec">Quebec</option>
+            <option value="Alberta">Alberta</option>
+            <option value="Manitoba">Manitoba</option>
+            <option value="Saskatchewan">Saskatchewan</option>
+            <option value="Nova Scotia">Nova Scotia</option>
+          </select>
+          <input type="number" id="filterTuition" placeholder="Max tuition (CAD)">
+          <select id="filterMatch">
+            <option value="">Any Match %</option>
+            <option value="70">70%+ Match</option>
+            <option value="50">50%+ Match</option>
+            <option value="30">30%+ Match</option>
+          </select>
+          <button class="portal-btn portal-btn-primary" onclick="applyFilters()" style="font-size:13px;">🔍 Filter</button>
+          <button class="portal-btn portal-btn-outline" onclick="resetFilters()" style="font-size:13px;">Reset</button>
+        </div>
+
+        <!-- Results -->
+        <div class="rec-grid" id="recGrid">
+          <!-- Populated by JS -->
+        </div>
+
+        <div id="noResults" style="display:none;text-align:center;padding:60px 20px;color:var(--portal-text-light);">
+          <div style="font-size:48px;margin-bottom:16px;">🔍</div>
+          <h3>No universities match your filters</h3>
+          <p>Try adjusting your filter criteria</p>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Init user info
+    const user = JSON.parse(localStorage.getItem('portal_user') || '{}');
+    document.getElementById('userAvatar').textContent = PortalAuth.getInitials();
+    document.getElementById('userName').textContent = user.name || 'Student';
+    document.getElementById('userEmail').textContent = user.email || '';
+
+    // Profile check
+    const profile = PortalProfile.get();
+    if (PortalProfile.completionPercent() < 30) {
+      document.getElementById('profileWarning').style.display = 'block';
+    }
+
+    // Get recommendations
+    let allRecs = RecommendationEngine.getRecommendations(profile);
+
+    function renderCards(recs) {
+      const grid = document.getElementById('recGrid');
+      const noRes = document.getElementById('noResults');
+
+      if (recs.length === 0) {
+        grid.innerHTML = '';
+        noRes.style.display = 'block';
+        return;
+      }
+
+      noRes.style.display = 'none';
+      grid.innerHTML = recs.map(r => `
+        <div class="rec-card">
+          <div class="rec-card-header">
+            <div class="uni-name">${r.name}</div>
+            <div class="uni-location">📍 ${r.location} • #${r.ranking} in Canada</div>
+          </div>
+          <div class="rec-card-body">
+            <div class="rec-match">⭐ ${r.matchPercent}% Match</div>
+            <p style="font-size:13px;color:var(--portal-text-light);margin-bottom:12px;">${r.description}</p>
+            <div class="rec-detail">
+              <span class="label">Annual Tuition</span>
+              <span class="value">$${r.tuitionIntl.toLocaleString()} CAD</span>
+            </div>
+            <div class="rec-detail">
+              <span class="label">Min GPA</span>
+              <span class="value">${r.minGPA} / 4.0</span>
+            </div>
+            <div class="rec-detail">
+              <span class="label">Min IELTS</span>
+              <span class="value">${r.minIELTS}</span>
+            </div>
+            <div class="rec-detail">
+              <span class="label">Min TOEFL</span>
+              <span class="value">${r.minTOEFL}</span>
+            </div>
+            <div class="rec-detail">
+              <span class="label">Programs</span>
+              <span class="value" style="font-size:12px;">${r.programs.slice(0, 3).join(', ')}${r.programs.length > 3 ? ' +' + (r.programs.length - 3) + ' more' : ''}</span>
+            </div>
+          </div>
+          <div class="rec-card-footer" style="display:flex;gap:8px;">
+            <a href="${r.website}" target="_blank" class="portal-btn portal-btn-primary" style="flex:1;justify-content:center;font-size:13px;padding:10px;">Apply Now →</a>
+          </div>
+        </div>
+      `).join('');
+
+      // Update summary
+      document.getElementById('totalMatches').textContent = recs.length;
+      document.getElementById('bestMatch').textContent = recs[0]?.name.split(' ').slice(0, 2).join(' ') || '--';
+      document.getElementById('bestMatchPct').textContent = recs[0] ? recs[0].matchPercent + '% match' : '';
+      const avg = Math.round(recs.reduce((s, r) => s + r.tuitionIntl, 0) / recs.length);
+      document.getElementById('avgTuition').textContent = '$' + avg.toLocaleString();
+    }
+
+    function applyFilters() {
+      const filters = {
+        program: document.getElementById('filterProgram').value,
+        province: document.getElementById('filterProvince').value,
+        maxTuition: document.getElementById('filterTuition').value,
+        minMatch: document.getElementById('filterMatch').value
+      };
+      const filtered = RecommendationEngine.filterRecommendations(allRecs, filters);
+      renderCards(filtered);
+    }
+
+    function resetFilters() {
+      document.getElementById('filterProgram').value = '';
+      document.getElementById('filterProvince').value = '';
+      document.getElementById('filterTuition').value = '';
+      document.getElementById('filterMatch').value = '';
+      renderCards(allRecs);
+    }
+
+    // Initial render
+    renderCards(allRecs);
+
+    // Mobile menu
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('portalSidebar').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

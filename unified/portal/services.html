@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Services - StudyCanada Portal</title>
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="js/portal.js"></script>
+</head>
+<body>
+  <script>
+    if (!localStorage.getItem('portal_user')) window.location.href = 'login.html';
+  </script>
+
+  <div class="portal-wrapper">
+    <aside class="portal-sidebar" id="portalSidebar">
+      <div class="portal-sidebar-header">
+        <a href="../index.html" class="logo">🍁 Study<span>Canada</span></a>
+        <div class="subtitle">Student Portal</div>
+      </div>
+      <nav class="portal-nav">
+        <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html"><span class="nav-icon">👤</span> Profile</a>
+        <a href="recommendations.html"><span class="nav-icon">🎓</span> Recommendations</a>
+        <a href="services.html" class="active"><span class="nav-icon">💎</span> Services</a>
+        <div class="portal-nav-divider"></div>
+        <a href="../uniprep/index.html"><span class="nav-icon">📚</span> UniPrep Tools</a>
+        <a href="../index.html"><span class="nav-icon">🏠</span> Main Site</a>
+      </nav>
+      <div class="portal-sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-details">
+            <div class="user-name" id="userName"></div>
+            <div class="user-email" id="userEmail"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <header class="portal-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="mobile-menu-toggle" id="menuToggle">☰</button>
+          <h1>Services & Packages</h1>
+        </div>
+        <div class="topbar-actions">
+          <a href="../index.html" class="back-to-site">← Main Site</a>
+          <button class="portal-btn portal-btn-outline" onclick="PortalAuth.logout()" style="font-size:12px;padding:8px 16px;">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="portal-content">
+        <!-- Header -->
+        <div class="welcome-banner" style="margin-bottom:32px;text-align:center;">
+          <h1>💎 Service Packages</h1>
+          <p style="max-width:600px;margin:8px auto 0;">Choose the package that fits your needs. Every package starts with free access to our tools — upgrade when you're ready for more support.</p>
+        </div>
+
+        <!-- Pricing Cards -->
+        <div class="pricing-grid">
+          <!-- Free -->
+          <div class="pricing-card">
+            <div class="plan-name">Free</div>
+            <div class="plan-price"><span class="currency">$</span>0</div>
+            <div class="plan-desc">Get started with the basics</div>
+            <ul class="plan-features">
+              <li>Create student profile</li>
+              <li>Limited university recommendations (5 schools)</li>
+              <li>Access to UniPrep tools</li>
+              <li>Basic Canada study guide</li>
+              <li class="unavailable">Full recommendations</li>
+              <li class="unavailable">Application checklist</li>
+              <li class="unavailable">Essay review</li>
+              <li class="unavailable">1-on-1 consultation</li>
+              <li class="unavailable">Visa guidance</li>
+            </ul>
+            <button class="portal-btn portal-btn-outline" style="width:100%;justify-content:center;" onclick="selectPlan('free')">Current Plan</button>
+          </div>
+
+          <!-- Starter -->
+          <div class="pricing-card">
+            <div class="plan-name">Starter</div>
+            <div class="plan-price"><span class="currency">$</span>99</div>
+            <div class="plan-desc">Everything you need to apply</div>
+            <ul class="plan-features">
+              <li>Everything in Free</li>
+              <li>Full university recommendations (all 17+)</li>
+              <li>Personalized match analysis</li>
+              <li>Application checklist & timeline</li>
+              <li>Document preparation guide</li>
+              <li class="unavailable">Essay review</li>
+              <li class="unavailable">1-on-1 consultation</li>
+              <li class="unavailable">Visa guidance</li>
+            </ul>
+            <button class="portal-btn portal-btn-secondary" style="width:100%;justify-content:center;" onclick="selectPlan('starter')">Get Starter</button>
+          </div>
+
+          <!-- Premium -->
+          <div class="pricing-card featured">
+            <div class="plan-name">Premium</div>
+            <div class="plan-price"><span class="currency">$</span>499</div>
+            <div class="plan-desc">Expert guidance for your applications</div>
+            <ul class="plan-features">
+              <li>Everything in Starter</li>
+              <li>Personal statement / essay review</li>
+              <li>2x 1-on-1 consultation calls</li>
+              <li>Application strategy session</li>
+              <li>Scholarship search assistance</li>
+              <li>Interview preparation</li>
+              <li class="unavailable">Visa guidance</li>
+              <li class="unavailable">Accommodation help</li>
+            </ul>
+            <button class="portal-btn portal-btn-primary" style="width:100%;justify-content:center;" onclick="selectPlan('premium')">Get Premium</button>
+          </div>
+
+          <!-- Elite -->
+          <div class="pricing-card">
+            <div class="plan-name">Elite</div>
+            <div class="plan-price"><span class="currency">$</span>1,499</div>
+            <div class="plan-desc">Full support from start to campus</div>
+            <ul class="plan-features">
+              <li>Everything in Premium</li>
+              <li>Student visa application guidance</li>
+              <li>Accmodation search assistance</li>
+              <li>Pre-departure orientation</li>
+              <li>Ongoing email support (1 year)</li>
+              <li>Arrival support in Canada</li>
+              <li>Priority 1-on-1 consultations</li>
+              <li>Guaranteed application review</li>
+            </ul>
+            <button class="portal-btn portal-btn-gold" style="width:100%;justify-content:center;" onclick="selectPlan('elite')">Get Elite</button>
+          </div>
+        </div>
+
+        <!-- Feature Comparison Table -->
+        <div class="portal-card" style="margin-top:40px;">
+          <div class="portal-card-header">
+            <h2>📊 Feature Comparison</h2>
+          </div>
+          <div style="overflow-x:auto;">
+            <table style="width:100%;border-collapse:collapse;font-size:14px;">
+              <thead>
+                <tr style="background:var(--portal-bg);">
+                  <th style="padding:12px 16px;text-align:left;border-bottom:2px solid var(--portal-border);">Feature</th>
+                  <th style="padding:12px 16px;text-align:center;border-bottom:2px solid var(--portal-border);">Free</th>
+                  <th style="padding:12px 16px;text-align:center;border-bottom:2px solid var(--portal-border);">Starter</th>
+                  <th style="padding:12px 16px;text-align:center;border-bottom:2px solid var(--portal-border);background:rgba(196,30,58,0.05);">Premium</th>
+                  <th style="padding:12px 16px;text-align:center;border-bottom:2px solid var(--portal-border);">Elite</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">Student Profile</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">UniPrep Tools</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">University Recommendations</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">5 schools</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">Unlimited</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">Unlimited</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">Unlimited</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">Match Analysis</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">Basic</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">Detailed</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">Detailed</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">Detailed</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">Application Checklist</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">Essay / Personal Statement Review</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">1-on-1 Consultation Calls</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">2 sessions</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">Priority</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">Scholarship Assistance</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">✅</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">Visa Application Guidance</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;border-bottom:1px solid var(--portal-border);">Accommodation Help</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);background:rgba(196,30,58,0.05);">—</td>
+                  <td style="padding:10px 16px;text-align:center;border-bottom:1px solid var(--portal-border);">✅</td>
+                </tr>
+                <tr>
+                  <td style="padding:10px 16px;font-weight:700;">Price</td>
+                  <td style="padding:10px 16px;text-align:center;font-weight:700;color:var(--portal-success);">$0</td>
+                  <td style="padding:10px 16px;text-align:center;font-weight:700;">$99</td>
+                  <td style="padding:10px 16px;text-align:center;font-weight:700;background:rgba(196,30,58,0.05);color:var(--portal-primary);">$499</td>
+                  <td style="padding:10px 16px;text-align:center;font-weight:700;">$1,499</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+
+        <!-- FAQ -->
+        <div class="portal-card" style="margin-top:24px;">
+          <div class="portal-card-header">
+            <h2>❓ Frequently Asked Questions</h2>
+          </div>
+          <div style="font-size:14px;line-height:1.8;">
+            <details style="margin-bottom:12px;">
+              <summary style="font-weight:600;cursor:pointer;padding:8px 0;">Can I upgrade my package later?</summary>
+              <p style="padding:8px 0;color:var(--portal-text-light);">Yes! You can upgrade at any time. You'll only pay the difference between your current package and the new one.</p>
+            </details>
+            <details style="margin-bottom:12px;">
+              <summary style="font-weight:600;cursor:pointer;padding:8px 0;">How do consultation calls work?</summary>
+              <p style="padding:8px 0;color:var(--portal-text-light);">Premium and Elite members can schedule 30-minute video calls with our education consultants. We cover application strategy, document review, and answer your questions.</p>
+            </details>
+            <details style="margin-bottom:12px;">
+              <summary style="font-weight:600;cursor:pointer;padding:8px 0;">Is the visa guidance comprehensive?</summary>
+              <p style="padding:8px 0;color:var(--portal-text-light);">Elite package includes step-by-step guidance for Canadian student visa (study permit) applications, including document preparation, financial proof requirements, and application review.</p>
+            </details>
+            <details style="margin-bottom:12px;">
+              <summary style="font-weight:600;cursor:pointer;padding:8px 0;">Do you guarantee admission?</summary>
+              <p style="padding:8px 0;color:var(--portal-text-light);">We cannot guarantee admission as decisions are made by universities. However, our guidance significantly improves your application quality and chances of acceptance.</p>
+            </details>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Init user info
+    const user = JSON.parse(localStorage.getItem('portal_user') || '{}');
+    document.getElementById('userAvatar').textContent = PortalAuth.getInitials();
+    document.getElementById('userName').textContent = user.name || 'Student';
+    document.getElementById('userEmail').textContent = user.email || '';
+
+    function selectPlan(plan) {
+      const names = { free: 'Free', starter: 'Starter ($99)', premium: 'Premium ($499)', elite: 'Elite ($1,499)' };
+      if (plan === 'free') {
+        alert('You\'re already on the Free plan!');
+        return;
+      }
+      alert(`Thank you for your interest in the ${names[plan]} package!\n\nPayment integration coming soon. Contact us at hello@studyncanada.com for manual enrollment.`);
+    }
+
+    // Mobile menu
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('portalSidebar').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

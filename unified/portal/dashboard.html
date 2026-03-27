@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard - StudyCanada Portal</title>
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="js/portal.js"></script>
+</head>
+<body>
+  <script>
+    // Auth check
+    if (!localStorage.getItem('portal_user')) {
+      window.location.href = 'login.html';
+    }
+  </script>
+
+  <div class="portal-wrapper" id="app">
+    <!-- Sidebar -->
+    <aside class="portal-sidebar" id="portalSidebar">
+      <div class="portal-sidebar-header">
+        <a href="../index.html" class="logo">🍁 Study<span>Canada</span></a>
+        <div class="subtitle">Student Portal</div>
+      </div>
+      <nav class="portal-nav">
+        <a href="dashboard.html" class="active"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html"><span class="nav-icon">👤</span> Profile</a>
+        <a href="recommendations.html"><span class="nav-icon">🎓</span> Recommendations</a>
+        <a href="services.html"><span class="nav-icon">💎</span> Services</a>
+        <div class="portal-nav-divider"></div>
+        <a href="../uniprep/index.html"><span class="nav-icon">📚</span> UniPrep Tools</a>
+        <a href="../index.html"><span class="nav-icon">🏠</span> Main Site</a>
+      </nav>
+      <div class="portal-sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-details">
+            <div class="user-name" id="userName"></div>
+            <div class="user-email" id="userEmail"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="portal-main">
+      <header class="portal-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="mobile-menu-toggle" id="menuToggle">☰</button>
+          <h1>Dashboard</h1>
+        </div>
+        <div class="topbar-actions">
+          <a href="../index.html" class="back-to-site">← Main Site</a>
+          <button class="portal-btn portal-btn-outline" onclick="PortalAuth.logout()" style="font-size:12px;padding:8px 16px;">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="portal-content">
+        <!-- Welcome Banner -->
+        <div class="welcome-banner" id="welcomeBanner">
+          <h1>Welcome back, <span id="welcomeName">Student</span>! 🎓</h1>
+          <p>Your journey to studying in Canada starts here. Complete your profile to get personalized university recommendations.</p>
+        </div>
+
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Profile Completion</div>
+            <div class="stat-value" id="statProfile">0%</div>
+            <div class="stat-detail">Complete for better matches</div>
+          </div>
+          <div class="stat-card navy">
+            <div class="stat-label">GPA</div>
+            <div class="stat-value" id="statGPA">--</div>
+            <div class="stat-detail" id="statGPADetail">Add in profile</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Target Schools</div>
+            <div class="stat-value" id="statSchools">0</div>
+            <div class="stat-detail">Universities matched</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-label">Application Status</div>
+            <div class="stat-value" id="statStatus" style="font-size:18px;">Not Started</div>
+            <div class="stat-detail">Update in profile</div>
+          </div>
+        </div>
+
+        <div class="portal-grid">
+          <!-- Left: Actions & Progress -->
+          <div>
+            <!-- Profile Completion -->
+            <div class="portal-card">
+              <div class="portal-card-header">
+                <h2>📋 Profile Completion</h2>
+                <a href="profile.html" class="portal-btn portal-btn-outline" style="font-size:12px;padding:6px 14px;">Edit Profile</a>
+              </div>
+              <div class="progress-container">
+                <div class="progress-bar">
+                  <div class="progress-fill" id="progressFill" style="width:0%"></div>
+                </div>
+                <div class="progress-label">
+                  <span id="progressText">0% complete</span>
+                  <span id="progressFields">0 of 10 fields</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Action Items -->
+            <div class="portal-card">
+              <div class="portal-card-header">
+                <h2>⚡ Next Steps</h2>
+              </div>
+              <ul class="action-list" id="actionList">
+                <li class="action-item">
+                  <div class="action-icon pending">📝</div>
+                  <div class="action-text">
+                    <div class="action-title">Complete your profile</div>
+                    <div class="action-desc">Add your academic info to get personalized recommendations</div>
+                  </div>
+                  <a href="profile.html" class="portal-btn portal-btn-primary" style="font-size:12px;padding:8px 16px;">Start</a>
+                </li>
+              </ul>
+            </div>
+
+            <!-- Quick Links -->
+            <div class="portal-card">
+              <div class="portal-card-header">
+                <h2>🔗 Quick Links</h2>
+              </div>
+              <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;">
+                <a href="recommendations.html" style="display:flex;align-items:center;gap:10px;padding:16px;background:var(--portal-bg);border-radius:8px;color:var(--portal-text);text-decoration:none;">
+                  <span style="font-size:24px;">🎓</span>
+                  <div>
+                    <div style="font-weight:600;font-size:14px;">View Matches</div>
+                    <div style="font-size:12px;color:var(--portal-text-light);">See recommended universities</div>
+                  </div>
+                </a>
+                <a href="../uniprep/index.html" style="display:flex;align-items:center;gap:10px;padding:16px;background:var(--portal-bg);border-radius:8px;color:var(--portal-text);text-decoration:none;">
+                  <span style="font-size:24px;">📚</span>
+                  <div>
+                    <div style="font-weight:600;font-size:14px;">UniPrep Tools</div>
+                    <div style="font-size:12px;color:var(--portal-text-light);">Free SAT, GPA & checklist tools</div>
+                  </div>
+                </a>
+                <a href="services.html" style="display:flex;align-items:center;gap:10px;padding:16px;background:var(--portal-bg);border-radius:8px;color:var(--portal-text);text-decoration:none;">
+                  <span style="font-size:24px;">💎</span>
+                  <div>
+                    <div style="font-weight:600;font-size:14px;">Our Services</div>
+                    <div style="font-size:12px;color:var(--portal-text-light);">Packages to help you succeed</div>
+                  </div>
+                </a>
+                <a href="../universities.html" style="display:flex;align-items:center;gap:10px;padding:16px;background:var(--portal-bg);border-radius:8px;color:var(--portal-text);text-decoration:none;">
+                  <span style="font-size:24px;">🍁</span>
+                  <div>
+                    <div style="font-weight:600;font-size:14px;">All Universities</div>
+                    <div style="font-size:12px;color:var(--portal-text-light);">Browse all Canadian schools</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+
+          <!-- Right: Sidebar Recommendations -->
+          <div>
+            <div class="portal-card">
+              <div class="portal-card-header">
+                <h2>🎯 Top Matches</h2>
+              </div>
+              <div id="sidebarRecs">
+                <p style="color:var(--portal-text-light);font-size:14px;text-align:center;padding:20px 0;">
+                  Complete your profile to see university matches
+                </p>
+              </div>
+              <div style="text-align:center;margin-top:16px;">
+                <a href="recommendations.html" class="portal-btn portal-btn-primary" style="font-size:12px;">View All Recommendations →</a>
+              </div>
+            </div>
+
+            <!-- Tips -->
+            <div class="portal-card">
+              <div class="portal-card-header">
+                <h2>💡 Tips</h2>
+              </div>
+              <div style="font-size:13px;color:var(--portal-text-light);line-height:1.8;">
+                <p style="margin-bottom:10px;">✅ Complete your profile for accurate matches</p>
+                <p style="margin-bottom:10px;">✅ Add all test scores (SAT, IELTS, TOEFL)</p>
+                <p style="margin-bottom:10px;">✅ Set a realistic budget range</p>
+                <p>✅ Apply to 3-5 universities for best results</p>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Init
+    const user = JSON.parse(localStorage.getItem('portal_user') || '{}');
+    const profile = PortalProfile.get();
+    const completion = PortalProfile.completionPercent();
+
+    // Populate user info
+    document.getElementById('userAvatar').textContent = PortalAuth.getInitials();
+    document.getElementById('userName').textContent = user.name || 'Student';
+    document.getElementById('userEmail').textContent = user.email || '';
+    document.getElementById('welcomeName').textContent = (user.name || 'Student').split(' ')[0];
+
+    // Stats
+    document.getElementById('statProfile').textContent = completion + '%';
+    document.getElementById('statGPA').textContent = profile.gpa || '--';
+    document.getElementById('statGPADetail').textContent = profile.gpa ? `Scale: ${profile.gpaScale}` : 'Add in profile';
+    document.getElementById('statStatus').textContent = profile.applicationStatus || 'Not Started';
+
+    // Progress
+    document.getElementById('progressFill').style.width = completion + '%';
+    document.getElementById('progressText').textContent = completion + '% complete';
+    const filledFields = [profile.firstName, profile.lastName, profile.email, profile.country, profile.nationality, profile.gpa, profile.program, profile.budgetMin, profile.provinces.length > 0, profile.extracurriculars].filter(f => f).length;
+    document.getElementById('progressFields').textContent = `${filledFields} of 10 fields`;
+
+    // Action items
+    const actions = [];
+    if (!profile.firstName) actions.push({ icon: '📝', title: 'Complete your profile', desc: 'Add personal and academic info', action: 'profile.html' });
+    if (!profile.gpa) actions.push({ icon: '📊', title: 'Add your GPA', desc: 'Enter your grade point average', action: 'profile.html' });
+    if (!profile.program) actions.push({ icon: '🎯', title: 'Choose your program', desc: 'Select your field of study', action: 'profile.html' });
+    if (completion >= 50) actions.push({ icon: '🎓', title: 'View university matches', desc: 'See schools that match your profile', action: 'recommendations.html' });
+    actions.push({ icon: '📚', title: 'Try UniPrep tools', desc: 'Free SAT prep, GPA tracker, and checklists', action: '../uniprep/index.html' });
+
+    const actionList = document.getElementById('actionList');
+    actionList.innerHTML = actions.map(a => `
+      <li class="action-item">
+        <div class="action-icon pending">${a.icon}</div>
+        <div class="action-text">
+          <div class="action-title">${a.title}</div>
+          <div class="action-desc">${a.desc}</div>
+        </div>
+        <a href="${a.action}" class="portal-btn portal-btn-primary" style="font-size:12px;padding:8px 16px;">Go</a>
+      </li>
+    `).join('');
+
+    // Sidebar recommendations
+    if (completion >= 30) {
+      const recs = RecommendationEngine.getRecommendations(profile).slice(0, 3);
+      document.getElementById('sidebarRecs').innerHTML = recs.map(r => `
+        <div style="display:flex;align-items:center;gap:12px;padding:12px 0;border-bottom:1px solid var(--portal-border);">
+          <div style="font-size:20px;font-weight:800;color:var(--portal-primary);min-width:45px;">${r.matchPercent}%</div>
+          <div>
+            <div style="font-size:14px;font-weight:600;color:var(--portal-text);">${r.name}</div>
+            <div style="font-size:12px;color:var(--portal-text-light);">${r.location} • $${r.tuitionIntl.toLocaleString()}/yr</div>
+          </div>
+        </div>
+      `).join('');
+      document.getElementById('statSchools').textContent = recs.filter(r => r.matchPercent >= 50).length;
+    }
+
+    // Mobile menu
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('portalSidebar').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

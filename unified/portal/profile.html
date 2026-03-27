@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Profile - StudyCanada Portal</title>
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="js/portal.js"></script>
+</head>
+<body>
+  <script>
+    if (!localStorage.getItem('portal_user')) window.location.href = 'login.html';
+  </script>
+
+  <div class="portal-wrapper">
+    <aside class="portal-sidebar" id="portalSidebar">
+      <div class="portal-sidebar-header">
+        <a href="../index.html" class="logo">🍁 Study<span>Canada</span></a>
+        <div class="subtitle">Student Portal</div>
+      </div>
+      <nav class="portal-nav">
+        <a href="dashboard.html"><span class="nav-icon">📊</span> Dashboard</a>
+        <a href="profile.html" class="active"><span class="nav-icon">👤</span> Profile</a>
+        <a href="recommendations.html"><span class="nav-icon">🎓</span> Recommendations</a>
+        <a href="services.html"><span class="nav-icon">💎</span> Services</a>
+        <div class="portal-nav-divider"></div>
+        <a href="../uniprep/index.html"><span class="nav-icon">📚</span> UniPrep Tools</a>
+        <a href="../index.html"><span class="nav-icon">🏠</span> Main Site</a>
+      </nav>
+      <div class="portal-sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="userAvatar"></div>
+          <div class="user-details">
+            <div class="user-name" id="userName"></div>
+            <div class="user-email" id="userEmail"></div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <main class="portal-main">
+      <header class="portal-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="mobile-menu-toggle" id="menuToggle">☰</button>
+          <h1>My Profile</h1>
+        </div>
+        <div class="topbar-actions">
+          <a href="../index.html" class="back-to-site">← Main Site</a>
+          <button class="portal-btn portal-btn-outline" onclick="PortalAuth.logout()" style="font-size:12px;padding:8px 16px;">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="portal-content">
+        <!-- Completion Banner -->
+        <div class="welcome-banner" style="margin-bottom:24px;">
+          <h1>👤 Your Profile</h1>
+          <p>Complete all sections for the most accurate university recommendations. Fields marked with * help us match you with the best schools.</p>
+          <div class="progress-container" style="margin-top:16px;">
+            <div class="progress-bar" style="background:rgba(255,255,255,0.2);">
+              <div class="progress-fill" id="profileProgress" style="width:0%"></div>
+            </div>
+            <div class="progress-label" style="color:rgba(255,255,255,0.8);">
+              <span id="progressText">0% complete</span>
+            </div>
+          </div>
+        </div>
+
+        <form id="profileForm" class="portal-form">
+          <!-- Personal Information -->
+          <div class="portal-card">
+            <div class="portal-card-header">
+              <h2>🧑 Personal Information</h2>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>First Name *</label>
+                <input type="text" id="firstName" placeholder="Enter your first name" required>
+              </div>
+              <div class="form-group">
+                <label>Last Name *</label>
+                <input type="text" id="lastName" placeholder="Enter your last name" required>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Email *</label>
+                <input type="email" id="email" placeholder="your@email.com">
+              </div>
+              <div class="form-group">
+                <label>Phone</label>
+                <input type="tel" id="phone" placeholder="+1 (000) 000-0000">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Country of Residence *</label>
+                <select id="country">
+                  <option value="">Select country</option>
+                  <option value="India">India</option>
+                  <option value="China">China</option>
+                  <option value="Nigeria">Nigeria</option>
+                  <option value="South Korea">South Korea</option>
+                  <option value="Vietnam">Vietnam</option>
+                  <option value="Brazil">Brazil</option>
+                  <option value="Iran">Iran</option>
+                  <option value="France">France</option>
+                  <option value="United States">United States</option>
+                  <option value="United Kingdom">United Kingdom</option>
+                  <option value="Pakistan">Pakistan</option>
+                  <option value="Bangladesh">Bangladesh</option>
+                  <option value="Mexico">Mexico</option>
+                  <option value="Japan">Japan</option>
+                  <option value="Other">Other</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Nationality *</label>
+                <input type="text" id="nationality" placeholder="e.g., Indian, Chinese, Nigerian">
+              </div>
+            </div>
+          </div>
+
+          <!-- Academic Information -->
+          <div class="portal-card">
+            <div class="portal-card-header">
+              <h2>📊 Academic Information</h2>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>GPA *</label>
+                <input type="number" id="gpa" placeholder="e.g., 3.5" step="0.01" min="0" max="100">
+              </div>
+              <div class="form-group">
+                <label>GPA Scale</label>
+                <select id="gpaScale">
+                  <option value="4.0">4.0 Scale (US/Canada)</option>
+                  <option value="5.0">5.0 Scale</option>
+                  <option value="10.0">10.0 Scale (India)</option>
+                  <option value="100">Percentage (100)</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>SAT Score</label>
+                <input type="number" id="satScore" placeholder="e.g., 1350" min="400" max="1600">
+              </div>
+              <div class="form-group">
+                <label>ACT Score</label>
+                <input type="number" id="actScore" placeholder="e.g., 28" min="1" max="36">
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>IELTS Score</label>
+                <input type="number" id="ieltsScore" placeholder="e.g., 6.5" step="0.5" min="0" max="9">
+              </div>
+              <div class="form-group">
+                <label>TOEFL Score</label>
+                <input type="number" id="toeflScore" placeholder="e.g., 90" min="0" max="120">
+              </div>
+            </div>
+          </div>
+
+          <!-- Preferences -->
+          <div class="portal-card">
+            <div class="portal-card-header">
+              <h2>🎯 Study Preferences</h2>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Program of Study *</label>
+                <select id="program">
+                  <option value="">Select program</option>
+                  <option value="Computer Science">Computer Science</option>
+                  <option value="Engineering">Engineering</option>
+                  <option value="Business">Business / Commerce</option>
+                  <option value="Medicine">Medicine / Health Sciences</option>
+                  <option value="Sciences">Natural Sciences</option>
+                  <option value="Arts">Arts & Humanities</option>
+                  <option value="Law">Law</option>
+                  <option value="Education">Education</option>
+                  <option value="Agriculture">Agriculture</option>
+                  <option value="Mathematics">Mathematics</option>
+                  <option value="Design">Design / Fine Arts</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Degree Level</label>
+                <select id="degreeLevel">
+                  <option value="Undergraduate">Undergraduate (Bachelor's)</option>
+                  <option value="Graduate">Graduate (Master's)</option>
+                  <option value="PhD">PhD / Doctoral</option>
+                  <option value="Diploma">Diploma / Certificate</option>
+                </select>
+              </div>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Budget Min (CAD/year)</label>
+                <input type="number" id="budgetMin" placeholder="e.g., 20000">
+              </div>
+              <div class="form-group">
+                <label>Budget Max (CAD/year)</label>
+                <input type="number" id="budgetMax" placeholder="e.g., 50000">
+              </div>
+            </div>
+            <div class="form-group">
+              <label>Preferred Provinces</label>
+              <div style="display:grid;grid-template-columns:repeat(auto-fill,minmax(180px,1fr));gap:8px;margin-top:8px;">
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="Ontario"> Ontario
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="British Columbia"> British Columbia
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="Quebec"> Quebec
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="Alberta"> Alberta
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="Manitoba"> Manitoba
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="Saskatchewan"> Saskatchewan
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="Nova Scotia"> Nova Scotia
+                </label>
+                <label style="display:flex;align-items:center;gap:6px;font-weight:400;font-size:14px;cursor:pointer;">
+                  <input type="checkbox" name="provinces" value="Any"> No Preference
+                </label>
+              </div>
+            </div>
+          </div>
+
+          <!-- Extracurriculars -->
+          <div class="portal-card">
+            <div class="portal-card-header">
+              <h2>🏆 Extracurriculars & Experience</h2>
+            </div>
+            <div class="form-group">
+              <label>Extracurricular Activities</label>
+              <textarea id="extracurriculars" placeholder="List your extracurricular activities, leadership roles, community service, sports, etc."></textarea>
+            </div>
+            <div class="form-group">
+              <label>Work Experience</label>
+              <textarea id="workExperience" placeholder="Describe any work experience, internships, or volunteer work related to your field of study."></textarea>
+            </div>
+          </div>
+
+          <!-- Application Status -->
+          <div class="portal-card">
+            <div class="portal-card-header">
+              <h2>📬 Application Status</h2>
+            </div>
+            <div class="form-row">
+              <div class="form-group">
+                <label>Current Status</label>
+                <select id="applicationStatus">
+                  <option value="Not Started">Not Started</option>
+                  <option value="Researching">Researching Schools</option>
+                  <option value="Preparing Documents">Preparing Documents</option>
+                  <option value="Applied">Applications Submitted</option>
+                  <option value="Admitted">Admitted</option>
+                  <option value="Enrolled">Enrolled</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Target Number of Schools</label>
+                <input type="number" id="targetSchools" placeholder="e.g., 5" min="1" max="20">
+              </div>
+            </div>
+          </div>
+
+          <!-- Save -->
+          <div style="display:flex;gap:12px;justify-content:flex-end;margin-top:8px;">
+            <button type="button" class="portal-btn portal-btn-outline" onclick="window.location.href='dashboard.html'">Cancel</button>
+            <button type="submit" class="portal-btn portal-btn-primary">💾 Save Profile</button>
+          </div>
+        </form>
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Load user info
+    const user = JSON.parse(localStorage.getItem('portal_user') || '{}');
+    document.getElementById('userAvatar').textContent = PortalAuth.getInitials();
+    document.getElementById('userName').textContent = user.name || 'Student';
+    document.getElementById('userEmail').textContent = user.email || '';
+
+    // Load profile data
+    const profile = PortalProfile.get();
+    const fields = ['firstName','lastName','email','phone','country','nationality','gpa','gpaScale','satScore','actScore','ieltsScore','toeflScore','program','degreeLevel','budgetMin','budgetMax','extracurriculars','workExperience','applicationStatus','targetSchools'];
+    fields.forEach(f => {
+      const el = document.getElementById(f);
+      if (el && profile[f]) el.value = profile[f];
+    });
+
+    // Load provinces
+    if (profile.provinces && profile.provinces.length > 0) {
+      document.querySelectorAll('input[name="provinces"]').forEach(cb => {
+        if (profile.provinces.includes(cb.value)) cb.checked = true;
+      });
+    }
+
+    // Update progress
+    function updateProgress() {
+      const pct = PortalProfile.completionPercent();
+      document.getElementById('profileProgress').style.width = pct + '%';
+      document.getElementById('progressText').textContent = pct + '% complete';
+    }
+    updateProgress();
+
+    // Save
+    document.getElementById('profileForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const data = {};
+      fields.forEach(f => {
+        const el = document.getElementById(f);
+        if (el) data[f] = el.value;
+      });
+      data.provinces = Array.from(document.querySelectorAll('input[name="provinces"]:checked')).map(c => c.value);
+      PortalProfile.save(data);
+      updateProgress();
+      setTimeout(() => window.location.href = 'dashboard.html', 1000);
+    });
+
+    // Mobile menu
+    document.getElementById('menuToggle').addEventListener('click', () => {
+      document.getElementById('portalSidebar').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>
