@@ -3020,8 +3020,26 @@ function loadQuestion() {
     document.getElementById('game-score').textContent = gameScore;
     // Generate options
     const correct = word.d;
-    let distractors = WORDS.filter(w => w.w !== word.w).map(w => w.d);
+    let distractors = WORDS.filter(w => w.w !== word.w && w.d !== correct).map(w => w.d);
+    // Remove duplicate definitions
+    distractors = [...new Set(distractors)];
     distractors = shuffle(distractors).slice(0, 3);
+    // If we don't have enough unique distractors, add generic ones
+    while (distractors.length < 3) {
+        const fallbacks = [
+            'A type of musical instrument',
+            'A species of bird found in forests',
+            'A style of painting from the Renaissance',
+            'A mathematical concept used in geometry',
+            'A traditional dance from South America',
+            'A type of fabric used in clothing',
+            'A geological formation in mountains',
+            'A cooking technique from French cuisine'
+        ];
+        const available = fallbacks.filter(f => !distractors.includes(f) && f !== correct);
+        if (available.length > 0) distractors.push(available[0]);
+        else break;
+    }
     const options = shuffle([correct, ...distractors]);
     const container = document.getElementById('game-options');
     container.innerHTML = '';
