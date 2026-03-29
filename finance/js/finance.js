@@ -222,3 +222,63 @@ function $(sel) { return document.querySelector(sel); }
 function $$(sel) { return document.querySelectorAll(sel); }
 function formatMoney(n) { return '$' + Number(n).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 }); }
 function formatDate(d) { return new Date(d).toLocaleDateString('en-CA'); }
+
+// ===== ENTITY MANAGEMENT =====
+FinanceApp.getEntities = function() {
+    return this.decrypt(localStorage.getItem('fin_entities')) || {
+        arfeen: { name: 'Arfeen Ahmad', type: 'personal', icon: '👤', created: Date.now() },
+        wife: { name: 'Wife', type: 'personal', icon: '👩', created: Date.now() },
+        agii: { name: 'Agii.ca', type: 'business', icon: '💼', created: Date.now() },
+        property: { name: 'Property Management', type: 'business', icon: '🏠', created: Date.now() },
+        consulting: { name: 'Consulting Business', type: 'business', icon: '📋', created: Date.now() }
+    };
+};
+
+FinanceApp.saveEntities = function(entities) {
+    localStorage.setItem('fin_entities', this.encrypt(entities));
+};
+
+FinanceApp.createEntity = function(name, type, icon) {
+    const entities = this.getEntities();
+    const id = name.toLowerCase().replace(/[^a-z0-9]/g, '-') + '-' + Date.now().toString(36);
+    entities[id] = { name, type, icon: icon || (type === 'personal' ? '👤' : '🏢'), created: Date.now(), createdBy: this.currentUser()?.email };
+    this.saveEntities(entities);
+    this.logAction('createEntity', name + ' (' + type + ')');
+    return id;
+};
+
+FinanceApp.deleteEntity = function(id) {
+    const entities = this.getEntities();
+    if (entities[id]) {
+        this.logAction('deleteEntity', entities[id].name);
+        delete entities[id];
+        this.saveEntities(entities);
+    }
+};
+
+// Investment tracking
+FinanceApp.getInvestments = function() {
+    return this.decrypt(localStorage.getItem('fin_investments')) || [];
+};
+
+FinanceApp.addInvestment = function(inv) {
+    const invs = this.getInvestments();
+    inv.id = Date.now().toString(36) + Math.random().toString(36).substr(2);
+    inv.addedBy = this.currentUser()?.email;
+    inv.date = inv.date || new Date().toISOString().split('T')[0];
+    invs.push(inv);
+    localStorage.setItem('fin_investments', this.encrypt(invs));
+    this.logAction('addInvestment', inv.name + ' - $' + inv.amount);
+    return inv;
+};
+
+FinanceApp.deleteInvestment = function(id) {
+    let invs = this.getInvestments();
+    invs = invs.filter(i => i.id !== id);
+    localStorage.setItem('fin_investments', this.encrypt(invs));
+};
+
+// Format money
+FinanceApp.formatMoney = function(n) {
+    return '$' + Number(n).toLocaleString('en-CA', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
+};

@@ -19,6 +19,7 @@
 </nav>
 <main class="dashboard">
 <div class="page-header">
+<button class="btn btn-primary" onclick="showCreateEntity()">+ New Business/Entity</button>
 <h1>📊 Your Financial Dashboards</h1>
 <p class="subtitle">Select a dashboard to manage finances</p>
 </div>
@@ -119,3 +120,83 @@ updateOverview();
 </script>
 </body>
 </html>
+
+<!-- Create Entity Modal -->
+<div class="modal" id="create-entity-modal"><div class="modal-content">
+<h2>Create New Entity</h2>
+<div class="form-group"><label>Name</label><input type="text" id="new-entity-name" placeholder="e.g., New Business, Investment Club"></div>
+<div class="form-group"><label>Type</label><select id="new-entity-type"><option value="business">Business</option><option value="personal">Personal</option><option value="investment">Investment Portfolio</option></select></div>
+<div class="form-group"><label>Icon</label>
+<div class="icon-picker">
+<span class="icon-option" onclick="selectIcon('🏢')">🏢</span>
+<span class="icon-option" onclick="selectIcon('💼')">💼</span>
+<span class="icon-option" onclick="selectIcon('🏠')">🏠</span>
+<span class="icon-option" onclick="selectIcon('📊')">📊</span>
+<span class="icon-option" onclick="selectIcon('📈')">📈</span>
+<span class="icon-option" onclick="selectIcon('💰')">💰</span>
+<span class="icon-option" onclick="selectIcon('👤')">👤</span>
+<span class="icon-option" onclick="selectIcon('👨')">👨</span>
+<span class="icon-option" onclick="selectIcon('👩')">👩</span>
+<span class="icon-option" onclick="selectIcon('🏭')">🏭</span>
+<span class="icon-option" onclick="selectIcon('🛒')">🛒</span>
+<span class="icon-option" onclick="selectIcon('🍽️')">🍽️</span>
+</div>
+<input type="hidden" id="new-entity-icon" value="🏢">
+</div>
+<button class="btn btn-primary" onclick="createEntity()">Create</button>
+<button class="btn btn-outline" onclick="document.getElementById('create-entity-modal').classList.remove('show')">Cancel</button>
+</div></div>
+
+<style>
+.icon-picker { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 12px; }
+.icon-option { font-size: 1.5em; padding: 8px; cursor: pointer; border-radius: 8px; border: 2px solid transparent; transition: all 0.2s; }
+.icon-option:hover, .icon-option.selected { border-color: var(--accent); background: rgba(233,69,96,0.1); }
+</style>
+
+<script>
+let selectedIcon = '🏢';
+function selectIcon(icon) {
+    selectedIcon = icon;
+    document.getElementById('new-entity-icon').value = icon;
+    document.querySelectorAll('.icon-option').forEach(el => el.classList.remove('selected'));
+    event.target.classList.add('selected');
+}
+function showCreateEntity() {
+    document.getElementById('create-entity-modal').classList.add('show');
+}
+function createEntity() {
+    const name = document.getElementById('new-entity-name').value;
+    const type = document.getElementById('new-entity-type').value;
+    if (!name) { alert('Please enter a name'); return; }
+    FinanceApp.createEntity(name, type, selectedIcon);
+    document.getElementById('create-entity-modal').classList.remove('show');
+    location.reload();
+}
+// Load dynamic entities
+function loadEntities() {
+    const entities = FinanceApp.getEntities();
+    const grid = document.querySelector('.entities-grid');
+    grid.innerHTML = '';
+    Object.entries(entities).forEach(([id, e]) => {
+        const link = e.type === 'personal' ? 'personal.html?entity=' + id : 'business.html?entity=' + id;
+        grid.innerHTML += `
+        <div class="entity-card ${e.type}" onclick="window.location.href='${link}'">
+            <div class="entity-icon">${e.icon || '🏢'}</div>
+            <div class="entity-name">${e.name}</div>
+            <div class="entity-type">${e.type}</div>
+            <div class="entity-balance" id="bal-${id}">$0.00</div>
+            <div class="entity-tag">${e.type === 'personal' ? 'Personal' : 'Business'}</div>
+        </div>`;
+    });
+    // Add family overview
+    grid.innerHTML += `
+    <div class="entity-card family" onclick="window.location.href='family-overview.html'">
+        <div class="entity-icon">👨‍👩‍👧‍👦</div>
+        <div class="entity-name">Family Overview</div>
+        <div class="entity-type">Combined View</div>
+        <div class="entity-balance" id="bal-family">$0.00</div>
+        <div class="entity-tag">All Entities</div>
+    </div>`;
+}
+loadEntities();
+</script>
