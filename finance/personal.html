@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Personal Finance — FinanceHub</title>
+<title>Finance — '+((new URLSearchParams(window.location.search).get('entity')||'arfeen')===wife'?'Wife':'Arfeen Ahmad') — FinanceHub</title>
 <link rel="stylesheet" href="css/finance.css">
 </head>
 <body>
@@ -23,7 +23,7 @@
 </nav>
 <main class="dashboard">
 <div class="page-header">
-<h1>📊 Personal Finance</h1>
+<h1>📊 Finance — '+((new URLSearchParams(window.location.search).get('entity')||'arfeen')===wife'?'Wife':'Arfeen Ahmad')</h1>
 <button class="btn btn-primary" onclick="showAddTransaction()">+ Add Transaction</button>
 </div>
 <div class="stats-grid">
@@ -88,7 +88,7 @@ document.getElementById('tx-date').value=new Date().toISOString().split('T')[0];
 function updateDashboard(){
 const now=new Date();const start=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
 const end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];
-const txs=FinanceApp.getTransactions({entity:'personal'});
+const txs=FinanceApp.getTransactions({entity:(new URLSearchParams(window.location.search).get('entity')||'arfeen')});
 const monthTxs=txs.filter(t=>t.date>=start&&t.date<=end);
 const income=monthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
 const expenses=monthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);

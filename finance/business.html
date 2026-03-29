@@ -74,7 +74,7 @@ document.getElementById('user-name').textContent=user.name||user.email;
 function updateBusiness(){
 const now=new Date();const start=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
 const end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];
-const txs=FinanceApp.getTransactions({entity:'business'});
+const txs=FinanceApp.getTransactions({entity:(new URLSearchParams(window.location.search).get('entity')||'agii')});
 const monthTxs=txs.filter(t=>t.date>=start&&t.date<=end);
 const revenue=monthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
 const expenses=monthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);

@@ -71,7 +71,7 @@ function doLogin(){
 const email=document.getElementById('login-email').value;
 const password=document.getElementById('login-password').value;
 const user=FinanceApp.login(email,password);
-if(user){window.location.href='personal.html';}
+if(user){window.location.href='entities.html';}
 else{document.getElementById('login-error').textContent='Invalid email or password';}
 }
 function doSignup(){
@@ -82,7 +82,7 @@ const confirm=document.getElementById('signup-confirm').value;
 if(password!==confirm){document.getElementById('signup-error').textContent='Passwords do not match';return;}
 if(password.length<8){document.getElementById('signup-error').textContent='Password must be at least 8 characters';return;}
 const user=FinanceApp.signup(email,password,name);
-if(user){window.location.href='personal.html';}
+if(user){window.location.href='entities.html';}
 else{document.getElementById('signup-error').textContent='Email already exists';}
 }
 function checkStrength(){
@@ -95,7 +95,7 @@ const labels=['Very Weak','Weak','Fair','Strong','Very Strong'];
 bar.style.width=(s*20)+'%';bar.style.background=colors[s-1]||'#ef4444';
 text.textContent=labels[s-1]||'';text.style.color=colors[s-1]||'#ef4444';
 }
-if(FinanceApp.currentUser())window.location.href='personal.html';
+if(FinanceApp.currentUser())window.location.href='entities.html';
 </script>
 </body>
 </html>

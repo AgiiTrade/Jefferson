@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Entity Selector — FinanceHub</title>
+<link rel="stylesheet" href="css/finance.css">
+</head>
+<body>
+<nav class="topnav">
+<div class="nav-brand"><span>💰</span> FinanceHub</div>
+<div class="nav-links">
+<a href="entities.html" class="active">Dashboards</a>
+<a href="transactions.html">Transactions</a>
+<a href="tax.html">Tax Center</a>
+<a href="family.html">Family</a>
+</div>
+<div class="nav-user"><span id="user-name"></span><button class="btn-sm" onclick="FinanceApp.logout()">Logout</button></div>
+</nav>
+<main class="dashboard">
+<div class="page-header">
+<h1>📊 Your Financial Dashboards</h1>
+<p class="subtitle">Select a dashboard to manage finances</p>
+</div>
+<div class="entities-grid">
+<!-- Personal - Arfeen -->
+<div class="entity-card" onclick="window.location.href='personal.html?entity=arfeen'">
+<div class="entity-icon">👤</div>
+<div class="entity-name">Arfeen Ahmad</div>
+<div class="entity-type">Personal</div>
+<div class="entity-balance" id="bal-arfeen">$0.00</div>
+<div class="entity-tag">Owner</div>
+</div>
+<!-- Personal - Wife -->
+<div class="entity-card" onclick="window.location.href='personal.html?entity=wife'">
+<div class="entity-icon">👩</div>
+<div class="entity-name">Wife</div>
+<div class="entity-type">Personal</div>
+<div class="entity-balance" id="bal-wife">$0.00</div>
+<div class="entity-tag">Family</div>
+</div>
+<!-- Agii.ca -->
+<div class="entity-card business" onclick="window.location.href='business.html?entity=agii'">
+<div class="entity-icon">💼</div>
+<div class="entity-name">Agii.ca</div>
+<div class="entity-type">Technology Consulting</div>
+<div class="entity-balance" id="bal-agii">$0.00</div>
+<div class="entity-goal">Goal: $200K/mo</div>
+</div>
+<!-- Property Management -->
+<div class="entity-card business" onclick="window.location.href='business.html?entity=property'">
+<div class="entity-icon">🏠</div>
+<div class="entity-name">Property Management</div>
+<div class="entity-type">Real Estate</div>
+<div class="entity-balance" id="bal-property">$0.00</div>
+<div class="entity-tag">Business</div>
+</div>
+<!-- Consulting -->
+<div class="entity-card business" onclick="window.location.href='business.html?entity=consulting'">
+<div class="entity-icon">📋</div>
+<div class="entity-name">Consulting Business</div>
+<div class="entity-type">Professional Services</div>
+<div class="entity-balance" id="bal-consulting">$0.00</div>
+<div class="entity-tag">Business</div>
+</div>
+<!-- Family Overview -->
+<div class="entity-card family" onclick="window.location.href='family-overview.html'">
+<div class="entity-icon">👨‍👩‍👧‍👦</div>
+<div class="entity-name">Family Overview</div>
+<div class="entity-type">Combined View</div>
+<div class="entity-balance" id="bal-family">$0.00</div>
+<div class="entity-tag">All Entities</div>
+</div>
+</div>
+<div class="quick-stats">
+<h3>📈 Quick Overview</h3>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Total Net Worth</div><div class="stat-value" id="total-worth">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Monthly Income (All)</div><div class="stat-value positive" id="total-income">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Monthly Expenses (All)</div><div class="stat-value negative" id="total-expenses">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Tax Estimate 2026</div><div class="stat-value warning" id="total-tax">$0.00</div></div>
+</div>
+</div>
+</main>
+<script src="js/finance.js"></script>
+<script>
+const user=requireAuth();if(!user)exit;
+document.getElementById('user-name').textContent=user.name||user.email;
+// Define entities
+const ENTITIES = {
+arfeen: {name:'Arfeen Ahmad',type:'personal',icon:'👤'},
+wife: {name:'Wife',type:'personal',icon:'👩'},
+agii: {name:'Agii.ca',type:'business',icon:'💼'},
+property: {name:'Property Management',type:'business',icon:'🏠'},
+consulting: {name:'Consulting Business',type:'business',icon:'📋'}
+};
+// Save entities to localStorage
+localStorage.setItem('fin_entities',FinanceApp.encrypt(ENTITIES));
+function updateOverview(){
+const now=new Date();const start=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+const end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];
+let totalWorth=0,totalIncome=0,totalExpenses=0;
+Object.keys(ENTITIES).forEach(key=>{
+const txs=FinanceApp.getTransactions({entity:key});
+const bal=txs.reduce((s,t)=>t.type==='income'?s+t.amount:s-t.amount,0);
+const monthTxs=txs.filter(t=>t.date>=start&&t.date<=end);
+const inc=monthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+const exp=monthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+const el=document.getElementById('bal-'+key);if(el)el.textContent=FinanceApp.formatMoney(bal);
+totalWorth+=bal;totalIncome+=inc;totalExpenses+=exp;
+});
+document.getElementById('total-worth').textContent=FinanceApp.formatMoney(totalWorth);
+document.getElementById('total-income').textContent=FinanceApp.formatMoney(totalIncome);
+document.getElementById('total-expenses').textContent=FinanceApp.formatMoney(totalExpenses);
+const tax=FinanceApp.calculateTax(totalIncome);
+document.getElementById('total-tax').textContent=FinanceApp.formatMoney(tax.total);
+}
+updateOverview();
+</script>
+</body>
+</html>

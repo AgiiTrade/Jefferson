@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Family Overview — FinanceHub</title>
+<link rel="stylesheet" href="css/finance.css">
+</head>
+<body>
+<nav class="topnav">
+<div class="nav-brand"><span>💰</span> FinanceHub</div>
+<div class="nav-links">
+<a href="entities.html">Dashboards</a>
+<a href="transactions.html">Transactions</a>
+<a href="tax.html">Tax Center</a>
+<a href="family.html">Family</a>
+</div>
+<div class="nav-user"><span id="user-name"></span><button class="btn-sm" onclick="FinanceApp.logout()">Logout</button></div>
+</nav>
+<main class="dashboard">
+<div class="page-header"><h1>👨‍👩‍👧‍👦 Family Financial Overview</h1></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Combined Net Worth</div><div class="stat-value" id="combined-worth">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Total Monthly Income</div><div class="stat-value positive" id="combined-income">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Total Monthly Expenses</div><div class="stat-value negative" id="combined-expenses">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Combined Tax Estimate</div><div class="stat-value warning" id="combined-tax">$0.00</div></div>
+</div>
+<div class="panel">
+<h3>📊 Income by Entity</h3>
+<div id="entity-breakdown"></div>
+</div>
+<div class="grid-2">
+<div class="panel">
+<h3>💼 Business Summary</h3>
+<table class="pl-table">
+<thead><tr><th>Business</th><th>Revenue</th><th>Expenses</th><th>Profit</th></tr></thead>
+<tbody id="biz-summary"></tbody>
+<tfoot><tr class="total"><td>Total</td><td id="biz-total-rev">$0</td><td id="biz-total-exp">$0</td><td id="biz-total-profit">$0</td></tr></tfoot>
+</table>
+</div>
+<div class="panel">
+<h3>👤 Personal Summary</h3>
+<table class="pl-table">
+<thead><tr><th>Person</th><th>Income</th><th>Expenses</th><th>Savings</th></tr></thead>
+<tbody id="personal-summary"></tbody>
+<tfoot><tr class="total"><td>Total</td><td id="per-total-inc">$0</td><td id="per-total-exp">$0</td><td id="per-total-sav">$0</td></tr></tfoot>
+</table>
+</div>
+</div>
+<div class="panel">
+<h3>🏠 Property Management</h3>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Rental Income</div><div class="stat-value positive" id="prop-income">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Expenses</div><div class="stat-value negative" id="prop-expenses">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Net Income</div><div class="stat-value" id="prop-net">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Occupancy</div><div class="stat-value" id="prop-occupancy">N/A</div></div>
+</div>
+</div>
+<div class="panel">
+<h3>💰 Combined Tax Estimate 2026</h3>
+<div class="tax-results">
+<div class="tax-row"><span>Personal Tax (Arfeen)</span><span id="tax-arfeen">$0.00</span></div>
+<div class="tax-row"><span>Personal Tax (Wife)</span><span id="tax-wife">$0.00</span></div>
+<div class="tax-row"><span>Business Tax (All)</span><span id="tax-business">$0.00</span></div>
+<div class="tax-row"><span>GST/HST to Remit</span><span id="tax-gst">$0.00</span></div>
+<div class="tax-row total"><span>Total Tax Liability</span><span id="tax-total-all">$0.00</span></div>
+</div>
+</div>
+</main>
+<script src="js/finance.js"></script>
+<script>
+const user=requireAuth();if(!user)exit;
+document.getElementById('user-name').textContent=user.name||user.email;
+const ENTITIES={
+arfeen:{name:'Arfeen Ahmad',type:'personal'},
+wife:{name:'Wife',type:'personal'},
+agii:{name:'Agii.ca',type:'business'},
+property:{name:'Property Management',type:'business'},
+consulting:{name:'Consulting Business',type:'business'}
+};
+function formatMoney(n){return '$'+Number(n).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function updateFamilyOverview(){
+const now=new Date();const start=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+const end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];
+let totalWorth=0,totalIncome=0,totalExpenses=0;
+let bizRev=0,bizExp=0,perInc=0,perExp=0;
+let propInc=0,propExp=0;
+const bizRows=document.getElementById('biz-summary');bizRows.innerHTML='';
+const perRows=document.getElementById('personal-summary');perRows.innerHTML='';
+const breakdown=document.getElementById('entity-breakdown');breakdown.innerHTML='';
+Object.entries(ENTITIES).forEach(([key,e])=>{
+const txs=FinanceApp.getTransactions({entity:key});
+const bal=txs.reduce((s,t)=>t.type==='income'?s+t.amount:s-t.amount,0);
+const monthTxs=txs.filter(t=>t.date>=start&&t.date<=end);
+const inc=monthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+const exp=monthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+totalWorth+=bal;totalIncome+=inc;totalExpenses+=exp;
+if(e.type==='business'){bizRev+=inc;bizExp+=exp;
+bizRows.innerHTML+=`<tr><td>${e.name}</td><td class="positive">${formatMoney(inc)}</td><td class="negative">${formatMoney(exp)}</td><td>${formatMoney(inc-exp)}</td></tr>`;
+if(key==='property'){propInc+=inc;propExp+=exp;}
+}else{perInc+=inc;perExp+=exp;
+perRows.innerHTML+=`<tr><td>${e.name}</td><td class="positive">${formatMoney(inc)}</td><td class="negative">${formatMoney(exp)}</td><td>${formatMoney(inc-exp)}</td></tr>`;
+}
+breakdown.innerHTML+=`<div class="cat-row"><span>${e.name}</span><span class="positive">${formatMoney(inc)}</span></div>`;
+});
+document.getElementById('combined-worth').textContent=formatMoney(totalWorth);
+document.getElementById('combined-income').textContent=formatMoney(totalIncome);
+document.getElementById('combined-expenses').textContent=formatMoney(totalExpenses);
+document.getElementById('combined-tax').textContent=formatMoney(FinanceApp.calculateTax(totalIncome).total);
+document.getElementById('biz-total-rev').textContent=formatMoney(bizRev);
+document.getElementById('biz-total-exp').textContent=formatMoney(bizExp);
+document.getElementById('biz-total-profit').textContent=formatMoney(bizRev-bizExp);
+document.getElementById('per-total-inc').textContent=formatMoney(perInc);
+document.getElementById('per-total-exp').textContent=formatMoney(perExp);
+document.getElementById('per-total-sav').textContent=formatMoney(perInc-perExp);
+document.getElementById('prop-income').textContent=formatMoney(propInc);
+document.getElementById('prop-expenses').textContent=formatMoney(propExp);
+document.getElementById('prop-net').textContent=formatMoney(propInc-propExp);
+const taxArfeen=FinanceApp.calculateTax(perInc);
+document.getElementById('tax-arfeen').textContent=formatMoney(taxArfeen.total);
+document.getElementById('tax-business').textContent=formatMoney(bizRev*0.15);
+document.getElementById('tax-gst').textContent=formatMoney((bizRev-bizExp)*0.13);
+document.getElementById('tax-total-all').textContent=formatMoney(taxArfeen.total+bizRev*0.15);
+}
+updateFamilyOverview();
+</script>
+</body>
+</html>
