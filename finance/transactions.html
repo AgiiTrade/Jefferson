@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Transactions — FinanceHub</title>
+<link rel="stylesheet" href="css/finance.css">
+</head>
+<body>
+<nav class="topnav">
+<div class="nav-brand"><span>💰</span> FinanceHub</div>
+<div class="nav-links">
+<a href="personal.html">Personal</a>
+<a href="business.html">Business</a>
+<a href="transactions.html" class="active">Transactions</a>
+<a href="tax.html">Tax Center</a>
+<a href="family.html">Family</a>
+</div>
+<div class="nav-user"><span id="user-name"></span><button class="btn-sm" onclick="FinanceApp.logout()">Logout</button></div>
+</nav>
+<main class="dashboard">
+<div class="page-header"><h1>💳 All Transactions</h1><button class="btn btn-primary" onclick="showAddTx()">+ Add</button></div>
+<div class="filters">
+<select id="filter-type" onchange="loadTransactions()"><option value="">All Types</option><option value="income">Income</option><option value="expense">Expense</option></select>
+<select id="filter-entity" onchange="loadTransactions()"><option value="">All Entities</option><option value="personal">Personal</option><option value="business">Business</option></select>
+<input type="text" id="filter-search" placeholder="Search..." oninput="loadTransactions()">
+</div>
+<div class="transactions-table">
+<table>
+<thead><tr><th>Date</th><th>Description</th><th>Category</th><th>Account</th><th>Entity</th><th>Amount</th><th>Actions</th></tr></thead>
+<tbody id="tx-tbody"></tbody>
+</table>
+</div>
+</main>
+<div class="modal" id="add-tx-modal"><div class="modal-content">
+<h2>Add Transaction</h2>
+<div class="form-group"><label>Type</label><select id="tx-type"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+<div class="form-group"><label>Amount</label><input type="number" id="tx-amount" step="0.01"></div>
+<div class="form-group"><label>Description</label><input type="text" id="tx-desc"></div>
+<div class="form-group"><label>Category</label><select id="tx-category"></select></div>
+<div class="form-group"><label>Date</label><input type="date" id="tx-date"></div>
+<div class="form-group"><label>Account</label><select id="tx-account"><option>Chequing</option><option>Savings</option><option>Credit Card</option><option>Cash</option></select></div>
+<div class="form-group"><label>Entity</label><select id="tx-entity"><option value="personal">Personal</option><option value="business">Business</option></select></div>
+<button class="btn btn-primary" onclick="saveTx()">Save</button>
+<button class="btn btn-outline" onclick="document.getElementById('add-tx-modal').classList.remove('show')">Cancel</button>
+</div></div>
+<script src="js/finance.js"></script>
+<script>
+const user=requireAuth();if(!user)exit;
+document.getElementById('user-name').textContent=user.name||user.email;
+document.getElementById('tx-date').value=new Date().toISOString().split('T')[0];
+function loadTransactions(){
+const type=document.getElementById('filter-type').value;
+const entity=document.getElementById('filter-entity').value;
+const search=document.getElementById('filter-search').value.toLowerCase();
+let txs=FinanceApp.getTransactions({type,entity:entity||undefined});
+if(search)txs=txs.filter(t=>t.description.toLowerCase().includes(search)||t.category.toLowerCase().includes(search));
+const tbody=document.getElementById('tx-tbody');tbody.innerHTML='';
+txs.forEach(t=>{
+tbody.innerHTML+=`<tr><td>${t.date}</td><td>${t.description}</td><td>${t.category}</td><td>${t.account||'-'}</td><td>${t.entity||'personal'}</td><td class="${t.type==='income'?'positive':'negative'}">${t.type==='income'?'+':'-'}${formatMoney(t.amount)}</td><td><button class="btn-sm danger" onclick="deleteTx('${t.id}')">🗑</button></td></tr>`;
+});
+}
+function showAddTx(){const sel=document.getElementById('tx-category');sel.innerHTML='';FinanceApp.categories.expense.forEach(c=>{sel.innerHTML+=`<option>${c}</option>`;});document.getElementById('add-tx-modal').classList.add('show');}
+function saveTx(){FinanceApp.addTransaction({type:document.getElementById('tx-type').value,amount:parseFloat(document.getElementById('tx-amount').value),description:document.getElementById('tx-desc').value,category:document.getElementById('tx-category').value,date:document.getElementById('tx-date').value,account:document.getElementById('tx-account').value,entity:document.getElementById('tx-entity').value});document.getElementById('add-tx-modal').classList.remove('show');loadTransactions();}
+function deleteTx(id){if(confirm('Delete?')){FinanceApp.deleteTransaction(id);loadTransactions();}}
+document.getElementById('tx-type').addEventListener('change',function(){const sel=document.getElementById('tx-category');sel.innerHTML='';(this.value==='income'?FinanceApp.categories.income:FinanceApp.categories.expense).forEach(c=>{sel.innerHTML+=`<option>${c}</option>`;});});
+loadTransactions();
+</script>
+</body>
+</html>

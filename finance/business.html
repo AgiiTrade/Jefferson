@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Business Finance — Agii.ca</title>
+<link rel="stylesheet" href="css/finance.css">
+</head>
+<body>
+<nav class="topnav">
+<div class="nav-brand"><span>💰</span> FinanceHub</div>
+<div class="nav-links">
+<a href="personal.html">Personal</a>
+<a href="business.html" class="active">Business</a>
+<a href="transactions.html">Transactions</a>
+<a href="tax.html">Tax Center</a>
+<a href="family.html">Family</a>
+</div>
+<div class="nav-user"><span id="user-name"></span><button class="btn-sm" onclick="FinanceApp.logout()">Logout</button></div>
+</nav>
+<main class="dashboard">
+<div class="page-header">
+<h1>💼 Agii.ca Business Dashboard</h1>
+<div class="revenue-goal">
+<span>Monthly Goal: </span><strong>$200,000</strong>
+<div class="progress-bar"><div class="progress-fill" id="goal-progress"></div></div>
+<span id="goal-text">0%</span>
+</div>
+</div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Monthly Revenue</div><div class="stat-value positive" id="biz-revenue">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Monthly Expenses</div><div class="stat-value negative" id="biz-expenses">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Net Profit</div><div class="stat-value" id="biz-profit">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">GST/HST to Remit</div><div class="stat-value warning" id="biz-gst">$0.00</div></div>
+</div>
+<div class="grid-2">
+<div class="panel">
+<h3>📈 Revenue vs Expenses (6 Months)</h3>
+<div class="chart-placeholder" id="rev-chart"></div>
+</div>
+<div class="panel">
+<h3>📊 Expense Breakdown</h3>
+<div class="category-list" id="biz-categories"></div>
+</div>
+</div>
+<div class="grid-2">
+<div class="panel">
+<h3>💼 Client Payments</h3>
+<div class="client-list" id="client-list">
+<div class="empty-state">No clients yet. Add transactions to see client data.</div>
+</div>
+</div>
+<div class="panel">
+<h3>📋 Profit & Loss</h3>
+<table class="pl-table">
+<tr><td>Revenue</td><td class="positive" id="pl-revenue">$0.00</td></tr>
+<tr><td>Cost of Services</td><td class="negative" id="pl-cos">$0.00</td></tr>
+<tr class="total"><td>Gross Profit</td><td id="pl-gross">$0.00</td></tr>
+<tr><td>Operating Expenses</td><td class="negative" id="pl-opex">$0.00</td></tr>
+<tr class="total"><td>Net Income</td><td id="pl-net">$0.00</td></tr>
+</table>
+</div>
+</div>
+<div class="panel">
+<h3>📝 Recent Business Transactions</h3>
+<div class="transactions-list" id="biz-transactions"></div>
+<a href="transactions.html" class="btn btn-outline btn-sm">View All</a>
+</div>
+</main>
+<script src="js/finance.js"></script>
+<script>
+const user=requireAuth();if(!user)exit;
+document.getElementById('user-name').textContent=user.name||user.email;
+function updateBusiness(){
+const now=new Date();const start=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+const end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];
+const txs=FinanceApp.getTransactions({entity:'business'});
+const monthTxs=txs.filter(t=>t.date>=start&&t.date<=end);
+const revenue=monthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+const expenses=monthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+const gstCollected=revenue*0.13;const gstPaid=expenses*0.13;
+document.getElementById('biz-revenue').textContent=formatMoney(revenue);
+document.getElementById('biz-expenses').textContent=formatMoney(expenses);
+document.getElementById('biz-profit').textContent=formatMoney(revenue-expenses);
+document.getElementById('biz-gst').textContent=formatMoney(gstCollected-gstPaid);
+const goal=200000;const pct=Math.min(revenue/goal*100,100);
+document.getElementById('goal-progress').style.width=pct+'%';
+document.getElementById('goal-text').textContent=pct.toFixed(1)+'%';
+document.getElementById('pl-revenue').textContent=formatMoney(revenue);
+document.getElementById('pl-cos').textContent=formatMoney(0);
+document.getElementById('pl-gross').textContent=formatMoney(revenue);
+document.getElementById('pl-opex').textContent=formatMoney(expenses);
+document.getElementById('pl-net').textContent=formatMoney(revenue-expenses);
+const cats={};monthTxs.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+t.amount;});
+const catList=document.getElementById('biz-categories');catList.innerHTML='';
+Object.entries(cats).sort((a,b)=>b[1]-a[1]).forEach(([cat,amt])=>{
+catList.innerHTML+=`<div class="cat-row"><span>${cat}</span><span>${formatMoney(amt)}</span></div>`;
+});
+const recent=document.getElementById('biz-transactions');recent.innerHTML='';
+txs.slice(0,5).forEach(t=>{
+recent.innerHTML+=`<div class="tx-row"><span>${t.description}</span><span class="${t.type==='income'?'positive':'negative'}">${t.type==='income'?'+':'-'}${formatMoney(t.amount)}</span></div>`;
+});
+}
+updateBusiness();
+</script>
+</body>
+</html>

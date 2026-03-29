@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Personal Finance — FinanceHub</title>
+<link rel="stylesheet" href="css/finance.css">
+</head>
+<body>
+<nav class="topnav">
+<div class="nav-brand"><span>💰</span> FinanceHub</div>
+<div class="nav-links">
+<a href="personal.html" class="active">Personal</a>
+<a href="business.html">Business</a>
+<a href="transactions.html">Transactions</a>
+<a href="tax.html">Tax Center</a>
+<a href="family.html">Family</a>
+</div>
+<div class="nav-user">
+<span id="user-name"></span>
+<button class="btn-sm" onclick="FinanceApp.logout()">Logout</button>
+</div>
+</nav>
+<main class="dashboard">
+<div class="page-header">
+<h1>📊 Personal Finance</h1>
+<button class="btn btn-primary" onclick="showAddTransaction()">+ Add Transaction</button>
+</div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Total Balance</div><div class="stat-value" id="total-balance">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Monthly Income</div><div class="stat-value positive" id="monthly-income">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Monthly Expenses</div><div class="stat-value negative" id="monthly-expenses">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Savings Rate</div><div class="stat-value" id="savings-rate">0%</div></div>
+</div>
+<div class="grid-2">
+<div class="panel">
+<h3>📈 Monthly Overview</h3>
+<div class="chart-placeholder">
+<div class="bar-chart" id="monthly-chart"></div>
+</div>
+</div>
+<div class="panel">
+<h3>🥧 Spending by Category</h3>
+<div class="category-list" id="category-list"></div>
+</div>
+</div>
+<div class="grid-2">
+<div class="panel">
+<h3>💳 Accounts</h3>
+<div class="accounts-list" id="accounts-list">
+<div class="account-card"><span>🏦 Chequing</span><span class="balance">$0.00</span></div>
+<div class="account-card"><span>💰 Savings</span><span class="balance">$0.00</span></div>
+<div class="account-card"><span>💳 Credit Card</span><span class="balance negative">$0.00</span></div>
+<button class="btn btn-outline btn-sm" onclick="FinanceApp.connectBank()">+ Connect Bank</button>
+</div>
+</div>
+<div class="panel">
+<h3>🎯 Budget Progress</h3>
+<div class="budget-list" id="budget-list"></div>
+<button class="btn btn-outline btn-sm" onclick="showSetBudget()">+ Set Budget</button>
+</div>
+</div>
+<div class="panel">
+<h3>📝 Recent Transactions</h3>
+<div class="transactions-list" id="recent-transactions"></div>
+<a href="transactions.html" class="btn btn-outline btn-sm">View All</a>
+</div>
+</main>
+<div class="modal" id="add-tx-modal">
+<div class="modal-content">
+<h2>Add Transaction</h2>
+<div class="form-group"><label>Type</label><select id="tx-type"><option value="expense">Expense</option><option value="income">Income</option></select></div>
+<div class="form-group"><label>Amount</label><input type="number" id="tx-amount" step="0.01" placeholder="0.00"></div>
+<div class="form-group"><label>Description</label><input type="text" id="tx-desc" placeholder="Coffee, Salary, etc."></div>
+<div class="form-group"><label>Category</label><select id="tx-category"></select></div>
+<div class="form-group"><label>Date</label><input type="date" id="tx-date"></div>
+<div class="form-group"><label>Account</label><select id="tx-account"><option>Chequing</option><option>Savings</option><option>Credit Card</option><option>Cash</option></select></div>
+<div class="form-group"><label>Entity</label><select id="tx-entity"><option value="personal">Personal</option><option value="business">Business (Agii.ca)</option></select></div>
+<button class="btn btn-primary" onclick="saveTransaction()">Save</button>
+<button class="btn btn-outline" onclick="closeModal('add-tx-modal')">Cancel</button>
+</div>
+</div>
+<script src="js/finance.js"></script>
+<script>
+const user=requireAuth();if(!user)exit;
+document.getElementById('user-name').textContent=user.name||user.email;
+document.getElementById('tx-date').value=new Date().toISOString().split('T')[0];
+function updateDashboard(){
+const now=new Date();const start=new Date(now.getFullYear(),now.getMonth(),1).toISOString().split('T')[0];
+const end=new Date(now.getFullYear(),now.getMonth()+1,0).toISOString().split('T')[0];
+const txs=FinanceApp.getTransactions({entity:'personal'});
+const monthTxs=txs.filter(t=>t.date>=start&&t.date<=end);
+const income=monthTxs.filter(t=>t.type==='income').reduce((s,t)=>s+t.amount,0);
+const expenses=monthTxs.filter(t=>t.type==='expense').reduce((s,t)=>s+t.amount,0);
+const balance=txs.reduce((s,t)=>t.type==='income'?s+t.amount:s-t.amount,0);
+document.getElementById('total-balance').textContent=formatMoney(balance);
+document.getElementById('monthly-income').textContent=formatMoney(income);
+document.getElementById('monthly-expenses').textContent=formatMoney(expenses);
+document.getElementById('savings-rate').textContent=(income>0?((income-expenses)/income*100).toFixed(0):0)+'%';
+const cats={};monthTxs.filter(t=>t.type==='expense').forEach(t=>{cats[t.category]=(cats[t.category]||0)+t.amount;});
+const catList=document.getElementById('category-list');catList.innerHTML='';
+Object.entries(cats).sort((a,b)=>b[1]-a[1]).slice(0,6).forEach(([cat,amt])=>{
+catList.innerHTML+=`<div class="cat-row"><span>${cat}</span><span>${formatMoney(amt)}</span></div>`;
+});
+const recent=document.getElementById('recent-transactions');recent.innerHTML='';
+txs.slice(0,5).forEach(t=>{
+recent.innerHTML+=`<div class="tx-row"><span>${t.description}</span><span class="${t.type==='income'?'positive':'negative'}">${t.type==='income'?'+':'-'}${formatMoney(t.amount)}</span></div>`;
+});
+}
+function showAddTransaction(){
+const sel=document.getElementById('tx-category');sel.innerHTML='';
+FinanceApp.categories.expense.forEach(c=>{sel.innerHTML+=`<option>${c}</option>`;});
+document.getElementById('add-tx-modal').classList.add('show');
+}
+function saveTransaction(){
+FinanceApp.addTransaction({
+type:document.getElementById('tx-type').value,
+amount:parseFloat(document.getElementById('tx-amount').value),
+description:document.getElementById('tx-desc').value,
+category:document.getElementById('tx-category').value,
+date:document.getElementById('tx-date').value,
+account:document.getElementById('tx-account').value,
+entity:document.getElementById('tx-entity').value
+});
+closeModal('add-tx-modal');updateDashboard();
+}
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+document.getElementById('tx-type').addEventListener('change',function(){
+const sel=document.getElementById('tx-category');sel.innerHTML='';
+const cats=this.value==='income'?FinanceApp.categories.income:FinanceApp.categories.expense;
+cats.forEach(c=>{sel.innerHTML+=`<option>${c}</option>`;});
+});
+updateDashboard();
+</script>
+</body>
+</html>
