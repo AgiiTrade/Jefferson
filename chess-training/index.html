@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Chess Master Pro — Train. Play. Win.</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#1a1a2e;--card:#16213e;--accent:#e94560;--accent2:#0f3460;--text:#e0e0e0;--light:#f0d9b5;--dark:#b58863;--highlight:rgba(255,255,0,0.4);--legal:rgba(0,0,0,0.2);--check:rgba(255,0,0,0.5)}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+.header{background:var(--card);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:2px solid var(--accent)}
+.header h1{font-size:1.5em;background:linear-gradient(135deg,var(--accent),#ff6b6b);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.header .subtitle{font-size:0.85em;color:#888}
+.nav{display:flex;gap:8px}
+.nav-btn{padding:8px 16px;border-radius:8px;border:1px solid var(--accent2);background:transparent;color:var(--text);cursor:pointer;font-size:0.85em;transition:all 0.2s}
+.nav-btn:hover,.nav-btn.active{background:var(--accent2);border-color:var(--accent)}
+.main{display:flex;gap:24px;padding:24px;max-width:1200px;margin:0 auto;justify-content:center;flex-wrap:wrap}
+.board-container{position:relative}
+.board{display:grid;grid-template-columns:repeat(8,1fr);width:min(480px,90vw);height:min(480px,90vw);border:4px solid var(--card);border-radius:4px;overflow:hidden}
+.square{display:flex;align-items:center;justify-content:center;font-size:clamp(28px,6vw,48px);cursor:pointer;user-select:none;position:relative;transition:background 0.1s}
+.square.light{background:var(--light)}
+.square.dark{background:var(--dark)}
+.square.selected{box-shadow:inset 0 0 0 4px #ff0}
+.square.last-move{background:var(--highlight)!important}
+.square.check{background:var(--check)!important}
+.square.legal::after{content:'';position:absolute;width:30%;height:30%;background:var(--legal);border-radius:50%}
+.square.legal-capture::after{content:'';position:absolute;width:90%;height:90%;border:4px solid var(--legal);border-radius:50%;background:transparent}
+.sidebar{width:300px;display:flex;flex-direction:column;gap:16px}
+.panel{background:var(--card);border-radius:12px;padding:16px;border:1px solid rgba(255,255,255,0.05)}
+.panel h3{font-size:0.9em;color:var(--accent);margin-bottom:12px;text-transform:uppercase;letter-spacing:1px}
+.player-info{display:flex;justify-content:space-between;align-items:center;padding:8px 12px;border-radius:8px;background:rgba(0,0,0,0.2);margin-bottom:8px}
+.player-info.current{border:2px solid var(--accent)}
+.player-name{font-weight:600}
+.player-elo{font-size:0.8em;color:#888}
+.captured{display:flex;flex-wrap:wrap;gap:2px;font-size:18px;min-height:28px}
+.moves-list{max-height:200px;overflow-y:auto;font-family:monospace;font-size:0.85em}
+.move-row{display:flex;gap:12px;padding:4px 8px;border-radius:4px}
+.move-row:nth-child(odd){background:rgba(255,255,255,0.02)}
+.move-num{color:#666;min-width:30px}
+.move-white,.move-black{min-width:60px;cursor:pointer}
+.move-white:hover,.move-black:hover{color:var(--accent)}
+.btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-size:0.9em;font-weight:600;transition:all 0.2s;width:100%;margin-bottom:8px}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:#ff6b6b}
+.btn-secondary{background:var(--accent2);color:white}
+.btn-secondary:hover{background:#1a4a8a}
+.btn-outline{background:transparent;border:1px solid var(--accent2);color:var(--text)}
+.btn-outline:hover{background:var(--accent2)}
+.btn-row{display:flex;gap:8px}
+.btn-row .btn{flex:1}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;z-index:100;display:none}
+.modal.show{display:flex}
+.modal-content{background:var(--card);border-radius:16px;padding:32px;text-align:center;max-width:400px;width:90%}
+.modal h2{font-size:1.8em;margin-bottom:16px}
+.modal p{color:#888;margin-bottom:24px}
+.promo-pieces{display:flex;gap:16px;justify-content:center;font-size:48px}
+.promo-pieces span{cursor:pointer;padding:12px;border-radius:8px;transition:all 0.2s}
+.promo-pieces span:hover{background:var(--accent2);transform:scale(1.1)}
+.puzzle-info{text-align:center;padding:12px}
+.puzzle-theme{display:inline-block;padding:4px 12px;background:var(--accent2);border-radius:20px;font-size:0.8em;margin-bottom:8px}
+.puzzle-rating{color:#888;font-size:0.9em}
+.hint-box{background:rgba(233,69,96,0.1);border:1px solid var(--accent);border-radius:8px;padding:12px;margin-top:12px;font-size:0.9em;display:none}
+.hint-box.show{display:block}
+.stats-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;text-align:center}
+.stat-item .num{font-size:1.5em;font-weight:700;color:var(--accent)}
+.stat-item .label{font-size:0.75em;color:#888}
+.lesson-content{font-size:0.9em;line-height:1.6}
+.lesson-content h4{color:var(--accent);margin:12px 0 8px}
+.lesson-nav{display:flex;justify-content:space-between;margin-top:16px}
+.difficulty-selector{display:flex;gap:8px;margin-bottom:16px}
+.diff-btn{flex:1;padding:8px;border-radius:8px;border:1px solid var(--accent2);background:transparent;color:var(--text);cursor:pointer;font-size:0.85em}
+.diff-btn.active{background:var(--accent);border-color:var(--accent)}
+.timer{font-size:1.5em;font-weight:700;text-align:center;font-family:monospace}
+.timer.warning{color:var(--accent);animation:pulse 1s infinite}
+@keyframes pulse{50%{opacity:0.5}}
+.status-bar{text-align:center;padding:8px;font-size:0.9em;color:var(--accent);font-weight:600}
+@media(max-width:800px){.main{flex-direction:column;align-items:center}.sidebar{width:100%;max-width:480px}.board{width:min(400px,95vw);height:min(400px,95vw)}}
+</style>
+</head>
+<body>
+<div class="header">
+<div><h1>♔ Chess Master Pro</h1><div class="subtitle">Train. Play. Win.</div></div>
+<div class="nav">
+<button class="nav-btn active" onclick="setMode('play')">Play</button>
+<button class="nav-btn" onclick="setMode('training')">Train</button>
+<button class="nav-btn" onclick="setMode('puzzles')">Puzzles</button>
+<button class="nav-btn" onclick="setMode('lessons')">Lessons</button>
+</div>
+</div>
+<div class="main">
+<div class="board-container">
+<div class="status-bar" id="status">White to move</div>
+<div class="board" id="board"></div>
+</div>
+<div class="sidebar">
+<div class="panel">
+<h3>Players</h3>
+<div class="player-info current" id="white-info"><span class="player-name">♔ White</span><span class="player-elo" id="white-elo">1200</span></div>
+<div id="white-captured" class="captured"></div>
+<div class="player-info" id="black-info"><span class="player-name">♚ Black</span><span class="player-elo" id="black-elo">1200</span></div>
+<div id="black-captured" class="captured"></div>
+</div>
+<div class="panel" id="play-panel">
+<h3>Game</h3>
+<div class="difficulty-selector" id="diff-selector">
+<button class="diff-btn" onclick="setDifficulty('easy')">Easy</button>
+<button class="diff-btn active" onclick="setDifficulty('medium')">Medium</button>
+<button class="diff-btn" onclick="setDifficulty('hard')">Hard</button>
+</div>
+<div class="btn-row">
+<button class="btn btn-primary" onclick="newGame()">New Game</button>
+<button class="btn btn-secondary" onclick="flipBoard()">Flip</button>
+</div>
+<button class="btn btn-outline" onclick="undoMove()">Undo Move</button>
+</div>
+<div class="panel" id="training-panel" style="display:none">
+<h3>Training</h3>
+<button class="btn btn-primary" onclick="suggestMove()">💡 Suggest Move</button>
+<button class="btn btn-secondary" onclick="undoMove()">↩ Undo</button>
+<div class="hint-box" id="hint-box"></div>
+</div>
+<div class="panel" id="puzzle-panel" style="display:none">
+<h3>Puzzle</h3>
+<div class="puzzle-info"><div class="puzzle-theme" id="puzzle-theme">Fork</div><div class="puzzle-rating" id="puzzle-rating">Rating: 1200</div></div>
+<div class="stats-grid"><div class="stat-item"><div class="num" id="puzzle-solved">0</div><div class="label">Solved</div></div><div class="stat-item"><div class="num" id="puzzle-streak">0</div><div class="label">Streak</div></div><div class="stat-item"><div class="num" id="puzzle-total">20</div><div class="label">Total</div></div></div>
+<div class="btn-row" style="margin-top:12px"><button class="btn btn-primary" onclick="nextPuzzle()">Next</button><button class="btn btn-outline" onclick="showPuzzleHint()">Hint</button></div>
+<div class="hint-box" id="puzzle-hint"></div>
+</div>
+<div class="panel" id="lesson-panel" style="display:none">
+<h3>Lesson</h3>
+<div id="lesson-content" class="lesson-content"></div>
+<div class="lesson-nav"><button class="btn btn-outline" onclick="prevLesson()" style="width:auto;padding:8px 16px">← Prev</button><span id="lesson-num">1/5</span><button class="btn btn-outline" onclick="nextLesson()" style="width:auto;padding:8px 16px">Next →</button></div>
+</div>
+<div class="panel"><h3>Moves</h3><div class="moves-list" id="moves-list"></div></div>
+</div>
+</div>
+<div class="modal" id="promo-modal"><div class="modal-content"><h2>Promote Pawn</h2><p>Choose a piece:</p><div class="promo-pieces" id="promo-pieces"></div></div></div>
+<div class="modal" id="gameover-modal"><div class="modal-content"><h2 id="gameover-title">Game Over</h2><p id="gameover-text"></p><button class="btn btn-primary" onclick="closeModal('gameover-modal');newGame()">New Game</button></div></div>
+<script>
+// ===== CHESS ENGINE =====
+const PIECES={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+const PIECE_VALUES={p:100,n:320,b:330,r:500,q:900,k:20000,P:100,N:320,B:330,R:500,Q:900,K:20000};
+const PST_PAWN=[[0,0,0,0,0,0,0,0],[50,50,50,50,50,50,50,50],[10,10,20,30,30,20,10,10],[5,5,10,25,25,10,5,5],[0,0,0,20,20,0,0,0],[5,-5,-10,0,0,-10,-5,5],[5,10,10,-20,-20,10,10,5],[0,0,0,0,0,0,0,0]];
+const PST_KNIGHT=[[-50,-40,-30,-30,-30,-30,-40,-50],[-40,-20,0,0,0,0,-20,-40],[-30,0,10,15,15,10,0,-30],[-30,5,15,20,20,15,5,-30],[-30,0,15,20,20,15,0,-30],[-30,5,10,15,15,10,5,-30],[-40,-20,0,5,5,0,-20,-40],[-50,-40,-30,-30,-30,-30,-40,-50]];
+const PST_BISHOP=[[-20,-10,-10,-10,-10,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,10,10,5,0,-10],[-10,5,5,10,10,5,5,-10],[-10,0,10,10,10,10,0,-10],[-10,10,10,10,10,10,10,-10],[-10,5,0,0,0,0,5,-10],[-20,-10,-10,-10,-10,-10,-10,-20]];
+const PST_ROOK=[[0,0,0,0,0,0,0,0],[5,10,10,10,10,10,10,5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[-5,0,0,0,0,0,0,-5],[0,0,0,5,5,0,0,0]];
+const PST_QUEEN=[[-20,-10,-10,-5,-5,-10,-10,-20],[-10,0,0,0,0,0,0,-10],[-10,0,5,5,5,5,0,-10],[-5,0,5,5,5,5,0,-5],[0,0,5,5,5,5,0,-5],[-10,5,5,5,5,5,0,-10],[-10,0,5,0,0,0,0,-10],[-20,-10,-10,-5,-5,-10,-10,-20]];
+const PST_KING_MID=[[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-30,-40,-40,-50,-50,-40,-40,-30],[-20,-30,-30,-40,-40,-30,-30,-20],[-10,-20,-20,-20,-20,-20,-20,-10],[20,20,0,0,0,0,20,20],[20,30,10,0,0,10,30,20]];
+
+let board=[],turn='w',selected=null,legalMoves=[],moveHistory=[],captured={w:[],b:[]};
+let castling={K:true,Q:true,k:true,q:true},enPassant=null,halfMoves=0,fullMoves=1;
+let gameMode='play',difficulty='medium',playerColor='w',aiThinking=false;
+let puzzleIndex=0,puzzleSolved=0,puzzleStreak=0,lessonIndex=0;
+let elo=1200,gameActive=true;
+let lastMove=null;
+
+const PUZZLES=[
+{fen:'r1bqkb1r/pppp1ppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 4 4',solution:['h5f7'],hint:'Scholar\'s mate! The queen and bishop target f7.',theme:'Back Rank Mate',rating:800},
+{fen:'r1b1k2r/ppppqppp/2n2n2/2b1p3/2B1P3/3P1N2/PPP2PPP/RNBQK2R w KQkq - 0 6',solution:['c4f7'],hint:'The bishop can capture on f7 with check!',theme:'Fork',rating:900},
+{fen:'rnbqkbnr/pppp1ppp/8/4p3/6P1/5P2/PPPPP2P/RNBQKBNR b KQkq - 0 2',solution:['d8h4'],hint:'The queen can deliver checkmate!',theme:'Back Rank Mate',rating:850},
+{fen:'r1bqk2r/pppp1ppp/2n2n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',solution:['f3g5'],hint:'Attack f7 with the knight!',theme:'Fork',rating:950},
+{fen:'r2qk2r/ppp2ppp/2np1n2/2b1p1B1/2B1P1b1/2NP1N2/PPP2PPP/R2QK2R w KQkq - 0 7',solution:['g5f6'],hint:'The bishop captures the knight, attacking the queen.',theme:'Pin',rating:1000},
+{fen:'r1bqkb1r/pppp1Qpp/2n2n2/4p3/2B1P3/8/PPPP1PPP/RNB1K1NR b KQkq - 0 4',solution:['e8f7'],hint:'Black must capture the queen.',theme:'Back Rank Mate',rating:800},
+{fen:'rnbqk2r/pppp1ppp/5n2/2b1p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',solution:['f3g5'],hint:'Knight to g5 attacks f7!',theme:'Fork',rating:950},
+{fen:'r1bqkbnr/pppp1ppp/2n5/4p3/4P3/5N2/PPPP1PPP/RNBQKB1R w KQkq - 2 3',solution:['f1b5'],hint:'The Spanish Opening! Bishop to b5.',theme:'Pin',rating:1100},
+{fen:'rnbqkb1r/pppp1ppp/5n2/4p3/2B1P3/8/PPPP1PPP/RNBQK1NR w KQkq - 2 3',solution:['c4f7'],hint:'Attack f7 with the bishop!',theme:'Fork',rating:900},
+{fen:'r1bqk2r/ppppbppp/2n2n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 6 5',solution:['h5f7'],hint:'Queen takes f7 is checkmate!',theme:'Back Rank Mate',rating:850},
+{fen:'rnbqkbnr/ppp2ppp/8/3pp3/4P3/3P4/PPP2PPP/RNBQKBNR w KQkq - 0 3',solution:['e4d5'],hint:'Capture the pawn!',theme:'Tactic',rating:900},
+{fen:'r1bqkb1r/ppppnppp/5n2/4p2Q/2B1P3/8/PPPP1PPP/RNB1K1NR w KQkq - 6 5',solution:['h5f7'],hint:'Queen to f7 is mate!',theme:'Checkmate',rating:800},
+{fen:'rnb1kbnr/pppp1ppp/8/4p3/6q1/5NP1/PPPPPP1P/RNBQKB1R w KKQkq - 2 3',solution:['f1g2'],hint:'Develop the bishop, blocking the check.',theme:'Defense',rating:950},
+{fen:'r1bqkbnr/1ppp1ppp/p1n5/4p3/B3P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 0 4',solution:['a4c6'],hint:'Bishop captures the knight!',theme:'Skewer',rating:1000},
+{fen:'rnbqk2r/pppp1ppp/4pn2/8/1bPP4/2N5/PP2PPPP/R1BQKBNR w KQkq - 2 4',solution:['c3d5'],hint:'Knight to d5!',theme:'Fork',rating:1100},
+{fen:'r1bqkb1r/pppp1ppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 4 4',solution:['f3g5'],hint:'Attack f7!',theme:'Fork',rating:950},
+{fen:'r2qk2r/ppp2ppp/2n1bn2/3pp3/2B1P1b1/2NP1N2/PPP2PPP/R1BQK2R w KQkq - 0 7',solution:['c4f7'],hint:'Bishop sacrifice on f7!',theme:'Sacrifice',rating:1200},
+{fen:'rnbqkb1r/pppp1ppp/5n2/4p3/4PP2/8/PPPP2PP/RNBQKBNR w KQkq - 0 3',solution:['f4e5'],hint:'Capture the pawn!',theme:'Tactic',rating:900},
+{fen:'r1bqkbnr/pppp1ppp/2n5/4N3/4P3/8/PPPP1PPP/RNBQKB1R b KQkq - 0 3',solution:['c6e5'],hint:'Knight takes knight!',theme:'Exchange',rating:950},
+{fen:'r1b1kb1r/ppppqppp/2n2n2/4p3/2B1P3/5N2/PPPP1PPP/RNBQK2R w KQkq - 6 4',solution:['c4f7'],hint:'Bishop takes f7! Forking king and queen.',theme:'Fork',rating:1000}
+];
+
+const LESSONS=[
+{title:'How Pieces Move',content:`<h4>♔ The King</h4><p>Moves one square in any direction. The most important piece — protect it!</p><h4>♕ The Queen</h4><p>Moves any number of squares in any direction. The most powerful piece.</p><h4>♖ The Rook</h4><p>Moves any number of squares horizontally or vertically.</p><h4>♗ The Bishop</h4><p>Moves any number of squares diagonally. Each bishop stays on one color.</p><h4>♘ The Knight</h4><p>Moves in an L-shape: 2 squares + 1 square. Can jump over pieces!</p><h4>♙ The Pawn</h4><p>Moves forward one square (two on first move). Captures diagonally.</p>`,fen:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'},
+{title:'Basic Checkmates',content:`<h4>King + Queen vs King</h4><p>Use your queen to force the enemy king to the edge, then bring your king to help.</p><h4>King + Rook vs King</h4><p>Use the rook to cut off ranks/files. Force the king to the corner.</p><h4>Key Principle</h4><p>Always keep your king active in the endgame!</p>`,fen:'8/8/8/8/8/5k2/8/4K3 w - - 0 1'},
+{title:'Tactical Patterns',content:`<h4>🍴 Fork</h4><p>One piece attacks two or more enemy pieces simultaneously.</p><h4>📌 Pin</h4><p>A piece cannot move because it would expose a more valuable piece behind it.</p><h4>⚔️ Skewer</h4><p>Like a pin in reverse — the more valuable piece is attacked first.</p><h4>💡 Discovered Attack</h4><p>Move one piece to reveal an attack by another piece behind it.</p>`,fen:'rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1'},
+{title:'Opening Principles',content:`<h4>1. Control the Center</h4><p>Put pawns on e4/d4 or e5/d5. The center gives your pieces more mobility.</p><h4>2. Develop Your Pieces</h4><p>Get knights and bishops out early. Don't move the same piece twice.</p><h4>3. Castle Early</h4><p>Castle within the first 10 moves to protect your king.</p><h4>4. Don't Bring Queen Out Too Early</h4><p>The queen is powerful but vulnerable to attacks from lesser pieces.</p>`,fen:'rnbqkbnr/pppppppp/8/8/4P3/8/PPPP1PPP/RNBQKBNR b KQkq - 0 1'},
+{title:'Endgame Basics',content:`<h4>King and Pawn Endings</h4><p>The opposition: When kings face each other with one square between them, the player NOT to move has the advantage.</p><h4>Passed Pawns</h4><p>A pawn with no enemy pawns blocking its path is called a "passed pawn" — push it!</p><h4>Key Rule</h4><p>In the endgame, activate your king! A centralized king is worth about 2 pawns.</p>`,fen:'4k3/8/8/8/8/8/4P3/4K3 w - - 0 1'}
+];
+// ===== BOARD SETUP =====
+function fenToBoard(fen){
+const parts=fen.split(' ');
+const rows=parts[0].split('/');
+board=[];
+for(let r=0;r<8;r++){
+board[r]=[];
+let c=0;
+for(const ch of rows[r]){
+if(ch>='1'&&ch<='8'){for(let i=0;i<parseInt(ch);i++){board[r][c]='';c++;}}
+else{board[r][c]=ch;c++;}
+}}
+turn=parts[1]||'w';
+castling={K:(parts[2]||'').includes('K'),Q:(parts[2]||'').includes('Q'),k:(parts[2]||'').includes('k'),q:(parts[2]||'').includes('q')};
+enPassant=parts[3]&&parts[3]!='-'?parts[3]:null;
+halfMoves=parseInt(parts[4])||0;
+fullMoves=parseInt(parts[5])||1;
+}
+
+function boardToFen(){
+let fen='';
+for(let r=0;r<8;r++){let empty=0;for(let c=0;c<8;c++){if(board[r][c])fen+=(empty>0?empty:'')+board[r][c],empty=0;else empty++;}if(empty>0)fen+=empty;if(r<7)fen+='/';}
+let cast='';if(castling.K)cast+='K';if(castling.Q)cast+='Q';if(castling.k)cast+='k';if(castling.q)cast+='q';
+fen+=' '+turn+' '+(cast||'-')+' '+(enPassant||'-')+' '+halfMoves+' '+fullMoves;
+return fen;
+}
+
+function isWhite(p){return p&&p===p.toUpperCase();}
+function isBlack(p){return p&&p===p.toLowerCase();}
+function isEnemy(p,side){return side==='w'?isBlack(p):isWhite(p);}
+function isAlly(p,side){return side==='w'?isWhite(p):isBlack(p);}
+
+function findKing(side){const k=side==='w'?'K':'k';for(let r=0;r<8;r++)for(let c=0;c<8;c++)if(board[r][c]===k)return[r,c];return null;}
+
+function isSquareAttacked(r,c,bySide){
+for(let r2=0;r2<8;r2++)for(let c2=0;c2<8;c2++){
+const p=board[r2][c2];if(!p||!isAlly(p,bySide))continue;
+const type=p.toLowerCase();
+if(type==='p'){const dir=bySide==='w'?1:-1;if(r2+dir===r&&(c2-1===c||c2+1===c))return true;}
+if(type==='n'){const dr=Math.abs(r2-r),dc=Math.abs(c2-c);if((dr===2&&dc===1)||(dr===1&&dc===2))return true;}
+if(type==='k'){if(Math.abs(r2-r)<=1&&Math.abs(c2-c)<=1)return true;}
+if(type==='b'||type==='q'){if(Math.abs(r2-r)===Math.abs(c2-c)){const dr=r>r2?1:-1,dc=c>c2?1:-1;let tr=r2+dr,tc=c2+dc;while(tr!==r||tc!==c){if(board[tr][tc])break;tr+=dr;tc+=dc;}if(tr===r&&tc===c)return true;}}
+if(type==='r'||type==='q'){if(r2===r||c2===c){const dr=r===r2?0:(r>r2?1:-1),dc=c===c2?0:(c>c2?1:-1);let tr=r2+dr,tc=c2+dc;while(tr!==r||tc!==c){if(board[tr][tc])break;tr+=dr;tc+=dc;}if(tr===r&&tc===c)return true;}}
+}return false;}
+
+function isInCheck(side){const k=findKing(side);if(!k)return false;return isSquareAttacked(k[0],k[1],side==='w'?'b':'w');}
+
+function getLegalMoves(r,c){
+const p=board[r][c];if(!p)return[];
+const side=isWhite(p)?'w':'b';const moves=[];const type=p.toLowerCase();
+function addMove(tr,tc){
+const orig=board[tr][tc],origP=board[r][c];
+board[tr][tc]=board[r][c];board[r][c]='';
+const inCheck=isInCheck(side);
+board[r][c]=origP;board[tr][tc]=orig;
+if(!inCheck)moves.push([tr,tc]);
+}
+if(type==='p'){
+const dir=side==='w'?-1:1;const startRow=side==='w'?6:1;
+if(r+dir>=0&&r+dir<8&&!board[r+dir][c])addMove(r+dir,c);
+if(r===startRow&&!board[r+dir][c]&&!board[r+2*dir][c])addMove(r+2*dir,c);
+for(const dc of[-1,1]){const nc=c+dc,nr=r+dir;if(nc>=0&&nc<8&&nr>=0&&nr<8){if(isEnemy(board[nr][nc],side))addMove(nr,nc);else if(enPassant&&(nr+''+nc===enPassant||(nr===parseInt(enPassant[1])-1&&nc==='abcdefgh'.indexOf(enPassant[0]))))addMove(nr,nc);}}
+}
+if(type==='n'){const offsets=[[-2,-1],[-2,1],[-1,-2],[-1,2],[1,-2],[1,2],[2,-1],[2,1]];for(const[dr,dc]of offsets){const nr=r+dr,nc=c+dc;if(nr>=0&&nr<8&&nc>=0&&nc<8&&!isAlly(board[nr][nc],side))addMove(nr,nc);}}
+if(type==='b'||type==='q'){for(const[dr,dc]of[[-1,-1],[-1,1],[1,-1],[1,1]]){let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){if(!board[nr][nc])addMove(nr,nc);else{if(isEnemy(board[nr][nc],side))addMove(nr,nc);break;}nr+=dr;nc+=dc;}}}
+if(type==='r'||type==='q'){for(const[dr,dc]of[[-1,0],[1,0],[0,-1],[0,1]]){let nr=r+dr,nc=c+dc;while(nr>=0&&nr<8&&nc>=0&&nc<8){if(!board[nr][nc])addMove(nr,nc);else{if(isEnemy(board[nr][nc],side))addMove(nr,nc);break;}nr+=dr;nc+=dc;}}}
+if(type==='k'){for(let dr=-1;dr<=1;dr++)for(let dc=-1;dc<=1;dc++){if(!dr&&!dc)continue;const nr=r+dr,nc=c+dc;if(nr>=0&&nr<8&&nc>=0&&nc<8&&!isAlly(board[nr][nc],side))addMove(nr,nc);}
+if(side==='w'&&r===7&&c===4){if(castling.K&&!board[7][5]&&!board[7][6]&&!isSquareAttacked(7,4,'b')&&!isSquareAttacked(7,5,'b')&&!isSquareAttacked(7,6,'b'))addMove(7,6);if(castling.Q&&!board[7][3]&&!board[7][2]&&!board[7][1]&&!isSquareAttacked(7,4,'b')&&!isSquareAttacked(7,3,'b')&&!isSquareAttacked(7,2,'b'))addMove(7,2);}
+if(side==='b'&&r===0&&c===4){if(castling.k&&!board[0][5]&&!board[0][6]&&!isSquareAttacked(0,4,'w')&&!isSquareAttacked(0,5,'w')&&!isSquareAttacked(0,6,'w'))addMove(0,6);if(castling.q&&!board[0][3]&&!board[0][2]&&!board[0][1]&&!isSquareAttacked(0,4,'w')&&!isSquareAttacked(0,3,'w')&&!isSquareAttacked(0,2,'w'))addMove(0,2);}
+}
+return moves;
+}
+
+function getAllMoves(side){
+const moves=[];
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){const p=board[r][c];if(p&&(side==='w'?isWhite(p):isBlack(p))){const lm=getLegalMoves(r,c);for(const m of lm)moves.push({from:[r,c],to:m,piece:p});}}
+return moves;
+}
+// ===== MOVE EXECUTION =====
+function executeMove(fr,fc,tr,tc,animate=true){
+const p=board[fr][fc];const captured=board[tr][tc];const type=p.toLowerCase();const side=isWhite(p)?'w':'b';
+// Handle capture
+if(captured){const cSide=isWhite(captured)?'w':'b';captured[cSide].push(captured);}
+// Castling
+if(type==='k'&&Math.abs(fc-tc)===2){if(tc===6){board[fr][5]=board[fr][7];board[fr][7]='';}else{board[fr][3]=board[fr][0];board[fr][0]='';}}
+// En passant capture
+if(type==='p'&&enPassant){const epCol='abcdefgh'.indexOf(enPassant[0]);const epRow=parseInt(enPassant[1])-1;if(tr===epRow&&tc===epCol){const dir=side==='w'?1:-1;const capturedPawn=board[tr+dir][tc];captured[side==='w'?'b':'w'].push(capturedPawn);board[tr+dir][tc]='';}}
+// Update en passant
+enPassant=null;
+if(type==='p'&&Math.abs(fr-tr)===2){const epRow=(fr+tr)/2;enPassant='abcdefgh'[tc]+(8-epRow);}
+// Move piece
+board[tr][tc]=p;board[fr][fc]='';
+// Pawn promotion
+if(type==='p'&&(tr===0||tr===7)){if(side===playerColor||gameMode!=='play'){showPromotion(tr,tc,side);return;}else{board[tr][tc]=side==='w'?'Q':'q';}}
+// Update castling rights
+if(type==='k'){if(side==='w'){castling.K=false;castling.Q=false;}else{castling.k=false;castling.q=false;}}
+if(type==='r'){if(fr===7&&fc===0)castling.Q=false;if(fr===7&&fc===7)castling.K=false;if(fr===0&&fc===0)castling.q=false;if(fr===0&&fc===7)castling.k=false;}
+// Record move
+lastMove={from:[fr,fc],to:[tr,tc]};
+const san=toSan(fr,fc,tr,tc,captured);
+moveHistory.push({san,from:[fr,fc],to:[tr,tc],piece:p,captured,board:JSON.parse(JSON.stringify(board)),castling:{...castling},enPassant,halfMoves});
+// Switch turn
+turn=turn==='w'?'b':'w';
+halfMoves++;if(turn==='w')fullMoves++;
+// Check game state
+checkGameState();
+renderBoard();
+updateUI();
+// AI move
+if(gameActive&&gameMode==='play'&&turn!==playerColor&&!aiThinking){aiThinking=true;setTimeout(()=>{aiMove();aiThinking=false;},300);}
+}
+
+function showPromotion(r,c,side){
+const modal=document.getElementById('promo-modal');const container=document.getElementById('promo-pieces');
+const pieces=side==='w'?['Q','R','B','N']:['q','r','b','n'];
+container.innerHTML='';
+pieces.forEach(p=>{const span=document.createElement('span');span.textContent=PIECES[p];span.onclick=()=>{board[r][c]=p;modal.classList.remove('show');lastMove=moveHistory[moveHistory.length-1]?{from:moveHistory[moveHistory.length-1].from,to:moveHistory[moveHistory.length-1].to}:null;turn=turn==='w'?'b':'w';checkGameState();renderBoard();updateUI();if(gameActive&&gameMode==='play'&&turn!==playerColor){aiThinking=true;setTimeout(()=>{aiMove();aiThinking=false;},300);}};container.appendChild(span);});
+modal.classList.add('show');
+}
+
+function toSan(fr,fc,tr,tc,captured){
+const p=board[fr][fc];const type=p.toLowerCase();const files='abcdefgh';
+if(type==='k'&&Math.abs(fc-tc)===2)return tc===6?'O-O':'O-O-O';
+let san='';if(type!=='p')san+=type.toUpperCase();
+if(captured||type==='p'&&fc!==tc){if(type==='p')san+=files[fc];san+='x';}
+san+=files[tc]+(8-tr);
+return san;
+}
+
+function checkGameState(){
+const moves=getAllMoves(turn);
+if(moves.length===0){
+if(isInCheck(turn)){const winner=turn==='w'?'Black':'White';showGameOver(winner+' wins by checkmate!',winner);updateElo(winner===playerColor);}
+else{showGameOver('Draw by stalemate!','draw');}
+gameActive=false;
+}
+if(halfMoves>=100){showGameOver('Draw by 50-move rule!','draw');gameActive=false;}
+}
+
+function showGameOver(text,result){
+document.getElementById('gameover-title').textContent=result==='draw'?'Draw!':(result+' Wins!');
+document.getElementById('gameover-text').textContent=text;
+document.getElementById('gameover-modal').classList.add('show');
+}
+
+function closeModal(id){document.getElementById(id).classList.remove('show');}
+
+function updateElo(won){
+const k=32;const expected=1/(1+Math.pow(10,(1200-elo)/400));
+elo=Math.round(elo+k*((won?1:0)-expected));
+document.getElementById('white-elo').textContent=elo;
+localStorage.setItem('chessElo',elo);
+}
+
+function undoMove(){
+if(moveHistory.length<2&&gameMode==='play')return;
+const count=gameMode==='play'?2:1;
+for(let i=0;i<count&&moveHistory.length>0;i++){
+moveHistory.pop();
+if(moveHistory.length>0){const last=moveHistory[moveHistory.length-1];board=JSON.parse(JSON.stringify(last.board));castling={...last.castling};enPassant=last.enPassant;halfMoves=last.halfMoves;}
+else{newGame();return;}
+}
+turn=moveHistory.length%2===0?'w':'b';
+lastMove=moveHistory.length>0?{from:moveHistory[moveHistory.length-1].from,to:moveHistory[moveHistory.length-1].to}:null;
+gameActive=true;
+renderBoard();updateUI();
+}
+
+function flipBoard(){playerColor=playerColor==='w'?'b':'w';renderBoard();}
+// ===== AI =====
+function evaluateBoard(){
+let score=0;
+const pstMap={p:PST_PAWN,n:PST_KNIGHT,b:PST_BISHOP,r:PST_ROOK,q:PST_QUEEN,k:PST_KING_MID};
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+const p=board[r][c];if(!p)continue;
+const type=p.toLowerCase();const isW=isWhite(p);let val=PIECE_VALUES[p]||0;
+if(pstMap[type]){const row=isW?r:7-r;val+=pstMap[type][row][c]||0;}
+score+=isW?val:-val;
+}
+return score;
+}
+
+function aiMove(){
+const moves=getAllMoves(turn);if(moves.length===0)return;
+let bestMove;
+if(difficulty==='easy'){bestMove=moves[Math.floor(Math.random()*moves.length)];}
+else if(difficulty==='medium'){bestMove=bestMoveMedium(moves);}
+else{bestMove=bestMoveHard(moves);}
+executeMove(bestMove.from[0],bestMove.from[1],bestMove.to[0],bestMove.to[1]);
+}
+
+function bestMoveMedium(moves){
+let bestScore=turn==='w'?-Infinity:Infinity;let bestMove=moves[0];
+for(const m of moves){
+const origFrom=board[m.from[0]][m.from[1]];const origTo=board[m.to[0]][m.to[1]];
+board[m.to[0]][m.to[1]]=origFrom;board[m.from[0]][m.from[1]]='';
+const score=evaluateBoard();
+board[m.from[0]][m.from[1]]=origFrom;board[m.to[0]][m.to[1]]=origTo;
+if(turn==='w'?score>bestScore:score<bestScore){bestScore=score;bestMove=m;}
+}
+// Add some randomness for medium
+if(Math.random()<0.3)bestMove=moves[Math.floor(Math.random()*moves.length)];
+return bestMove;
+}
+
+function bestMoveHard(moves){
+let bestScore=turn==='w'?-Infinity:Infinity;let bestMove=moves[0];const depth=3;
+for(const m of moves){
+const origFrom=board[m.from[0]][m.from[1]];const origTo=board[m.to[0]][m.to[1]];
+const oldCastling={...castling};const oldEP=enPassant;
+board[m.to[0]][m.to[1]]=origFrom;board[m.from[0]][m.from[1]]='';
+if(m.piece.toLowerCase()==='k'){if(isWhite(m.piece)){castling.K=false;castling.Q=false;}else{castling.k=false;castling.q=false;}}
+const score=minimax(depth-1,turn==='w'?'b':'w',-Infinity,Infinity);
+board[m.from[0]][m.from[1]]=origFrom;board[m.to[0]][m.to[1]]=origTo;
+castling=oldCastling;enPassant=oldEP;
+if(turn==='w'?score>bestScore:score<bestScore){bestScore=score;bestMove=m;}
+}
+return bestMove;
+}
+
+function minimax(depth,side,alpha,beta){
+if(depth===0)return evaluateBoard();
+const moves=getAllMoves(side);if(moves.length===0)return isInCheck(side)?(side==='w'?-99999:99999):0;
+const isMax=side==='w';
+for(const m of moves){
+const origFrom=board[m.from[0]][m.from[1]];const origTo=board[m.to[0]][m.to[1]];
+board[m.to[0]][m.to[1]]=origFrom;board[m.from[0]][m.from[1]]='';
+const score=minimax(depth-1,side==='w'?'b':'w',alpha,beta);
+board[m.from[0]][m.from[1]]=origFrom;board[m.to[0]][m.to[1]]=origTo;
+if(isMax){alpha=Math.max(alpha,score);if(beta<=alpha)break;}else{beta=Math.min(beta,score);if(beta<=alpha)break;}
+}
+return isMax?alpha:beta;
+}
+
+// ===== TRAINING MODE =====
+function suggestMove(){
+const moves=getAllMoves(turn);if(moves.length===0)return;
+let bestMove=moves[0];let bestScore=turn==='w'?-Infinity:Infinity;
+for(const m of moves){
+const origFrom=board[m.from[0]][m.from[1]];const origTo=board[m.to[0]][m.to[1]];
+board[m.to[0]][m.to[1]]=origFrom;board[m.from[0]][m.from[1]]='';
+const score=evaluateBoard();
+board[m.from[0]][m.from[1]]=origFrom;board[m.to[0]][m.to[1]]=origTo;
+if(turn==='w'?score>bestScore:score<bestScore){bestScore=score;bestMove=m;}
+}
+const files='abcdefgh';const from=files[moves[0].from[1]]+(8-moves[0].from[0]);const to=files[moves[0].to[1]]+(8-moves[0].to[0]);
+const hint=document.getElementById('hint-box');
+hint.textContent=`💡 Suggested: ${PIECES[bestMove.piece]} ${files[bestMove.from[1]]}${8-bestMove.from[0]} → ${files[bestMove.to[1]]}${8-bestMove.to[0]} (eval: ${bestScore>0?'+':''}${(bestScore/100).toFixed(1)})`;
+hint.classList.add('show');
+selected={r:bestMove.from[0],c:bestMove.from[1]};legalMoves=getLegalMoves(bestMove.from[0],bestMove.from[1]);
+renderBoard();
+}
+
+// ===== PUZZLES =====
+function loadPuzzle(index){
+if(index>=PUZZLES.length)index=0;
+const puzzle=PUZZLES[index];
+fenToBoard(puzzle.fen);
+document.getElementById('puzzle-theme').textContent=puzzle.theme;
+document.getElementById('puzzle-rating').textContent='Rating: '+puzzle.rating;
+document.getElementById('puzzle-hint').textContent='';
+document.getElementById('puzzle-hint').classList.remove('show');
+puzzleIndex=index;gameActive=true;selected=null;legalMoves=[];lastMove=null;moveHistory=[];
+renderBoard();updateUI();
+const status=document.getElementById('status');
+status.textContent='Find the best move! ('+(turn==='w'?'White':'Black')+' to play)';
+}
+
+function nextPuzzle(){loadPuzzle(puzzleIndex+1);}
+
+function showPuzzleHint(){
+const hint=document.getElementById('puzzle-hint');
+hint.textContent='💡 '+PUZZLES[puzzleIndex].hint;
+hint.classList.add('show');
+}
+
+function checkPuzzle(fr,fc,tr,tc){
+const move='abcdefgh'[fc]+(8-fr)+'abcdefgh'[tc]+(8-tr);
+const solution=PUZZLES[puzzleIndex].solution;
+if(solution.includes(move)){
+puzzleSolved++;puzzleStreak++;
+document.getElementById('puzzle-solved').textContent=puzzleSolved;
+document.getElementById('puzzle-streak').textContent=puzzleStreak;
+document.getElementById('status').textContent='✅ Correct! Well done!';
+gameActive=false;
+setTimeout(nextPuzzle,1500);
+}else{
+puzzleStreak=0;
+document.getElementById('puzzle-streak').textContent='0';
+document.getElementById('status').textContent='❌ Not quite. Try again!';
+}
+}
+
+// ===== LESSONS =====
+function loadLesson(index){
+if(index<0)index=LESSONS.length-1;if(index>=LESSONS.length)index=0;
+lessonIndex=index;const lesson=LESSONS[index];
+fenToBoard(lesson.fen);
+document.getElementById('lesson-content').innerHTML=`<h3>${lesson.title}</h3>${lesson.content}`;
+document.getElementById('lesson-num').textContent=(index+1)+'/'+LESSONS.length;
+selected=null;legalMoves=[];gameActive=true;
+renderBoard();updateUI();
+}
+function nextLesson(){loadLesson(lessonIndex+1);}
+function prevLesson(){loadLesson(lessonIndex-1);}
+// ===== RENDERING =====
+function renderBoard(){
+const boardEl=document.getElementById('board');boardEl.innerHTML='';
+const isFlipped=playerColor==='b';
+for(let r=0;r<8;r++)for(let c=0;c<8;c++){
+const row=isFlipped?7-r:r;const col=isFlipped?7-c:c;
+const sq=document.createElement('div');
+sq.className='square '+((row+col)%2===0?'light':'dark');
+if(selected&&selected.r===row&&selected.c===col)sq.classList.add('selected');
+if(lastMove&&((lastMove.from[0]===row&&lastMove.from[1]===col)||(lastMove.to[0]===row&&lastMove.to[1]===col)))sq.classList.add('last-move');
+const kPos=findKing(turn);if(kPos&&kPos[0]===row&&kPos[1]===col&&isInCheck(turn))sq.classList.add('check');
+if(legalMoves.some(m=>m[0]===row&&m[1]===col)){sq.classList.add(board[row][col]?'legal-capture':'legal');}
+sq.textContent=board[row][col]?PIECES[board[row][col]]:'';
+sq.onclick=()=>handleClick(row,col);
+boardEl.appendChild(sq);
+}
+}
+
+function handleClick(r,c){
+if(!gameActive&&gameMode!=='lessons')return;
+if(gameMode==='play'&&turn!==playerColor)return;
+if(aiThinking)return;
+const p=board[r][c];
+if(selected){
+const isLegal=legalMoves.some(m=>m[0]===r&&m[1]===c);
+if(isLegal){
+if(gameMode==='puzzles'){checkPuzzle(selected.r,selected.c,r,c);}
+executeMove(selected.r,selected.c,r,c);
+selected=null;legalMoves=[];
+return;
+}
+}
+if(p&&(gameMode!=='play'||(isWhite(p)&&turn==='w')||(isBlack(p)&&turn==='b'))){
+selected={r,c};legalMoves=getLegalMoves(r,c);
+}else{selected=null;legalMoves=[];}
+renderBoard();
+}
+
+function updateUI(){
+// Status
+const status=document.getElementById('status');
+if(gameActive){status.textContent=(turn==='w'?'White':'Black')+' to move'+(isInCheck(turn)?' — CHECK!':'');}
+// Player info
+document.getElementById('white-info').classList.toggle('current',turn==='w');
+document.getElementById('black-info').classList.toggle('current',turn==='b');
+// Captured pieces
+document.getElementById('white-captured').textContent=captured.w.map(p=>PIECES[p]).join('');
+document.getElementById('black-captured').textContent=captured.b.map(p=>PIECES[p]).join('');
+// Moves list
+const movesList=document.getElementById('moves-list');movesList.innerHTML='';
+for(let i=0;i<moveHistory.length;i+=2){
+const row=document.createElement('div');row.className='move-row';
+const num=document.createElement('span');num.className='move-num';num.textContent=(Math.floor(i/2)+1)+'.';
+const white=document.createElement('span');white.className='move-white';white.textContent=moveHistory[i]?.san||'';
+row.appendChild(num);row.appendChild(white);
+if(moveHistory[i+1]){const black=document.createElement('span');black.className='move-black';black.textContent=moveHistory[i+1]?.san||'';row.appendChild(black);}
+movesList.appendChild(row);
+}
+movesList.scrollTop=movesList.scrollHeight;
+// Panels
+document.getElementById('play-panel').style.display=gameMode==='play'?'block':'none';
+document.getElementById('training-panel').style.display=gameMode==='training'?'block':'none';
+document.getElementById('puzzle-panel').style.display=gameMode==='puzzles'?'block':'none';
+document.getElementById('lesson-panel').style.display=gameMode==='lessons'?'block':'none';
+// ELO
+document.getElementById('white-elo').textContent=elo;
+}
+
+function setMode(mode){
+gameMode=mode;playerColor='w';
+document.querySelectorAll('.nav-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.nav-btn').forEach(b=>{if(b.textContent.toLowerCase().includes(mode==='puzzles'?'puzzle':mode))b.classList.add('active');});
+if(mode==='puzzles')loadPuzzle(0);else if(mode==='lessons')loadLesson(0);else newGame();
+}
+
+function setDifficulty(d){
+difficulty=d;
+document.querySelectorAll('.diff-btn').forEach(b=>b.classList.remove('active'));
+document.querySelectorAll('.diff-btn').forEach(b=>{if(b.textContent.toLowerCase()===d)b.classList.add('active');});
+}
+
+function newGame(){
+fenToBoard('rnbqkbnr/pppppppp/8/8/8/8/PPPPPPPP/RNBQKBNR w KQkq - 0 1');
+selected=null;legalMoves=[];moveHistory=[];captured={w:[],b:[]};lastMove=null;gameActive=true;aiThinking=false;
+renderBoard();updateUI();
+}
+
+// ===== INIT =====
+elo=parseInt(localStorage.getItem('chessElo'))||1200;
+newGame();
+</script>
+</body>
+</html>
