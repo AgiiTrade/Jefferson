@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Investments — FinanceHub</title>
+<link rel="stylesheet" href="css/finance.css">
+</head>
+<body>
+<nav class="topnav">
+<div class="nav-brand"><span>💰</span> FinanceHub</div>
+<div class="nav-links">
+<a href="entities.html">Dashboards</a>
+<a href="transactions.html">Transactions</a>
+<a href="investments.html" class="active">Investments</a>
+<a href="tax.html">Tax Center</a>
+<a href="family.html">Family</a>
+</div>
+<div class="nav-user"><span id="user-name"></span><button class="btn-sm" onclick="FinanceApp.logout()">Logout</button></div>
+</nav>
+<main class="dashboard">
+<div class="page-header"><h1>📈 Investment Tracker</h1><button class="btn btn-primary" onclick="showAddInvestment()">+ Add Investment</button></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Total Portfolio</div><div class="stat-value" id="total-portfolio">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Total Contributions</div><div class="stat-value" id="total-contributions">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Total Growth</div><div class="stat-value positive" id="total-growth">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Return %</div><div class="stat-value" id="total-return">0%</div></div>
+</div>
+<!-- RRSP Section -->
+<div class="panel investment-panel">
+<div class="panel-header"><h3>🏦 RRSP — Registered Retirement Savings Plan</h3><span class="badge-info">2026 Limit: $31,560</span></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Current Value</div><div class="stat-value" id="rrsp-value">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">2026 Contributions</div><div class="stat-value" id="rrsp-contrib">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Room Remaining</div><div class="stat-value positive" id="rrsp-room">$31,560</div></div>
+<div class="stat-card"><div class="stat-label">Tax Deduction</div><div class="stat-value" id="rrsp-deduction">$0.00</div></div>
+</div>
+<div class="holdings-list" id="rrsp-holdings"></div>
+<button class="btn btn-outline btn-sm" onclick="showContribution('rrsp')">+ Add RRSP Contribution</button>
+</div>
+<!-- TFSA Section -->
+<div class="panel investment-panel">
+<div class="panel-header"><h3>💎 TFSA — Tax-Free Savings Account</h3><span class="badge-info">2026 Limit: $7,000</span></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Current Value</div><div class="stat-value" id="tfsa-value">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">2026 Contributions</div><div class="stat-value" id="tfsa-contrib">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Room Remaining</div><div class="stat-value positive" id="tfsa-room">$7,000</div></div>
+<div class="stat-card"><div class="stat-label">Tax-Free Growth</div><div class="stat-value positive" id="tfsa-growth">$0.00</div></div>
+</div>
+<div class="holdings-list" id="tfsa-holdings"></div>
+<button class="btn btn-outline btn-sm" onclick="showContribution('tfsa')">+ Add TFSA Contribution</button>
+</div>
+<!-- RESP Section -->
+<div class="panel investment-panel">
+<div class="panel-header"><h3>🎓 RESP — Registered Education Savings Plan</h3><span class="badge-info">CESG: $500/year/child</span></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Current Value</div><div class="stat-value" id="resp-value">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">2026 Contributions</div><div class="stat-value" id="resp-contrib">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">CESG Received</div><div class="stat-value positive" id="resp-cesg">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">For Child</div><div class="stat-value" id="resp-child">-</div></div>
+</div>
+<div class="holdings-list" id="resp-holdings"></div>
+<button class="btn btn-outline btn-sm" onclick="showContribution('resp')">+ Add RESP Contribution</button>
+</div>
+<!-- Non-Registered Section -->
+<div class="panel investment-panel">
+<div class="panel-header"><h3>📊 Non-Registered Investments</h3><span class="badge-info">Taxable</span></div>
+<div class="stats-grid">
+<div class="stat-card"><div class="stat-label">Current Value</div><div class="stat-value" id="nonreg-value">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Capital Gains</div><div class="stat-value" id="nonreg-gains">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Dividends (YTD)</div><div class="stat-value positive" id="nonreg-dividends">$0.00</div></div>
+<div class="stat-card"><div class="stat-label">Tax on Gains (50%)</div><div class="stat-value negative" id="nonreg-tax">$0.00</div></div>
+</div>
+<div class="holdings-list" id="nonreg-holdings"></div>
+<button class="btn btn-outline btn-sm" onclick="showContribution('nonreg')">+ Add Investment</button>
+</div>
+<!-- Portfolio Allocation -->
+<div class="grid-2">
+<div class="panel">
+<h3>🥧 Portfolio Allocation</h3>
+<div class="allocation-chart" id="allocation-chart"></div>
+<div class="allocation-legend" id="allocation-legend"></div>
+</div>
+<div class="panel">
+<h3>📅 Contribution Schedule</h3>
+<div class="schedule-list">
+<div class="schedule-item"><span>RRSP Auto-Deposit</span><span>Monthly</span></div>
+<div class="schedule-item"><span>TFSA Auto-Deposit</span><span>Monthly</span></div>
+<div class="schedule-item"><span>RESP + CESG</span><span>Monthly</span></div>
+<div class="schedule-item"><span>Employer Match</span><span>Per Pay</span></div>
+</div>
+</div>
+</div>
+</main>
+<!-- Add Investment Modal -->
+<div class="modal" id="add-investment-modal"><div class="modal-content">
+<h2>Add Investment</h2>
+<div class="form-group"><label>Account Type</label><select id="inv-account"><option value="rrsp">RRSP</option><option value="tfsa">TFSA</option><option value="resp">RESP</option><option value="nonreg">Non-Registered</option></select></div>
+<div class="form-group"><label>Investment Name</label><input type="text" id="inv-name" placeholder="e.g., VGRO, XBAL, GIC 5%"></div>
+<div class="form-group"><label>Amount ($)</label><input type="number" id="inv-amount" step="0.01" placeholder="0.00"></div>
+<div class="form-group"><label>Date</label><input type="date" id="inv-date"></div>
+<div class="form-group"><label>Type</label><select id="inv-type"><option value="contribution">Contribution</option><option value="growth">Growth/Interest</option><option value="dividend">Dividend</option><option value="withdrawal">Withdrawal</option></select></div>
+<div class="form-group"><label>Notes</label><input type="text" id="inv-notes" placeholder="Optional"></div>
+<button class="btn btn-primary" onclick="saveInvestment()">Save</button>
+<button class="btn btn-outline" onclick="document.getElementById('add-investment-modal').classList.remove('show')">Cancel</button>
+</div></div>
+<script src="js/finance.js"></script>
+<script>
+const user=requireAuth();if(!user)exit;
+document.getElementById('user-name').textContent=user.name||user.email;
+document.getElementById('inv-date').value=new Date().toISOString().split('T')[0];
+const LIMITS={rrsp:31560,tfsa:7000,resp:2500};
+function getInvestments(){return FinanceApp.decrypt(localStorage.getItem('fin_investments'))||[];}
+function saveInvestments(invs){localStorage.setItem('fin_investments',FinanceApp.encrypt(invs));}
+function showAddInvestment(){document.getElementById('add-investment-modal').classList.add('show');}
+function showContribution(type){document.getElementById('inv-account').value=type;showAddInvestment();}
+function saveInvestment(){
+const invs=getInvestments();
+invs.push({
+account:document.getElementById('inv-account').value,
+name:document.getElementById('inv-name').value,
+amount:parseFloat(document.getElementById('inv-amount').value),
+date:document.getElementById('inv-date').value,
+type:document.getElementById('inv-type').value,
+notes:document.getElementById('inv-notes').value,
+addedBy:user.email,
+id:Date.now().toString(36)
+});
+saveInvestments(invs);
+document.getElementById('add-investment-modal').classList.remove('show');
+updateInvestments();
+}
+function formatMoney(n){return '$'+Number(n).toLocaleString('en-CA',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function updateInvestments(){
+const invs=getInvestments();
+const accounts={rrsp:{value:0,contrib:0,growth:0},tfsa:{value:0,contrib:0,growth:0},resp:{value:0,contrib:0,cesg:0},nonreg:{value:0,gains:0,dividends:0}};
+let totalPortfolio=0,totalContrib=0,totalGrowth=0;
+invs.forEach(inv=>{
+const acc=accounts[inv.account]||accounts.nonreg;
+if(inv.type==='contribution'){acc.value+=inv.amount;acc.contrib+=inv.amount;}
+else if(inv.type==='growth'){acc.value+=inv.amount;acc.growth=(acc.growth||0)+inv.amount;}
+else if(inv.type==='dividend'){acc.value+=inv.amount;acc.dividends=(acc.dividends||0)+inv.amount;}
+else if(inv.type==='withdrawal'){acc.value-=inv.amount;}
+});
+['rrsp','tfsa','resp','nonreg'].forEach(acc=>{
+const el=document.getElementById(acc+'-value');if(el)el.textContent=formatMoney(accounts[acc].value);
+totalPortfolio+=accounts[acc].value;totalContrib+=accounts[acc].contrib||0;totalGrowth+=(accounts[acc].growth||0);
+});
+document.getElementById('rrsp-contrib').textContent=formatMoney(accounts.rrsp.contrib);
+document.getElementById('rrsp-room').textContent=formatMoney(Math.max(0,LIMITS.rrsp-accounts.rrsp.contrib));
+document.getElementById('rrsp-deduction').textContent=formatMoney(accounts.rrsp.contrib);
+document.getElementById('tfsa-contrib').textContent=formatMoney(accounts.tfsa.contrib);
+document.getElementById('tfsa-room').textContent=formatMoney(Math.max(0,LIMITS.tfsa-accounts.tfsa.contrib));
+document.getElementById('tfsa-growth').textContent=formatMoney(accounts.tfsa.growth||0);
+document.getElementById('resp-contrib').textContent=formatMoney(accounts.resp.contrib);
+document.getElementById('resp-cesg').textContent=formatMoney(accounts.resp.cesg||0);
+document.getElementById('nonreg-gains').textContent=formatMoney(accounts.nonreg.gains||0);
+document.getElementById('nonreg-dividends').textContent=formatMoney(accounts.nonreg.dividends||0);
+document.getElementById('nonreg-tax').textContent=formatMoney((accounts.nonreg.gains||0)*0.5);
+document.getElementById('total-portfolio').textContent=formatMoney(totalPortfolio);
+document.getElementById('total-contributions').textContent=formatMoney(totalContrib);
+document.getElementById('total-growth').textContent=formatMoney(totalGrowth);
+document.getElementById('total-return').textContent=totalContrib>0?((totalGrowth/totalContrib)*100).toFixed(1)+'%':'0%';
+// Render holdings
+['rrsp','tfsa','resp','nonreg'].forEach(acc=>{
+const el=document.getElementById(acc+'-holdings');if(!el)return;
+const accInvs=invs.filter(i=>i.account===acc);
+el.innerHTML=accInvs.length?accInvs.map(i=>`<div class="holding-row"><span>${i.name||i.type}</span><span>${i.date}</span><span class="${i.type==='withdrawal'?'negative':'positive'}">${i.type==='withdrawal'?'-':'+'}${formatMoney(i.amount)}</span></div>`).join(''):'<div class="empty-state">No investments yet</div>';
+});
+// Allocation chart
+const alloc=document.getElementById('allocation-legend');alloc.innerHTML='';
+const colors={rrsp:'#e94560',tfsa:'#22c55e',resp:'#3b82f6',nonreg:'#f59e0b'};
+Object.entries(accounts).forEach(([key,val])=>{
+if(val.value>0){const pct=(val.value/totalPortfolio*100).toFixed(1);
+alloc.innerHTML+=`<div class="alloc-item"><span class="alloc-dot" style="background:${colors[key]}"></span><span>${key.toUpperCase()}</span><span>${pct}%</span></div>`;}
+});
+}
+updateInvestments();
+</script>
+</body>
+</html>
