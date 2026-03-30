@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{width:320px;font-family:system-ui;background:#0f172a;color:#f1f5f9;padding:16px}
+.header{display:flex;align-items:center;gap:12px;margin-bottom:20px;padding-bottom:16px;border-bottom:1px solid #334155}
+.header h1{font-size:1.1em}
+.header .icon{font-size:1.5em}
+.stat{background:#1e293b;border-radius:8px;padding:12px;margin-bottom:12px}
+.stat .label{font-size:0.8em;color:#94a3b8}
+.stat .value{font-size:1.4em;font-weight:700}
+.stat .value.green{color:#22c55e}
+.stat .value.yellow{color:#f59e0b}
+.stat .value.red{color:#ef4444}
+.progress-bar{background:#334155;height:8px;border-radius:4px;overflow:hidden;margin-top:8px}
+.progress-fill{height:100%;border-radius:4px;transition:width 0.5s}
+.sites{margin-top:12px}
+.site{display:flex;justify-content:space-between;padding:6px 0;border-bottom:1px solid rgba(255,255,255,0.05);font-size:0.85em}
+.site .domain{color:#f1f5f9}
+.site .time{color:#94a3b8}
+.btn{padding:10px;border-radius:8px;border:none;cursor:pointer;font-size:0.9em;font-weight:600;width:100%;margin-top:8px}
+.btn-primary{background:#3b82f6;color:white}
+.btn-outline{background:transparent;border:1px solid #3b82f6;color:#3b82f6}
+.btn-danger{background:#ef4444;color:white}
+input{width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:#0f172a;color:#f1f5f9;margin-bottom:8px}
+.lock-screen{text-align:center;padding:20px}
+.lock-screen .icon{font-size:3em;margin-bottom:16px}
+.tab-bar{display:flex;gap:4px;margin-bottom:16px}
+.tab{flex:1;padding:8px;text-align:center;border-radius:6px;cursor:pointer;font-size:0.8em;background:#1e293b}
+.tab.active{background:#3b82f6}
+.hidden{display:none}
+</style>
+</head>
+<body>
+<!-- Lock Screen -->
+<div id="lock-screen" class="lock-screen">
+<div class="icon">🔒</div>
+<h2>FamilyShield</h2>
+<p style="color:#94a3b8;margin:12px 0">Enter PIN to access settings</p>
+<input type="password" id="pin-input" placeholder="Enter PIN" maxlength="4">
+<button class="btn btn-primary" onclick="unlock()">Unlock</button>
+<p id="pin-error" style="color:#ef4444;margin-top:8px;display:none">Wrong PIN</p>
+</div>
+
+<!-- Main Dashboard -->
+<div id="main-dashboard" class="hidden">
+<div class="header">
+<span class="icon">🛡️</span>
+<h1>FamilyShield</h1>
+</div>
+
+<div class="tab-bar">
+<div class="tab active" onclick="showTab('overview')">Overview</div>
+<div class="tab" onclick="showTab('sites')">Sites</div>
+<div class="tab" onclick="showTab('settings')">Settings</div>
+</div>
+
+<!-- Overview Tab -->
+<div id="tab-overview">
+<div class="stat">
+<div class="label">Screen Time Today</div>
+<div class="value" id="total-time">0 min</div>
+<div class="progress-bar"><div class="progress-fill" id="time-progress" style="width:0%;background:#22c55e"></div></div>
+<div style="display:flex;justify-content:space-between;font-size:0.75em;color:#94a3b8;margin-top:4px">
+<span id="used-time">0 min used</span>
+<span id="remaining-time">120 min left</span>
+</div>
+</div>
+
+<div class="stat">
+<div class="label">Daily Limit</div>
+<div class="value" id="limit-value">120 min</div>
+</div>
+
+<div class="stat">
+<div class="label">Status</div>
+<div class="value green" id="status-value">Protected ✓</div>
+</div>
+</div>
+
+<!-- Sites Tab -->
+<div id="tab-sites" class="hidden">
+<div class="stat">
+<div class="label">Top Sites Today</div>
+<div class="sites" id="sites-list">
+<div style="color:#94a3b8;text-align:center;padding:20px">No browsing data yet</div>
+</div>
+</div>
+</div>
+
+<!-- Settings Tab -->
+<div id="tab-settings" class="hidden">
+<div class="stat">
+<div class="label">Daily Screen Time Limit</div>
+<select id="setting-limit" onchange="saveSettings()">
+<option value="60">1 hour</option>
+<option value="90">1.5 hours</option>
+<option value="120" selected>2 hours</option>
+<option value="180">3 hours</option>
+<option value="240">4 hours</option>
+</select>
+</div>
+
+<div class="stat">
+<div class="label">Change PIN</div>
+<input type="password" id="new-pin" placeholder="New 4-digit PIN" maxlength="4">
+<button class="btn btn-outline" onclick="changePIN()">Update PIN</button>
+</div>
+
+<div class="stat">
+<div class="label">Actions</div>
+<button class="btn btn-primary" onclick="viewDashboard()">📊 View Full Dashboard</button>
+<button class="btn btn-outline" onclick="resetToday()">🔄 Reset Today's Timer</button>
+<button class="btn btn-danger" onclick="lockExtension()">🔒 Lock Extension</button>
+</div>
+</div>
+
+<button class="btn btn-outline" onclick="lockExtension()" style="margin-top:8px">🔒 Lock</button>
+</div>
+
+<script>
+let isLocked = true;
+let currentData = {};
+
+// Unlock function
+async function unlock() {
+    const pin = document.getElementById('pin-input').value;
+    chrome.runtime.sendMessage({ type: 'checkPIN', pin }, (response) => {
+        if (response && response.valid) {
+            isLocked = false;
+            document.getElementById('lock-screen').classList.add('hidden');
+            document.getElementById('main-dashboard').classList.remove('hidden');
+            loadData();
+        } else {
+            document.getElementById('pin-error').style.display = 'block';
+        }
+    });
+}
+
+// Load data
+async function loadData() {
+    chrome.runtime.sendMessage({ type: 'getReport' }, (report) => {
+        if (report) {
+            currentData = report;
+            updateUI(report);
+        }
+    });
+}
+
+// Update UI
+function updateUI(report) {
+    const totalMin = Math.round(report.totalMinutes);
+    const limitMin = report.limitMinutes;
+    const percent = Math.min(totalMin / limitMin * 100, 100);
+    
+    document.getElementById('total-time').textContent = totalMin + ' min';
+    document.getElementById('used-time').textContent = totalMin + ' min used';
+    document.getElementById('remaining-time').textContent = Math.max(0, limitMin - totalMin) + ' min left';
+    document.getElementById('limit-value').textContent = limitMin + ' min';
+    
+    const progressBar = document.getElementById('time-progress');
+    progressBar.style.width = percent + '%';
+    progressBar.style.background = percent >= 100 ? '#ef4444' : percent >= 80 ? '#f59e0b' : '#22c55e';
+    
+    const totalEl = document.getElementById('total-time');
+    totalEl.className = 'value ' + (percent >= 100 ? 'red' : percent >= 80 ? 'yellow' : 'green');
+    
+    const statusEl = document.getElementById('status-value');
+    if (percent >= 100) {
+        statusEl.textContent = 'Time Limit Reached ⚠️';
+        statusEl.className = 'value red';
+    } else {
+        statusEl.textContent = 'Protected ✓';
+        statusEl.className = 'value green';
+    }
+    
+    // Update sites
+    const sitesList = document.getElementById('sites-list');
+    if (report.topSites && report.topSites.length > 0) {
+        sitesList.innerHTML = report.topSites.map(s => 
+            `<div class="site"><span class="domain">${s.domain}</span><span class="time">${Math.round(s.minutes)} min</span></div>`
+        ).join('');
+    }
+}
+
+// Tab switching
+function showTab(name) {
+    document.querySelectorAll('[id^="tab-"]').forEach(t => t.classList.add('hidden'));
+    document.getElementById('tab-' + name).classList.remove('hidden');
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+// Save settings
+function saveSettings() {
+    const limit = parseInt(document.getElementById('setting-limit').value);
+    chrome.runtime.sendMessage({ 
+        type: 'saveSettings', 
+        settings: { dailyLimitMinutes: limit } 
+    });
+}
+
+// Change PIN
+function changePIN() {
+    const newPin = document.getElementById('new-pin').value;
+    if (newPin.length === 4) {
+        chrome.runtime.sendMessage({ type: 'changePIN', pin: newPin }, () => {
+            alert('PIN updated!');
+            document.getElementById('new-pin').value = '';
+        });
+    } else {
+        alert('PIN must be 4 digits');
+    }
+}
+
+// Lock extension
+function lockExtension() {
+    isLocked = true;
+    document.getElementById('main-dashboard').classList.add('hidden');
+    document.getElementById('lock-screen').classList.remove('hidden');
+    document.getElementById('pin-input').value = '';
+}
+
+// Reset today
+function resetToday() {
+    if (confirm('Reset today\'s screen time?')) {
+        chrome.storage.local.remove('fs_browsing');
+        loadData();
+    }
+}
+
+// View full dashboard
+function viewDashboard() {
+    chrome.tabs.create({ url: 'https://agiitrade.github.io/Jefferson/family-shield/index.html' });
+}
+
+// Enter key for PIN
+document.getElementById('pin-input').addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') unlock();
+});
+
+// Auto-load if already unlocked
+chrome.storage.local.get('fs_unlocked', (data) => {
+    if (data.fs_unlocked) {
+        isLocked = false;
+        document.getElementById('lock-screen').classList.add('hidden');
+        document.getElementById('main-dashboard').classList.remove('hidden');
+        loadData();
+    }
+});
+
+// Load data every 10 seconds
+setInterval(() => {
+    if (!isLocked) loadData();
+}, 10000);
+</script>
+</body>
+</html>
