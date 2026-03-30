@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FamilyShield — Parental Control Dashboard</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--accent:#3b82f6;--accent2:#8b5cf6;--green:#22c55e;--red:#ef4444;--yellow:#f59e0b;--text:#f1f5f9;--muted:#94a3b8}
+body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+nav{background:var(--card);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05)}
+.nav-brand{font-size:1.3em;font-weight:800;color:var(--accent)}
+.nav-links{display:flex;gap:16px}
+.nav-links a{color:var(--muted);text-decoration:none;padding:8px 16px;border-radius:8px;transition:all 0.2s}
+.nav-links a:hover,.nav-links a.active{background:var(--accent);color:white}
+main{padding:24px;max-width:1200px;margin:0 auto}
+h1{margin-bottom:24px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;margin-bottom:24px}
+.stat-card{background:var(--card);border-radius:12px;padding:20px}
+.stat-card .label{font-size:0.85em;color:var(--muted);margin-bottom:4px}
+.stat-card .value{font-size:1.8em;font-weight:700}
+.stat-card .value.green{color:var(--green)}
+.stat-card .value.yellow{color:var(--yellow)}
+.stat-card .value.red{color:var(--red)}
+.grid-2{display:grid;grid-template-columns:repeat(auto-fit,minmax(400px,1fr));gap:20px;margin-bottom:24px}
+.panel{background:var(--card);border-radius:12px;padding:24px}
+.panel h3{margin-bottom:16px;font-size:1.1em}
+.child-card{background:rgba(0,0,0,0.2);border-radius:12px;padding:20px;margin-bottom:12px;display:flex;justify-content:space-between;align-items:center}
+.child-info{display:flex;align-items:center;gap:16px}
+.child-avatar{width:48px;height:48px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:1.5em}
+.child-name{font-weight:600;font-size:1.1em}
+.child-device{color:var(--muted);font-size:0.85em}
+.child-status{display:flex;align-items:center;gap:8px}
+.status-dot{width:10px;height:10px;border-radius:50%}
+.status-dot.online{background:var(--green)}
+.status-dot.offline{background:var(--muted)}
+.screen-time-bar{background:rgba(0,0,0,0.3);height:8px;border-radius:4px;overflow:hidden;margin-top:8px}
+.screen-time-fill{height:100%;border-radius:4px}
+.activity-list{display:flex;flex-direction:column;gap:8px}
+.activity-item{display:flex;justify-content:space-between;padding:10px;background:rgba(0,0,0,0.2);border-radius:8px;font-size:0.9em}
+.activity-item .app{font-weight:500}
+.activity-item .time{color:var(--muted)}
+.schedule-item{display:flex;justify-content:space-between;padding:12px;background:rgba(0,0,0,0.2);border-radius:8px;margin-bottom:8px}
+.schedule-item .time{color:var(--accent);font-weight:600}
+.alert-item{padding:12px;border-radius:8px;margin-bottom:8px;display:flex;align-items:center;gap:12px}
+.alert-item.warning{background:rgba(245,158,11,0.15);border-left:3px solid var(--yellow)}
+.alert-item.danger{background:rgba(239,68,68,0.15);border-left:3px solid var(--red)}
+.alert-item.info{background:rgba(59,130,246,0.15);border-left:3px solid var(--accent)}
+.btn{padding:10px 20px;border-radius:8px;border:none;cursor:pointer;font-weight:600;font-size:0.9em}
+.btn-primary{background:var(--accent);color:white}
+.btn-outline{background:transparent;border:1px solid var(--accent);color:var(--accent)}
+.btn-sm{padding:6px 12px;font-size:0.8em}
+.settings-row{display:flex;justify-content:space-between;align-items:center;padding:12px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
+.toggle{position:relative;width:48px;height:24px;background:var(--muted);border-radius:12px;cursor:pointer;transition:0.3s}
+.toggle.on{background:var(--green)}
+.toggle::after{content:'';position:absolute;width:20px;height:20px;background:white;border-radius:50%;top:2px;left:2px;transition:0.3s}
+.toggle.on::after{left:26px}
+.location-map{background:rgba(0,0,0,0.3);border-radius:12px;height:200px;display:flex;align-items:center;justify-content:center;color:var(--muted);margin-top:12px}
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:100}
+.modal.show{display:flex}
+.modal-content{background:var(--card);border-radius:16px;padding:32px;max-width:500px;width:90%}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;margin-bottom:6px;font-size:0.9em;color:var(--muted)}
+.form-group input,.form-group select{width:100%;padding:10px;border-radius:8px;border:1px solid #334155;background:var(--bg);color:var(--text);font-size:1em}
+</style>
+</head>
+<body>
+<nav>
+<div class="nav-brand">🛡️ FamilyShield</div>
+<div class="nav-links">
+<a href="#" class="active" onclick="showSection('dashboard')">Dashboard</a>
+<a href="#" onclick="showSection('children')">Children</a>
+<a href="#" onclick="showSection('schedule')">Schedule</a>
+<a href="#" onclick="showSection('alerts')">Alerts</a>
+<a href="#" onclick="showSection('settings')">Settings</a>
+</div>
+</nav>
+
+<main>
+<!-- DASHBOARD -->
+<div id="section-dashboard">
+<h1>🛡️ Family Dashboard</h1>
+<div class="stats-grid">
+<div class="stat-card"><div class="label">Children Protected</div><div class="value green" id="children-count">2</div></div>
+<div class="stat-card"><div class="label">Devices Monitored</div><div class="value" id="devices-count">4</div></div>
+<div class="stat-card"><div class="label">Screen Time Today</div><div class="value yellow" id="screen-time">3h 45m</div></div>
+<div class="stat-card"><div class="label">Alerts Today</div><div class="value red" id="alerts-count">2</div></div>
+</div>
+<div class="grid-2">
+<div class="panel">
+<h3>👨‍👩‍👧‍👦 Children</h3>
+<div id="children-list"></div>
+<button class="btn btn-primary" onclick="showAddChild()">+ Add Child</button>
+</div>
+<div class="panel">
+<h3>📊 Today's Activity</h3>
+<div class="activity-list" id="activity-list"></div>
+</div>
+</div>
+<div class="grid-2">
+<div class="panel">
+<h3>📍 Location</h3>
+<p style="color:var(--muted);margin-bottom:12px">Last known locations</p>
+<div id="location-list"></div>
+<div class="location-map">🗺️ Map view (requires device GPS)</div>
+</div>
+<div class="panel">
+<h3>🔔 Recent Alerts</h3>
+<div id="alerts-list"></div>
+</div>
+</div>
+</div>
+
+<!-- CHILDREN -->
+<div id="section-children" style="display:none">
+<h1>👶 Children Management</h1>
+<div class="panel">
+<h3>Your Children</h3>
+<div id="children-detail-list"></div>
+<button class="btn btn-primary" onclick="showAddChild()">+ Add Child</button>
+</div>
+<div class="panel" style="margin-top:20px">
+<h3>📱 Device Setup Instructions</h3>
+<div style="color:var(--muted);line-height:1.8">
+<p><strong>iPhone/iPad:</strong></p>
+<ol style="margin-left:20px;margin-bottom:16px">
+<li>Settings → Screen Time → Turn On</li>
+<li>Set up Family Sharing</li>
+<li>Add child's Apple ID</li>
+<li>Enable Content & Privacy Restrictions</li>
+</ol>
+<p><strong>Android:</strong></p>
+<ol style="margin-left:20px;margin-bottom:16px">
+<li>Install Google Family Link</li>
+<li>Create supervised Google Account</li>
+<li>Link child's device</li>
+<li>Set screen time limits</li>
+</ol>
+<p><strong>Windows PC:</strong></p>
+<ol style="margin-left:20px">
+<li>Settings → Accounts → Family</li>
+<li>Add child's Microsoft account</li>
+<li>Enable activity reporting</li>
+</ol>
+</div>
+</div>
+</div>
+
+<!-- SCHEDULE -->
+<div id="section-schedule" style="display:none">
+<h1>📅 Schedule & Limits</h1>
+<div class="panel">
+<h3>Screen Time Limits</h3>
+<div id="schedule-list"></div>
+<button class="btn btn-primary" onclick="showAddSchedule()">+ Add Rule</button>
+</div>
+<div class="panel" style="margin-top:20px">
+<h3>Bedtime Schedule</h3>
+<div class="schedule-item"><span>🌙 Bedtime</span><span class="time">9:00 PM - 7:00 AM</span></div>
+<div class="schedule-item"><span>📚 Homework Time</span><span class="time">4:00 PM - 6:00 PM (no games)</span></div>
+<div class="schedule-item"><span>🍽️ Dinner Time</span><span class="time">6:30 PM - 7:30 PM (no devices)</span></div>
+</div>
+</div>
+
+<!-- ALERTS -->
+<div id="section-alerts" style="display:none">
+<h1>🔔 Alerts & Notifications</h1>
+<div class="panel">
+<h3>Recent Alerts</h3>
+<div id="all-alerts-list"></div>
+</div>
+<div class="panel" style="margin-top:20px">
+<h3>Alert Settings</h3>
+<div class="settings-row"><span>New app installed</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Screen time limit reached</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Location change</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Inappropriate content blocked</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Device goes offline</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+</div>
+</div>
+
+<!-- SETTINGS -->
+<div id="section-settings" style="display:none">
+<h1>⚙️ Settings</h1>
+<div class="panel">
+<h3>Content Filtering</h3>
+<div class="settings-row"><span>Block adult content</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Block violence</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Block gambling</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Block social media (under 13)</span><div class="toggle" onclick="this.classList.toggle('on')"></div></div>
+<div class="settings-row"><span>Safe search enforced</span><div class="toggle on" onclick="this.classList.toggle('on')"></div></div>
+</div>
+<div class="panel" style="margin-top:20px">
+<h3>Integration</h3>
+<div class="settings-row">
+<span>Apple Screen Time</span>
+<button class="btn btn-outline btn-sm">Connect</button>
+</div>
+<div class="settings-row">
+<span>Google Family Link</span>
+<button class="btn btn-outline btn-sm">Connect</button>
+</div>
+<div class="settings-row">
+<span>Microsoft Family Safety</span>
+<button class="btn btn-outline btn-sm">Connect</button>
+</div>
+</div>
+<div class="panel" style="margin-top:20px">
+<h3>Data & Privacy</h3>
+<button class="btn btn-outline" onclick="exportData()">📥 Export All Data</button>
+<button class="btn btn-outline" style="margin-left:8px">🗑️ Delete All Data</button>
+</div>
+</div>
+</main>
+
+<!-- Add Child Modal -->
+<div class="modal" id="add-child-modal"><div class="modal-content">
+<h2>Add Child</h2>
+<div class="form-group"><label>Name</label><input type="text" id="child-name" placeholder="Child's name"></div>
+<div class="form-group"><label>Age</label><input type="number" id="child-age" placeholder="10"></div>
+<div class="form-group"><label>Device</label><select id="child-device"><option>iPhone</option><option>iPad</option><option>Android Phone</option><option>Android Tablet</option><option>Windows PC</option><option>Mac</option></select></div>
+<div class="form-group"><label>Daily Screen Time Limit</label><select id="child-limit"><option>1 hour</option><option>2 hours</option><option>3 hours</option><option>4 hours</option><option>No limit</option></select></div>
+<button class="btn btn-primary" onclick="addChild()">Add Child</button>
+<button class="btn btn-outline" style="margin-left:8px" onclick="document.getElementById('add-child-modal').classList.remove('show')">Cancel</button>
+</div></div>
+
+<script>
+// Data store
+const Store = {
+    get(key) { return JSON.parse(localStorage.getItem('fs_'+key) || '[]'); },
+    set(key, data) { localStorage.setItem('fs_'+key, JSON.stringify(data)); },
+    id() { return Date.now().toString(36) + Math.random().toString(36).substr(2,5); }
+};
+
+// Initialize with demo data
+function initDemo() {
+    if (Store.get('children').length === 0) {
+        Store.set('children', [
+            { id: 'c1', name: 'Ahmed', age: 12, device: 'iPhone', limit: '2 hours', status: 'online', screenTime: 45 },
+            { id: 'c2', name: 'Sara', age: 9, device: 'iPad', limit: '1 hour', status: 'offline', screenTime: 30 }
+        ]);
+        Store.set('activity', [
+            { child: 'Ahmed', app: 'YouTube', time: '25 min', timeOfDay: '3:30 PM' },
+            { child: 'Ahmed', app: 'Minecraft', time: '20 min', timeOfDay: '2:45 PM' },
+            { child: 'Sara', app: 'PBS Kids', time: '30 min', timeOfDay: '10:00 AM' }
+        ]);
+        Store.set('alerts', [
+            { type: 'warning', msg: 'Ahmed reached 80% of daily screen time', time: '3:45 PM' },
+            { type: 'info', msg: 'Sara installed Duolingo', time: '10:15 AM' },
+            { type: 'danger', msg: 'Blocked: inappropriate website on Ahmed\'s iPhone', time: '2:30 PM' }
+        ]);
+    }
+}
+
+function showSection(name) {
+    document.querySelectorAll('main > div').forEach(s => s.style.display = 'none');
+    document.getElementById('section-' + name).style.display = 'block';
+    document.querySelectorAll('.nav-links a').forEach(a => a.classList.remove('active'));
+    event.target.classList.add('active');
+}
+
+function renderDashboard() {
+    const children = Store.get('children');
+    const activity = Store.get('activity');
+    const alerts = Store.get('alerts');
+    
+    document.getElementById('children-count').textContent = children.length;
+    document.getElementById('devices-count').textContent = children.length * 2;
+    document.getElementById('alerts-count').textContent = alerts.filter(a => a.type === 'danger' || a.type === 'warning').length;
+    
+    // Children list
+    const childList = document.getElementById('children-list');
+    childList.innerHTML = children.map(c => `
+        <div class="child-card">
+            <div class="child-info">
+                <div class="child-avatar">${c.name[0]}</div>
+                <div>
+                    <div class="child-name">${c.name}</div>
+                    <div class="child-device">${c.device} • ${c.age} years old</div>
+                    <div class="screen-time-bar"><div class="screen-time-fill" style="width:${Math.min(c.screenTime/120*100,100)}%;background:${c.screenTime>90?'var(--red)':c.screenTime>60?'var(--yellow)':'var(--green)'}"></div></div>
+                    <div style="font-size:0.8em;color:var(--muted);margin-top:4px">${c.screenTime} min / ${c.limit}</div>
+                </div>
+            </div>
+            <div class="child-status"><span class="status-dot ${c.status}"></span>${c.status}</div>
+        </div>
+    `).join('');
+    
+    // Activity
+    const actList = document.getElementById('activity-list');
+    actList.innerHTML = activity.map(a => `
+        <div class="activity-item"><span class="app">${a.app}</span><span class="time">${a.child} • ${a.time} • ${a.timeOfDay}</span></div>
+    `).join('');
+    
+    // Alerts
+    const alertsList = document.getElementById('alerts-list');
+    alertsList.innerHTML = alerts.slice(0, 3).map(a => `
+        <div class="alert-item ${a.type}"><span>${a.type === 'danger' ? '🚨' : a.type === 'warning' ? '⚠️' : 'ℹ️'}</span><span>${a.msg}</span></div>
+    `).join('');
+}
+
+function showAddChild() { document.getElementById('add-child-modal').classList.add('show'); }
+
+function addChild() {
+    const children = Store.get('children');
+    children.push({
+        id: Store.id(),
+        name: document.getElementById('child-name').value,
+        age: parseInt(document.getElementById('child-age').value),
+        device: document.getElementById('child-device').value,
+        limit: document.getElementById('child-limit').value,
+        status: 'offline',
+        screenTime: 0
+    });
+    Store.set('children', children);
+    document.getElementById('add-child-modal').classList.remove('show');
+    renderDashboard();
+}
+
+function exportData() {
+    const data = {
+        children: Store.get('children'),
+        activity: Store.get('activity'),
+        alerts: Store.get('alerts'),
+        exportedAt: new Date().toISOString()
+    };
+    const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = 'familyshield-backup.json';
+    a.click();
+}
+
+// Init
+initDemo();
+renderDashboard();
+</script>
+</body>
+</html>
