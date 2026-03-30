@@ -1,0 +1,104 @@
+// ===== FIRESTORE SECURITY RULES =====
+// Copy these to Firebase Console → Firestore → Rules
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper function: Check if user is authenticated
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    // Helper function: Check if user owns the document
+    function isOwner(userId) {
+      return request.auth.uid == userId;
+    }
+    
+    // Helper function: Check if user is admin
+    function isAdmin() {
+      return request.auth.token.admin == true;
+    }
+    
+    // ===== PROPERTIES =====
+    match /properties/{propertyId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid || 
+         resource.data.sharedWith has request.auth.uid);
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // ===== TENANTS =====
+    match /tenants/{tenantId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.userId == request.auth.uid ||
+         resource.data.email == request.auth.token.email);
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // ===== LEASES =====
+    match /leases/{leaseId} {
+      allow read: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // ===== TRANSACTIONS =====
+    match /transactions/{txId} {
+      allow read: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // ===== MAINTENANCE =====
+    match /maintenance/{requestId} {
+      allow read: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow create: if isAuthenticated() && 
+        request.resource.data.userId == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+        resource.data.userId == request.auth.uid;
+    }
+    
+    // ===== INVITES =====
+    match /invites/{inviteId} {
+      allow read: if isAuthenticated() && 
+        (resource.data.invitedBy == request.auth.uid ||
+         resource.data.email == request.auth.token.email);
+      allow create: if isAuthenticated() && 
+        request.resource.data.invitedBy == request.auth.uid;
+      allow update: if isAuthenticated() && 
+        resource.data.invitedBy == request.auth.uid;
+      allow delete: if isAuthenticated() && 
+        resource.data.invitedBy == request.auth.uid;
+    }
+    
+    // ===== USER PROFILES =====
+    match /users/{userId} {
+      allow read: if isAuthenticated() && userId == request.auth.uid;
+      allow write: if isAuthenticated() && userId == request.auth.uid;
+    }
+  }
+}
