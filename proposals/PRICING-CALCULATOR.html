@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pricing Calculator | Agilitas Innovations</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0a1628;--navy-light:#132240;--navy-mid:#1a2d4a;--gold:#d4a843;--gold-light:#e8c36a;--red:#c0392b;--red-light:#e74c3c;--white:#f0f0f0;--gray:#8899aa;--dark-bg:#0d1b2a}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--dark-bg);color:var(--white);line-height:1.6}
+.container{max-width:1000px;margin:0 auto;padding:40px 24px}
+header{text-align:center;padding:30px 0 40px;border-bottom:2px solid var(--gold)}
+.logo{font-size:1.8em;font-weight:800;color:var(--gold);letter-spacing:2px}
+.logo span{color:var(--red-light)}
+.subtitle{color:var(--gray);margin-top:6px}
+.back-link{display:inline-block;color:var(--gray);text-decoration:none;font-size:.9em;margin-bottom:20px}
+.back-link:hover{color:var(--gold)}
+.grid{display:grid;grid-template-columns:1fr 380px;gap:30px;margin:30px 0}
+@media(max-width:800px){.grid{grid-template-columns:1fr}}
+section{margin:30px 0}
+h2{color:var(--gold);font-size:1.3em;margin-bottom:16px;padding-bottom:8px;border-bottom:1px solid rgba(212,168,67,.3)}
+h3{color:var(--gold-light);font-size:1.05em;margin:16px 0 10px}
+.service-group{background:var(--navy);border:1px solid rgba(212,168,67,.15);border-radius:10px;padding:20px;margin:12px 0}
+.service-group h3{margin-top:0}
+label.check{display:flex;align-items:center;gap:10px;padding:8px 0;cursor:pointer;color:var(--gray);transition:color .2s}
+label.check:hover{color:var(--white)}
+label.check input[type=checkbox]{accent-color:var(--gold);width:18px;height:18px}
+label.check .price{margin-left:auto;color:var(--gold-light);font-weight:600;white-space:nowrap}
+.scope-row{display:flex;align-items:center;gap:12px;padding:6px 0;color:var(--gray)}
+.scope-row label{min-width:160px}
+.scope-row input[type=range]{flex:1;accent-color:var(--gold)}
+.scope-row .val{min-width:60px;text-align:right;color:var(--gold-light);font-weight:600}
+.summary{background:var(--navy);border:2px solid var(--gold);border-radius:12px;padding:24px;position:sticky;top:20px}
+.summary h2{border:none;padding:0;margin:0 0 16px}
+.line-item{display:flex;justify-content:space-between;padding:8px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9em}
+.line-item .name{color:var(--gray)}
+.line-item .amt{color:var(--white);font-weight:600}
+.line-item.empty{color:var(--gray);font-style:italic;text-align:center;display:block;border:none;padding:20px 0}
+.discount{color:var(--red-light)!important}
+.total-row{display:flex;justify-content:space-between;padding:16px 0 8px;font-size:1.3em;font-weight:800;border-top:2px solid var(--gold);margin-top:8px}
+.total-row .amt{color:var(--gold)}
+.monthly{color:var(--gray);font-size:.85em;margin-top:4px}
+.btn{display:block;width:100%;padding:14px;border:none;border-radius:8px;font-size:1em;font-weight:700;cursor:pointer;margin-top:12px;transition:background .2s}
+.btn-primary{background:var(--gold);color:var(--navy)}
+.btn-primary:hover{background:var(--gold-light)}
+.btn-secondary{background:var(--navy-mid);color:var(--white);border:1px solid rgba(212,168,67,.3)}
+.btn-secondary:hover{border-color:var(--gold)}
+.client-fields{background:var(--navy);border:1px solid rgba(212,168,67,.15);border-radius:10px;padding:20px;margin:12px 0}
+.field{margin-bottom:12px}
+.field label{display:block;color:var(--gray);font-size:.85em;margin-bottom:4px}
+.field input,.field textarea{width:100%;padding:10px 12px;background:var(--navy-light);border:1px solid rgba(212,168,67,.2);border-radius:6px;color:var(--white);font-size:.95em}
+.field input:focus,.field textarea:focus{outline:none;border-color:var(--gold)}
+.field textarea{resize:vertical;min-height:60px}
+.toast{position:fixed;bottom:30px;right:30px;background:var(--gold);color:var(--navy);padding:14px 24px;border-radius:8px;font-weight:600;transform:translateY(100px);opacity:0;transition:all .3s;z-index:100}
+.toast.show{transform:translateY(0);opacity:1}
+@media print{body{background:#fff;color:#222}.grid{grid-template-columns:1fr}.summary{position:static;border-color:#333}.btn,.back-link{display:none!important}.service-group{border-color:#ccc;background:#f9f9f9}}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">← Back to Templates</a>
+<header>
+<div class="logo">AGILITAS <span>INNOVATIONS</span></div>
+<div class="subtitle">Interactive Pricing Calculator — agii.ca</div>
+</header>
+
+<div class="grid">
+<div class="main">
+
+<section>
+<h2>👤 Client Information</h2>
+<div class="client-fields">
+<div class="field"><label>Client / Company Name</label><input type="text" id="clientName" placeholder="[CLIENT COMPANY]"></div>
+<div class="field"><label>Project Name</label><input type="text" id="projectName" placeholder="[PROJECT NAME]"></div>
+<div class="field"><label>Prepared By</label><input type="text" id="preparedBy" placeholder="[YOUR NAME]"></div>
+<div class="field"><label>Notes</label><textarea id="notes" placeholder="Optional notes for the quote..."></textarea></div>
+</div>
+</section>
+
+<section>
+<h2>🔗 Oracle Integration Cloud</h2>
+<div class="service-group">
+<label class="check"><input type="checkbox" data-cat="oic" data-name="OIC — Basic Setup (3 integrations)" data-price="15000"> OIC — Basic Setup (up to 3 integrations)<span class="price">$15,000</span></label>
+<label class="check"><input type="checkbox" data-cat="oic" data-name="OIC — Standard (8 integrations)" data-price="35000"> OIC — Standard (up to 8 integrations)<span class="price">$35,000</span></label>
+<label class="check"><input type="checkbox" data-cat="oic" data-name="OIC — Enterprise (unlimited)" data-price="65000"> OIC — Enterprise (unlimited integrations)<span class="price">$65,000</span></label>
+<label class="check"><input type="checkbox" data-cat="oic" data-name="Custom Adapter Development" data-price="8000"> Custom Adapter Development<span class="price">$8,000</span></label>
+<label class="check"><input type="checkbox" data-cat="oic" data-name="API Management Setup" data-price="5000"> API Management Setup<span class="price">$5,000</span></label>
+<label class="check"><input type="checkbox" data-cat="oic" data-name="Process Automation" data-price="7500"> Process Automation<span class="price">$7,500</span></label>
+<div class="scope-row"><label>Additional integrations:</label><input type="range" min="0" max="20" value="0" id="oicExtra" oninput="updateCalc()"><span class="val" id="oicExtraVal">0</span></div>
+</div>
+</section>
+
+<section>
+<h2>💻 Software Development</h2>
+<div class="service-group">
+<label class="check"><input type="checkbox" data-cat="dev" data-name="MVP (3-5 screens, single platform)" data-price="25000"> MVP — Single platform (3–5 screens)<span class="price">$25,000</span></label>
+<label class="check"><input type="checkbox" data-cat="dev" data-name="Professional App (10-15 screens)" data-price="75000"> Professional App (10–15 screens)<span class="price">$75,000</span></label>
+<label class="check"><input type="checkbox" data-cat="dev" data-name="Enterprise Platform (25+ screens)" data-price="150000"> Enterprise Platform (25+ screens)<span class="price">$150,000</span></label>
+<label class="check"><input type="checkbox" data-cat="dev" data-name="Mobile App (React Native)" data-price="20000"> Mobile App Add-on (React Native)<span class="price">$20,000</span></label>
+<label class="check"><input type="checkbox" data-cat="dev" data-name="UI/UX Design Package" data-price="10000"> UI/UX Design Package<span class="price">$10,000</span></label>
+<label class="check"><input type="checkbox" data-cat="dev" data-name="Third-party API Integration" data-price="5000"> Third-party API Integration (per API)<span class="price">$5,000</span></label>
+<div class="scope-row"><label>Extra screens:</label><input type="range" min="0" max="50" value="0" id="devScreens" oninput="updateCalc()"><span class="val" id="devScreensVal">0</span></div>
+</div>
+</section>
+
+<section>
+<h2>📊 Data Analytics &amp; BI</h2>
+<div class="service-group">
+<label class="check"><input type="checkbox" data-cat="bi" data-name="Essentials (3 dashboards)" data-price="10000"> Essentials (up to 3 dashboards)<span class="price">$10,000</span></label>
+<label class="check"><input type="checkbox" data-cat="bi" data-name="Professional (8 dashboards)" data-price="25000"> Professional (up to 8 dashboards)<span class="price">$25,000</span></label>
+<label class="check"><input type="checkbox" data-cat="bi" data-name="Enterprise (unlimited dashboards)" data-price="50000"> Enterprise (unlimited dashboards)<span class="price">$50,000</span></label>
+<label class="check"><input type="checkbox" data-cat="bi" data-name="Data Warehouse Setup" data-price="12000"> Data Warehouse Setup<span class="price">$12,000</span></label>
+<label class="check"><input type="checkbox" data-cat="bi" data-name="Predictive Analytics / ML" data-price="15000"> Predictive Analytics / ML<span class="price">$15,000</span></label>
+<label class="check"><input type="checkbox" data-cat="bi" data-name="ETL Pipeline (per source)" data-price="3000"> ETL Pipeline (per source)<span class="price">$3,000</span></label>
+<div class="scope-row"><label>Extra data sources:</label><input type="range" min="0" max="15" value="0" id="biSources" oninput="updateCalc()"><span class="val" id="biSourcesVal">0</span></div>
+</div>
+</section>
+
+<section>
+<h2>🔄 Monthly Retainer</h2>
+<div class="service-group">
+<label class="check"><input type="checkbox" data-cat="retainer" data-name="Essential Retainer" data-price="5000" data-monthly="true"> Essential — 20 hrs/month<span class="price">$5,000/mo</span></label>
+<label class="check"><input type="checkbox" data-cat="retainer" data-name="Professional Retainer" data-price="12000" data-monthly="true"> Professional — 50 hrs/month<span class="price">$12,000/mo</span></label>
+<label class="check"><input type="checkbox" data-cat="retainer" data-name="Enterprise Retainer" data-price="25000" data-monthly="true"> Enterprise — 120 hrs/month<span class="price">$25,000/mo</span></label>
+<div class="scope-row"><label>Contract months:</label><input type="range" min="3" max="24" value="6" id="retainerMonths" oninput="updateCalc()"><span class="val" id="retainerMonthsVal">6</span></div>
+</div>
+</section>
+
+<section>
+<h2>📋 Additional Services</h2>
+<div class="service-group">
+<label class="check"><input type="checkbox" data-cat="add" data-name="Project Discovery Workshop" data-price="5000"> Project Discovery Workshop (2 days)<span class="price">$5,000</span></label>
+<label class="check"><input type="checkbox" data-cat="add" data-name="Architecture Review" data-price="3500"> Architecture Review<span class="price">$3,500</span></label>
+<label class="check"><input type="checkbox" data-cat="add" data-name="Security Audit" data-price="7500"> Security Audit &amp; Penetration Testing<span class="price">$7,500</span></label>
+<label class="check"><input type="checkbox" data-cat="add" data-name="Training Package" data-price="4000"> Training Package (2 days)<span class="price">$4,000</span></label>
+<label class="check"><input type="checkbox" data-cat="add" data-name="DevOps & CI/CD Setup" data-price="6000"> DevOps &amp; CI/CD Pipeline Setup<span class="price">$6,000</span></label>
+<label class="check"><input type="checkbox" data-cat="add" data-name="Documentation Package" data-price="3000"> Documentation Package<span class="price">$3,000</span></label>
+</div>
+</section>
+
+</div>
+
+<div class="sidebar">
+<div class="summary">
+<h2>💰 Quote Summary</h2>
+<div id="lineItems"><div class="line-item empty">Select services to build your quote</div></div>
+<div id="discountRow" style="display:none" class="line-item"><span class="name discount">Bundle Discount (10%)</span><span class="amt discount" id="discountAmt"></span></div>
+<div class="total-row"><span>Total</span><span class="amt" id="totalAmt">$0</span></div>
+<div class="monthly" id="monthlyNote"></div>
+<button class="btn btn-primary" onclick="generatePDF()">📄 Generate PDF Quote</button>
+<button class="btn btn-secondary" onclick="copyToClipboard()">📋 Copy to Clipboard</button>
+<button class="btn btn-secondary" onclick="resetAll()">🔄 Reset All</button>
+</div>
+</div>
+</div>
+
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+function fmt(n){return'$'+n.toLocaleString('en-US')}
+function updateCalc(){
+const items=[];
+let total=0;
+let hasRetainer=false;
+let retainerMonthly=0;
+let retainerMo=0;
+const cats=new Set();
+
+document.querySelectorAll('input[type=checkbox]:checked').forEach(cb=>{
+const name=cb.dataset.name;
+const price=parseInt(cb.dataset.price);
+const monthly=cb.dataset.monthly==='true';
+if(monthly){hasRetainer=true;retainerMonthly=price;retainerMo=parseInt(document.getElementById('retainerMonths').value);items.push({name:name+' × '+retainerMo+' months',amt:price*retainerMo});total+=price*retainerMo;cats.add('retainer')}
+else{items.push({name,amt:price});total+=price;cats.add(cb.dataset.cat)}
+});
+
+const oicExtra=parseInt(document.getElementById('oicExtra').value);
+document.getElementById('oicExtraVal').textContent=oicExtra;
+if(oicExtra>0&&cats.has('oic')){const a=oicExtra*2500;items.push({name:'OIC — Additional '+oicExtra+' integrations',amt:a});total+=a}
+
+const devScreens=parseInt(document.getElementById('devScreens').value);
+document.getElementById('devScreensVal').textContent=devScreens;
+if(devScreens>0&&cats.has('dev')){const a=devScreens*800;items.push({name:'Dev — '+devScreens+' extra screens',amt:a});total+=a}
+
+const biSources=parseInt(document.getElementById('biSources').value);
+document.getElementById('biSourcesVal').textContent=biSources;
+if(biSources>0&&cats.has('bi')){const a=biSources*3000;items.push({name:'BI — '+biSources+' extra data sources',amt:a});total+=a}
+
+document.getElementById('retainerMonthsVal').textContent=document.getElementById('retainerMonths').value;
+
+const discount=cats.size>=2?Math.round(total*0.1):0;
+const el=document.getElementById('lineItems');
+if(items.length===0){el.innerHTML='<div class="line-item empty">Select services to build your quote</div>'}
+else{el.innerHTML=items.map(i=>'<div class="line-item"><span class="name">'+i.name+'</span><span class="amt">'+fmt(i.amt)+'</span></div>').join('')}
+
+const dr=document.getElementById('discountRow');
+if(discount>0){dr.style.display='flex';document.getElementById('discountAmt').textContent='-'+fmt(discount)}else{dr.style.display='none'}
+document.getElementById('totalAmt').textContent=fmt(total-discount);
+
+const mn=document.getElementById('monthlyNote');
+mn.textContent=hasRetainer?'Includes '+fmt(retainerMonthly)+'/month retainer for '+retainerMo+' months':'';
+}
+
+function showToast(msg){const t=document.getElementById('toast');t.textContent=msg;t.classList.add('show');setTimeout(()=>t.classList.remove('show'),2500)}
+
+function generatePDF(){
+const cn=document.getElementById('clientName').value||'[CLIENT]';
+const pn=document.getElementById('projectName').value||'[PROJECT]';
+const pb=document.getElementById('preparedBy').value||'[NAME]';
+const items=[];
+document.querySelectorAll('#lineItems .line-item:not(.empty)').forEach(el=>{items.push({name:el.querySelector('.name').textContent,amt:el.querySelector('.amt').textContent})});
+const total=document.getElementById('totalAmt').textContent;
+const disc=document.getElementById('discountRow').style.display!=='none'?document.getElementById('discountAmt').textContent:'';
+const mn=document.getElementById('monthlyNote').textContent;
+const date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+const valid=new Date(Date.now()+30*86400000).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
+
+let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Quote — ${cn}</title>
+<style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;padding:40px;color:#222;max-width:800px;margin:0 auto}
+h1{color:#1a3a5c;font-size:1.8em;margin-bottom:4px}h2{color:#1a3a5c;font-size:1.2em;margin:24px 0 12px;padding-bottom:6px;border-bottom:2px solid #d4a843}
+.meta{color:#666;font-size:.9em;margin-bottom:24px}.meta strong{color:#222}
+table{width:100%;border-collapse:collapse;margin:12px 0}th{text-align:left;padding:10px;border-bottom:2px solid #1a3a5c;color:#1a3a5c;font-size:.9em}
+td{padding:10px;border-bottom:1px solid #eee;font-size:.9em}.amt{text-align:right;font-weight:600}
+.total td{border-top:2px solid #1a3a5c;font-size:1.1em;font-weight:700;color:#1a3a5c}
+.discount td{color:#a0201a}
+.footer{margin-top:40px;padding-top:16px;border-top:1px solid #ccc;font-size:.8em;color:#888}
+.note{color:#888;font-size:.85em;margin-top:8px}
+@media print{body{padding:20px}}</style></head><body>
+<h1>Agilitas Innovations</h1>
+<div style="color:#a0201a;font-size:.9em;margin-bottom:16px">agii.ca</div>
+<h2 style="border:none;padding:0;margin:0 0 4px;font-size:1.4em">Project Quote</h2>
+<div class="meta">
+<strong>Client:</strong> ${cn}<br>
+<strong>Project:</strong> ${pn}<br>
+<strong>Prepared by:</strong> ${pb}<br>
+<strong>Date:</strong> ${date}<br>
+<strong>Valid until:</strong> ${valid}
+</div>
+<h2>Services &amp; Investment</h2>
+<table><thead><tr><th>Service</th><th class="amt">Amount (USD)</th></tr></thead><tbody>
+${items.map(i=>'<tr><td>'+i.name+'</td><td class="amt">'+i.amt+'</td></tr>').join('')}
+${disc?'<tr class="discount"><td>Bundle Discount (10%)</td><td class="amt">'+disc+'</td></tr>':''}
+<tr class="total"><td>Total Investment</td><td class="amt">'+total+'</td></tr>
+</tbody></table>
+${mn?'<div class="note">'+mn+'</div>':''}
+<div class="note">All prices in USD. HST applies for Canadian clients. Payment terms per signed SOW.</div>
+<div class="footer">This quote is valid for 30 days. Pricing subject to change after validity period.<br>Agilitas Innovations Inc. — agii.ca — [EMAIL] — [PHONE]</div>
+</body></html>`;
+
+const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),500);
+showToast('PDF quote generated!');
+}
+
+function copyToClipboard(){
+const items=[];
+document.querySelectorAll('#lineItems .line-item:not(.empty)').forEach(el=>{items.push(el.querySelector('.name').textContent+': '+el.querySelector('.amt').textContent)});
+const total=document.getElementById('totalAmt').textContent;
+const disc=document.getElementById('discountRow').style.display!=='none'?'\nDiscount: '+document.getElementById('discountAmt').textContent:'';
+const text='AGILITAS INNOVATIONS — Project Quote\n'+'='.repeat(40)+'\nClient: '+(document.getElementById('clientName').value||'[CLIENT]')+'\nProject: '+(document.getElementById('projectName').value||'[PROJECT]')+'\nDate: '+new Date().toLocaleDateString()+'\n\n'+items.join('\n')+disc+'\n\nTOTAL: '+total+'\n\nAgii.ca — All prices USD';
+navigator.clipboard.writeText(text).then(()=>showToast('Quote copied to clipboard!')).catch(()=>showToast('Copy failed'));
+}
+
+function resetAll(){
+document.querySelectorAll('input[type=checkbox]').forEach(c=>c.checked=false);
+document.getElementById('oicExtra').value=0;document.getElementById('devScreens').value=0;
+document.getElementById('biSources').value=0;document.getElementById('retainerMonths').value=6;
+updateCalc();showToast('Calculator reset');
+}
+
+document.querySelectorAll('input[type=checkbox]').forEach(c=>c.addEventListener('change',updateCalc));
+updateCalc();
+</script>
+</body>
+</html>
