@@ -1,0 +1,535 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — UniPrep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/saas.css">
+  <link rel="stylesheet" href="css/dashboard.css">
+  <script src="js/saas.js"></script>
+</head>
+<body>
+  <div class="dash-wrapper">
+    <!-- Sidebar -->
+    <aside class="dash-sidebar" id="dashSidebar">
+      <div class="dash-sidebar-header">
+        <a href="index.html" class="nav-logo" style="font-size:18px;">
+          <span class="logo-icon">🎓</span>
+          <span class="logo-text">Uni<span>Prep</span></span>
+        </a>
+      </div>
+      <nav class="dash-nav">
+        <a href="dashboard.html" class="active"><span>📊</span> Dashboard</a>
+        <a href="#" onclick="showSection('recommendations')"><span>🎯</span> Recommendations</a>
+        <a href="#" onclick="showSection('essays')"><span>✍️</span> Essay Tools</a>
+        <a href="#" onclick="showSection('tracking')"><span>📋</span> Tracking</a>
+        <div class="dash-nav-divider"></div>
+        <a href="#" onclick="showSection('account')"><span>⚙️</span> Account</a>
+        <a href="#" onclick="showSection('billing')"><span>💳</span> Billing</a>
+        <div class="dash-nav-divider"></div>
+        <a href="pricing.html"><span>⬆️</span> Upgrade</a>
+        <a href="index.html"><span>🏠</span> Home</a>
+      </nav>
+      <div class="dash-sidebar-footer">
+        <div class="dash-user">
+          <div class="dash-avatar" id="dashAvatar">S</div>
+          <div>
+            <div class="dash-username" id="dashUsername">Student</div>
+            <div class="dash-plan" id="dashPlan">Free Plan</div>
+          </div>
+        </div>
+      </div>
+    </aside>
+
+    <!-- Main -->
+    <main class="dash-main">
+      <header class="dash-topbar">
+        <div style="display:flex;align-items:center;gap:12px;">
+          <button class="mobile-menu-toggle" id="mobileToggle">☰</button>
+          <h1 id="dashTitle">Dashboard</h1>
+        </div>
+        <div class="topbar-right">
+          <a href="index.html" class="back-link">← Back to Site</a>
+          <button class="dash-btn-outline" onclick="SaasAuth.logout()">Sign Out</button>
+        </div>
+      </header>
+
+      <div class="dash-content" id="dashContent">
+        <!-- Filled by JS -->
+      </div>
+    </main>
+  </div>
+
+  <script>
+    // Auth check — auto-create demo user for first visit
+    if (!SaasAuth.isLoggedIn()) {
+      SaasAuth.demoLogin();
+    }
+
+    const user = SaasAuth.getUser();
+    const usage = SaasUsage.get();
+
+    // Populate sidebar user
+    document.getElementById('dashAvatar').textContent = (user.name || 'S')[0].toUpperCase();
+    document.getElementById('dashUsername').textContent = user.name || 'Student';
+    document.getElementById('dashPlan').textContent = SaasPlans.getPlanLabel(usage.plan);
+
+    // Mobile toggle
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      document.getElementById('dashSidebar').classList.toggle('open');
+    });
+
+    // Sections
+    function showSection(section) {
+      const content = document.getElementById('dashContent');
+      const title = document.getElementById('dashTitle');
+
+      switch(section) {
+        case 'recommendations':
+          title.textContent = 'University Recommendations';
+          renderRecommendations(content);
+          break;
+        case 'essays':
+          title.textContent = 'Essay Tools';
+          renderEssays(content);
+          break;
+        case 'tracking':
+          title.textContent = 'Application Tracking';
+          renderTracking(content);
+          break;
+        case 'account':
+          title.textContent = 'Account Settings';
+          renderAccount(content);
+          break;
+        case 'billing':
+          title.textContent = 'Billing & Subscription';
+          renderBilling(content);
+          break;
+        default:
+          title.textContent = 'Dashboard';
+          renderDashboard(content);
+      }
+    }
+
+    function renderDashboard(el) {
+      const usage = SaasUsage.get();
+      const freeLimit = SaasPlans.FREE.recommendations;
+      const isFree = usage.plan === 'free';
+      const recsUsed = usage.recommendationsUsed;
+      const recsLeft = isFree ? Math.max(0, freeLimit - recsUsed) : '∞';
+      const usagePercent = isFree ? Math.min(100, (recsUsed / freeLimit) * 100) : 0;
+
+      el.innerHTML = `
+        <div class="dash-welcome">
+          <div>
+            <h2>Welcome back, ${(user.name || 'Student').split(' ')[0]}! 👋</h2>
+            <p>Here's your UniPrep overview. ${isFree && recsUsed >= freeLimit ? '<strong>You\'ve used all your free recommendations.</strong> Upgrade to Pro for unlimited access.' : ''}</p>
+          </div>
+          ${isFree ? '<a href="pricing.html" class="dash-btn-upgrade">⬆️ Upgrade to Pro</a>' : ''}
+        </div>
+
+        ${isFree && recsUsed >= freeLimit ? `
+        <div class="upgrade-banner">
+          <div class="upgrade-banner-content">
+            <div class="upgrade-icon">🚀</div>
+            <div>
+              <h3>You've Reached Your Free Limit</h3>
+              <p>Upgrade to Pro for unlimited recommendations, essay tools, and application tracking.</p>
+            </div>
+          </div>
+          <a href="pricing.html" class="upgrade-banner-btn">Upgrade Now — $9.99/mo</a>
+        </div>
+        ` : ''}
+
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Plan</div>
+            <div class="stat-value">${SaasPlans.getPlanLabel(usage.plan)}</div>
+            <div class="stat-detail">${isFree ? 'Limited features' : 'Full access'}</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">Recommendations Used</div>
+            <div class="stat-value">${recsUsed} ${isFree ? '/ ' + freeLimit : ''}</div>
+            <div class="stat-detail">${isFree ? recsLeft + ' remaining' : 'Unlimited'}</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-label">Essays Written</div>
+            <div class="stat-value">${usage.essaysWritten}</div>
+            <div class="stat-detail">${isFree ? 'Upgrade for essay tools' : 'AI-powered editing'}</div>
+          </div>
+          <div class="stat-card green">
+            <div class="stat-label">Applications Tracked</div>
+            <div class="stat-value">${usage.applicationsTracked}</div>
+            <div class="stat-detail">${isFree ? 'Upgrade to track' : 'Active tracking'}</div>
+          </div>
+        </div>
+
+        ${isFree ? `
+        <div class="usage-card">
+          <div class="usage-header">
+            <h3>📊 Free Tier Usage</h3>
+            <span class="usage-count">${recsUsed} / ${freeLimit} recommendations</span>
+          </div>
+          <div class="progress-container">
+            <div class="progress-bar">
+              <div class="progress-fill ${usagePercent >= 100 ? 'exhausted' : ''}" style="width:${usagePercent}%"></div>
+            </div>
+          </div>
+          ${usagePercent >= 100
+            ? '<p class="usage-warning">⚠️ You\'ve used all your free recommendations. <a href="pricing.html">Upgrade to Pro</a> for unlimited access.</p>'
+            : usagePercent >= 66
+            ? '<p class="usage-warning">⚡ Running low on recommendations. Consider <a href="pricing.html">upgrading to Pro</a>.</p>'
+            : '<p class="usage-okay">✅ You have ' + recsLeft + ' recommendations remaining on the free plan.</p>'
+          }
+        </div>
+        ` : ''}
+
+        <div class="dash-grid">
+          <div class="dash-col-main">
+            <div class="dash-card">
+              <div class="dash-card-header">
+                <h3>⚡ Quick Actions</h3>
+              </div>
+              <div class="quick-actions">
+                <a href="#" onclick="showSection('recommendations')" class="quick-action">
+                  <span class="qa-icon">🎯</span>
+                  <div>
+                    <div class="qa-title">Get Recommendations</div>
+                    <div class="qa-desc">Find your perfect university match</div>
+                  </div>
+                </a>
+                ${!isFree ? `
+                <a href="#" onclick="showSection('essays')" class="quick-action">
+                  <span class="qa-icon">✍️</span>
+                  <div>
+                    <div class="qa-title">Essay Editor</div>
+                    <div class="qa-desc">AI-powered writing assistance</div>
+                  </div>
+                </a>
+                <a href="#" onclick="showSection('tracking')" class="quick-action">
+                  <span class="qa-icon">📋</span>
+                  <div>
+                    <div class="qa-title">Track Applications</div>
+                    <div class="qa-desc">Monitor deadlines and status</div>
+                  </div>
+                </a>
+                ` : `
+                <div class="quick-action locked" onclick="showSection('essays')">
+                  <span class="qa-icon">🔒</span>
+                  <div>
+                    <div class="qa-title">Essay Editor <span class="pro-badge">PRO</span></div>
+                    <div class="qa-desc">Upgrade to unlock AI essay tools</div>
+                  </div>
+                </div>
+                <div class="quick-action locked" onclick="showSection('tracking')">
+                  <span class="qa-icon">🔒</span>
+                  <div>
+                    <div class="qa-title">Application Tracking <span class="pro-badge">PRO</span></div>
+                    <div class="qa-desc">Upgrade to track your applications</div>
+                  </div>
+                </div>
+                `}
+                <a href="#" onclick="showSection('account')" class="quick-action">
+                  <span class="qa-icon">⚙️</span>
+                  <div>
+                    <div class="qa-title">Account Settings</div>
+                    <div class="qa-desc">Update your profile and preferences</div>
+                  </div>
+                </a>
+              </div>
+            </div>
+          </div>
+          <div class="dash-col-side">
+            ${isFree ? `
+            <div class="dash-card upgrade-card">
+              <div class="upgrade-card-badge">PRO</div>
+              <h3>Unlock Everything</h3>
+              <ul>
+                <li>✓ Unlimited recommendations</li>
+                <li>✓ AI essay editor</li>
+                <li>✓ Application tracking</li>
+                <li>✓ Deadline alerts</li>
+                <li>✓ Priority support</li>
+              </ul>
+              <a href="pricing.html" class="dash-btn-primary" style="width:100%;text-align:center;">Upgrade — $9.99/mo</a>
+              <p class="upgrade-guarantee">30-day money-back guarantee</p>
+            </div>
+            ` : `
+            <div class="dash-card pro-active-card">
+              <div class="pro-active-badge">✅ PRO</div>
+              <h3>You're on the ${SaasPlans.getPlanLabel(usage.plan)}</h3>
+              <p>All features unlocked. Enjoy unlimited recommendations, essay tools, and tracking.</p>
+              <a href="#" onclick="showSection('billing')" class="dash-btn-outline" style="width:100%;text-align:center;margin-top:12px;">Manage Billing</a>
+            </div>
+            `}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderRecommendations(el) {
+      const usage = SaasUsage.get();
+      const isFree = usage.plan === 'free';
+      const freeLimit = SaasPlans.FREE.recommendations;
+
+      if (isFree && usage.recommendationsUsed >= freeLimit) {
+        el.innerHTML = `
+          <div class="limit-reached">
+            <div class="limit-icon">🎯</div>
+            <h2>Free Recommendations Limit Reached</h2>
+            <p>You've used all ${freeLimit} free recommendations. Upgrade to Pro for unlimited university matches, essay tools, and application tracking.</p>
+            <a href="pricing.html" class="dash-btn-primary">Upgrade to Pro — $9.99/mo</a>
+            <p class="limit-note">30-day money-back guarantee • Cancel anytime</p>
+          </div>
+        `;
+        return;
+      }
+
+      el.innerHTML = `
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>🎯 University Recommendations</h3>
+            ${isFree ? `<span class="usage-badge">${usage.recommendationsUsed}/${freeLimit} used</span>` : '<span class="usage-badge unlimited">Unlimited</span>'}
+          </div>
+          <p style="color:var(--text-light);margin-bottom:20px;">Complete your profile to get personalized university matches.</p>
+          <div class="rec-placeholder">
+            <div class="rec-placeholder-icon">🎓</div>
+            <h4>Get Your Matches</h4>
+            <p>Enter your GPA, test scores, and preferences to see universities ranked by fit.</p>
+            <button class="dash-btn-primary" onclick="generateRecommendations()">Generate Recommendations</button>
+          </div>
+        </div>
+      `;
+    }
+
+    function generateRecommendations() {
+      const usage = SaasUsage.get();
+      const isFree = usage.plan === 'free';
+      const freeLimit = SaasPlans.FREE.recommendations;
+
+      if (isFree && usage.recommendationsUsed >= freeLimit) {
+        showSection('recommendations');
+        return;
+      }
+
+      // Increment usage
+      SaasUsage.incrementRecommendations();
+
+      const el = document.getElementById('dashContent');
+      const mockRecs = [
+        { name: 'University of Toronto', location: 'Toronto, ON', match: 95, tuition: '$58,680/yr', program: 'Computer Science' },
+        { name: 'University of Waterloo', location: 'Waterloo, ON', match: 91, tuition: '$53,000/yr', program: 'Computer Science' },
+        { name: 'McGill University', location: 'Montreal, QC', match: 87, tuition: '$49,000/yr', program: 'Computer Science' },
+        { name: 'UBC', location: 'Vancouver, BC', match: 84, tuition: '$51,000/yr', program: 'Computer Science' },
+        { name: 'McMaster University', location: 'Hamilton, ON', match: 78, tuition: '$42,000/yr', program: 'Engineering' },
+      ];
+
+      const newUsage = SaasUsage.get();
+      const remaining = isFree ? Math.max(0, freeLimit - newUsage.recommendationsUsed) : '∞';
+
+      el.innerHTML = `
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>🎯 Your Top Matches</h3>
+            ${isFree ? `<span class="usage-badge">${newUsage.recommendationsUsed}/${freeLimit} used</span>` : '<span class="usage-badge unlimited">Unlimited</span>'}
+          </div>
+          ${isFree && newUsage.recommendationsUsed >= freeLimit ? `
+            <div class="inline-upgrade">
+              <p>⚠️ You've used all free recommendations. <a href="pricing.html"><strong>Upgrade to Pro</strong></a> for unlimited access.</p>
+            </div>
+          ` : ''}
+          <div class="rec-list">
+            ${mockRecs.map(r => `
+              <div class="rec-item">
+                <div class="rec-match">${r.match}%</div>
+                <div class="rec-info">
+                  <div class="rec-name">${r.name}</div>
+                  <div class="rec-meta">${r.location} • ${r.program} • ${r.tuition}</div>
+                </div>
+                <button class="dash-btn-outline" style="font-size:12px;padding:8px 14px;">Details</button>
+              </div>
+            `).join('')}
+          </div>
+        </div>
+      `;
+    }
+
+    function renderEssays(el) {
+      const usage = SaasUsage.get();
+      const isFree = usage.plan === 'free';
+
+      if (isFree) {
+        el.innerHTML = `
+          <div class="limit-reached">
+            <div class="limit-icon">✍️</div>
+            <h2>Essay Tools — Pro Feature</h2>
+            <p>The AI-powered essay editor is available on the Pro and Institution plans. Upgrade to get real-time writing feedback, grammar checks, and admissions-specific guidance.</p>
+            <a href="pricing.html" class="dash-btn-primary">Upgrade to Pro — $9.99/mo</a>
+          </div>
+        `;
+        return;
+      }
+
+      el.innerHTML = `
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>✍️ AI Essay Editor</h3>
+          </div>
+          <div class="essay-editor">
+            <div class="essay-toolbar">
+              <button class="essay-tool" title="Bold"><b>B</b></button>
+              <button class="essay-tool" title="Italic"><i>I</i></button>
+              <button class="essay-tool" title="Underline"><u>U</u></button>
+              <span class="essay-divider"></span>
+              <button class="essay-tool">📝 Grammar Check</button>
+              <button class="essay-tool">💡 Get Suggestions</button>
+            </div>
+            <textarea class="essay-area" placeholder="Start writing your personal statement here... The AI will provide real-time feedback and suggestions as you write."></textarea>
+            <div class="essay-footer">
+              <span class="word-count">0 words</span>
+              <button class="dash-btn-primary">Analyze Essay</button>
+            </div>
+          </div>
+        </div>
+      `;
+
+      // Word count
+      const textarea = el.querySelector('.essay-area');
+      const counter = el.querySelector('.word-count');
+      textarea.addEventListener('input', () => {
+        const words = textarea.value.trim().split(/\s+/).filter(w => w).length;
+        counter.textContent = words + ' words';
+        SaasUsage.incrementEssay();
+      });
+    }
+
+    function renderTracking(el) {
+      const usage = SaasUsage.get();
+      const isFree = usage.plan === 'free';
+
+      if (isFree) {
+        el.innerHTML = `
+          <div class="limit-reached">
+            <div class="limit-icon">📋</div>
+            <h2>Application Tracking — Pro Feature</h2>
+            <p>Track deadlines, documents, and application status across all your target schools. Available on Pro and Institution plans.</p>
+            <a href="pricing.html" class="dash-btn-primary">Upgrade to Pro — $9.99/mo</a>
+          </div>
+        `;
+        return;
+      }
+
+      el.innerHTML = `
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>📋 Application Tracker</h3>
+            <button class="dash-btn-primary" style="font-size:12px;padding:8px 16px;">+ Add Application</button>
+          </div>
+          <div class="tracking-empty">
+            <p>No applications tracked yet. Add your first application to start tracking deadlines and documents.</p>
+          </div>
+        </div>
+      `;
+    }
+
+    function renderAccount(el) {
+      const user = SaasAuth.getUser();
+      el.innerHTML = `
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>⚙️ Account Settings</h3>
+          </div>
+          <form class="dash-form" onsubmit="event.preventDefault(); saveAccount();">
+            <div class="form-group">
+              <label>Full Name</label>
+              <input type="text" id="acctName" value="${user.name || ''}" placeholder="Your full name">
+            </div>
+            <div class="form-group">
+              <label>Email</label>
+              <input type="email" id="acctEmail" value="${user.email || ''}" placeholder="you@example.com">
+            </div>
+            <div class="form-group">
+              <label>Password</label>
+              <input type="password" placeholder="••••••••" disabled>
+              <small style="color:var(--text-muted);">Password changes are managed through your login provider.</small>
+            </div>
+            <div class="form-actions">
+              <button type="submit" class="dash-btn-primary">Save Changes</button>
+            </div>
+          </form>
+        </div>
+      `;
+    }
+
+    function saveAccount() {
+      const name = document.getElementById('acctName').value;
+      const email = document.getElementById('acctEmail').value;
+      SaasAuth.setUser({ name, email });
+      document.getElementById('dashUsername').textContent = name || 'Student';
+      document.getElementById('dashAvatar').textContent = (name || 'S')[0].toUpperCase();
+      SaasUI.toast('Account updated!', 'success');
+    }
+
+    function renderBilling(el) {
+      const usage = SaasUsage.get();
+      const isFree = usage.plan === 'free';
+
+      el.innerHTML = `
+        <div class="dash-card">
+          <div class="dash-card-header">
+            <h3>💳 Billing & Subscription</h3>
+          </div>
+          <div class="billing-current">
+            <div class="billing-plan">
+              <div>
+                <div class="billing-plan-name">${SaasPlans.getPlanLabel(usage.plan)}</div>
+                <div class="billing-plan-price">${isFree ? 'Free forever' : '$9.99/mo'}</div>
+              </div>
+              ${isFree ? '<a href="pricing.html" class="dash-btn-primary">Upgrade</a>' : '<button class="dash-btn-outline">Cancel Subscription</button>'}
+            </div>
+          </div>
+          ${!isFree ? `
+          <div class="billing-section">
+            <h4>Payment Method</h4>
+            <div class="billing-card-placeholder">
+              <span>💳</span>
+              <div>
+                <div>•••• •••• •••• 4242</div>
+                <div style="font-size:12px;color:var(--text-muted);">Expires 12/27</div>
+              </div>
+              <button class="dash-btn-outline" style="font-size:12px;">Update</button>
+            </div>
+          </div>
+          <div class="billing-section">
+            <h4>Billing History</h4>
+            <div class="billing-history">
+              <div class="billing-row">
+                <span>Mar 2026</span>
+                <span>Pro Plan</span>
+                <span>$9.99</span>
+                <span class="billing-status paid">Paid</span>
+              </div>
+              <div class="billing-row">
+                <span>Feb 2026</span>
+                <span>Pro Plan</span>
+                <span>$9.99</span>
+                <span class="billing-status paid">Paid</span>
+              </div>
+            </div>
+          </div>
+          ` : `
+          <div class="billing-section">
+            <p style="color:var(--text-light);">No active subscription. <a href="pricing.html" style="color:var(--primary);font-weight:600;">View plans</a></p>
+          </div>
+          `}
+        </div>
+      `;
+    }
+
+    // Init dashboard
+    showSection('dashboard');
+  </script>
+</body>
+</html>

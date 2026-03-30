@@ -1,97 +1,387 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>UniPrep — Student Success Platform</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#f8fafc;--card:#fff;--accent:#2563eb;--accent2:#1e40af;--text:#1e293b;--muted:#64748b}
-body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text)}
-nav{background:white;padding:16px 40px;display:flex;justify-content:space-between;align-items:center;box-shadow:0 1px 3px rgba(0,0,0,0.1);position:sticky;top:0}
-.nav-brand{font-size:1.3em;font-weight:800;color:var(--accent)}
-.nav-cta{padding:10px 24px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600}
-.hero{padding:100px 20px;text-align:center;background:linear-gradient(135deg,#eff6ff,#dbeafe)}
-.hero h1{font-size:clamp(2em,5vw,3.5em);max-width:700px;margin:0 auto 20px}
-.hero p{font-size:1.2em;color:var(--muted);max-width:600px;margin:0 auto 32px}
-.pricing{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;padding:60px 20px;max-width:1000px;margin:0 auto}
-.price-card{background:white;border-radius:16px;padding:32px;width:280px;text-align:center;box-shadow:0 4px 6px rgba(0,0,0,0.05);border:2px solid transparent}
-.price-card.popular{border-color:var(--accent);transform:scale(1.05)}
-.price-card h3{margin-bottom:8px}
-.price-card .price{font-size:2.5em;font-weight:800;color:var(--accent)}
-.price-card .period{color:var(--muted)}
-.price-card ul{text-align:left;margin:20px 0;list-style:none}
-.price-card li{padding:8px 0;border-bottom:1px solid #f1f5f9}
-.price-card li::before{content:'✅ ';margin-right:8px}
-.btn{display:inline-block;padding:14px 32px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600;border:none;cursor:pointer;width:100%}
-.features{padding:60px 20px;max-width:1000px;margin:0 auto}
-.features h2{text-align:center;margin-bottom:40px}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
-.feature{background:white;padding:24px;border-radius:12px;box-shadow:0 2px 4px rgba(0,0,0,0.05)}
-.feature .icon{font-size:2em;margin-bottom:12px}
-footer{text-align:center;padding:40px;color:var(--muted)}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>UniPrep — Student Success Platform</title>
+  <meta name="description" content="The all-in-one platform for students seeking university recommendations, essay help, and application tracking.">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/saas.css">
+  <script src="js/saas.js"></script>
 </head>
 <body>
-<nav><div class="nav-brand">📚 UniPrep</div><a href="#" class="nav-cta">Start Free</a></nav>
-<div class="hero">
-<h1>Get Into Your Dream University</h1>
-<p>AI-powered recommendations, personalized guidance, and expert tools for international students.</p>
-<a href="#pricing" class="btn" style="width:auto;padding:16px 48px">Start Free →</a>
-</div>
-<div class="pricing" id="pricing">
-<div class="price-card">
-<h3>Free</h3>
-<div class="price">$0</div>
-<div class="period">forever</div>
-<ul>
-<li>Basic profile</li>
-<li>3 university recommendations</li>
-<li>Application checklist</li>
-<li>Community access</li>
-</ul>
-<button class="btn" style="background:#e2e8f0;color:var(--text)">Current Plan</button>
-</div>
-<div class="price-card popular">
-<h3>Pro ⭐</h3>
-<div class="price">$9.99</div>
-<div class="period">/month</div>
-<ul>
-<li>Unlimited recommendations</li>
-<li>Essay review tools</li>
-<li>Visa guidance</li>
-<li>Priority support</li>
-<li>Scholarship finder</li>
-<li>Application tracking</li>
-</ul>
-<button class="btn">Upgrade to Pro</button>
-</div>
-<div class="price-card">
-<h3>Institution</h3>
-<div class="price">$49.99</div>
-<div class="period">/month</div>
-<ul>
-<li>Up to 100 students</li>
-<li>Admin dashboard</li>
-<li>Analytics & reports</li>
-<li>Custom branding</li>
-<li>API access</li>
-<li>Dedicated support</li>
-</ul>
-<button class="btn">Contact Sales</button>
-</div>
-</div>
-<div class="features">
-<h2>Everything You Need</h2>
-<div class="features-grid">
-<div class="feature"><div class="icon">🎯</div><h3>Smart Matching</h3><p>AI matches your profile with the best-fit universities.</p></div>
-<div class="feature"><div class="icon">📝</div><h3>Essay Tools</h3><p>Write winning personal statements with AI assistance.</p></div>
-<div class="feature"><div class="icon">💰</div><h3>Scholarships</h3><p>Find and apply to scholarships you qualify for.</p></div>
-<div class="feature"><div class="icon">✈️</div><h3>Visa Guidance</h3><p>Step-by-step study permit application help.</p></div>
-<div class="feature"><div class="icon">📊</div><h3>Track Progress</h3><p>Monitor your application status in real-time.</p></div>
-<div class="feature"><div class="icon">🏠</div><h3>Accommodation</h3><p>Find housing near your campus.</p></div>
-</div>
-</div>
-<footer><p>© 2026 UniPrep by PlanByInnovations</p></footer>
+  <!-- Navigation -->
+  <nav class="saas-nav" id="mainNav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🎓</span>
+        <span class="logo-text">Uni<span>Prep</span></span>
+      </a>
+      <div class="nav-links" id="navLinks">
+        <a href="#features">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="affiliate.html">Affiliates</a>
+        <a href="dashboard.html" class="nav-link-dashboard" style="display:none;">Dashboard</a>
+      </div>
+      <div class="nav-actions">
+        <a href="dashboard.html" class="nav-btn-ghost" id="navLoginBtn">Log In</a>
+        <a href="dashboard.html" class="nav-btn-primary" id="navSignupBtn">Get Started Free</a>
+        <button class="mobile-menu-toggle" id="mobileToggle">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="hero">
+    <div class="hero-bg">
+      <div class="hero-gradient"></div>
+      <div class="hero-pattern"></div>
+    </div>
+    <div class="hero-content">
+      <div class="hero-badge">🚀 Trusted by 10,000+ students worldwide</div>
+      <h1>Your Path to the <span class="text-gradient">Perfect University</span> Starts Here</h1>
+      <p class="hero-subtitle">AI-powered recommendations, essay tools, and application tracking — everything you need to get into your dream school.</p>
+      <div class="hero-actions">
+        <a href="dashboard.html" class="btn-hero-primary">Start Free — 3 Recommendations</a>
+        <a href="#features" class="btn-hero-secondary">See How It Works →</a>
+      </div>
+      <div class="hero-social-proof">
+        <div class="proof-avatars">
+          <div class="proof-avatar" style="background:#4F46E5;">A</div>
+          <div class="proof-avatar" style="background:#0891B2;">M</div>
+          <div class="proof-avatar" style="background:#7C3AED;">S</div>
+          <div class="proof-avatar" style="background:#059669;">R</div>
+        </div>
+        <span>Join 10,000+ students who found their perfect match</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Logos -->
+  <section class="trust-bar">
+    <div class="container">
+      <p class="trust-label">Students admitted to</p>
+      <div class="trust-logos">
+        <span>University of Toronto</span>
+        <span>McGill</span>
+        <span>UBC</span>
+        <span>Waterloo</span>
+        <span>McMaster</span>
+        <span>Alberta</span>
+      </div>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="features" id="features">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Features</span>
+        <h2>Everything You Need to Succeed</h2>
+        <p>From discovering the right school to crafting the perfect essay — we've got you covered.</p>
+      </div>
+      <div class="features-grid">
+        <div class="feature-card">
+          <div class="feature-icon">🎯</div>
+          <h3>Smart Recommendations</h3>
+          <p>Our AI analyzes your GPA, test scores, budget, and preferences to match you with the perfect universities.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">✍️</div>
+          <h3>Essay Tools</h3>
+          <p>AI-powered essay editor with real-time feedback, grammar checks, and admissions-specific guidance.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📊</div>
+          <h3>Application Tracking</h3>
+          <p>Track deadlines, document submissions, and application status across all your target schools.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">📈</div>
+          <h3>Analytics Dashboard</h3>
+          <p>Visualize your admission chances, compare programs, and make data-driven decisions.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🏫</div>
+          <h3>Institution Portal</h3>
+          <p>Schools and counselors can manage multiple students, track progress, and access bulk analytics.</p>
+        </div>
+        <div class="feature-card">
+          <div class="feature-icon">🔔</div>
+          <h3>Deadline Alerts</h3>
+          <p>Never miss a deadline with smart notifications for applications, scholarships, and documents.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-it-works">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">How It Works</span>
+        <h2>Three Steps to Your Dream School</h2>
+      </div>
+      <div class="steps-grid">
+        <div class="step-card">
+          <div class="step-number">1</div>
+          <h3>Create Your Profile</h3>
+          <p>Enter your GPA, test scores, preferences, and budget. Takes less than 5 minutes.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">2</div>
+          <h3>Get Matched</h3>
+          <p>Our AI instantly analyzes 500+ universities and delivers personalized recommendations ranked by fit.</p>
+        </div>
+        <div class="step-card">
+          <div class="step-number">3</div>
+          <h3>Apply with Confidence</h3>
+          <p>Use our essay tools and tracking system to submit winning applications on time.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing Preview -->
+  <section class="pricing-preview">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Pricing</span>
+        <h2>Simple, Transparent Pricing</h2>
+        <p>Start free. Upgrade when you're ready. No hidden fees.</p>
+      </div>
+      <div class="pricing-grid">
+        <div class="pricing-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price"><span class="currency">$</span>0</div>
+          <div class="plan-desc">Perfect for getting started</div>
+          <ul class="plan-features">
+            <li>Basic student profile</li>
+            <li>3 university recommendations</li>
+            <li>University directory access</li>
+            <li>Basic match scoring</li>
+            <li class="unlimited">Essay tools</li>
+            <li class="unlimited">Application tracking</li>
+          </ul>
+          <a href="dashboard.html" class="btn-plan">Get Started Free</a>
+        </div>
+        <div class="pricing-card featured">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price"><span class="currency">$</span>9.99<span class="period">/mo</span></div>
+          <div class="plan-desc">For serious applicants</div>
+          <ul class="plan-features">
+            <li>Everything in Free</li>
+            <li class="highlight">Unlimited recommendations</li>
+            <li class="highlight">AI essay editor & feedback</li>
+            <li class="highlight">Application tracking</li>
+            <li>Deadline alerts</li>
+            <li>Advanced match analytics</li>
+            <li>Priority support</li>
+          </ul>
+          <a href="pricing.html" class="btn-plan btn-plan-featured">Upgrade to Pro</a>
+        </div>
+        <div class="pricing-card">
+          <div class="plan-name">Institution</div>
+          <div class="plan-price"><span class="currency">$</span>49.99<span class="period">/mo</span></div>
+          <div class="plan-desc">For schools & counselors</div>
+          <ul class="plan-features">
+            <li>Everything in Pro</li>
+            <li>Manage up to 50 students</li>
+            <li>Bulk analytics dashboard</li>
+            <li>Custom branding</li>
+            <li>Counselor tools</li>
+            <li>CSV data export</li>
+            <li>Dedicated account manager</li>
+          </ul>
+          <a href="pricing.html" class="btn-plan">Contact Sales</a>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:32px;">
+        <a href="pricing.html" class="compare-link">See full feature comparison →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Testimonials</span>
+        <h2>Loved by Students Everywhere</h2>
+      </div>
+      <div class="testimonials-grid">
+        <div class="testimonial-card">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p>"UniPrep matched me with universities I'd never have considered. I got into my top choice with a scholarship!"</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#4F46E5;">AS</div>
+            <div>
+              <div class="author-name">Aisha Sharma</div>
+              <div class="author-detail">Computer Science, U of T '28</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p>"The essay tools saved me weeks of editing. My personal statement went from good to outstanding."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#0891B2;">MK</div>
+            <div>
+              <div class="author-name">Marcus Kim</div>
+              <div class="author-detail">Engineering, Waterloo '27</div>
+            </div>
+          </div>
+        </div>
+        <div class="testimonial-card">
+          <div class="testimonial-stars">⭐⭐⭐⭐⭐</div>
+          <p>"As a counselor, the Institution plan lets me track 40 students at once. Game changer for our school."</p>
+          <div class="testimonial-author">
+            <div class="author-avatar" style="background:#7C3AED;">LW</div>
+            <div>
+              <div class="author-name">Lisa Wang</div>
+              <div class="author-detail">Guidance Counselor, Toronto</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section class="faq" id="faq">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">FAQ</span>
+        <h2>Common Questions</h2>
+      </div>
+      <div class="faq-grid">
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            How does the free plan work?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>The free plan gives you a basic profile and 3 university recommendations powered by our matching algorithm. No credit card required. Upgrade anytime to unlock unlimited recommendations and essay tools.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            Can I cancel my subscription anytime?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Yes! You can cancel your Pro or Institution subscription at any time. You'll retain access until the end of your billing period. We also offer a 30-day money-back guarantee.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            How accurate are the recommendations?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Our algorithm analyzes GPA, test scores, budget, program preferences, and location to calculate a match percentage for each university. Students using UniPrep have a 92% admission rate to their top-3 matched schools.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            What's included in the Institution plan?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>The Institution plan includes everything in Pro for up to 50 student accounts, a bulk analytics dashboard, custom branding with your school's logo, counselor management tools, and CSV data export.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            Do you offer refunds?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>Absolutely. We offer a 30-day money-back guarantee on all paid plans. If you're not satisfied, contact support for a full refund — no questions asked.</p>
+          </div>
+        </div>
+        <div class="faq-item">
+          <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+            Which countries do you cover?
+            <span class="faq-icon">+</span>
+          </button>
+          <div class="faq-answer">
+            <p>UniPrep currently covers universities in Canada, the US, the UK, and Australia. We're expanding to more countries every quarter. Pro users get early access to new regions.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section class="cta-section">
+    <div class="container">
+      <div class="cta-card">
+        <h2>Ready to Find Your Perfect University?</h2>
+        <p>Join 10,000+ students who've already discovered their best-fit schools with UniPrep.</p>
+        <a href="dashboard.html" class="btn-cta">Start Free Today →</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="saas-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="logo-icon">🎓</span>
+            <span class="logo-text">Uni<span>Prep</span></span>
+          </div>
+          <p>The student success platform. Smarter university matching, better essays, simpler applications.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <a href="#features">Features</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="affiliate.html">Affiliates</a>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+          <a href="#">Careers</a>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy Policy</a>
+          <a href="#">Terms of Service</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 UniPrep. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    // Mobile menu
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // Sticky nav
+    window.addEventListener('scroll', () => {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Show dashboard link if logged in
+    if (SaasAuth.isLoggedIn()) {
+      document.querySelector('.nav-link-dashboard').style.display = '';
+      document.getElementById('navLoginBtn').textContent = 'Dashboard';
+      document.getElementById('navLoginBtn').href = 'dashboard.html';
+      document.getElementById('navSignupBtn').textContent = 'Dashboard';
+      document.getElementById('navSignupBtn').href = 'dashboard.html';
+    }
+  </script>
 </body>
 </html>
