@@ -1,121 +1,380 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>RentBoss — Property Management Made Simple</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0f172a;--card:#1e293b;--accent:#22c55e;--accent2:#16a34a;--text:#f1f5f9;--muted:#94a3b8}
-body{font-family:system-ui,sans-serif;background:var(--bg);color:var(--text)}
-nav{background:rgba(15,23,42,0.95);padding:16px 40px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid rgba(255,255,255,0.05)}
-.nav-brand{font-size:1.3em;font-weight:800;color:var(--accent)}
-.nav-cta{padding:10px 24px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600}
-.hero{padding:100px 20px;text-align:center}
-.hero h1{font-size:clamp(2em,5vw,3.5em);max-width:700px;margin:0 auto 20px}
-.hero h1 span{color:var(--accent)}
-.hero p{font-size:1.2em;color:var(--muted);max-width:600px;margin:0 auto 32px}
-.stats{display:flex;gap:40px;justify-content:center;margin-top:40px}
-.stat .num{font-size:2em;font-weight:800;color:var(--accent)}
-.stat .label{color:var(--muted);font-size:0.9em}
-.pricing{display:flex;gap:24px;justify-content:center;flex-wrap:wrap;padding:60px 20px;max-width:1000px;margin:0 auto}
-.price-card{background:var(--card);border-radius:16px;padding:32px;width:280px;text-align:center;border:2px solid transparent}
-.price-card.popular{border-color:var(--accent)}
-.price-card h3{margin-bottom:8px}
-.price-card .price{font-size:2.5em;font-weight:800;color:var(--accent)}
-.price-card .period{color:var(--muted)}
-.price-card ul{text-align:left;margin:20px 0;list-style:none}
-.price-card li{padding:8px 0;border-bottom:1px solid rgba(255,255,255,0.05)}
-.price-card li::before{content:'✅ '}
-.btn{display:inline-block;padding:14px 32px;background:var(--accent);color:white;border-radius:8px;text-decoration:none;font-weight:600;border:none;cursor:pointer;width:100%}
-.features{padding:60px 20px;max-width:1000px;margin:0 auto}
-.features h2{text-align:center;margin-bottom:40px}
-.features-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:20px}
-.feature{background:var(--card);padding:24px;border-radius:12px}
-.feature .icon{font-size:2em;margin-bottom:12px}
-.dashboard-preview{max-width:900px;margin:60px auto;padding:20px}
-.dashboard-preview h2{text-align:center;margin-bottom:20px}
-.dash-mockup{background:var(--card);border-radius:16px;padding:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:16px}
-.dash-stat{background:rgba(0,0,0,0.2);padding:16px;border-radius:8px;text-align:center}
-.dash-stat .num{font-size:1.5em;font-weight:700;color:var(--accent)}
-footer{text-align:center;padding:40px;color:var(--muted)}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RentBoss — Property Management Made Simple</title>
+  <style>
+    :root {
+      --navy: #1a2744; --navy-light: #243352; --green: #2ecc71; --green-dark: #27ae60;
+      --green-light: #a8e6cf; --accent: #3498db; --bg: #f0f4f8; --card: #fff;
+      --text: #2c3e50; --text-muted: #7f8c8d; --border: #e0e6ed;
+    }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; color: var(--text); line-height: 1.6; }
+
+    /* Hero */
+    .hero {
+      background: linear-gradient(135deg, var(--navy) 0%, var(--navy-light) 100%);
+      color: #fff;
+      padding: 80px 24px 100px;
+      text-align: center;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero::after {
+      content: '';
+      position: absolute;
+      bottom: -2px;
+      left: 0; right: 0;
+      height: 80px;
+      background: var(--bg);
+      clip-path: ellipse(55% 100% at 50% 100%);
+    }
+    .hero-nav {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      max-width: 1200px;
+      margin: 0 auto 60px;
+    }
+    .hero-logo { font-size: 1.5rem; font-weight: 800; color: #fff; text-decoration: none; }
+    .hero-logo span { color: var(--green); }
+    .hero-nav-links { display: flex; gap: 24px; }
+    .hero-nav-links a { color: rgba(255,255,255,0.8); text-decoration: none; font-size: 0.95rem; }
+    .hero-nav-links a:hover { color: #fff; }
+    .hero h1 { font-size: 3rem; font-weight: 800; margin-bottom: 16px; line-height: 1.2; }
+    .hero h1 span { color: var(--green); }
+    .hero p { font-size: 1.2rem; color: rgba(255,255,255,0.8); max-width: 600px; margin: 0 auto 32px; }
+    .hero-cta { display: flex; gap: 12px; justify-content: center; flex-wrap: wrap; }
+    .btn-hero {
+      padding: 14px 32px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      transition: all 0.2s;
+      border: none;
+      cursor: pointer;
+    }
+    .btn-hero.primary { background: var(--green); color: #fff; }
+    .btn-hero.primary:hover { background: var(--green-dark); transform: translateY(-2px); box-shadow: 0 8px 20px rgba(46,204,113,0.3); }
+    .btn-hero.secondary { background: rgba(255,255,255,0.15); color: #fff; border: 1px solid rgba(255,255,255,0.3); }
+    .btn-hero.secondary:hover { background: rgba(255,255,255,0.25); }
+
+    /* Sections */
+    .section { padding: 80px 24px; max-width: 1200px; margin: 0 auto; }
+    .section-title { text-align: center; margin-bottom: 48px; }
+    .section-title h2 { font-size: 2rem; color: var(--navy); margin-bottom: 8px; }
+    .section-title p { color: var(--text-muted); font-size: 1.05rem; }
+
+    /* Features */
+    .features-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 24px;
+    }
+    .feature-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid var(--border);
+      transition: all 0.2s;
+    }
+    .feature-card:hover { transform: translateY(-4px); box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+    .feature-icon { font-size: 2.5rem; margin-bottom: 16px; }
+    .feature-card h3 { font-size: 1.15rem; color: var(--navy); margin-bottom: 8px; }
+    .feature-card p { color: var(--text-muted); font-size: 0.95rem; }
+
+    /* Screenshots */
+    .screenshots { background: var(--navy); padding: 80px 24px; }
+    .screenshots .section-title h2 { color: #fff; }
+    .screenshots .section-title p { color: rgba(255,255,255,0.6); }
+    .screenshot-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; }
+    .screenshot-card {
+      background: var(--navy-light);
+      border-radius: 12px;
+      overflow: hidden;
+      border: 1px solid rgba(255,255,255,0.1);
+    }
+    .screenshot-preview {
+      height: 180px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 4rem;
+      background: linear-gradient(135deg, rgba(46,204,113,0.1), rgba(52,152,219,0.1));
+    }
+    .screenshot-info { padding: 16px; }
+    .screenshot-info h3 { color: #fff; font-size: 1rem; margin-bottom: 4px; }
+    .screenshot-info p { color: rgba(255,255,255,0.5); font-size: 0.85rem; }
+
+    /* Pricing */
+    .pricing-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 24px; max-width: 960px; margin: 0 auto; }
+    .pricing-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 32px;
+      text-align: center;
+      border: 2px solid var(--border);
+      transition: all 0.2s;
+      position: relative;
+    }
+    .pricing-card.popular { border-color: var(--green); transform: scale(1.05); }
+    .pricing-card.popular::before {
+      content: 'Most Popular';
+      position: absolute;
+      top: -14px;
+      left: 50%;
+      transform: translateX(-50%);
+      background: var(--green);
+      color: #fff;
+      padding: 4px 16px;
+      border-radius: 20px;
+      font-size: 0.8rem;
+      font-weight: 700;
+    }
+    .pricing-card:hover { box-shadow: 0 12px 32px rgba(0,0,0,0.1); }
+    .pricing-card h3 { font-size: 1.2rem; color: var(--navy); margin-bottom: 8px; }
+    .pricing-amount { font-size: 2.8rem; font-weight: 800; color: var(--navy); }
+    .pricing-amount span { font-size: 1rem; font-weight: 400; color: var(--text-muted); }
+    .pricing-desc { color: var(--text-muted); font-size: 0.9rem; margin: 8px 0 24px; }
+    .pricing-features { list-style: none; text-align: left; margin-bottom: 24px; }
+    .pricing-features li { padding: 8px 0; font-size: 0.9rem; color: var(--text); border-bottom: 1px solid var(--border); }
+    .pricing-features li::before { content: '✓ '; color: var(--green); font-weight: 700; }
+    .btn-price {
+      display: block;
+      width: 100%;
+      padding: 12px;
+      border-radius: 8px;
+      font-size: 1rem;
+      font-weight: 700;
+      text-decoration: none;
+      text-align: center;
+      transition: all 0.2s;
+    }
+    .btn-price.primary { background: var(--green); color: #fff; }
+    .btn-price.primary:hover { background: var(--green-dark); }
+    .btn-price.outline { background: transparent; border: 2px solid var(--navy); color: var(--navy); }
+    .btn-price.outline:hover { background: var(--navy); color: #fff; }
+
+    /* Testimonials */
+    .testimonials { background: var(--bg); padding: 80px 24px; }
+    .testimonial-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; max-width: 1200px; margin: 0 auto; }
+    .testimonial-card {
+      background: var(--card);
+      border-radius: 12px;
+      padding: 28px;
+      border: 1px solid var(--border);
+    }
+    .testimonial-card p { font-style: italic; color: var(--text); margin-bottom: 16px; }
+    .testimonial-author { font-weight: 700; color: var(--navy); }
+    .testimonial-role { font-size: 0.85rem; color: var(--text-muted); }
+
+    /* Footer */
+    footer {
+      background: var(--navy);
+      color: rgba(255,255,255,0.6);
+      text-align: center;
+      padding: 40px 24px;
+      font-size: 0.9rem;
+    }
+    footer a { color: var(--green); text-decoration: none; }
+
+    @media (max-width: 768px) {
+      .hero h1 { font-size: 2rem; }
+      .hero { padding: 40px 20px 80px; }
+      .hero-nav-links { display: none; }
+      .pricing-card.popular { transform: scale(1); }
+      .section { padding: 48px 20px; }
+    }
+  </style>
 </head>
 <body>
-<nav><div class="nav-brand">🏠 RentBoss</div><a href="#pricing" class="nav-cta">Start Free Trial</a></nav>
-<div class="hero">
-<h1>Property Management <span>Made Simple</span></h1>
-<p>Track rent, manage tenants, handle maintenance, and maximize your rental income — all in one dashboard.</p>
-<a href="#pricing" class="btn" style="width:auto;padding:16px 48px">Start 14-Day Free Trial →</a>
-<div class="stats">
-<div class="stat"><div class="num">10,000+</div><div class="label">Units Managed</div></div>
-<div class="stat"><div class="num">$50M+</div><div class="label">Rent Tracked</div></div>
-<div class="stat"><div class="num">98%</div><div class="label">Satisfaction</div></div>
-</div>
-</div>
-<div class="pricing" id="pricing">
-<div class="price-card">
-<h3>Starter</h3>
-<div class="price">$29</div>
-<div class="period">/month</div>
-<ul>
-<li>Up to 10 units</li>
-<li>Tenant management</li>
-<li>Rent tracking</li>
-<li>Maintenance requests</li>
-<li>Basic reports</li>
-</ul>
-<button class="btn">Start Free Trial</button>
-</div>
-<div class="price-card popular">
-<h3>Growth ⭐</h3>
-<div class="price">$79</div>
-<div class="period">/month</div>
-<ul>
-<li>Up to 50 units</li>
-<li>Everything in Starter</li>
-<li>Financial reports</li>
-<li>Online rent collection</li>
-<li>Lease management</li>
-<li>Tenant portal</li>
-</ul>
-<button class="btn">Start Free Trial</button>
-</div>
-<div class="price-card">
-<h3>Enterprise</h3>
-<div class="price">$149</div>
-<div class="period">/month</div>
-<ul>
-<li>Unlimited units</li>
-<li>Everything in Growth</li>
-<li>Multi-user access</li>
-<li>API integration</li>
-<li>Custom reports</li>
-<li>Dedicated support</li>
-</ul>
-<button class="btn">Contact Sales</button>
-</div>
-</div>
-<div class="dashboard-preview">
-<h2>Your Command Center</h2>
-<div class="dash-mockup">
-<div class="dash-stat"><div class="num">24</div><div class="label">Properties</div></div>
-<div class="dash-stat"><div class="num">$48,500</div><div class="label">Monthly Rent</div></div>
-<div class="dash-stat"><div class="num">96%</div><div class="label">Occupancy</div></div>
-<div class="dash-stat"><div class="num">3</div><div class="label">Maintenance</div></div>
-</div>
-</div>
-<div class="features">
-<h2>Everything You Need</h2>
-<div class="features-grid">
-<div class="feature"><div class="icon">🏠</div><h3>Property Management</h3><p>Track all your properties, units, and leases in one place.</p></div>
-<div class="feature"><div class="icon">👥</div><h3>Tenant Portal</h3><p>Tenants can pay rent, submit requests, and view their lease online.</p></div>
-<div class="feature"><div class="icon">💰</div><h3>Rent Collection</h3><p>Automated rent reminders and online payment processing.</p></div>
-<div class="feature"><div class="icon">🔧</div><h3>Maintenance</h3><p>Track requests, assign contractors, and monitor costs.</p></div>
-<div class="feature"><div class="icon">📊</div><h3>Financial Reports</h3><p>P&L per property, expense tracking, and tax-ready reports.</p></div>
-<div class="feature"><div class="icon">📱</div><h3>Mobile App</h3><p>Manage your properties from anywhere with our mobile app.</p></div>
-</div>
-</div>
-<footer><p>© 2026 RentBoss by PlanByInnovations</p></footer>
+  <!-- Hero -->
+  <section class="hero">
+    <nav class="hero-nav">
+      <a href="index.html" class="hero-logo">🏠 Rent<span>Boss</span></a>
+      <div class="hero-nav-links">
+        <a href="#features">Features</a>
+        <a href="#pricing">Pricing</a>
+        <a href="dashboard.html">Dashboard</a>
+      </div>
+    </nav>
+    <h1>Property Management<br><span>Made Simple</span></h1>
+    <p>The all-in-one platform for landlords and property managers. Track properties, tenants, rent, maintenance, and finances — all from one dashboard.</p>
+    <div class="hero-cta">
+      <a href="dashboard.html" class="btn-hero primary">🚀 Launch Dashboard</a>
+      <a href="#pricing" class="btn-hero secondary">View Pricing</a>
+    </div>
+  </section>
+
+  <!-- Features -->
+  <section class="section" id="features">
+    <div class="section-title">
+      <h2>Everything You Need to Manage Properties</h2>
+      <p>Stop juggling spreadsheets. Start managing like a pro.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card">
+        <div class="feature-icon">🏢</div>
+        <h3>Property Management</h3>
+        <p>Track all your properties, units, and vacancies in one place. Know your occupancy rate at a glance.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">👥</div>
+        <h3>Tenant Management</h3>
+        <p>Maintain tenant profiles, contact info, lease details, and communication history effortlessly.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">💰</div>
+        <h3>Rent Collection</h3>
+        <p>Track rent payments, send reminders, and monitor payment history across all properties.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📊</div>
+        <h3>Financial Tracking</h3>
+        <p>Profit & loss per property, expense tracking, GST/HST calculations, and year-end reports.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">🔧</div>
+        <h3>Maintenance Requests</h3>
+        <p>Manage maintenance tickets with priority levels, contractor assignments, and cost tracking.</p>
+      </div>
+      <div class="feature-card">
+        <div class="feature-icon">📈</div>
+        <h3>Reports & Analytics</h3>
+        <p>Occupancy trends, revenue analysis, expense breakdowns, and tax-ready financial reports.</p>
+      </div>
+    </div>
+  </section>
+
+  <!-- Screenshots -->
+  <section class="screenshots">
+    <div class="section-title">
+      <h2>See It in Action</h2>
+      <p>Clean, intuitive interface designed for property professionals</p>
+    </div>
+    <div class="screenshot-grid">
+      <div class="screenshot-card">
+        <div class="screenshot-preview">📊</div>
+        <div class="screenshot-info">
+          <h3>Dashboard Overview</h3>
+          <p>Real-time stats, occupancy rates, and upcoming events at a glance</p>
+        </div>
+      </div>
+      <div class="screenshot-card">
+        <div class="screenshot-preview">🏢</div>
+        <div class="screenshot-info">
+          <h3>Property Management</h3>
+          <p>Manage units, track leases, and monitor vacancies</p>
+        </div>
+      </div>
+      <div class="screenshot-card">
+        <div class="screenshot-preview">💰</div>
+        <div class="screenshot-info">
+          <h3>Financial Reports</h3>
+          <p>Track income, expenses, and generate tax-ready reports</p>
+        </div>
+      </div>
+      <div class="screenshot-card">
+        <div class="screenshot-preview">🔧</div>
+        <div class="screenshot-info">
+          <h3>Maintenance Tracking</h3>
+          <p>Manage requests, assign contractors, and track costs</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Pricing -->
+  <section class="section" id="pricing">
+    <div class="section-title">
+      <h2>Simple, Transparent Pricing</h2>
+      <p>No hidden fees. No surprises. Cancel anytime.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card">
+        <h3>Starter</h3>
+        <div class="pricing-amount">$29<span>/mo</span></div>
+        <p class="pricing-desc">Perfect for small landlords</p>
+        <ul class="pricing-features">
+          <li>Up to 10 units</li>
+          <li>Property management</li>
+          <li>Tenant tracking</li>
+          <li>Basic financial reports</li>
+          <li>Maintenance requests</li>
+          <li>Email support</li>
+        </ul>
+        <a href="dashboard.html" class="btn-price outline">Get Started</a>
+      </div>
+      <div class="pricing-card popular">
+        <h3>Professional</h3>
+        <div class="pricing-amount">$79<span>/mo</span></div>
+        <p class="pricing-desc">For growing property managers</p>
+        <ul class="pricing-features">
+          <li>Up to 50 units</li>
+          <li>Everything in Starter</li>
+          <li>Advanced analytics</li>
+          <li>GST/HST tracking</li>
+          <li>Contractor management</li>
+          <li>Priority support</li>
+        </ul>
+        <a href="dashboard.html" class="btn-price primary">Get Started</a>
+      </div>
+      <div class="pricing-card">
+        <h3>Enterprise</h3>
+        <div class="pricing-amount">$149<span>/mo</span></div>
+        <p class="pricing-desc">For large portfolios</p>
+        <ul class="pricing-features">
+          <li>Unlimited units</li>
+          <li>Everything in Professional</li>
+          <li>Tax-ready reports</li>
+          <li>API access</li>
+          <li>Custom integrations</li>
+          <li>Dedicated support</li>
+        </ul>
+        <a href="dashboard.html" class="btn-price outline">Get Started</a>
+      </div>
+    </div>
+  </section>
+
+  <!-- Testimonials -->
+  <section class="testimonials">
+    <div class="section-title">
+      <h2>Trusted by Landlords Across Canada</h2>
+      <p>See what property managers are saying about RentBoss</p>
+    </div>
+    <div class="testimonial-grid">
+      <div class="testimonial-card">
+        <p>"RentBoss replaced three spreadsheets and a whiteboard. I can finally see my entire portfolio in one place."</p>
+        <div class="testimonial-author">Sarah M.</div>
+        <div class="testimonial-role">Landlord, 12 units — Toronto, ON</div>
+      </div>
+      <div class="testimonial-card">
+        <p>"The financial tracking alone is worth it. Tax season used to take me weeks — now it takes hours."</p>
+        <div class="testimonial-author">David K.</div>
+        <div class="testimonial-role">Property Manager, 45 units — Vancouver, BC</div>
+      </div>
+      <div class="testimonial-card">
+        <p>"Maintenance tracking changed how I work. I assign contractors and track costs without losing requests."</p>
+        <div class="testimonial-author">Lisa T.</div>
+        <div class="testimonial-role">Landlord, 8 units — Calgary, AB</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CTA -->
+  <section style="background: linear-gradient(135deg, var(--navy), var(--navy-light)); padding: 80px 24px; text-align: center; color: #fff;">
+    <h2 style="font-size: 2rem; margin-bottom: 16px;">Ready to Take Control?</h2>
+    <p style="color: rgba(255,255,255,0.7); font-size: 1.1rem; margin-bottom: 32px;">Start managing your properties like a professional today.</p>
+    <a href="dashboard.html" class="btn-hero primary" style="display: inline-block;">🚀 Launch Dashboard — It's Free to Try</a>
+  </section>
+
+  <!-- Footer -->
+  <footer>
+    <p>🏠 RentBoss — Property Management Made Simple</p>
+    <p style="margin-top: 8px;">© 2026 RentBoss. Built with ❤️ for Canadian landlords.</p>
+  </footer>
 </body>
 </html>

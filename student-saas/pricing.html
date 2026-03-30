@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pricing — UniPrep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/saas.css">
+  <script src="js/saas.js"></script>
+  <style>
+    .pricing-page { padding-top: 120px; padding-bottom: 80px; }
+
+    .pricing-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 48px;
+    }
+
+    .pricing-toggle span {
+      font-size: 15px;
+      font-weight: 500;
+      color: var(--text-light);
+    }
+
+    .pricing-toggle span.active { color: var(--navy); font-weight: 700; }
+
+    .toggle-switch {
+      width: 52px;
+      height: 28px;
+      background: var(--border);
+      border-radius: 14px;
+      position: relative;
+      cursor: pointer;
+      transition: background 0.3s;
+    }
+
+    .toggle-switch.active { background: var(--primary); }
+
+    .toggle-switch::after {
+      content: '';
+      position: absolute;
+      width: 22px; height: 22px;
+      border-radius: 50%;
+      background: white;
+      top: 3px; left: 3px;
+      transition: transform 0.3s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.15);
+    }
+
+    .toggle-switch.active::after { transform: translateX(24px); }
+
+    .save-badge {
+      background: var(--success-light);
+      color: var(--success);
+      font-size: 12px;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 100px;
+    }
+
+    /* Feature Comparison Table */
+    .comparison-section {
+      margin-top: 80px;
+    }
+
+    .comparison-table {
+      width: 100%;
+      border-collapse: collapse;
+      background: white;
+      border-radius: var(--radius-lg);
+      overflow: hidden;
+      box-shadow: var(--shadow);
+    }
+
+    .comparison-table thead th {
+      padding: 20px 16px;
+      font-size: 14px;
+      font-weight: 700;
+      color: var(--navy);
+      background: var(--bg);
+      border-bottom: 2px solid var(--border);
+      text-align: center;
+    }
+
+    .comparison-table thead th:first-child { text-align: left; }
+
+    .comparison-table tbody td {
+      padding: 14px 16px;
+      font-size: 14px;
+      color: var(--text);
+      border-bottom: 1px solid var(--border-light);
+      text-align: center;
+    }
+
+    .comparison-table tbody td:first-child {
+      text-align: left;
+      font-weight: 500;
+    }
+
+    .comparison-table .check { color: var(--success); font-weight: 700; }
+    .comparison-table .cross { color: var(--text-muted); }
+
+    .comparison-table .featured-col {
+      background: rgba(37,99,235,0.03);
+    }
+
+    /* Guarantee */
+    .guarantee-section {
+      margin-top: 64px;
+      text-align: center;
+    }
+
+    .guarantee-card {
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 40px;
+      background: var(--success-light);
+      border: 1px solid #A7F3D0;
+      border-radius: var(--radius-lg);
+    }
+
+    .guarantee-icon { font-size: 48px; margin-bottom: 16px; }
+    .guarantee-card h3 { font-size: 22px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .guarantee-card p { font-size: 15px; color: var(--text-light); line-height: 1.7; }
+
+    /* FAQ */
+    .billing-faq { margin-top: 64px; }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav class="saas-nav" id="mainNav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🎓</span>
+        <span class="logo-text">Uni<span>Prep</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#features">Features</a>
+        <a href="pricing.html" style="color:var(--primary);">Pricing</a>
+        <a href="affiliate.html">Affiliates</a>
+      </div>
+      <div class="nav-actions">
+        <a href="dashboard.html" class="nav-btn-ghost">Log In</a>
+        <a href="dashboard.html" class="nav-btn-primary">Get Started Free</a>
+        <button class="mobile-menu-toggle" id="mobileToggle">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <section class="pricing-page">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Pricing</span>
+        <h2>Choose Your Plan</h2>
+        <p>Start free. Upgrade when you're ready. All plans include a 30-day money-back guarantee.</p>
+      </div>
+
+      <!-- Monthly/Annual Toggle -->
+      <div class="pricing-toggle">
+        <span class="active" id="monthlyLabel">Monthly</span>
+        <div class="toggle-switch" id="billingToggle" onclick="toggleBilling()"></div>
+        <span id="annualLabel">Annual</span>
+        <span class="save-badge">Save 20%</span>
+      </div>
+
+      <!-- Pricing Cards -->
+      <div class="pricing-grid" id="pricingGrid">
+        <div class="pricing-card">
+          <div class="plan-name">Free</div>
+          <div class="plan-price"><span class="currency">$</span>0</div>
+          <div class="plan-desc">Perfect for getting started</div>
+          <ul class="plan-features">
+            <li>Basic student profile</li>
+            <li>3 university recommendations</li>
+            <li>University directory access</li>
+            <li>Basic match scoring</li>
+            <li class="unlimited">Essay tools</li>
+            <li class="unlimited">Application tracking</li>
+            <li class="unlimited">Deadline alerts</li>
+            <li class="unlimited">Analytics dashboard</li>
+            <li class="unlimited">Custom branding</li>
+          </ul>
+          <a href="dashboard.html" class="btn-plan">Get Started Free</a>
+        </div>
+
+        <div class="pricing-card featured">
+          <div class="plan-badge">Most Popular</div>
+          <div class="plan-name">Pro</div>
+          <div class="plan-price"><span class="currency">$</span><span id="proPrice">9.99</span><span class="period" id="proPeriod">/mo</span></div>
+          <div class="plan-desc">For serious applicants</div>
+          <ul class="plan-features">
+            <li>Everything in Free</li>
+            <li class="highlight">Unlimited recommendations</li>
+            <li class="highlight">AI essay editor & feedback</li>
+            <li class="highlight">Application tracking</li>
+            <li class="highlight">Deadline alerts</li>
+            <li>Advanced match analytics</li>
+            <li>Priority email support</li>
+            <li class="unlimited">Custom branding</li>
+            <li class="unlimited">Multi-student management</li>
+          </ul>
+          <button class="btn-plan btn-plan-featured" onclick="SaasStripe.createCheckoutSession('pro')">Upgrade to Pro</button>
+        </div>
+
+        <div class="pricing-card">
+          <div class="plan-name">Institution</div>
+          <div class="plan-price"><span class="currency">$</span><span id="instPrice">49.99</span><span class="period" id="instPeriod">/mo</span></div>
+          <div class="plan-desc">For schools & counselors</div>
+          <ul class="plan-features">
+            <li>Everything in Pro</li>
+            <li class="highlight">Manage up to 50 students</li>
+            <li class="highlight">Bulk analytics dashboard</li>
+            <li class="highlight">Custom branding & logo</li>
+            <li>Counselor management tools</li>
+            <li>CSV data export</li>
+            <li>Dedicated account manager</li>
+            <li>SSO integration</li>
+            <li>Priority phone support</li>
+          </ul>
+          <button class="btn-plan" onclick="SaasStripe.createCheckoutSession('institution')">Contact Sales</button>
+        </div>
+      </div>
+
+      <!-- Feature Comparison -->
+      <div class="comparison-section">
+        <div class="section-header">
+          <h2>Detailed Feature Comparison</h2>
+        </div>
+        <table class="comparison-table">
+          <thead>
+            <tr>
+              <th>Feature</th>
+              <th>Free</th>
+              <th class="featured-col">Pro</th>
+              <th>Institution</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td>University Recommendations</td>
+              <td>3 total</td>
+              <td class="featured-col"><strong>Unlimited</strong></td>
+              <td><strong>Unlimited</strong></td>
+            </tr>
+            <tr>
+              <td>Match Scoring Algorithm</td>
+              <td><span class="check">✓</span> Basic</td>
+              <td class="featured-col"><span class="check">✓</span> Advanced</td>
+              <td><span class="check">✓</span> Advanced</td>
+            </tr>
+            <tr>
+              <td>AI Essay Editor</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Essay Grammar & Style Check</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Application Tracking</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Deadline Alerts</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Analytics Dashboard</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="check">✓</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Student Management</td>
+              <td>1 student</td>
+              <td class="featured-col">1 student</td>
+              <td><strong>Up to 50</strong></td>
+            </tr>
+            <tr>
+              <td>Custom Branding</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="cross">—</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>CSV Data Export</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="cross">—</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+            <tr>
+              <td>Support</td>
+              <td>Community</td>
+              <td class="featured-col">Priority Email</td>
+              <td>Dedicated + Phone</td>
+            </tr>
+            <tr>
+              <td>SSO Integration</td>
+              <td><span class="cross">—</span></td>
+              <td class="featured-col"><span class="cross">—</span></td>
+              <td><span class="check">✓</span></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <!-- Guarantee -->
+      <div class="guarantee-section">
+        <div class="guarantee-card">
+          <div class="guarantee-icon">🛡️</div>
+          <h3>30-Day Money-Back Guarantee</h3>
+          <p>Try any paid plan risk-free. If you're not completely satisfied within 30 days, we'll refund your payment in full — no questions asked.</p>
+        </div>
+      </div>
+
+      <!-- Billing FAQ -->
+      <div class="billing-faq">
+        <div class="section-header">
+          <h2>Billing FAQ</h2>
+        </div>
+        <div class="faq-grid">
+          <div class="faq-item">
+            <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+              How does billing work?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>You're billed monthly (or annually if you choose the annual plan) via Stripe. You can cancel anytime and won't be charged for the next period.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+              Can I switch plans?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Yes! You can upgrade or downgrade at any time. Upgrades take effect immediately with prorated billing. Downgrades take effect at the end of the current billing period.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+              What payment methods do you accept?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>We accept all major credit cards (Visa, Mastercard, Amex) and debit cards through Stripe. Institution plans can also pay by invoice.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+              Is there a student discount?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>The Free plan is already generous! For students who need more, the Pro plan at $9.99/mo is designed to be affordable. We also offer occasional promotions — sign up to stay in the loop.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+              What happens when I cancel?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>You keep access until the end of your billing period, then automatically move to the Free plan. Your data is preserved — you won't lose anything.</p>
+            </div>
+          </div>
+          <div class="faq-item">
+            <button class="faq-question" onclick="this.parentElement.classList.toggle('open')">
+              How do I get an invoice?
+              <span class="faq-icon">+</span>
+            </button>
+            <div class="faq-answer">
+              <p>Invoices are automatically sent to your email after each payment. You can also download them from your Billing page in the dashboard.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="saas-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="logo-icon">🎓</span>
+            <span class="logo-text">Uni<span>Prep</span></span>
+          </div>
+          <p>The student success platform.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <a href="index.html#features">Features</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="affiliate.html">Affiliates</a>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 UniPrep. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    let isAnnual = false;
+
+    function toggleBilling() {
+      isAnnual = !isAnnual;
+      document.getElementById('billingToggle').classList.toggle('active', isAnnual);
+      document.getElementById('monthlyLabel').classList.toggle('active', !isAnnual);
+      document.getElementById('annualLabel').classList.toggle('active', isAnnual);
+
+      if (isAnnual) {
+        document.getElementById('proPrice').textContent = '7.99';
+        document.getElementById('proPeriod').textContent = '/mo (billed annually)';
+        document.getElementById('instPrice').textContent = '39.99';
+        document.getElementById('instPeriod').textContent = '/mo (billed annually)';
+      } else {
+        document.getElementById('proPrice').textContent = '9.99';
+        document.getElementById('proPeriod').textContent = '/mo';
+        document.getElementById('instPrice').textContent = '49.99';
+        document.getElementById('instPeriod').textContent = '/mo';
+      }
+    }
+
+    // Sticky nav
+    window.addEventListener('scroll', () => {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+
+    // Mobile
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

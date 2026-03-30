@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Dashboard — RentBoss</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">🏠 Rent<span>Boss</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <ul class="nav-links">
+      <li><a href="dashboard.html" class="active">Dashboard</a></li>
+      <li><a href="properties.html">Properties</a></li>
+      <li><a href="tenants.html">Tenants</a></li>
+      <li><a href="finances.html">Finances</a></li>
+      <li><a href="maintenance.html">Maintenance</a></li>
+      <li><a href="reports.html">Reports</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>📊 Dashboard</h1>
+      <span style="color: var(--text-muted); font-size: 0.9rem;" id="currentDate"></span>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="statsGrid"></div>
+
+    <div class="grid-2">
+      <!-- Upcoming Rent -->
+      <div class="card">
+        <div class="card-header">
+          <h2>💰 Upcoming Rent Due</h2>
+          <a href="finances.html" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Tenant</th><th>Property</th><th>Amount</th><th>Due</th></tr></thead>
+            <tbody id="upcomingRent"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Maintenance Requests -->
+      <div class="card">
+        <div class="card-header">
+          <h2>🔧 Open Maintenance</h2>
+          <a href="maintenance.html" class="btn btn-outline btn-sm">View All</a>
+        </div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Issue</th><th>Property</th><th>Priority</th><th>Status</th></tr></thead>
+            <tbody id="maintenanceList"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <div class="grid-2" style="margin-top: 20px;">
+      <!-- Monthly Summary -->
+      <div class="card">
+        <div class="card-header"><h2>📈 Monthly Summary — March 2026</h2></div>
+        <div id="monthlySummary" style="padding: 12px 0;"></div>
+      </div>
+
+      <!-- Vacancy Alerts -->
+      <div class="card">
+        <div class="card-header"><h2>🏠 Vacancy Alerts</h2></div>
+        <div id="vacancyAlerts"></div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/property.js"></script>
+  <script>
+    function renderDashboard() {
+      // Date
+      document.getElementById('currentDate').textContent = new Date().toLocaleDateString('en-CA', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
+      // Stats
+      const stats = RentBoss.getOccupancyStats();
+      const totalRev = RentBoss.getTotalRevenue(2026, 3);
+      const totalExp = RentBoss.getTotalExpenses(2026, 3);
+      const openMaint = RentBoss.getOpenMaintenance();
+      const props = RentBoss.getProperties();
+
+      document.getElementById('statsGrid').innerHTML = `
+        <div class="stat-card">
+          <div class="stat-label">Properties</div>
+          <div class="stat-value">${props.length}</div>
+          <div class="stat-sub">${stats.totalUnits} total units</div>
+        </div>
+        <div class="stat-card navy">
+          <div class="stat-label">Occupancy Rate</div>
+          <div class="stat-value">${stats.occupancyRate}%</div>
+          <div class="stat-sub">${stats.occupiedUnits}/${stats.totalUnits} units occupied</div>
+        </div>
+        <div class="stat-card accent">
+          <div class="stat-label">March Revenue</div>
+          <div class="stat-value">${RentBoss.formatCurrency(totalRev)}</div>
+          <div class="stat-sub">Expenses: ${RentBoss.formatCurrency(totalExp)}</div>
+        </div>
+        <div class="stat-card ${openMaint.length > 0 ? 'warning' : ''}">
+          <div class="stat-label">Open Maintenance</div>
+          <div class="stat-value">${openMaint.length}</div>
+          <div class="stat-sub">${openMaint.filter(m => m.priority === 'high').length} high priority</div>
+        </div>
+      `;
+
+      // Upcoming Rent
+      const leases = RentBoss.getLeases().filter(l => l.status === 'active');
+      const tenants = RentBoss.getTenants();
+      const rentRows = leases.map(l => {
+        const tenant = tenants.find(t => t.id === l.tenantId);
+        const prop = props.find(p => p.id === l.propertyId);
+        const unit = prop?.units?.find(u => u.id === l.unitId);
+        return `<tr>
+          <td>${tenant ? tenant.firstName + ' ' + tenant.lastName : '—'}</td>
+          <td>${prop?.name || '—'} ${unit ? '— ' + unit.name : ''}</td>
+          <td><strong>${RentBoss.formatCurrency(l.rentAmount)}</strong></td>
+          <td>1st of month</td>
+        </tr>`;
+      }).join('');
+      document.getElementById('upcomingRent').innerHTML = rentRows || '<tr><td colspan="4" class="empty-state">No active leases</td></tr>';
+
+      // Maintenance
+      const maintRows = openMaint.slice(0, 5).map(m => {
+        const prop = props.find(p => p.id === m.propertyId);
+        return `<tr>
+          <td>${m.title}</td>
+          <td>${prop?.name || '—'}</td>
+          <td><span class="priority-${m.priority}">${m.priority.toUpperCase()}</span></td>
+          <td><span class="badge badge-${m.status === 'open' ? 'warning' : 'info'}">${m.status}</span></td>
+        </tr>`;
+      }).join('');
+      document.getElementById('maintenanceList').innerHTML = maintRows || '<tr><td colspan="4" class="empty-state">No open requests ✅</td></tr>';
+
+      // Monthly Summary
+      const profit = totalRev - totalExp;
+      document.getElementById('monthlySummary').innerHTML = `
+        <div style="display: grid; gap: 12px;">
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span>Total Income</span><strong style="color: var(--green);">${RentBoss.formatCurrency(totalRev)}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);">
+            <span>Total Expenses</span><strong style="color: var(--danger);">${RentBoss.formatCurrency(totalExp)}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; font-size: 1.1rem;">
+            <span>Net Profit</span><strong style="color: ${profit >= 0 ? 'var(--green)' : 'var(--danger)'};">${RentBoss.formatCurrency(profit)}</strong>
+          </div>
+          <div style="display: flex; justify-content: space-between; padding: 8px 0; color: var(--text-muted); font-size: 0.9rem;">
+            <span>Est. HST (13%)</span><span>${RentBoss.formatCurrency(RentBoss.getGST(totalRev))}</span>
+          </div>
+        </div>
+      `;
+
+      // Vacancy Alerts
+      const vacantUnits = [];
+      props.forEach(p => {
+        (p.units || []).forEach(u => {
+          if (!RentBoss.getActiveLease(p.id, u.id)) {
+            vacantUnits.push({ property: p.name, unit: u.name, beds: u.beds, rent: u.rent });
+          }
+        });
+      });
+      if (vacantUnits.length === 0) {
+        document.getElementById('vacancyAlerts').innerHTML = '<div class="empty-state"><div class="icon">🎉</div><p>No vacancies! Full occupancy.</p></div>';
+      } else {
+        document.getElementById('vacancyAlerts').innerHTML = vacantUnits.map(v => `
+          <div style="display: flex; justify-content: space-between; align-items: center; padding: 12px 0; border-bottom: 1px solid var(--border);">
+            <div>
+              <strong>${v.property}</strong> — ${v.unit}
+              <div style="font-size: 0.85rem; color: var(--text-muted);">${v.beds}-bed • ${RentBoss.formatCurrency(v.rent)}/mo</div>
+            </div>
+            <span class="badge badge-danger">Vacant</span>
+          </div>
+        `).join('');
+      }
+    }
+    document.addEventListener('DOMContentLoaded', renderDashboard);
+  </script>
+</body>
+</html>

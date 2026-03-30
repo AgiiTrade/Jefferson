@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tenants — RentBoss</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">🏠 Rent<span>Boss</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="properties.html">Properties</a></li>
+      <li><a href="tenants.html" class="active">Tenants</a></li>
+      <li><a href="finances.html">Finances</a></li>
+      <li><a href="maintenance.html">Maintenance</a></li>
+      <li><a href="reports.html">Reports</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>👥 Tenants</h1>
+      <button class="btn btn-primary" onclick="openModal()">+ Add Tenant</button>
+    </div>
+
+    <div id="tenantsList"></div>
+
+    <!-- Tenant Modal -->
+    <div class="modal-overlay" id="tenantModal">
+      <div class="modal">
+        <div class="modal-header">
+          <h2 id="modalTitle">Add Tenant</h2>
+          <button class="modal-close" onclick="closeModal()">✕</button>
+        </div>
+        <div class="modal-body">
+          <input type="hidden" id="editId">
+          <div class="form-row">
+            <div class="form-group"><label>First Name</label><input type="text" class="form-control" id="tFirstName"></div>
+            <div class="form-group"><label>Last Name</label><input type="text" class="form-control" id="tLastName"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Email</label><input type="email" class="form-control" id="tEmail"></div>
+            <div class="form-group"><label>Phone</label><input type="tel" class="form-control" id="tPhone"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group">
+              <label>Property</label>
+              <select class="form-control" id="tProperty" onchange="updateUnitDropdown()">
+                <option value="">Select property...</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Unit</label>
+              <select class="form-control" id="tUnit"><option value="">Select unit...</option></select>
+            </div>
+          </div>
+          <div class="card-header" style="margin-top: 8px;"><h3>Lease Details</h3></div>
+          <div class="form-row">
+            <div class="form-group"><label>Start Date</label><input type="date" class="form-control" id="tLeaseStart"></div>
+            <div class="form-group"><label>End Date</label><input type="date" class="form-control" id="tLeaseEnd"></div>
+          </div>
+          <div class="form-group"><label>Monthly Rent ($)</label><input type="number" class="form-control" id="tRent" placeholder="2000"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveTenant()">Save Tenant</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Detail Modal -->
+    <div class="modal-overlay" id="detailModal">
+      <div class="modal" style="max-width: 700px;">
+        <div class="modal-header">
+          <h2 id="detailTitle">Tenant Details</h2>
+          <button class="modal-close" onclick="closeDetail()">✕</button>
+        </div>
+        <div class="modal-body" id="detailBody"></div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeDetail()">Close</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/property.js"></script>
+  <script>
+    function renderTenants() {
+      const tenants = RentBoss.getTenants();
+      const props = RentBoss.getProperties();
+      if (tenants.length === 0) {
+        document.getElementById('tenantsList').innerHTML = `<div class="card empty-state"><div class="icon">👥</div><p>No tenants yet.</p><button class="btn btn-primary" onclick="openModal()">+ Add Tenant</button></div>`;
+        return;
+      }
+      document.getElementById('tenantsList').innerHTML = `<div class="card"><div class="table-wrap"><table>
+        <thead><tr><th>Name</th><th>Contact</th><th>Property</th><th>Unit</th><th>Rent</th><th>Lease End</th><th>Actions</th></tr></thead>
+        <tbody>${tenants.map(t => {
+          const prop = props.find(p => p.id === t.propertyId);
+          const unit = prop?.units?.find(u => u.id === t.unitId);
+          const lease = RentBoss.getLeases().find(l => l.tenantId === t.id && l.status === 'active');
+          const daysLeft = lease ? RentBoss.daysUntil(lease.endDate) : null;
+          return `<tr>
+            <td><a href="#" onclick="showDetail('${t.id}'); return false;" style="color: var(--navy); font-weight: 600; text-decoration: none;">${t.firstName} ${t.lastName}</a></td>
+            <td><div style="font-size: 0.85rem;">${t.email}</div><div style="font-size: 0.85rem; color: var(--text-muted);">${t.phone}</div></td>
+            <td>${prop?.name || '—'}</td>
+            <td>${unit?.name || '—'}</td>
+            <td>${lease ? RentBoss.formatCurrency(lease.rentAmount) + '/mo' : '—'}</td>
+            <td>${lease ? `<span class="badge ${daysLeft < 30 ? 'badge-warning' : 'badge-success'}">${RentBoss.formatDate(lease.endDate)}</span>` : '—'}</td>
+            <td>
+              <button class="btn btn-outline btn-sm" onclick="editTenant('${t.id}')">✏️</button>
+              <button class="btn btn-danger btn-sm" onclick="deleteTenant('${t.id}')">🗑️</button>
+            </td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table></div></div>`;
+    }
+
+    function populatePropertyDropdown() {
+      const sel = document.getElementById('tProperty');
+      sel.innerHTML = '<option value="">Select property...</option>';
+      RentBoss.getProperties().forEach(p => {
+        sel.innerHTML += `<option value="${p.id}">${p.name}</option>`;
+      });
+    }
+
+    function updateUnitDropdown() {
+      const propId = document.getElementById('tProperty').value;
+      const sel = document.getElementById('tUnit');
+      sel.innerHTML = '<option value="">Select unit...</option>';
+      if (!propId) return;
+      const prop = RentBoss.getProperty(propId);
+      (prop?.units || []).forEach(u => {
+        const occupied = RentBoss.getActiveLease(propId, u.id);
+        sel.innerHTML += `<option value="${u.id}" ${occupied ? 'disabled' : ''}>${u.name} — ${u.beds}-bed ${occupied ? '(Occupied)' : ''}</option>`;
+      });
+    }
+
+    function openModal(id) {
+      populatePropertyDropdown();
+      document.getElementById('tenantModal').classList.add('active');
+      if (id) {
+        const t = RentBoss.getTenant(id);
+        const lease = RentBoss.getLeases().find(l => l.tenantId === id && l.status === 'active');
+        document.getElementById('modalTitle').textContent = 'Edit Tenant';
+        document.getElementById('editId').value = id;
+        document.getElementById('tFirstName').value = t.firstName;
+        document.getElementById('tLastName').value = t.lastName;
+        document.getElementById('tEmail').value = t.email;
+        document.getElementById('tPhone').value = t.phone;
+        document.getElementById('tProperty').value = t.propertyId;
+        updateUnitDropdown();
+        document.getElementById('tUnit').value = t.unitId;
+        if (lease) {
+          document.getElementById('tLeaseStart').value = lease.startDate;
+          document.getElementById('tLeaseEnd').value = lease.endDate;
+          document.getElementById('tRent').value = lease.rentAmount;
+        }
+      } else {
+        document.getElementById('modalTitle').textContent = 'Add Tenant';
+        document.getElementById('editId').value = '';
+        ['tFirstName','tLastName','tEmail','tPhone','tLeaseStart','tLeaseEnd','tRent'].forEach(id => document.getElementById(id).value = '');
+        document.getElementById('tProperty').value = '';
+        document.getElementById('tUnit').innerHTML = '<option value="">Select unit...</option>';
+      }
+    }
+
+    function closeModal() { document.getElementById('tenantModal').classList.remove('active'); }
+
+    function saveTenant() {
+      const first = document.getElementById('tFirstName').value.trim();
+      const last = document.getElementById('tLastName').value.trim();
+      if (!first || !last) return alert('Name is required');
+      const tenantData = {
+        id: document.getElementById('editId').value || undefined,
+        firstName: first, lastName: last,
+        email: document.getElementById('tEmail').value.trim(),
+        phone: document.getElementById('tPhone').value.trim(),
+        propertyId: document.getElementById('tProperty').value,
+        unitId: document.getElementById('tUnit').value,
+      };
+      const saved = RentBoss.saveTenant(tenantData);
+
+      const startDate = document.getElementById('tLeaseStart').value;
+      const endDate = document.getElementById('tLeaseEnd').value;
+      const rent = parseFloat(document.getElementById('tRent').value) || 0;
+      if (startDate && endDate && rent) {
+        RentBoss.saveLease({
+          tenantId: saved.id,
+          propertyId: tenantData.propertyId,
+          unitId: tenantData.unitId,
+          startDate, endDate,
+          rentAmount: rent,
+          status: 'active',
+        });
+      }
+      closeModal();
+      renderTenants();
+    }
+
+    function editTenant(id) { openModal(id); }
+    function deleteTenant(id) {
+      if (confirm('Delete this tenant?')) { RentBoss.deleteTenant(id); renderTenants(); }
+    }
+
+    function showDetail(id) {
+      const t = RentBoss.getTenant(id);
+      const prop = RentBoss.getProperty(t.propertyId);
+      const unit = prop?.units?.find(u => u.id === t.unitId);
+      const lease = RentBoss.getLeases().find(l => l.tenantId === id && l.status === 'active');
+      const payments = RentBoss.getPaymentsByTenant(id);
+      const maintReqs = RentBoss.getMaintenance().filter(m => m.tenantId === id);
+
+      document.getElementById('detailTitle').textContent = `${t.firstName} ${t.lastName}`;
+      document.getElementById('detailBody').innerHTML = `
+        <div class="grid-2" style="margin-bottom: 20px;">
+          <div>
+            <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Contact</h3>
+            <p>📧 ${t.email}</p>
+            <p>📱 ${t.phone}</p>
+          </div>
+          <div>
+            <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Property</h3>
+            <p>🏢 ${prop?.name || '—'}</p>
+            <p>🚪 ${unit?.name || '—'}</p>
+          </div>
+        </div>
+        ${lease ? `
+        <div class="card" style="margin-bottom: 16px; border-left: 4px solid var(--green);">
+          <h3 style="font-size: 0.9rem; margin-bottom: 8px;">Lease Details</h3>
+          <div class="grid-2">
+            <p>Start: ${RentBoss.formatDate(lease.startDate)}</p>
+            <p>End: ${RentBoss.formatDate(lease.endDate)}</p>
+            <p>Rent: <strong>${RentBoss.formatCurrency(lease.rentAmount)}/mo</strong></p>
+            <p>Days remaining: <strong>${RentBoss.daysUntil(lease.endDate)}</strong></p>
+          </div>
+        </div>` : '<p style="color: var(--text-muted); margin-bottom: 16px;">No active lease</p>'}
+        <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Payment History</h3>
+        ${payments.length > 0 ? `<div class="table-wrap" style="margin-bottom: 16px;"><table>
+          <thead><tr><th>Date</th><th>Amount</th><th>Method</th></tr></thead>
+          <tbody>${payments.map(p => `<tr><td>${RentBoss.formatDate(p.date)}</td><td>${RentBoss.formatCurrency(p.amount)}</td><td>${p.method || '—'}</td></tr>`).join('')}</tbody>
+        </table></div>` : '<p style="color: var(--text-muted); margin-bottom: 16px;">No payments recorded</p>'}
+        <h3 style="font-size: 0.9rem; color: var(--text-muted); margin-bottom: 8px;">Maintenance Requests</h3>
+        ${maintReqs.length > 0 ? maintReqs.map(m => `<div style="padding: 8px 0; border-bottom: 1px solid var(--border);"><strong>${m.title}</strong> <span class="badge badge-${m.status === 'completed' ? 'success' : 'warning'}">${m.status}</span></div>`).join('') : '<p style="color: var(--text-muted);">No maintenance requests</p>'}
+      `;
+      document.getElementById('detailModal').classList.add('active');
+    }
+
+    function closeDetail() { document.getElementById('detailModal').classList.remove('active'); }
+
+    document.addEventListener('DOMContentLoaded', renderTenants);
+  </script>
+</body>
+</html>

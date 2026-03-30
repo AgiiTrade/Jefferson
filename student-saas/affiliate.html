@@ -1,0 +1,450 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Affiliate Program — UniPrep</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/saas.css">
+  <style>
+    .affiliate-hero {
+      padding: 160px 24px 80px;
+      text-align: center;
+      background: linear-gradient(135deg, #0F172A, #1E293B, #1E3A5F);
+    }
+
+    .affiliate-hero h1 {
+      font-size: 48px;
+      font-weight: 900;
+      color: white;
+      margin-bottom: 16px;
+      letter-spacing: -1px;
+    }
+
+    .affiliate-hero p {
+      font-size: 18px;
+      color: rgba(255,255,255,0.7);
+      max-width: 600px;
+      margin: 0 auto 32px;
+    }
+
+    .affiliate-stats {
+      display: flex;
+      justify-content: center;
+      gap: 48px;
+      margin-top: 40px;
+    }
+
+    .aff-stat {
+      text-align: center;
+    }
+
+    .aff-stat-value {
+      font-size: 36px;
+      font-weight: 900;
+      color: white;
+    }
+
+    .aff-stat-label {
+      font-size: 14px;
+      color: rgba(255,255,255,0.6);
+      margin-top: 4px;
+    }
+
+    .how-section { padding: 80px 24px; background: white; }
+
+    .how-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 32px;
+      max-width: 1000px;
+      margin: 0 auto;
+    }
+
+    .how-card {
+      text-align: center;
+      padding: 32px;
+    }
+
+    .how-number {
+      width: 56px; height: 56px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #7C3AED);
+      color: white;
+      font-size: 22px;
+      font-weight: 800;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      margin: 0 auto 20px;
+    }
+
+    .how-card h3 { font-size: 18px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .how-card p { font-size: 14px; color: var(--text-light); line-height: 1.7; }
+
+    .materials-section { padding: 80px 24px; background: var(--bg); }
+
+    .materials-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 24px;
+    }
+
+    .material-card {
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 28px;
+      box-shadow: var(--shadow-sm);
+      border: 1px solid var(--border);
+      transition: all 0.3s;
+    }
+
+    .material-card:hover {
+      transform: translateY(-2px);
+      box-shadow: var(--shadow-lg);
+    }
+
+    .material-icon { font-size: 36px; margin-bottom: 16px; }
+    .material-card h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .material-card p { font-size: 13px; color: var(--text-light); line-height: 1.6; margin-bottom: 16px; }
+
+    .material-btn {
+      display: inline-block;
+      padding: 8px 16px;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--primary);
+      border: 1.5px solid var(--primary);
+      border-radius: 6px;
+      transition: all 0.2s;
+    }
+
+    .material-btn:hover {
+      background: var(--primary);
+      color: white;
+    }
+
+    .payout-section { padding: 80px 24px; background: white; }
+
+    .payout-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+      gap: 24px;
+    }
+
+    .payout-card {
+      padding: 28px;
+      background: var(--bg);
+      border-radius: var(--radius-lg);
+      border: 1px solid var(--border);
+      text-align: center;
+    }
+
+    .payout-icon { font-size: 40px; margin-bottom: 12px; }
+    .payout-card h3 { font-size: 16px; font-weight: 700; color: var(--navy); margin-bottom: 8px; }
+    .payout-card p { font-size: 13px; color: var(--text-light); }
+
+    .apply-section {
+      padding: 80px 24px;
+      background: var(--bg);
+    }
+
+    .apply-card {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      border-radius: var(--radius-lg);
+      padding: 48px;
+      box-shadow: var(--shadow-lg);
+      text-align: center;
+    }
+
+    .apply-card h2 { font-size: 28px; font-weight: 800; color: var(--navy); margin-bottom: 12px; }
+    .apply-card p { font-size: 15px; color: var(--text-light); margin-bottom: 28px; }
+
+    .apply-form .form-group {
+      margin-bottom: 16px;
+      text-align: left;
+    }
+
+    .apply-form label {
+      display: block;
+      font-size: 13px;
+      font-weight: 600;
+      color: var(--text);
+      margin-bottom: 6px;
+    }
+
+    .apply-form input,
+    .apply-form textarea {
+      width: 100%;
+      padding: 12px 16px;
+      border: 1.5px solid var(--border);
+      border-radius: 8px;
+      font-size: 14px;
+      font-family: inherit;
+      transition: border-color 0.2s;
+    }
+
+    .apply-form input:focus,
+    .apply-form textarea:focus {
+      outline: none;
+      border-color: var(--primary);
+      box-shadow: 0 0 0 3px rgba(37,99,235,0.1);
+    }
+
+    .apply-form textarea { min-height: 80px; resize: vertical; }
+
+    .btn-apply {
+      width: 100%;
+      padding: 14px;
+      font-size: 15px;
+      font-weight: 700;
+      color: white;
+      background: var(--primary);
+      border: none;
+      border-radius: 10px;
+      cursor: pointer;
+      font-family: inherit;
+      transition: all 0.2s;
+      margin-top: 8px;
+    }
+
+    .btn-apply:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    @media (max-width: 768px) {
+      .affiliate-hero h1 { font-size: 32px; }
+      .how-grid { grid-template-columns: 1fr; }
+      .affiliate-stats { flex-direction: column; gap: 24px; }
+      .apply-card { padding: 32px 24px; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Nav -->
+  <nav class="saas-nav" id="mainNav">
+    <div class="nav-container">
+      <a href="index.html" class="nav-logo">
+        <span class="logo-icon">🎓</span>
+        <span class="logo-text">Uni<span>Prep</span></span>
+      </a>
+      <div class="nav-links">
+        <a href="index.html#features">Features</a>
+        <a href="pricing.html">Pricing</a>
+        <a href="affiliate.html" style="color:var(--primary);">Affiliates</a>
+      </div>
+      <div class="nav-actions">
+        <a href="dashboard.html" class="nav-btn-ghost">Log In</a>
+        <a href="dashboard.html" class="nav-btn-primary">Get Started Free</a>
+        <button class="mobile-menu-toggle" id="mobileToggle">☰</button>
+      </div>
+    </div>
+  </nav>
+
+  <!-- Hero -->
+  <section class="affiliate-hero">
+    <div class="container">
+      <h1>Earn <span class="text-gradient" style="background:linear-gradient(135deg,#60A5FA,#A78BFA);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;">30% Commission</span><br>Every Referral</h1>
+      <p>Join the UniPrep affiliate program and earn recurring revenue by helping students find their perfect university.</p>
+      <a href="#apply" class="btn-hero-primary" style="display:inline-block;">Apply Now →</a>
+      <div class="affiliate-stats">
+        <div class="aff-stat">
+          <div class="aff-stat-value">30%</div>
+          <div class="aff-stat-label">Recurring Commission</div>
+        </div>
+        <div class="aff-stat">
+          <div class="aff-stat-value">90 days</div>
+          <div class="aff-stat-label">Cookie Duration</div>
+        </div>
+        <div class="aff-stat">
+          <div class="aff-stat-value">$50</div>
+          <div class="aff-stat-label">Minimum Payout</div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- How It Works -->
+  <section class="how-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">How It Works</span>
+        <h2>Three Simple Steps</h2>
+      </div>
+      <div class="how-grid">
+        <div class="how-card">
+          <div class="how-number">1</div>
+          <h3>Apply & Get Approved</h3>
+          <p>Fill out the application form. We review within 48 hours. Anyone with an audience of students, parents, or educators is welcome.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-number">2</div>
+          <h3>Share Your Link</h3>
+          <p>Get your unique referral link and marketing materials. Share on your blog, YouTube, social media, or directly with students.</p>
+        </div>
+        <div class="how-card">
+          <div class="how-number">3</div>
+          <h3>Get Paid</h3>
+          <p>Earn 30% of every subscription — for as long as the customer stays active. Payouts via PayPal or bank transfer monthly.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Marketing Materials -->
+  <section class="materials-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Resources</span>
+        <h2>Marketing Materials</h2>
+        <p>Everything you need to promote UniPrep effectively.</p>
+      </div>
+      <div class="materials-grid">
+        <div class="material-card">
+          <div class="material-icon">📐</div>
+          <h3>Banner Ads</h3>
+          <p>Pre-designed banner ads in multiple sizes (728x90, 300x250, 160x600) for websites and blogs.</p>
+          <a href="#" class="material-btn">Download Pack</a>
+        </div>
+        <div class="material-card">
+          <div class="material-icon">📧</div>
+          <h3>Email Templates</h3>
+          <p>Ready-to-send email sequences for newsletters, student outreach, and counselor communications.</p>
+          <a href="#" class="material-btn">Get Templates</a>
+        </div>
+        <div class="material-card">
+          <div class="material-icon">📱</div>
+          <h3>Social Media Kit</h3>
+          <p>Instagram, TikTok, Twitter, and LinkedIn posts with captions, hashtags, and graphics.</p>
+          <a href="#" class="material-btn">Download Kit</a>
+        </div>
+        <div class="material-card">
+          <div class="material-icon">📝</div>
+          <h3>Review Templates</h3>
+          <p>Blog post outlines and video script templates for authentic, high-converting reviews.</p>
+          <a href="#" class="material-btn">Get Templates</a>
+        </div>
+        <div class="material-card">
+          <div class="material-icon">🎬</div>
+          <h3>Product Demos</h3>
+          <p>Screen recordings and walkthroughs you can embed or reference in your content.</p>
+          <a href="#" class="material-btn">View Demos</a>
+        </div>
+        <div class="material-card">
+          <div class="material-icon">📊</div>
+          <h3>Affiliate Dashboard</h3>
+          <p>Real-time tracking of clicks, conversions, and earnings. Deep-link to any page.</p>
+          <a href="#" class="material-btn">View Dashboard</a>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Payout Info -->
+  <section class="payout-section">
+    <div class="container">
+      <div class="section-header">
+        <span class="section-badge">Payouts</span>
+        <h2>How You Get Paid</h2>
+      </div>
+      <div class="payout-grid">
+        <div class="payout-card">
+          <div class="payout-icon">💰</div>
+          <h3>30% Recurring</h3>
+          <p>Earn 30% of every subscription payment for the lifetime of the customer. Not just the first month.</p>
+        </div>
+        <div class="payout-card">
+          <div class="payout-icon">📅</div>
+          <h3>Monthly Payouts</h3>
+          <p>Payments are processed on the 1st of each month for the previous month's earnings.</p>
+        </div>
+        <div class="payout-card">
+          <div class="payout-icon">🏦</div>
+          <h3>PayPal or Bank Transfer</h3>
+          <p>Choose your preferred payment method. International transfers supported in 30+ countries.</p>
+        </div>
+        <div class="payout-card">
+          <div class="payout-icon">📈</div>
+          <h3>$50 Minimum</h3>
+          <p>Once you reach $50 in earned commissions, you're eligible for payout. Balances roll over.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- Apply -->
+  <section class="apply-section" id="apply">
+    <div class="apply-card">
+      <h2>Apply to the Affiliate Program</h2>
+      <p>Tell us about yourself and how you plan to promote UniPrep. We review applications within 48 hours.</p>
+      <form class="apply-form" onsubmit="event.preventDefault(); alert('Application submitted! We\'ll be in touch within 48 hours.');">
+        <div class="form-group">
+          <label>Full Name</label>
+          <input type="text" placeholder="Your name" required>
+        </div>
+        <div class="form-group">
+          <label>Email</label>
+          <input type="email" placeholder="you@example.com" required>
+        </div>
+        <div class="form-group">
+          <label>Website / Social Media URL</label>
+          <input type="url" placeholder="https://yourwebsite.com" required>
+        </div>
+        <div class="form-group">
+          <label>How will you promote UniPrep?</label>
+          <textarea placeholder="Tell us about your audience and promotion strategy..."></textarea>
+        </div>
+        <button type="submit" class="btn-apply">Submit Application</button>
+      </form>
+    </div>
+  </section>
+
+  <!-- Footer -->
+  <footer class="saas-footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <div class="nav-logo">
+            <span class="logo-icon">🎓</span>
+            <span class="logo-text">Uni<span>Prep</span></span>
+          </div>
+          <p>The student success platform.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Product</h4>
+          <a href="index.html#features">Features</a>
+          <a href="pricing.html">Pricing</a>
+          <a href="affiliate.html">Affiliates</a>
+        </div>
+        <div class="footer-links">
+          <h4>Company</h4>
+          <a href="#">About</a>
+          <a href="#">Blog</a>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <a href="#">Help Center</a>
+          <a href="#">Contact</a>
+          <a href="#">Privacy</a>
+        </div>
+      </div>
+      <div class="footer-bottom">
+        <p>© 2026 UniPrep. All rights reserved.</p>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    window.addEventListener('scroll', () => {
+      document.getElementById('mainNav').classList.toggle('scrolled', window.scrollY > 20);
+    });
+    document.getElementById('mobileToggle').addEventListener('click', () => {
+      document.querySelector('.nav-links').classList.toggle('open');
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Finances — RentBoss</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">🏠 Rent<span>Boss</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="properties.html">Properties</a></li>
+      <li><a href="tenants.html">Tenants</a></li>
+      <li><a href="finances.html" class="active">Finances</a></li>
+      <li><a href="maintenance.html">Maintenance</a></li>
+      <li><a href="reports.html">Reports</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>💰 Finances</h1>
+      <div style="display: flex; gap: 8px;">
+        <button class="btn btn-primary" onclick="openPaymentModal()">+ Record Payment</button>
+        <button class="btn btn-secondary" onclick="openExpenseModal()">+ Add Expense</button>
+      </div>
+    </div>
+
+    <!-- Financial Summary -->
+    <div class="stats-grid" id="finStats"></div>
+
+    <div class="grid-2">
+      <!-- Rent Collection -->
+      <div class="card">
+        <div class="card-header"><h2>💵 Recent Rent Payments</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Tenant</th><th>Property</th><th>Amount</th><th>Method</th></tr></thead>
+            <tbody id="paymentsTable"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- Expenses -->
+      <div class="card">
+        <div class="card-header"><h2>🧾 Recent Expenses</h2></div>
+        <div class="table-wrap">
+          <table>
+            <thead><tr><th>Date</th><th>Property</th><th>Category</th><th>Description</th><th>Amount</th></tr></thead>
+            <tbody id="expensesTable"></tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- P&L by Property -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-header"><h2>📊 Profit & Loss by Property — March 2026</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead><tr><th>Property</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th></tr></thead>
+          <tbody id="plTable"></tbody>
+          <tfoot id="plFoot"></tfoot>
+        </table>
+      </div>
+    </div>
+
+    <!-- GST/HST -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-header"><h2>🇨🇦 GST/HST Summary</h2></div>
+      <div id="gstSummary"></div>
+    </div>
+
+    <!-- Payment Modal -->
+    <div class="modal-overlay" id="paymentModal">
+      <div class="modal">
+        <div class="modal-header"><h2>Record Rent Payment</h2><button class="modal-close" onclick="closePaymentModal()">✕</button></div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group"><label>Tenant</label><select class="form-control" id="payTenant" onchange="onPayTenantChange()"></select></div>
+            <div class="form-group"><label>Amount ($)</label><input type="number" class="form-control" id="payAmount" placeholder="2000"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Date</label><input type="date" class="form-control" id="payDate"></div>
+            <div class="form-group"><label>Method</label><select class="form-control" id="payMethod"><option>e-transfer</option><option>cheque</option><option>cash</option><option>direct deposit</option></select></div>
+          </div>
+          <input type="hidden" id="payPropertyId">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closePaymentModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="savePayment()">Record Payment</button>
+        </div>
+      </div>
+    </div>
+
+    <!-- Expense Modal -->
+    <div class="modal-overlay" id="expenseModal">
+      <div class="modal">
+        <div class="modal-header"><h2>Add Expense</h2><button class="modal-close" onclick="closeExpenseModal()">✕</button></div>
+        <div class="modal-body">
+          <div class="form-row">
+            <div class="form-group"><label>Property</label><select class="form-control" id="expProperty"></select></div>
+            <div class="form-group"><label>Amount ($)</label><input type="number" class="form-control" id="expAmount" placeholder="500"></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Date</label><input type="date" class="form-control" id="expDate"></div>
+            <div class="form-group"><label>Category</label><select class="form-control" id="expCategory">
+              <option>plumbing</option><option>electrical</option><option>hvac</option><option>landscaping</option>
+              <option>insurance</option><option>property tax</option><option>repairs</option><option>cleaning</option>
+              <option>management fees</option><option>utilities</option><option>other</option>
+            </select></div>
+          </div>
+          <div class="form-group"><label>Description</label><input type="text" class="form-control" id="expDesc" placeholder="Brief description"></div>
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeExpenseModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveExpense()">Save Expense</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/property.js"></script>
+  <script>
+    function renderFinances() {
+      const props = RentBoss.getProperties();
+      const totalRev = RentBoss.getTotalRevenue(2026, 3);
+      const totalExp = RentBoss.getTotalExpenses(2026, 3);
+      const profit = totalRev - totalExp;
+      const gst = RentBoss.getGST(totalRev);
+
+      // Stats
+      document.getElementById('finStats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">March Revenue</div><div class="stat-value">${RentBoss.formatCurrency(totalRev)}</div></div>
+        <div class="stat-card danger"><div class="stat-label">March Expenses</div><div class="stat-value">${RentBoss.formatCurrency(totalExp)}</div></div>
+        <div class="stat-card ${profit >= 0 ? 'navy' : 'danger'}"><div class="stat-label">Net Profit</div><div class="stat-value">${RentBoss.formatCurrency(profit)}</div></div>
+        <div class="stat-card warning"><div class="stat-label">Est. HST Collected</div><div class="stat-value">${RentBoss.formatCurrency(gst)}</div><div class="stat-sub">13% Ontario rate</div></div>
+      `;
+
+      // Payments table
+      const payments = RentBoss.getPayments().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+      const tenants = RentBoss.getTenants();
+      document.getElementById('paymentsTable').innerHTML = payments.map(p => {
+        const t = tenants.find(t => t.id === p.tenantId);
+        const prop = props.find(pr => pr.id === p.propertyId);
+        return `<tr><td>${RentBoss.formatDate(p.date)}</td><td>${t ? t.firstName + ' ' + t.lastName : '—'}</td><td>${prop?.name || '—'}</td><td><strong>${RentBoss.formatCurrency(p.amount)}</strong></td><td>${p.method || '—'}</td></tr>`;
+      }).join('') || '<tr><td colspan="5" class="empty-state">No payments recorded</td></tr>';
+
+      // Expenses table
+      const expenses = RentBoss.getExpenses().sort((a,b) => new Date(b.date) - new Date(a.date)).slice(0, 10);
+      document.getElementById('expensesTable').innerHTML = expenses.map(e => {
+        const prop = props.find(p => p.id === e.propertyId);
+        return `<tr><td>${RentBoss.formatDate(e.date)}</td><td>${prop?.name || '—'}</td><td><span class="badge badge-neutral">${e.category}</span></td><td>${e.description || '—'}</td><td><strong>${RentBoss.formatCurrency(e.amount)}</strong></td></tr>`;
+      }).join('') || '<tr><td colspan="5" class="empty-state">No expenses recorded</td></tr>';
+
+      // P&L
+      let totalPL = { revenue: 0, expenses: 0, profit: 0 };
+      document.getElementById('plTable').innerHTML = props.map(p => {
+        const pl = RentBoss.getProfitLoss(p.id, 2026, 3);
+        totalPL.revenue += pl.revenue;
+        totalPL.expenses += pl.expenses;
+        totalPL.profit += pl.profit;
+        const margin = pl.revenue > 0 ? Math.round((pl.profit / pl.revenue) * 100) : 0;
+        return `<tr>
+          <td><strong>${p.name}</strong></td>
+          <td style="color: var(--green);">${RentBoss.formatCurrency(pl.revenue)}</td>
+          <td style="color: var(--danger);">${RentBoss.formatCurrency(pl.expenses)}</td>
+          <td style="color: ${pl.profit >= 0 ? 'var(--green)' : 'var(--danger)'};"><strong>${RentBoss.formatCurrency(pl.profit)}</strong></td>
+          <td><span class="badge ${margin > 50 ? 'badge-success' : margin > 0 ? 'badge-warning' : 'badge-danger'}">${margin}%</span></td>
+        </tr>`;
+      }).join('') || '<tr><td colspan="5">No properties</td></tr>';
+      const totalMargin = totalPL.revenue > 0 ? Math.round((totalPL.profit / totalPL.revenue) * 100) : 0;
+      document.getElementById('plFoot').innerHTML = `<tr style="font-weight: 700; background: var(--bg);">
+        <td>TOTAL</td><td style="color: var(--green);">${RentBoss.formatCurrency(totalPL.revenue)}</td>
+        <td style="color: var(--danger);">${RentBoss.formatCurrency(totalPL.expenses)}</td>
+        <td style="color: ${totalPL.profit >= 0 ? 'var(--green)' : 'var(--danger)'};">${RentBoss.formatCurrency(totalPL.profit)}</td>
+        <td>${totalMargin}%</td></tr>`;
+
+      // GST
+      document.getElementById('gstSummary').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 16px; padding: 12px 0;">
+          <div><div class="stat-label">Total Revenue (before GST)</div><div style="font-size: 1.3rem; font-weight: 700;">${RentBoss.formatCurrency(totalRev)}</div></div>
+          <div><div class="stat-label">HST Collected (13%)</div><div style="font-size: 1.3rem; font-weight: 700; color: var(--warning);">${RentBoss.formatCurrency(gst)}</div></div>
+          <div><div class="stat-label">ITCs (Input Tax Credits)</div><div style="font-size: 1.3rem; font-weight: 700; color: var(--accent);">${RentBoss.formatCurrency(RentBoss.getGST(totalExp))}</div></div>
+          <div><div class="stat-label">Net HST Payable</div><div style="font-size: 1.3rem; font-weight: 700; color: var(--danger);">${RentBoss.formatCurrency(gst - RentBoss.getGST(totalExp))}</div></div>
+        </div>
+        <p style="color: var(--text-muted); font-size: 0.85rem; margin-top: 8px;">* Residential rent is exempt from GST/HST. This summary applies if you have commercial tenants or taxable supplies. Consult your accountant for accurate filing.</p>
+      `;
+    }
+
+    // Payment Modal
+    function openPaymentModal() {
+      const sel = document.getElementById('payTenant');
+      sel.innerHTML = '<option value="">Select tenant...</option>';
+      RentBoss.getTenants().forEach(t => {
+        const lease = RentBoss.getLeases().find(l => l.tenantId === t.id && l.status === 'active');
+        sel.innerHTML += `<option value="${t.id}" data-prop="${t.propertyId}" data-amount="${lease?.rentAmount || 0}">${t.firstName} ${t.lastName} — ${RentBoss.formatCurrency(lease?.rentAmount || 0)}/mo</option>`;
+      });
+      document.getElementById('payDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('paymentModal').classList.add('active');
+    }
+    function closePaymentModal() { document.getElementById('paymentModal').classList.remove('active'); }
+    function onPayTenantChange() {
+      const opt = document.getElementById('payTenant').selectedOptions[0];
+      if (opt?.value) {
+        document.getElementById('payAmount').value = opt.dataset.amount;
+        document.getElementById('payPropertyId').value = opt.dataset.prop;
+      }
+    }
+    function savePayment() {
+      const tenantId = document.getElementById('payTenant').value;
+      if (!tenantId) return alert('Select a tenant');
+      const tenant = RentBoss.getTenant(tenantId);
+      RentBoss.savePayment({
+        tenantId,
+        propertyId: tenant.propertyId,
+        amount: parseFloat(document.getElementById('payAmount').value) || 0,
+        date: document.getElementById('payDate').value,
+        type: 'rent',
+        method: document.getElementById('payMethod').value,
+      });
+      closePaymentModal();
+      renderFinances();
+    }
+
+    // Expense Modal
+    function openExpenseModal() {
+      const sel = document.getElementById('expProperty');
+      sel.innerHTML = '<option value="">Select property...</option>';
+      RentBoss.getProperties().forEach(p => sel.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+      document.getElementById('expDate').value = new Date().toISOString().split('T')[0];
+      document.getElementById('expenseModal').classList.add('active');
+    }
+    function closeExpenseModal() { document.getElementById('expenseModal').classList.remove('active'); }
+    function saveExpense() {
+      const propId = document.getElementById('expProperty').value;
+      if (!propId) return alert('Select a property');
+      RentBoss.saveExpense({
+        propertyId: propId,
+        amount: parseFloat(document.getElementById('expAmount').value) || 0,
+        date: document.getElementById('expDate').value,
+        category: document.getElementById('expCategory').value,
+        description: document.getElementById('expDesc').value.trim(),
+      });
+      closeExpenseModal();
+      renderFinances();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderFinances);
+  </script>
+</body>
+</html>
