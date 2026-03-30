@@ -1,0 +1,768 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Ultimate Business Notion Templates Bundle</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        :root {
+            --bg-primary: #ffffff;
+            --bg-secondary: #f7f6f3;
+            --bg-tertiary: #f0efeb;
+            --text-primary: #37352f;
+            --text-secondary: #787774;
+            --text-tertiary: #9b9a97;
+            --accent: #2eaadc;
+            --accent-hover: #2496c4;
+            --border: #e3e2de;
+            --success: #4dab6e;
+            --warning: #dfab01;
+            --shadow: rgba(55, 53, 47, 0.09);
+            --card-bg: #ffffff;
+            --mockup-bg: #fbfbfa;
+            --mockup-border: #e8e7e5;
+        }
+        
+        [data-theme="dark"] {
+            --bg-primary: #191919;
+            --bg-secondary: #202020;
+            --bg-tertiary: #2a2a2a;
+            --text-primary: #e8e7e5;
+            --text-secondary: #9b9a97;
+            --text-tertiary: #787774;
+            --accent: #2eaadc;
+            --accent-hover: #5dc0f0;
+            --border: #373737;
+            --shadow: rgba(0, 0, 0, 0.3);
+            --card-bg: #252525;
+            --mockup-bg: #1e1e1e;
+            --mockup-border: #333333;
+        }
+        
+        body {
+            font-family: 'Inter', -apple-system, BlinkMacSystemFont, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            transition: background 0.3s, color 0.3s;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 24px;
+        }
+        
+        /* Theme Toggle */
+        .theme-toggle {
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            z-index: 100;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 8px 12px;
+            cursor: pointer;
+            font-size: 14px;
+            color: var(--text-secondary);
+            transition: all 0.2s;
+        }
+        
+        .theme-toggle:hover {
+            background: var(--bg-tertiary);
+        }
+        
+        /* Hero Section */
+        .hero {
+            text-align: center;
+            padding: 80px 0 60px;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .hero h1 {
+            font-size: 2.5rem;
+            font-weight: 700;
+            letter-spacing: -0.03em;
+            margin-bottom: 16px;
+            color: var(--text-primary);
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            color: var(--text-secondary);
+            max-width: 600px;
+            margin: 0 auto 32px;
+            font-weight: 400;
+        }
+        
+        .price-section {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 16px;
+            margin-bottom: 32px;
+        }
+        
+        .price-original {
+            font-size: 1.5rem;
+            color: var(--text-tertiary);
+            text-decoration: line-through;
+        }
+        
+        .price-current {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .badge {
+            background: var(--success);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+        
+        .buy-btn {
+            display: inline-block;
+            background: var(--accent);
+            color: white;
+            padding: 16px 48px;
+            border-radius: 8px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            text-decoration: none;
+            transition: background 0.2s, transform 0.1s;
+            border: none;
+            cursor: pointer;
+        }
+        
+        .buy-btn:hover {
+            background: var(--accent-hover);
+            transform: translateY(-1px);
+        }
+        
+        .buy-btn:active {
+            transform: translateY(0);
+        }
+        
+        /* Stats */
+        .stats {
+            display: flex;
+            justify-content: center;
+            gap: 48px;
+            padding: 40px 0;
+            border-bottom: 1px solid var(--border);
+        }
+        
+        .stat {
+            text-align: center;
+        }
+        
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--accent);
+        }
+        
+        .stat-label {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            margin-top: 4px;
+        }
+        
+        /* Templates Grid */
+        .templates-section {
+            padding: 60px 0;
+        }
+        
+        .section-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 32px;
+            color: var(--text-primary);
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .template-category {
+            margin-bottom: 48px;
+        }
+        
+        .category-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 20px;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            font-size: 0.85rem;
+        }
+        
+        .templates-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 16px;
+        }
+        
+        .template-card {
+            background: var(--card-bg);
+            border: 1px solid var(--border);
+            border-radius: 8px;
+            padding: 20px;
+            transition: box-shadow 0.2s, transform 0.2s;
+            cursor: default;
+        }
+        
+        .template-card:hover {
+            box-shadow: 0 4px 12px var(--shadow);
+            transform: translateY(-2px);
+        }
+        
+        .template-icon {
+            font-size: 1.5rem;
+            margin-bottom: 12px;
+        }
+        
+        .template-name {
+            font-weight: 600;
+            font-size: 1rem;
+            margin-bottom: 8px;
+            color: var(--text-primary);
+        }
+        
+        .template-desc {
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+            line-height: 1.5;
+        }
+        
+        /* Notion Mockup Preview */
+        .preview-section {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+        
+        .notion-mockup {
+            background: var(--mockup-bg);
+            border: 1px solid var(--mockup-border);
+            border-radius: 8px;
+            overflow: hidden;
+            margin-top: 24px;
+        }
+        
+        .mockup-toolbar {
+            background: var(--bg-secondary);
+            border-bottom: 1px solid var(--mockup-border);
+            padding: 8px 16px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mockup-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+        }
+        
+        .mockup-dot.red { background: #ff5f57; }
+        .mockup-dot.yellow { background: #febc2e; }
+        .mockup-dot.green { background: #28c840; }
+        
+        .mockup-content {
+            padding: 24px;
+        }
+        
+        .mockup-title {
+            font-size: 1.8rem;
+            font-weight: 700;
+            margin-bottom: 8px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .mockup-property {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 4px 0;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        .mockup-property-label {
+            color: var(--text-tertiary);
+            min-width: 100px;
+        }
+        
+        .mockup-tag {
+            display: inline-block;
+            padding: 2px 8px;
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 500;
+        }
+        
+        .tag-blue { background: #d3e5ef; color: #183b56; }
+        .tag-green { background: #dbeddb; color: #1a3a1a; }
+        .tag-yellow { background: #fdecc8; color: #5c4813; }
+        .tag-red { background: #ffe2dd; color: #5c1e1e; }
+        .tag-purple { background: #e8deee; color: #3b1d5c; }
+        
+        .mockup-divider {
+            height: 1px;
+            background: var(--mockup-border);
+            margin: 16px 0;
+        }
+        
+        .mockup-table {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+        }
+        
+        .mockup-table th {
+            text-align: left;
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--mockup-border);
+            color: var(--text-secondary);
+            font-weight: 500;
+        }
+        
+        .mockup-table td {
+            padding: 8px 12px;
+            border-bottom: 1px solid var(--mockup-border);
+        }
+        
+        .mockup-checkbox {
+            display: inline-block;
+            width: 16px;
+            height: 16px;
+            border: 2px solid var(--border);
+            border-radius: 3px;
+            margin-right: 8px;
+            vertical-align: middle;
+        }
+        
+        .mockup-checkbox.checked {
+            background: var(--accent);
+            border-color: var(--accent);
+            position: relative;
+        }
+        
+        .mockup-checkbox.checked::after {
+            content: '✓';
+            color: white;
+            font-size: 12px;
+            position: absolute;
+            top: -2px;
+            left: 2px;
+        }
+        
+        /* What's Included */
+        .included-section {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+        
+        .included-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 16px;
+            margin-top: 24px;
+        }
+        
+        .included-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 12px;
+            padding: 16px;
+            background: var(--bg-secondary);
+            border-radius: 8px;
+        }
+        
+        .included-icon {
+            font-size: 1.2rem;
+            flex-shrink: 0;
+        }
+        
+        .included-text h4 {
+            font-weight: 600;
+            margin-bottom: 4px;
+            font-size: 0.95rem;
+        }
+        
+        .included-text p {
+            font-size: 0.85rem;
+            color: var(--text-secondary);
+        }
+        
+        /* Testimonials */
+        .testimonials {
+            padding: 60px 0;
+            border-top: 1px solid var(--border);
+        }
+        
+        .testimonial-card {
+            background: var(--bg-secondary);
+            border-radius: 8px;
+            padding: 24px;
+            margin-bottom: 16px;
+        }
+        
+        .testimonial-text {
+            font-style: italic;
+            margin-bottom: 12px;
+            color: var(--text-primary);
+        }
+        
+        .testimonial-author {
+            font-weight: 600;
+            font-size: 0.9rem;
+            color: var(--text-secondary);
+        }
+        
+        /* CTA */
+        .cta-section {
+            text-align: center;
+            padding: 60px 0 80px;
+            border-top: 1px solid var(--border);
+        }
+        
+        .cta-section h2 {
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 16px;
+        }
+        
+        .cta-section p {
+            color: var(--text-secondary);
+            margin-bottom: 32px;
+            font-size: 1.1rem;
+        }
+        
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 24px;
+            border-top: 1px solid var(--border);
+            color: var(--text-tertiary);
+            font-size: 0.85rem;
+        }
+        
+        /* Responsive */
+        @media (max-width: 640px) {
+            .hero h1 { font-size: 1.8rem; }
+            .hero p { font-size: 1rem; }
+            .price-current { font-size: 2rem; }
+            .stats { flex-direction: column; gap: 24px; }
+            .templates-grid { grid-template-columns: 1fr; }
+        }
+    </style>
+</head>
+<body>
+    <button class="theme-toggle" onclick="toggleTheme()">🌙 Dark Mode</button>
+    
+    <div class="container">
+        <!-- Hero -->
+        <section class="hero">
+            <h1>Ultimate Business Notion Templates Bundle</h1>
+            <p>15 professionally designed Notion templates to organize your business, personal life, and boost productivity.</p>
+            
+            <div class="price-section">
+                <span class="price-original">$79.99</span>
+                <span class="price-current">$29.99</span>
+                <span class="badge">63% OFF</span>
+            </div>
+            
+            <a href="https://gumroad.com" class="buy-btn">Get the Bundle →</a>
+        </section>
+        
+        <!-- Stats -->
+        <section class="stats">
+            <div class="stat">
+                <div class="stat-number">15</div>
+                <div class="stat-label">Templates</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">50+</div>
+                <div class="stat-label">Database Views</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">100%</div>
+                <div class="stat-label">Customizable</div>
+            </div>
+            <div class="stat">
+                <div class="stat-number">∞</div>
+                <div class="stat-label">Lifetime Updates</div>
+            </div>
+        </section>
+        
+        <!-- Preview Mockup -->
+        <section class="preview-section">
+            <h2 class="section-title">👀 Preview</h2>
+            <div class="notion-mockup">
+                <div class="mockup-toolbar">
+                    <div class="mockup-dot red"></div>
+                    <div class="mockup-dot yellow"></div>
+                    <div class="mockup-dot green"></div>
+                </div>
+                <div class="mockup-content">
+                    <div class="mockup-title">📋 CRM Dashboard</div>
+                    <div class="mockup-property">
+                        <span class="mockup-property-label">Status</span>
+                        <span class="mockup-tag tag-green">Active</span>
+                    </div>
+                    <div class="mockup-property">
+                        <span class="mockup-property-label">Pipeline</span>
+                        <span class="mockup-tag tag-blue">Discovery</span>
+                    </div>
+                    <div class="mockup-divider"></div>
+                    <table class="mockup-table">
+                        <thead>
+                            <tr>
+                                <th>Client</th>
+                                <th>Deal Value</th>
+                                <th>Status</th>
+                                <th>Next Follow-up</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>Acme Corp</td>
+                                <td>$12,500</td>
+                                <td><span class="mockup-tag tag-green">Won</span></td>
+                                <td>Mar 15</td>
+                            </tr>
+                            <tr>
+                                <td>TechStart Inc</td>
+                                <td>$8,200</td>
+                                <td><span class="mockup-tag tag-yellow">Negotiation</span></td>
+                                <td>Mar 10</td>
+                            </tr>
+                            <tr>
+                                <td>Global Solutions</td>
+                                <td>$25,000</td>
+                                <td><span class="mockup-tag tag-blue">Discovery</span></td>
+                                <td>Mar 8</td>
+                            </tr>
+                            <tr>
+                                <td>Bright Ideas</td>
+                                <td>$5,500</td>
+                                <td><span class="mockup-tag tag-purple">Proposal</span></td>
+                                <td>Mar 12</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Templates -->
+        <section class="templates-section">
+            <h2 class="section-title">📦 What's Inside</h2>
+            
+            <div class="template-category">
+                <div class="category-title">💼 Business Templates</div>
+                <div class="templates-grid">
+                    <div class="template-card">
+                        <div class="template-icon">👥</div>
+                        <div class="template-name">CRM Template</div>
+                        <div class="template-desc">Client tracking, deals pipeline, and follow-up reminders.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">📊</div>
+                        <div class="template-name">Project Manager</div>
+                        <div class="template-desc">Tasks, sprints, timelines, and team collaboration.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">🧾</div>
+                        <div class="template-name">Invoice Tracker</div>
+                        <div class="template-desc">Manage invoices, payments, and client billing.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">📅</div>
+                        <div class="template-name">Content Calendar</div>
+                        <div class="template-desc">Social media, blog, and newsletter planning.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">📝</div>
+                        <div class="template-name">Meeting Notes</div>
+                        <div class="template-desc">Agenda, notes, action items, and decisions.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="template-category">
+                <div class="category-title">🏠 Personal Templates</div>
+                <div class="templates-grid">
+                    <div class="template-card">
+                        <div class="template-icon">✅</div>
+                        <div class="template-name">Habit Tracker</div>
+                        <div class="template-desc">Daily habits, streaks, and goal tracking.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">💰</div>
+                        <div class="template-name">Finance Tracker</div>
+                        <div class="template-desc">Income, expenses, budgets, and investments.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">📚</div>
+                        <div class="template-name">Book Tracker</div>
+                        <div class="template-desc">Reading list, notes, reviews, and progress.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">💪</div>
+                        <div class="template-name">Workout Log</div>
+                        <div class="template-desc">Exercises, sets, reps, and progress tracking.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">🍽️</div>
+                        <div class="template-name">Meal Planner</div>
+                        <div class="template-desc">Weekly meals, grocery lists, and recipes.</div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="template-category">
+                <div class="category-title">⚡ Productivity Templates</div>
+                <div class="templates-grid">
+                    <div class="template-card">
+                        <div class="template-icon">🎯</div>
+                        <div class="template-name">Goal Setting</div>
+                        <div class="template-desc">OKRs, quarterly goals, and progress reviews.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">🔄</div>
+                        <div class="template-name">Weekly Review</div>
+                        <div class="template-desc">Reflection, planning, and priorities.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">📖</div>
+                        <div class="template-name">Journal</div>
+                        <div class="template-desc">Daily entries, gratitude, and reflection.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">🎓</div>
+                        <div class="template-name">Learning Hub</div>
+                        <div class="template-desc">Courses, notes, resources, and progress.</div>
+                    </div>
+                    <div class="template-card">
+                        <div class="template-icon">🧠</div>
+                        <div class="template-name">Note-Taking System</div>
+                        <div class="template-desc">Zettelkasten method, categories, and linked notes.</div>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- What's Included -->
+        <section class="included-section">
+            <h2 class="section-title">✨ What You Get</h2>
+            <div class="included-grid">
+                <div class="included-item">
+                    <div class="included-icon">📄</div>
+                    <div class="included-text">
+                        <h4>15 Ready-to-Use Templates</h4>
+                        <p>Import directly into Notion with one click.</p>
+                    </div>
+                </div>
+                <div class="included-item">
+                    <div class="included-icon">📖</div>
+                    <div class="included-text">
+                        <h4>Step-by-Step Setup Guide</h4>
+                        <p>Clear instructions for importing and customizing.</p>
+                    </div>
+                </div>
+                <div class="included-item">
+                    <div class="included-icon">⚡</div>
+                    <div class="included-text">
+                        <h4>5 Bonus Automation Workflows</h4>
+                        <p>Zapier integrations to supercharge your templates.</p>
+                    </div>
+                </div>
+                <div class="included-item">
+                    <div class="included-icon">🎨</div>
+                    <div class="included-text">
+                        <h4>Fully Customizable</h4>
+                        <p>Add your own properties, views, and branding.</p>
+                    </div>
+                </div>
+                <div class="included-item">
+                    <div class="included-icon">🔄</div>
+                    <div class="included-text">
+                        <h4>Lifetime Updates</h4>
+                        <p>New templates and improvements included free.</p>
+                    </div>
+                </div>
+                <div class="included-item">
+                    <div class="included-icon">💬</div>
+                    <div class="included-text">
+                        <h4>Email Support</h4>
+                        <p>Questions? Get help within 24 hours.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+        
+        <!-- Testimonials -->
+        <section class="testimonials">
+            <h2 class="section-title">💬 What People Say</h2>
+            <div class="testimonial-card">
+                <div class="testimonial-text">"These templates completely transformed how I manage my business. The CRM alone saved me hours every week."</div>
+                <div class="testimonial-author">— Sarah M., Freelance Designer</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-text">"Finally, a Notion template bundle that's actually well-organized and thoughtfully designed. Worth every penny."</div>
+                <div class="testimonial-author">— James K., Startup Founder</div>
+            </div>
+            <div class="testimonial-card">
+                <div class="testimonial-text">"I use the habit tracker and journal every single day. The automation workflows are a game-changer."</div>
+                <div class="testimonial-author">— Lisa T., Product Manager</div>
+            </div>
+        </section>
+        
+        <!-- Final CTA -->
+        <section class="cta-section">
+            <h2>Ready to get organized?</h2>
+            <p>15 templates. One price. Lifetime access.</p>
+            <div class="price-section">
+                <span class="price-original">$79.99</span>
+                <span class="price-current">$29.99</span>
+                <span class="badge">63% OFF</span>
+            </div>
+            <a href="https://gumroad.com" class="buy-btn">Get the Bundle →</a>
+        </section>
+    </div>
+    
+    <footer>
+        <p>© 2026 Ultimate Notion Templates. Made with ❤️</p>
+    </footer>
+    
+    <script>
+        function toggleTheme() {
+            const body = document.body;
+            const btn = document.querySelector('.theme-toggle');
+            if (body.getAttribute('data-theme') === 'dark') {
+                body.removeAttribute('data-theme');
+                btn.textContent = '🌙 Dark Mode';
+            } else {
+                body.setAttribute('data-theme', 'dark');
+                btn.textContent = '☀️ Light Mode';
+            }
+        }
+    </script>
+</body>
+</html>
