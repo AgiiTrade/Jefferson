@@ -1,0 +1,233 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Maintenance — RentBoss</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">🏠 Rent<span>Boss</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="properties.html">Properties</a></li>
+      <li><a href="tenants.html">Tenants</a></li>
+      <li><a href="finances.html">Finances</a></li>
+      <li><a href="maintenance.html" class="active">Maintenance</a></li>
+      <li><a href="reports.html">Reports</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>🔧 Maintenance</h1>
+      <button class="btn btn-primary" onclick="openModal()">+ New Request</button>
+    </div>
+
+    <!-- Stats -->
+    <div class="stats-grid" id="maintStats"></div>
+
+    <!-- Filter -->
+    <div style="display: flex; gap: 8px; margin-bottom: 16px; flex-wrap: wrap;">
+      <button class="btn btn-outline btn-sm filter-btn active" onclick="filterMaint('all', this)">All</button>
+      <button class="btn btn-outline btn-sm filter-btn" onclick="filterMaint('open', this)">Open</button>
+      <button class="btn btn-outline btn-sm filter-btn" onclick="filterMaint('in_progress', this)">In Progress</button>
+      <button class="btn btn-outline btn-sm filter-btn" onclick="filterMaint('completed', this)">Completed</button>
+    </div>
+
+    <!-- List -->
+    <div id="maintList"></div>
+
+    <!-- Modal -->
+    <div class="modal-overlay" id="maintModal">
+      <div class="modal">
+        <div class="modal-header"><h2 id="modalTitle">New Maintenance Request</h2><button class="modal-close" onclick="closeModal()">✕</button></div>
+        <div class="modal-body">
+          <input type="hidden" id="editId">
+          <div class="form-group"><label>Title</label><input type="text" class="form-control" id="mTitle" placeholder="Brief issue title"></div>
+          <div class="form-group"><label>Description</label><textarea class="form-control" id="mDesc" rows="3" placeholder="Detailed description of the issue"></textarea></div>
+          <div class="form-row">
+            <div class="form-group"><label>Property</label><select class="form-control" id="mProperty" onchange="updateUnitTenant()"></select></div>
+            <div class="form-group"><label>Unit</label><select class="form-control" id="mUnit" onchange="updateTenantFromUnit()"><option value="">Select unit...</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Priority</label><select class="form-control" id="mPriority"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select></div>
+            <div class="form-group"><label>Status</label><select class="form-control" id="mStatus"><option value="open">Open</option><option value="in_progress">In Progress</option><option value="completed">Completed</option></select></div>
+          </div>
+          <div class="form-row">
+            <div class="form-group"><label>Contractor</label><input type="text" class="form-control" id="mContractor" placeholder="Contractor name"></div>
+            <div class="form-group"><label>Estimated Cost ($)</label><input type="number" class="form-control" id="mCost" placeholder="0"></div>
+          </div>
+          <input type="hidden" id="mTenant">
+        </div>
+        <div class="modal-footer">
+          <button class="btn btn-outline" onclick="closeModal()">Cancel</button>
+          <button class="btn btn-primary" onclick="saveMaint()">Save Request</button>
+        </div>
+      </div>
+    </div>
+  </main>
+
+  <script src="js/property.js"></script>
+  <script>
+    let currentFilter = 'all';
+
+    function renderMaint() {
+      const allMaint = RentBoss.getMaintenance();
+      const openCount = allMaint.filter(m => m.status === 'open').length;
+      const inProg = allMaint.filter(m => m.status === 'in_progress').length;
+      const completed = allMaint.filter(m => m.status === 'completed').length;
+      const highPri = allMaint.filter(m => m.priority === 'high' && m.status !== 'completed').length;
+      const totalCost = allMaint.reduce((s, m) => s + (m.cost || 0), 0);
+
+      document.getElementById('maintStats').innerHTML = `
+        <div class="stat-card"><div class="stat-label">Total Requests</div><div class="stat-value">${allMaint.length}</div></div>
+        <div class="stat-card warning"><div class="stat-label">Open</div><div class="stat-value">${openCount}</div></div>
+        <div class="stat-card accent"><div class="stat-label">In Progress</div><div class="stat-value">${inProg}</div></div>
+        <div class="stat-card danger"><div class="stat-label">High Priority</div><div class="stat-value">${highPri}</div></div>
+        <div class="stat-card navy"><div class="stat-label">Total Costs</div><div class="stat-value">${RentBoss.formatCurrency(totalCost)}</div></div>
+      `;
+
+      const filtered = currentFilter === 'all' ? allMaint : allMaint.filter(m => m.status === currentFilter);
+      const props = RentBoss.getProperties();
+      const tenants = RentBoss.getTenants();
+
+      if (filtered.length === 0) {
+        document.getElementById('maintList').innerHTML = `<div class="card empty-state"><div class="icon">🔧</div><p>No maintenance requests ${currentFilter !== 'all' ? 'with status: ' + currentFilter : ''}.</p></div>`;
+        return;
+      }
+
+      document.getElementById('maintList').innerHTML = filtered.sort((a,b) => {
+        const pri = { high: 0, medium: 1, low: 2 };
+        return (pri[a.priority] || 3) - (pri[b.priority] || 3);
+      }).map(m => {
+        const prop = props.find(p => p.id === m.propertyId);
+        const unit = prop?.units?.find(u => u.id === m.unitId);
+        const tenant = tenants.find(t => t.id === m.tenantId);
+        return `
+          <div class="card" style="margin-bottom: 12px; border-left: 4px solid ${m.priority === 'high' ? 'var(--danger)' : m.priority === 'medium' ? 'var(--warning)' : 'var(--accent)'};">
+            <div class="card-header">
+              <div>
+                <h3>${m.title}</h3>
+                <span style="color: var(--text-muted); font-size: 0.85rem;">
+                  ${prop?.name || '—'} ${unit ? '• ' + unit.name : ''} ${tenant ? '• ' + tenant.firstName + ' ' + tenant.lastName : ''}
+                </span>
+              </div>
+              <div style="display: flex; gap: 8px; align-items: center;">
+                <span class="priority-${m.priority}" style="font-size: 0.8rem;">${m.priority.toUpperCase()}</span>
+                <span class="badge badge-${m.status === 'completed' ? 'success' : m.status === 'in_progress' ? 'info' : 'warning'}">${m.status.replace('_', ' ')}</span>
+              </div>
+            </div>
+            <p style="color: var(--text); margin-bottom: 12px;">${m.description || ''}</p>
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px;">
+              <div style="font-size: 0.85rem; color: var(--text-muted);">
+                ${m.contractor ? '👷 ' + m.contractor : ''} ${m.cost ? '• 💰 ' + RentBoss.formatCurrency(m.cost) : ''} • 📅 ${RentBoss.formatDate(m.createdAt)}
+              </div>
+              <div style="display: flex; gap: 6px;">
+                <button class="btn btn-outline btn-sm" onclick="editMaint('${m.id}')">✏️ Edit</button>
+                ${m.status !== 'completed' ? `<button class="btn btn-primary btn-sm" onclick="completeMaint('${m.id}')">✅ Complete</button>` : ''}
+                <button class="btn btn-danger btn-sm" onclick="deleteMaint('${m.id}')">🗑️</button>
+              </div>
+            </div>
+          </div>`;
+      }).join('');
+    }
+
+    function filterMaint(status, btn) {
+      currentFilter = status;
+      document.querySelectorAll('.filter-btn').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderMaint();
+    }
+
+    function populatePropDropdown() {
+      const sel = document.getElementById('mProperty');
+      sel.innerHTML = '<option value="">Select property...</option>';
+      RentBoss.getProperties().forEach(p => sel.innerHTML += `<option value="${p.id}">${p.name}</option>`);
+    }
+
+    function updateUnitTenant() {
+      const propId = document.getElementById('mProperty').value;
+      const unitSel = document.getElementById('mUnit');
+      unitSel.innerHTML = '<option value="">Select unit...</option>';
+      if (!propId) return;
+      const prop = RentBoss.getProperty(propId);
+      (prop?.units || []).forEach(u => unitSel.innerHTML += `<option value="${u.id}">${u.name}</option>`);
+    }
+
+    function updateTenantFromUnit() {
+      const propId = document.getElementById('mProperty').value;
+      const unitId = document.getElementById('mUnit').value;
+      if (!propId || !unitId) return;
+      const lease = RentBoss.getActiveLease(propId, unitId);
+      document.getElementById('mTenant').value = lease?.tenantId || '';
+    }
+
+    function openModal(id) {
+      populatePropDropdown();
+      document.getElementById('maintModal').classList.add('active');
+      if (id) {
+        const m = RentBoss.getMaintenance().find(x => x.id === id);
+        document.getElementById('modalTitle').textContent = 'Edit Request';
+        document.getElementById('editId').value = id;
+        document.getElementById('mTitle').value = m.title;
+        document.getElementById('mDesc').value = m.description || '';
+        document.getElementById('mProperty').value = m.propertyId;
+        updateUnitTenant();
+        document.getElementById('mUnit').value = m.unitId || '';
+        document.getElementById('mPriority').value = m.priority;
+        document.getElementById('mStatus').value = m.status;
+        document.getElementById('mContractor').value = m.contractor || '';
+        document.getElementById('mCost').value = m.cost || '';
+        document.getElementById('mTenant').value = m.tenantId || '';
+      } else {
+        document.getElementById('modalTitle').textContent = 'New Maintenance Request';
+        document.getElementById('editId').value = '';
+        document.getElementById('mTitle').value = '';
+        document.getElementById('mDesc').value = '';
+        document.getElementById('mPriority').value = 'medium';
+        document.getElementById('mStatus').value = 'open';
+        document.getElementById('mContractor').value = '';
+        document.getElementById('mCost').value = '';
+        document.getElementById('mTenant').value = '';
+        document.getElementById('mUnit').innerHTML = '<option value="">Select unit...</option>';
+      }
+    }
+
+    function closeModal() { document.getElementById('maintModal').classList.remove('active'); }
+
+    function saveMaint() {
+      const title = document.getElementById('mTitle').value.trim();
+      if (!title) return alert('Title is required');
+      RentBoss.saveMaintenance({
+        id: document.getElementById('editId').value || undefined,
+        title,
+        description: document.getElementById('mDesc').value.trim(),
+        propertyId: document.getElementById('mProperty').value,
+        unitId: document.getElementById('mUnit').value,
+        tenantId: document.getElementById('mTenant').value,
+        priority: document.getElementById('mPriority').value,
+        status: document.getElementById('mStatus').value,
+        contractor: document.getElementById('mContractor').value.trim(),
+        cost: parseFloat(document.getElementById('mCost').value) || 0,
+      });
+      closeModal();
+      renderMaint();
+    }
+
+    function editMaint(id) { openModal(id); }
+    function completeMaint(id) {
+      const m = RentBoss.getMaintenance().find(x => x.id === id);
+      RentBoss.saveMaintenance({ ...m, status: 'completed' });
+      renderMaint();
+    }
+    function deleteMaint(id) {
+      if (confirm('Delete this request?')) { RentBoss.deleteMaintenance(id); renderMaint(); }
+    }
+
+    document.addEventListener('DOMContentLoaded', renderMaint);
+  </script>
+</body>
+</html>

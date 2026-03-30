@@ -1,0 +1,234 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Reports — RentBoss</title>
+  <link rel="stylesheet" href="css/styles.css">
+</head>
+<body>
+  <nav class="nav">
+    <a href="index.html" class="nav-brand">🏠 Rent<span>Boss</span></a>
+    <button class="hamburger" onclick="document.querySelector('.nav-links').classList.toggle('open')">☰</button>
+    <ul class="nav-links">
+      <li><a href="dashboard.html">Dashboard</a></li>
+      <li><a href="properties.html">Properties</a></li>
+      <li><a href="tenants.html">Tenants</a></li>
+      <li><a href="finances.html">Finances</a></li>
+      <li><a href="maintenance.html">Maintenance</a></li>
+      <li><a href="reports.html" class="active">Reports</a></li>
+    </ul>
+  </nav>
+
+  <main class="main">
+    <div class="page-header">
+      <h1>📈 Reports & Analytics</h1>
+      <div style="display: flex; gap: 8px;">
+        <select class="form-control" id="reportYear" onchange="renderReports()" style="width: auto;">
+          <option value="2026" selected>2026</option>
+          <option value="2025">2025</option>
+        </select>
+        <button class="btn btn-outline" onclick="exportCSV()">📥 Export CSV</button>
+      </div>
+    </div>
+
+    <!-- Occupancy -->
+    <div class="card" style="margin-bottom: 20px;">
+      <div class="card-header"><h2>🏠 Occupancy Overview</h2></div>
+      <div id="occupancyReport"></div>
+    </div>
+
+    <div class="grid-2">
+      <!-- Revenue Trends -->
+      <div class="card">
+        <div class="card-header"><h2>💰 Revenue by Month</h2></div>
+        <div id="revenueChart"></div>
+      </div>
+
+      <!-- Expense Breakdown -->
+      <div class="card">
+        <div class="card-header"><h2>🧾 Expense Breakdown</h2></div>
+        <div id="expenseBreakdown"></div>
+      </div>
+    </div>
+
+    <!-- Revenue by Property -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-header"><h2>📊 Revenue by Property (Monthly)</h2></div>
+      <div class="table-wrap">
+        <table>
+          <thead id="revPropHead"><tr><th>Property</th></tr></thead>
+          <tbody id="revPropBody"></tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Tax Report -->
+    <div class="card" style="margin-top: 20px;">
+      <div class="card-header"><h2>🇨🇦 Tax-Ready Summary</h2>
+        <button class="btn btn-outline btn-sm" onclick="printTaxReport()">🖨️ Print</button>
+      </div>
+      <div id="taxReport"></div>
+    </div>
+  </main>
+
+  <script src="js/property.js"></script>
+  <script>
+    const MONTHS = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+
+    function renderReports() {
+      const year = parseInt(document.getElementById('reportYear').value);
+      const props = RentBoss.getProperties();
+      const stats = RentBoss.getOccupancyStats();
+
+      // Occupancy
+      const occBar = stats.totalUnits > 0 ? (stats.occupiedUnits / stats.totalUnits * 100) : 0;
+      document.getElementById('occupancyReport').innerHTML = `
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 16px; margin-bottom: 16px;">
+          <div><div class="stat-label">Total Units</div><div style="font-size: 1.5rem; font-weight: 700;">${stats.totalUnits}</div></div>
+          <div><div class="stat-label">Occupied</div><div style="font-size: 1.5rem; font-weight: 700; color: var(--green);">${stats.occupiedUnits}</div></div>
+          <div><div class="stat-label">Vacant</div><div style="font-size: 1.5rem; font-weight: 700; color: var(--danger);">${stats.vacantUnits}</div></div>
+          <div><div class="stat-label">Rate</div><div style="font-size: 1.5rem; font-weight: 700; color: var(--navy);">${stats.occupancyRate}%</div></div>
+        </div>
+        <div style="background: var(--border); border-radius: 20px; height: 24px; overflow: hidden;">
+          <div style="background: linear-gradient(90deg, var(--green), var(--green-dark)); height: 100%; width: ${occBar}%; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #fff; font-size: 0.75rem; font-weight: 700; min-width: 40px;">${stats.occupancyRate}%</div>
+        </div>
+        <div style="margin-top: 16px;">
+          ${props.map(p => {
+            const units = p.units || [];
+            const occ = units.filter(u => RentBoss.getActiveLease(p.id, u.id)).length;
+            const rate = units.length > 0 ? Math.round(occ/units.length*100) : 0;
+            return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 8px 0; border-bottom: 1px solid var(--border);">
+              <span>${p.name}</span>
+              <div style="display: flex; align-items: center; gap: 12px;">
+                <span style="font-size: 0.85rem; color: var(--text-muted);">${occ}/${units.length} units</span>
+                <span class="badge ${rate === 100 ? 'badge-success' : rate > 50 ? 'badge-warning' : 'badge-danger'}">${rate}%</span>
+              </div>
+            </div>`;
+          }).join('')}
+        </div>
+      `;
+
+      // Revenue chart (text-based bar chart)
+      const monthlyRev = MONTHS.map((m, i) => RentBoss.getTotalRevenue(year, i + 1));
+      const maxRev = Math.max(...monthlyRev, 1);
+      document.getElementById('revenueChart').innerHTML = `
+        <div style="display: flex; align-items: flex-end; gap: 6px; height: 200px; padding: 12px 0;">
+          ${monthlyRev.map((rev, i) => {
+            const h = (rev / maxRev) * 160;
+            const now = new Date();
+            const isCurrent = (year === now.getFullYear() && i === now.getMonth());
+            return `<div style="flex: 1; display: flex; flex-direction: column; align-items: center; gap: 4px;">
+              <span style="font-size: 0.7rem; font-weight: 600;">${rev > 0 ? '$' + Math.round(rev/1000) + 'k' : ''}</span>
+              <div style="width: 100%; max-width: 40px; height: ${Math.max(h, 4)}px; background: ${isCurrent ? 'var(--green)' : 'var(--navy-light)'}; border-radius: 4px 4px 0 0; min-height: 4px;"></div>
+              <span style="font-size: 0.7rem; color: ${isCurrent ? 'var(--green)' : 'var(--text-muted)'}; font-weight: ${isCurrent ? '700' : '400'};">${MONTHS[i]}</span>
+            </div>`;
+          }).join('')}
+        </div>
+        <div style="text-align: center; padding: 8px; border-top: 1px solid var(--border); font-size: 0.9rem;">
+          <strong>Total ${year}:</strong> ${RentBoss.formatCurrency(monthlyRev.reduce((a,b) => a+b, 0))}
+        </div>
+      `;
+
+      // Expense breakdown
+      const expenses = RentBoss.getExpenses().filter(e => new Date(e.date).getFullYear() === year);
+      const byCategory = {};
+      expenses.forEach(e => { byCategory[e.category] = (byCategory[e.category] || 0) + e.amount; });
+      const sorted = Object.entries(byCategory).sort((a,b) => b[1] - a[1]);
+      const totalExp = sorted.reduce((s, [,v]) => s + v, 0);
+      document.getElementById('expenseBreakdown').innerHTML = sorted.length > 0 ? `
+        <div style="padding: 12px 0;">
+          ${sorted.map(([cat, amt]) => {
+            const pct = totalExp > 0 ? Math.round(amt / totalExp * 100) : 0;
+            return `<div style="margin-bottom: 12px;">
+              <div style="display: flex; justify-content: space-between; margin-bottom: 4px;">
+                <span style="font-weight: 600; text-transform: capitalize;">${cat}</span>
+                <span>${RentBoss.formatCurrency(amt)} (${pct}%)</span>
+              </div>
+              <div style="background: var(--border); border-radius: 10px; height: 8px; overflow: hidden;">
+                <div style="background: var(--danger); height: 100%; width: ${pct}%; border-radius: 10px; opacity: 0.7;"></div>
+              </div>
+            </div>`;
+          }).join('')}
+          <div style="border-top: 2px solid var(--border); padding-top: 12px; display: flex; justify-content: space-between; font-weight: 700;">
+            <span>Total Expenses</span><span style="color: var(--danger);">${RentBoss.formatCurrency(totalExp)}</span>
+          </div>
+        </div>` : '<div class="empty-state"><p>No expenses recorded for ' + year + '</p></div>';
+
+      // Revenue by property
+      const head = document.getElementById('revPropHead');
+      head.innerHTML = '<tr><th>Property</th>' + MONTHS.map(m => `<th>${m}</th>`).join('') + '<th>Total</th></tr>';
+      document.getElementById('revPropBody').innerHTML = props.map(p => {
+        let total = 0;
+        const cells = MONTHS.map((_, i) => {
+          const rev = RentBoss.getPropertyRevenue(p.id, year, i + 1);
+          total += rev;
+          return `<td style="font-size: 0.8rem; ${rev > 0 ? 'color: var(--green);' : 'color: var(--text-muted);'}">${rev > 0 ? '$' + Math.round(rev) : '—'}</td>`;
+        }).join('');
+        return `<tr><td><strong>${p.name}</strong></td>${cells}<td><strong>${RentBoss.formatCurrency(total)}</strong></td></tr>`;
+      }).join('');
+
+      // Tax report
+      const totalRev = RentBoss.getTotalRevenue(year);
+      const totalExps = RentBoss.getTotalExpenses(year);
+      const net = totalRev - totalExps;
+      const gst = RentBoss.getGST(totalRev);
+      document.getElementById('taxReport').innerHTML = `
+        <div id="taxPrintArea" style="padding: 16px 0;">
+          <div style="background: var(--bg); border-radius: var(--radius); padding: 20px; margin-bottom: 16px;">
+            <h3 style="margin-bottom: 12px; color: var(--navy);">Annual Income Statement — ${year}</h3>
+            <div style="display: grid; gap: 8px;">
+              <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);"><span>Total Rental Income</span><strong style="color: var(--green);">${RentBoss.formatCurrency(totalRev)}</strong></div>
+              <div style="display: flex; justify-content: space-between; padding: 8px 0; border-bottom: 1px solid var(--border);"><span>Total Expenses</span><strong style="color: var(--danger);">(${RentBoss.formatCurrency(totalExps)})</strong></div>
+              <div style="display: flex; justify-content: space-between; padding: 12px 0; font-size: 1.1rem;"><span><strong>Net Rental Income</strong></span><strong style="color: ${net >= 0 ? 'var(--green)' : 'var(--danger)'};">${RentBoss.formatCurrency(net)}</strong></div>
+            </div>
+          </div>
+          <div class="grid-2">
+            <div style="background: var(--bg); border-radius: var(--radius); padding: 20px;">
+              <h3 style="margin-bottom: 12px; color: var(--navy);">GST/HST Summary</h3>
+              <div style="display: grid; gap: 6px; font-size: 0.9rem;">
+                <div style="display: flex; justify-content: space-between;"><span>HST Collected (13%)</span><span>${RentBoss.formatCurrency(gst)}</span></div>
+                <div style="display: flex; justify-content: space-between;"><span>ITCs Claimed</span><span>${RentBoss.formatCurrency(RentBoss.getGST(totalExps))}</span></div>
+                <div style="display: flex; justify-content: space-between; padding-top: 8px; border-top: 1px solid var(--border); font-weight: 700;"><span>Net HST Payable</span><span>${RentBoss.formatCurrency(gst - RentBoss.getGST(totalExps))}</span></div>
+              </div>
+            </div>
+            <div style="background: var(--bg); border-radius: var(--radius); padding: 20px;">
+              <h3 style="margin-bottom: 12px; color: var(--navy);">Expense Categories</h3>
+              ${sorted.slice(0, 6).map(([cat, amt]) => `<div style="display: flex; justify-content: space-between; padding: 4px 0; font-size: 0.9rem; text-transform: capitalize;"><span>${cat}</span><span>${RentBoss.formatCurrency(amt)}</span></div>`).join('')}
+            </div>
+          </div>
+          <p style="color: var(--text-muted); font-size: 0.8rem; margin-top: 16px;">* This report is for informational purposes. Consult a qualified accountant for tax filing. Generated by RentBoss on ${new Date().toLocaleDateString('en-CA')}.</p>
+        </div>
+      `;
+    }
+
+    function exportCSV() {
+      const year = parseInt(document.getElementById('reportYear').value);
+      const props = RentBoss.getProperties();
+      let csv = 'Property,Month,Revenue,Expenses,Profit\n';
+      props.forEach(p => {
+        MONTHS.forEach((m, i) => {
+          const rev = RentBoss.getPropertyRevenue(p.id, year, i + 1);
+          const exp = RentBoss.getPropertyExpenses(p.id, year, i + 1);
+          csv += `"${p.name}",${m},${rev},${exp},${rev - exp}\n`;
+        });
+      });
+      const blob = new Blob([csv], { type: 'text/csv' });
+      const a = document.createElement('a');
+      a.href = URL.createObjectURL(blob);
+      a.download = `rentboss-report-${year}.csv`;
+      a.click();
+    }
+
+    function printTaxReport() {
+      const content = document.getElementById('taxPrintArea').innerHTML;
+      const w = window.open('', '_blank');
+      w.document.write(`<html><head><title>RentBoss Tax Report</title><style>body{font-family:system-ui;padding:40px;color:#2c3e50;}h3{color:#1a2744;}</style></head><body><h1>🏠 RentBoss Tax Report</h1>${content}</body></html>`);
+      w.document.close();
+      w.print();
+    }
+
+    document.addEventListener('DOMContentLoaded', renderReports);
+  </script>
+</body>
+</html>
