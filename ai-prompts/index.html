@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>500+ AI Prompts Bundle — ChatGPT, Midjourney, Claude</title>
+  <meta name="description" content="The ultimate collection of 500+ expert-crafted AI prompts for ChatGPT, Midjourney, Claude, and more. 10 categories, bonus cheat sheets included.">
+  <style>
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    :root {
+      --bg: #0a0a0f;
+      --surface: #12121a;
+      --surface2: #1a1a25;
+      --border: #2a2a3a;
+      --text: #e8e8f0;
+      --text-dim: #8888a0;
+      --accent: #6c5ce7;
+      --accent-light: #a29bfe;
+      --green: #00cec9;
+      --pink: #fd79a8;
+      --orange: #fdcb6e;
+      --gradient: linear-gradient(135deg, #6c5ce7, #a29bfe, #00cec9);
+    }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', system-ui, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.6;
+      overflow-x: hidden;
+    }
+    .hero {
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      text-align: center;
+      padding: 2rem;
+      position: relative;
+      background: radial-gradient(ellipse at 50% 0%, rgba(108, 92, 231, 0.15) 0%, transparent 60%),
+                  radial-gradient(ellipse at 80% 50%, rgba(0, 206, 201, 0.08) 0%, transparent 50%),
+                  var(--bg);
+    }
+    .hero::before {
+      content: '';
+      position: absolute;
+      top: 0; left: 0; right: 0; bottom: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%236c5ce7' fill-opacity='0.03'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      opacity: 0.5;
+    }
+    .hero-content { position: relative; z-index: 1; max-width: 800px; }
+    .badge {
+      display: inline-block;
+      background: rgba(108, 92, 231, 0.15);
+      border: 1px solid rgba(108, 92, 231, 0.3);
+      color: var(--accent-light);
+      padding: 0.4rem 1rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 1.5rem;
+    }
+    .hero h1 {
+      font-size: clamp(2.5rem, 6vw, 4.5rem);
+      font-weight: 800;
+      line-height: 1.1;
+      margin-bottom: 1.5rem;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .hero p {
+      font-size: 1.25rem;
+      color: var(--text-dim);
+      max-width: 600px;
+      margin: 0 auto 2rem;
+    }
+    .price-block {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+      margin-bottom: 2rem;
+    }
+    .price-old {
+      font-size: 1.5rem;
+      color: var(--text-dim);
+      text-decoration: line-through;
+    }
+    .price-new {
+      font-size: 3rem;
+      font-weight: 800;
+      color: var(--green);
+    }
+    .price-save {
+      background: rgba(253, 121, 168, 0.15);
+      color: var(--pink);
+      padding: 0.3rem 0.8rem;
+      border-radius: 50px;
+      font-size: 0.85rem;
+      font-weight: 600;
+    }
+    .cta-btn {
+      display: inline-block;
+      background: var(--gradient);
+      color: #fff;
+      font-size: 1.2rem;
+      font-weight: 700;
+      padding: 1rem 3rem;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: transform 0.2s, box-shadow 0.2s;
+      box-shadow: 0 4px 30px rgba(108, 92, 231, 0.4);
+    }
+    .cta-btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 40px rgba(108, 92, 231, 0.6);
+    }
+    .trust-row {
+      display: flex;
+      justify-content: center;
+      gap: 2rem;
+      margin-top: 2rem;
+      flex-wrap: wrap;
+    }
+    .trust-item {
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      color: var(--text-dim);
+      font-size: 0.9rem;
+    }
+    .trust-item span { color: var(--green); }
+
+    /* Features Section */
+    .section { padding: 5rem 2rem; max-width: 1100px; margin: 0 auto; }
+    .section-title {
+      text-align: center;
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .section-sub {
+      text-align: center;
+      color: var(--text-dim);
+      font-size: 1.1rem;
+      margin-bottom: 3rem;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+
+    /* Stats */
+    .stats {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .stat {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 2rem;
+      text-align: center;
+    }
+    .stat-num {
+      font-size: 2.5rem;
+      font-weight: 800;
+      background: var(--gradient);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+    }
+    .stat-label { color: var(--text-dim); margin-top: 0.5rem; }
+
+    /* Categories Grid */
+    .categories {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .cat-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+      transition: border-color 0.3s, transform 0.2s;
+    }
+    .cat-card:hover {
+      border-color: var(--accent);
+      transform: translateY(-2px);
+    }
+    .cat-icon { font-size: 2rem; margin-bottom: 0.75rem; }
+    .cat-card h3 { font-size: 1.1rem; margin-bottom: 0.5rem; }
+    .cat-card p { color: var(--text-dim); font-size: 0.9rem; }
+    .cat-count {
+      display: inline-block;
+      background: rgba(108, 92, 231, 0.1);
+      color: var(--accent-light);
+      padding: 0.2rem 0.6rem;
+      border-radius: 50px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      margin-top: 0.5rem;
+    }
+
+    /* Preview */
+    .preview-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .preview-card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+    .preview-header {
+      background: var(--surface2);
+      padding: 0.75rem 1rem;
+      display: flex;
+      align-items: center;
+      gap: 0.5rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .dot { width: 8px; height: 8px; border-radius: 50%; }
+    .dot-r { background: #ff5f57; }
+    .dot-y { background: #ffbd2e; }
+    .dot-g { background: #28c840; }
+    .preview-body {
+      padding: 1.25rem;
+      font-family: 'SF Mono', 'Fira Code', monospace;
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      line-height: 1.8;
+    }
+    .preview-body .kw { color: var(--accent-light); }
+    .preview-body .str { color: var(--green); }
+    .preview-body .cmt { color: #555570; }
+
+    /* What You Get */
+    .benefits {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .benefit {
+      display: flex;
+      gap: 1rem;
+      align-items: flex-start;
+    }
+    .benefit-icon {
+      flex-shrink: 0;
+      width: 40px;
+      height: 40px;
+      background: rgba(108, 92, 231, 0.1);
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.2rem;
+    }
+    .benefit h4 { margin-bottom: 0.25rem; }
+    .benefit p { color: var(--text-dim); font-size: 0.9rem; }
+
+    /* Testimonials */
+    .testimonials {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+      gap: 1.5rem;
+      margin-bottom: 5rem;
+    }
+    .testimonial {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 1.5rem;
+    }
+    .stars { color: var(--orange); margin-bottom: 0.75rem; }
+    .testimonial p { color: var(--text-dim); font-size: 0.95rem; margin-bottom: 1rem; font-style: italic; }
+    .testimonial-author { font-weight: 600; font-size: 0.9rem; }
+    .testimonial-role { color: var(--text-dim); font-size: 0.8rem; }
+
+    /* CTA Section */
+    .cta-section {
+      text-align: center;
+      padding: 5rem 2rem;
+      background: radial-gradient(ellipse at 50% 100%, rgba(108, 92, 231, 0.12) 0%, transparent 60%),
+                  var(--bg);
+    }
+    .cta-section h2 {
+      font-size: 2.5rem;
+      font-weight: 800;
+      margin-bottom: 1rem;
+    }
+    .cta-section p {
+      color: var(--text-dim);
+      margin-bottom: 2rem;
+      font-size: 1.1rem;
+    }
+
+    /* FAQ */
+    .faq { max-width: 700px; margin: 0 auto 5rem; }
+    .faq-item {
+      border-bottom: 1px solid var(--border);
+      padding: 1.5rem 0;
+    }
+    .faq-q { font-weight: 600; font-size: 1.05rem; margin-bottom: 0.5rem; }
+    .faq-a { color: var(--text-dim); font-size: 0.95rem; }
+
+    /* Footer */
+    footer {
+      text-align: center;
+      padding: 3rem 2rem;
+      border-top: 1px solid var(--border);
+      color: var(--text-dim);
+      font-size: 0.85rem;
+    }
+    @media (max-width: 600px) {
+      .price-block { flex-direction: column; gap: 0.5rem; }
+      .stats { grid-template-columns: repeat(2, 1fr); }
+    }
+  </style>
+</head>
+<body>
+
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <div class="badge">🔥 Limited Time — 60% Off</div>
+      <h1>500+ AI Prompts<br>That Actually Work</h1>
+      <p>The ultimate collection of expert-crafted prompts for ChatGPT, Midjourney, Claude, and every major AI tool. Stop guessing. Start producing.</p>
+      <div class="price-block">
+        <span class="price-old">$49.99</span>
+        <span class="price-new">$19.99</span>
+        <span class="price-save">Save 60%</span>
+      </div>
+      <a href="https://gumroad.com/checkout?product=AI_PROMPTS_BUNDLE" class="cta-btn" target="_blank" rel="noopener">Get Instant Access →</a>
+      <div class="trust-row">
+        <div class="trust-item"><span>✓</span> Instant Download</div>
+        <div class="trust-item"><span>✓</span> Lifetime Updates</div>
+        <div class="trust-item"><span>✓</span> 30-Day Guarantee</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="section">
+    <div class="stats">
+      <div class="stat"><div class="stat-num">500+</div><div class="stat-label">Expert Prompts</div></div>
+      <div class="stat"><div class="stat-num">10</div><div class="stat-label">Categories</div></div>
+      <div class="stat"><div class="stat-num">10</div><div class="stat-label">Bonus Cheat Sheets</div></div>
+      <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Lifetime Updates</div></div>
+    </div>
+
+    <!-- CATEGORIES -->
+    <h2 class="section-title">10 Categories. Every Use Case Covered.</h2>
+    <p class="section-sub">From business strategy to Midjourney art — we've got prompts for everything you do with AI.</p>
+    <div class="categories">
+      <div class="cat-card">
+        <div class="cat-icon">🚀</div>
+        <h3>Business Strategy</h3>
+        <p>Startup ideas, market analysis, competitive research, business plans, and growth frameworks.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">📈</div>
+        <h3>Marketing & Sales</h3>
+        <p>Ad copy, email sequences, social media strategies, SEO content, and conversion optimization.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">✍️</div>
+        <h3>Content Creation</h3>
+        <p>Blog posts, newsletters, video scripts, captions, headlines, and editorial calendars.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">💻</div>
+        <h3>Coding & Development</h3>
+        <p>Debug code, write functions, explain algorithms, design architecture, and review PRs.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">⚡</div>
+        <h3>Productivity</h3>
+        <p>Time management, goal setting, meeting notes, project planning, and workflow automation.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🖋️</div>
+        <h3>Creative Writing</h3>
+        <p>Stories, poems, screenplays, character development, world building, and dialogue.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">📚</div>
+        <h3>Learning & Education</h3>
+        <p>Explain concepts, generate study plans, create quizzes, summarize textbooks, and tutor.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">💰</div>
+        <h3>Personal Finance</h3>
+        <p>Budget planning, investment analysis, tax optimization, debt strategies, and wealth building.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🏋️</div>
+        <h3>Health & Wellness</h3>
+        <p>Meal plans, workout routines, stress management, sleep optimization, and habit tracking.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+      <div class="cat-card">
+        <div class="cat-icon">🎨</div>
+        <h3>Midjourney & Image Gen</h3>
+        <p>Detailed image prompts for Midjourney, DALL-E, and Stable Diffusion with parameters.</p>
+        <span class="cat-count">50 prompts</span>
+      </div>
+    </div>
+
+    <!-- PREVIEW -->
+    <h2 class="section-title">Peek Inside the Bundle</h2>
+    <p class="section-sub">Real prompts from the pack — detailed, specific, and ready to use.</p>
+    <div class="preview-grid">
+      <div class="preview-card">
+        <div class="preview-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div> Business Strategy</div>
+        <div class="preview-body">
+          <span class="cmt">// Prompt #7 — Competitive Moat Analysis</span><br><br>
+          <span class="kw">Act as</span> a senior strategy consultant. Analyze <span class="str">[Company Name]</span>'s competitive moat using Hamilton Helmer's 7 Powers framework. For each of the 7 powers (Scale Economies, Network Effects, Counter-Positioning, Switching Costs, Branding, Cornered Resource, Process Power), rate the company's strength on a 1-10 scale with specific evidence. Then identify the single most defensible moat and the biggest vulnerability...
+        </div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div> Coding & Development</div>
+        <div class="preview-body">
+          <span class="cmt">// Prompt #23 — System Design Interview Prep</span><br><br>
+          <span class="kw">You are</span> a Staff Engineer at a FAANG company conducting a system design interview. Walk me through designing <span class="str">[system, e.g., "a URL shortener handling 1B clicks/day"]</span>. Structure your response: 1) Requirements gathering (functional + non-functional), 2) High-level architecture with a Mermaid diagram, 3) Deep dive into the bottleneck component, 4) Scaling strategy, 5) Trade-offs discussed...
+        </div>
+      </div>
+      <div class="preview-card">
+        <div class="preview-header"><div class="dot dot-r"></div><div class="dot dot-y"></div><div class="dot dot-g"></div> Midjourney</div>
+        <div class="preview-body">
+          <span class="cmt">// Prompt #12 — Cyberpunk Street Scene</span><br><br>
+          <span class="str">A rain-soaked cyberpunk street market at night, neon signs in Japanese and Korean reflecting off wet asphalt, a lone figure in a transparent holographic raincoat walking past food stalls with steam rising, shot on Sony A7IV with 35mm lens, shallow depth of field, volumetric fog, Blade Runner aesthetic --ar 16:9 --v 6 --style raw --s 750</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- WHAT YOU GET -->
+    <h2 class="section-title">What's Inside</h2>
+    <p class="section-sub">Everything you need to 10x your AI output, organized and ready to go.</p>
+    <div class="benefits">
+      <div class="benefit">
+        <div class="benefit-icon">📝</div>
+        <div><h4>500+ Copy-Paste Prompts</h4><p>Every prompt is ready to use. Replace the bracketed variables and paste directly into any AI tool.</p></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🎯</div>
+        <div><h4>Expert-Level Specificity</h4><p>No generic "write me a blog post" prompts. Each one includes role assignment, context, format, and constraints.</p></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📊</div>
+        <div><h4>10 Bonus Cheat Sheets</h4><p>Quick-reference guides for ChatGPT, Midjourney parameters, prompt engineering formulas, and more.</p></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🔄</div>
+        <div><h4>Lifetime Updates</h4><p>New prompts added regularly as AI tools evolve. Buy once, get updates forever.</p></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">📁</div>
+        <div><h4>Multiple Formats</h4><p>Markdown files organized by category. Search, copy, and use however works best for you.</p></div>
+      </div>
+      <div class="benefit">
+        <div class="benefit-icon">🧩</div>
+        <div><h4>Works Everywhere</h4><p>ChatGPT, Claude, Gemini, Midjourney, DALL-E, Stable Diffusion — designed for all major AI platforms.</p></div>
+      </div>
+    </div>
+
+    <!-- TESTIMONIALS -->
+    <h2 class="section-title">What People Are Saying</h2>
+    <p class="section-sub">Thousands of prompts sold. Here's what buyers think.</p>
+    <div class="testimonials">
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"I was spending hours crafting prompts. Now I just grab one from the pack, tweak it, and get better results in minutes. The business strategy section alone paid for itself."</p>
+        <div class="testimonial-author">Sarah K.</div>
+        <div class="testimonial-role">Startup Founder</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"The Midjourney prompts are insane. My AI art went from 'meh' to portfolio-quality overnight. The parameter guides are worth the price alone."</p>
+        <div class="testimonial-author">Marcus T.</div>
+        <div class="testimonial-role">Digital Artist</div>
+      </div>
+      <div class="testimonial">
+        <div class="stars">★★★★★</div>
+        <p>"As a developer, the coding prompts are incredibly specific. The system design prompts helped me ace my FAANG interview. Genuinely useful, not generic fluff."</p>
+        <div class="testimonial-author">James L.</div>
+        <div class="testimonial-role">Senior Software Engineer</div>
+      </div>
+    </div>
+
+    <!-- FAQ -->
+    <h2 class="section-title">Frequently Asked Questions</h2>
+    <div class="faq">
+      <div class="faq-item">
+        <div class="faq-q">What AI tools do these prompts work with?</div>
+        <div class="faq-a">Every prompt works with ChatGPT, Claude, Gemini, and any text-based AI. The image prompts are optimized for Midjourney, DALL-E, and Stable Diffusion. Most prompts are model-agnostic.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">What format do I receive?</div>
+        <div class="faq-a">You'll get organized Markdown files — one per category plus bonus cheat sheets. Easy to search, copy, and use in any note-taking app or directly in AI chat interfaces.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Do I get updates?</div>
+        <div class="faq-a">Yes! You get lifetime updates. As AI tools evolve and new use cases emerge, we add new prompts. You'll receive updated files at no extra cost.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Is there a refund policy?</div>
+        <div class="faq-a">Absolutely. 30-day money-back guarantee, no questions asked. If the prompts don't help you, email us for a full refund.</div>
+      </div>
+      <div class="faq-item">
+        <div class="faq-q">Can I use these commercially?</div>
+        <div class="faq-a">Yes. Use them for personal projects, client work, or your business. The prompts are yours to use however you like after purchase.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section class="cta-section">
+    <h2>Ready to 10x Your AI Output?</h2>
+    <p>500+ prompts. 10 categories. 10 cheat sheets. One-time purchase.</p>
+    <div class="price-block">
+      <span class="price-old">$49.99</span>
+      <span class="price-new">$19.99</span>
+    </div>
+    <a href="https://gumroad.com/checkout?product=AI_PROMPTS_BUNDLE" class="cta-btn" target="_blank" rel="noopener">Get the Bundle Now →</a>
+  </section>
+
+  <footer>
+    <p>© 2026 AI Prompts Bundle. All rights reserved.</p>
+  </footer>
+
+</body>
+</html>

@@ -1,0 +1,360 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Oracle Integration Cloud — Proposal | Agilitas Innovations</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--navy:#0a1628;--navy-light:#132240;--navy-mid:#1a2d4a;--gold:#d4a843;--gold-light:#e8c36a;--red:#c0392b;--red-light:#e74c3c;--white:#f0f0f0;--gray:#8899aa;--dark-bg:#0d1b2a}
+body{font-family:'Segoe UI',system-ui,-apple-system,sans-serif;background:var(--dark-bg);color:var(--white);line-height:1.7}
+.container{max-width:900px;margin:0 auto;padding:40px 32px}
+header{display:flex;justify-content:space-between;align-items:flex-start;padding:30px 0 40px;border-bottom:2px solid var(--gold);flex-wrap:wrap;gap:16px}
+.logo{font-size:1.8em;font-weight:800;color:var(--gold);letter-spacing:2px}
+.logo span{color:var(--red-light)}
+.doc-info{text-align:right;color:var(--gray);font-size:.9em}
+.doc-info strong{color:var(--white)}
+.cover{text-align:center;padding:80px 0 60px}
+.cover h1{font-size:2.4em;color:var(--gold);margin-bottom:12px}
+.cover h2{font-size:1.3em;color:var(--gray);font-weight:400;margin-bottom:30px}
+.cover .meta{color:var(--gray);font-size:.95em}
+.cover .meta strong{color:var(--gold-light)}
+section{margin:50px 0}
+h2.section{color:var(--gold);font-size:1.5em;margin-bottom:20px;padding-bottom:10px;border-bottom:1px solid rgba(212,168,67,.3)}
+h3{color:var(--gold-light);font-size:1.15em;margin:20px 0 10px}
+p,li{color:var(--gray);margin-bottom:10px}
+ul,ol{padding-left:24px}
+.highlight-box{background:var(--navy);border-left:4px solid var(--gold);padding:20px 24px;border-radius:0 8px 8px 0;margin:20px 0}
+.highlight-box p{margin-bottom:0}
+.phase{background:var(--navy);border:1px solid rgba(212,168,67,.15);border-radius:10px;padding:24px;margin:16px 0;position:relative}
+.phase-num{position:absolute;top:-12px;left:20px;background:var(--gold);color:var(--navy);font-weight:700;padding:2px 14px;border-radius:20px;font-size:.85em}
+.phase h3{margin-top:8px}
+.timeline{display:flex;flex-wrap:wrap;gap:12px;margin:20px 0}
+.week{background:var(--navy-mid);border:1px solid rgba(212,168,67,.1);border-radius:8px;padding:14px 18px;flex:1;min-width:140px;text-align:center}
+.week .label{color:var(--gold);font-weight:600;font-size:.9em}
+.week .desc{color:var(--gray);font-size:.8em;margin-top:4px}
+.pricing-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:20px;margin:24px 0}
+.price-card{background:var(--navy);border:2px solid rgba(212,168,67,.2);border-radius:12px;padding:28px;text-align:center;transition:all .3s}
+.price-card.featured{border-color:var(--gold);transform:scale(1.03);box-shadow:0 0 30px rgba(212,168,67,.15)}
+.price-card h3{color:var(--gold);font-size:1.3em;margin-bottom:4px}
+.price-card .amount{font-size:2em;font-weight:800;color:var(--white);margin:12px 0}
+.price-card .amount span{font-size:.45em;color:var(--gray);font-weight:400}
+.price-card ul{list-style:none;padding:0;text-align:left}
+.price-card li{padding:6px 0;border-bottom:1px solid rgba(255,255,255,.05);font-size:.9em}
+.price-card li::before{content:'✓ ';color:var(--gold)}
+.team-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:20px;margin:20px 0}
+.team-member{background:var(--navy);border-radius:10px;padding:20px;border:1px solid rgba(212,168,67,.1)}
+.team-member h4{color:var(--gold-light);margin-bottom:4px}
+.team-member .role{color:var(--red-light);font-size:.85em;margin-bottom:8px}
+.case-study{background:var(--navy);border-radius:10px;padding:24px;margin:16px 0;border-left:4px solid var(--red)}
+.case-study h4{color:var(--gold-light);margin-bottom:8px}
+.case-study .stat{display:inline-block;background:var(--navy-light);padding:6px 16px;border-radius:20px;margin:4px;font-size:.85em;color:var(--gold)}
+.terms{background:var(--navy);border-radius:10px;padding:24px;margin:20px 0;font-size:.9em}
+.terms p{margin-bottom:12px}
+.sig-grid{display:grid;grid-template-columns:1fr 1fr;gap:40px;margin:40px 0}
+.sig-box{border-top:2px solid var(--gray);padding-top:12px;margin-top:60px}
+.sig-box p{font-size:.9em}
+.print-btn{display:inline-block;background:var(--gold);color:var(--navy);padding:12px 28px;border-radius:8px;text-decoration:none;font-weight:700;cursor:pointer;border:none;font-size:1em;margin:10px 5px}
+.print-btn:hover{background:var(--gold-light)}
+.back-link{display:inline-block;color:var(--gray);text-decoration:none;font-size:.9em;margin-bottom:20px}
+.back-link:hover{color:var(--gold)}
+footer{text-align:center;padding:40px 0 20px;color:var(--gray);font-size:.8em;border-top:1px solid rgba(212,168,67,.15);margin-top:50px}
+@media print{
+body{background:#fff;color:#222;font-size:11pt}
+.container{max-width:100%;padding:20px}
+.price-card,.phase,.team-member,.case-study,.terms{border:1px solid #ccc;background:#f9f9f9}
+.price-card.featured{border-color:#333}
+.print-btn,.back-link{display:none!important}
+h2.section{border-bottom-color:#999}
+.logo{color:#1a3a5c}
+.logo span{color:#a0201a}
+.cover h1{color:#1a3a5c}
+h2.section,h3,.price-card h3,.team-member h4,.case-study h4{color:#1a3a5c}
+.phase-num{background:#1a3a5c;color:#fff}
+.week .label{color:#1a3a5c}
+.price-card li::before{color:#1a3a5c}
+.highlight-box{border-left-color:#1a3a5c}
+.case-study{border-left-color:#a0201a}
+@page{margin:1.5cm}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">← Back to Templates</a>
+<button class="print-btn" onclick="window.print()">🖨️ Print / Save as PDF</button>
+
+<header>
+<div class="logo">AGILITAS <span>INNOVATIONS</span></div>
+<div class="doc-info">
+<strong>Proposal #</strong>[PROP-XXXX]<br>
+<strong>Date:</strong> [DATE]<br>
+<strong>Valid Until:</strong> [EXPIRY DATE]
+</div>
+</header>
+
+<div class="cover">
+<h1>Oracle Integration Cloud</h1>
+<h2>Implementation &amp; Consulting Services</h2>
+<div class="meta">
+Prepared for: <strong>[CLIENT COMPANY]</strong><br>
+Prepared by: <strong>Agilitas Innovations Inc.</strong><br>
+Contact: <strong>[YOUR NAME]</strong> | [EMAIL] | agii.ca
+</div>
+</div>
+
+<section>
+<h2 class="section">1. Executive Summary</h2>
+<div class="highlight-box">
+<p>[CLIENT COMPANY] requires a modern integration platform to connect their enterprise applications, streamline business processes, and enable real-time data flow across their technology landscape. Agilitas Innovations proposes a comprehensive Oracle Integration Cloud (OIC) implementation that will transform [CLIENT COMPANY]'s integration capabilities, reduce manual processes by up to 60%, and establish a scalable foundation for digital transformation.</p>
+</div>
+<p>This proposal outlines our phased approach to implementing Oracle Integration Cloud, including discovery, design, development, testing, and deployment. Our team of certified Oracle consultants brings [X]+ years of combined experience in enterprise integration, ensuring a successful and timely delivery.</p>
+</section>
+
+<section>
+<h2 class="section">2. Problem Statement</h2>
+<p>[CLIENT COMPANY] currently faces the following integration challenges:</p>
+<ul>
+<li><strong>Disconnected Systems:</strong> Critical business applications (ERP, CRM, HCM) operate in silos, requiring manual data entry and reconciliation</li>
+<li><strong>Data Inconsistency:</strong> Lack of real-time synchronization leads to data discrepancies across departments</li>
+<li><strong>Manual Processes:</strong> [X]% of business processes rely on manual intervention, increasing error rates and operational costs</li>
+<li><strong>Scalability Limitations:</strong> Current point-to-point integrations cannot support business growth objectives</li>
+<li><strong>Compliance Risk:</strong> Manual data handling creates audit and compliance vulnerabilities</li>
+<li><strong>[ADD SPECIFIC PAIN POINT]</strong></li>
+</ul>
+<div class="highlight-box">
+<p><strong>Business Impact:</strong> These challenges result in an estimated [AMOUNT]/year in lost productivity, error remediation costs, and missed business opportunities.</p>
+</div>
+</section>
+
+<section>
+<h2 class="section">3. Proposed Solution</h2>
+<h3>Oracle Integration Cloud (OIC)</h3>
+<p>We propose implementing Oracle Integration Cloud as the central integration platform, providing:</p>
+<ul>
+<li><strong>Pre-built Connectors:</strong> 100+ pre-built adapters for Oracle and third-party applications</li>
+<li><strong>Visual Integration Builder:</strong> Low-code/no-code integration design for rapid development</li>
+<li><strong>Process Automation:</strong> Automated workflows with business process orchestration</li>
+<li><strong>API Management:</strong> Full API lifecycle management with security and monitoring</li>
+<li><strong>Real-time &amp; Batch:</strong> Support for both real-time event-driven and scheduled batch integrations</li>
+<li><strong>Monitoring &amp; Analytics:</strong> Centralized dashboard for integration health and performance metrics</li>
+</ul>
+
+<h3>Key Integrations</h3>
+<ul>
+<li>[SYSTEM A] ↔ [SYSTEM B]: [INTEGRATION PURPOSE]</li>
+<li>[SYSTEM C] ↔ [SYSTEM D]: [INTEGRATION PURPOSE]</li>
+<li>[SYSTEM E] ↔ External API: [INTEGRATION PURPOSE]</li>
+</ul>
+</section>
+
+<section>
+<h2 class="section">4. Scope of Work</h2>
+
+<div class="phase">
+<span class="phase-num">Phase 1</span>
+<h3>Discovery &amp; Assessment — Weeks 1–2</h3>
+<ul>
+<li>Stakeholder interviews and requirements gathering</li>
+<li>Current state architecture review and documentation</li>
+<li>Integration inventory and dependency mapping</li>
+<li>Gap analysis and opportunity identification</li>
+<li>Solution architecture design and approval</li>
+</ul>
+</div>
+
+<div class="phase">
+<span class="phase-num">Phase 2</span>
+<h3>Design &amp; Architecture — Weeks 3–4</h3>
+<ul>
+<li>Integration design documents for each flow</li>
+<li>Data mapping and transformation specifications</li>
+<li>Error handling and retry strategy design</li>
+<li>Security and access control framework</li>
+<li>Environment setup and configuration</li>
+</ul>
+</div>
+
+<div class="phase">
+<span class="phase-num">Phase 3</span>
+<h3>Development &amp; Configuration — Weeks 5–8</h3>
+<ul>
+<li>OIC instance provisioning and configuration</li>
+<li>Integration development (connections, orchestrations, mappings)</li>
+<li>Process automation workflow implementation</li>
+<li>Custom adapter development (if required)</li>
+<li>Unit testing and code reviews</li>
+</ul>
+</div>
+
+<div class="phase">
+<span class="phase-num">Phase 4</span>
+<h3>Testing &amp; UAT — Weeks 9–10</h3>
+<ul>
+<li>System integration testing (SIT)</li>
+<li>Performance and load testing</li>
+<li>User acceptance testing (UAT) support</li>
+<li>Defect resolution and regression testing</li>
+<li>Documentation and runbook creation</li>
+</ul>
+</div>
+
+<div class="phase">
+<span class="phase-num">Phase 5</span>
+<h3>Deployment &amp; Handover — Weeks 11–12</h3>
+<ul>
+<li>Production deployment and smoke testing</li>
+<li>Hypercare support (2 weeks)</li>
+<li>Knowledge transfer and training sessions</li>
+<li>Operational documentation delivery</li>
+<li>Post-go-live support plan activation</li>
+</ul>
+</div>
+</section>
+
+<section>
+<h2 class="section">5. Timeline</h2>
+<div class="timeline">
+<div class="week"><div class="label">Weeks 1–2</div><div class="desc">Discovery &amp; Assessment</div></div>
+<div class="week"><div class="label">Weeks 3–4</div><div class="desc">Design &amp; Architecture</div></div>
+<div class="week"><div class="label">Weeks 5–8</div><div class="desc">Development</div></div>
+<div class="week"><div class="label">Weeks 9–10</div><div class="desc">Testing &amp; UAT</div></div>
+<div class="week"><div class="label">Weeks 11–12</div><div class="desc">Deployment</div></div>
+</div>
+<p style="color:var(--gray);font-size:.9em;margin-top:10px">* Timeline assumes timely client feedback and resource availability. Adjustments will be communicated proactively.</p>
+</section>
+
+<section>
+<h2 class="section">6. Investment</h2>
+<div class="pricing-grid">
+<div class="price-card">
+<h3>Starter</h3>
+<div class="amount">$25,000<span> fixed price</span></div>
+<ul>
+<li>Up to 3 integrations</li>
+<li>Basic OIC configuration</li>
+<li>Standard connectors only</li>
+<li>2-week implementation</li>
+<li>Documentation &amp; training</li>
+<li>30-day post-go-live support</li>
+</ul>
+</div>
+<div class="price-card featured">
+<h3>Professional</h3>
+<div class="amount">$50,000<span> fixed price</span></div>
+<ul>
+<li>Up to 8 integrations</li>
+<li>Full OIC implementation</li>
+<li>Custom &amp; standard connectors</li>
+<li>Process automation included</li>
+<li>6–8 week implementation</li>
+<li>60-day post-go-live support</li>
+<li>Performance optimization</li>
+</ul>
+</div>
+<div class="price-card">
+<h3>Enterprise</h3>
+<div class="amount">$100,000<span> fixed price</span></div>
+<ul>
+<li>Unlimited integrations</li>
+<li>Full OIC + VBCS implementation</li>
+<li>Custom adapter development</li>
+<li>API management platform</li>
+<li>12-week implementation</li>
+<li>90-day hypercare support</li>
+<li>Dedicated integration architect</li>
+<li>24/7 critical support SLA</li>
+</ul>
+</div>
+</div>
+<p style="color:var(--gray);font-size:.9em">* Oracle Cloud licensing costs are separate and billed directly by Oracle. All prices in USD. HST applies for Canadian clients.</p>
+</section>
+
+<section>
+<h2 class="section">7. Our Team</h2>
+<div class="team-grid">
+<div class="team-member">
+<h4>[NAME]</h4>
+<div class="role">Integration Architect — Lead</div>
+<p>15+ years in enterprise integration. Oracle certified. Led 50+ OIC implementations across finance, healthcare, and manufacturing.</p>
+</div>
+<div class="team-member">
+<h4>[NAME]</h4>
+<div class="role">Senior OIC Developer</div>
+<p>8+ years with Oracle middleware. Specialist in SOA, REST APIs, and process automation. Oracle Cloud certified.</p>
+</div>
+<div class="team-member">
+<h4>[NAME]</h4>
+<div class="role">Technical Project Manager</div>
+<p>PMP certified. 12+ years managing enterprise technology projects. Expert in Agile delivery and stakeholder management.</p>
+</div>
+<div class="team-member">
+<h4>[NAME]</h4>
+<div class="role">QA Lead</div>
+<p>10+ years in integration testing. Specializes in automated testing frameworks and performance validation.</p>
+</div>
+</div>
+</section>
+
+<section>
+<h2 class="section">8. Case Studies</h2>
+<div class="case-study">
+<h4>Fortune 500 Financial Services — ERP &amp; CRM Integration</h4>
+<p>Integrated Oracle ERP Cloud with Salesforce CRM, automating order-to-cash and customer onboarding processes for a leading financial institution.</p>
+<div><span class="stat">60% reduction in manual effort</span><span class="stat">$2.4M annual savings</span><span class="stat">8-week delivery</span></div>
+</div>
+<div class="case-study">
+<h4>Healthcare Provider — Patient Data Integration</h4>
+<p>Connected EHR system with Oracle HCM and financial platforms, enabling real-time patient billing and staff scheduling optimization.</p>
+<div><span class="stat">99.9% data accuracy</span><span class="stat">40% faster billing</span><span class="stat">HIPAA compliant</span></div>
+</div>
+<div class="case-study">
+<h4>Manufacturing Leader — Supply Chain Integration</h4>
+<p>Built end-to-end supply chain integration connecting Oracle SCM Cloud with warehouse management, logistics, and vendor portals.</p>
+<div><span class="stat">35% inventory reduction</span><span class="stat">Real-time visibility</span><span class="stat">10-week delivery</span></div>
+</div>
+</section>
+
+<section>
+<h2 class="section">9. Terms &amp; Conditions</h2>
+<div class="terms">
+<p><strong>Payment Terms:</strong> 40% upon contract signing, 30% at midpoint milestone, 30% upon go-live acceptance.</p>
+<p><strong>Change Requests:</strong> Any scope changes beyond the agreed SOW will be documented, estimated, and approved via formal change request process.</p>
+<p><strong>Intellectual Property:</strong> All custom integration code and configurations developed specifically for the client become client property upon final payment. Agilitas retains rights to reusable frameworks and methodologies.</p>
+<p><strong>Confidentiality:</strong> Both parties agree to maintain strict confidentiality of proprietary information shared during the engagement.</p>
+<p><strong>Liability:</strong> Agilitas' total liability shall not exceed the total contract value. Neither party shall be liable for indirect, incidental, or consequential damages.</p>
+<p><strong>Termination:</strong> Either party may terminate with 30 days written notice. Client shall pay for all work completed up to the termination date.</p>
+<p><strong>Warranty:</strong> Agilitas provides a 90-day warranty period post-go-live for defects in delivered integrations.</p>
+<p><strong>Governing Law:</strong> This agreement shall be governed by the laws of Ontario, Canada.</p>
+</div>
+</section>
+
+<section>
+<h2 class="section">10. Acceptance</h2>
+<p>By signing below, both parties agree to the scope, timeline, and investment outlined in this proposal. This document, together with the signed Statement of Work, constitutes the full agreement.</p>
+<div class="sig-grid">
+<div>
+<p><strong>For Agilitas Innovations Inc.</strong></p>
+<div class="sig-box">
+<p>Name: ___________________________</p>
+<p>Title: ___________________________</p>
+<p>Date: ___________________________</p>
+</div>
+</div>
+<div>
+<p><strong>For [CLIENT COMPANY]</strong></p>
+<div class="sig-box">
+<p>Name: ___________________________</p>
+<p>Title: ___________________________</p>
+<p>Date: ___________________________</p>
+</div>
+</div>
+</div>
+</section>
+
+<footer>
+&copy; 2026 Agilitas Innovations Inc. — agii.ca — Confidential
+</footer>
+</div>
+</body>
+</html>
