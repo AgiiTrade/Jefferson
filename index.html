@@ -4,83 +4,151 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PlanByInnovations — All Projects</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&display=swap" rel="stylesheet">
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-body{font-family:'Inter',sans-serif;background:#f8fafc;color:#1e293b;min-height:100vh;padding:60px 20px}
-.container{max-width:900px;margin:0 auto}
-h1{text-align:center;font-size:26pt;margin-bottom:6px}
-.sub{text-align:center;color:#64748b;margin-bottom:40px;font-size:11pt}
-.section{margin-bottom:40px}
-.section h2{font-size:14pt;margin-bottom:16px;padding-bottom:8px;border-bottom:2px solid #dc2626;color:#1e293b}
-.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:14px}
-.card{background:white;border:1px solid #e2e8f0;border-radius:12px;padding:20px;transition:all 0.2s;text-decoration:none;color:inherit;display:block}
-.card:hover{box-shadow:0 8px 24px rgba(0,0,0,0.1);transform:translateY(-2px)}
-.card h3{font-size:12pt;margin-bottom:4px}
-.card p{color:#64748b;font-size:8pt;margin-bottom:10px}
-.badge{display:inline-block;padding:2px 8px;border-radius:10px;font-size:7pt;font-weight:700}
-.b-free{background:#16a34a;color:white}.b-app{background:#2563eb;color:white}.b-tool{background:#d97706;color:white}.b-doc{background:#7c3aed;color:white}
+:root{--bg:#0f172a;--card:#1e293b;--accent:#e94560;--gold:#FFD700;--text:#f1f5f9;--muted:#94a3b8}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:40px 20px}
+.container{max-width:1200px;margin:0 auto}
+header{text-align:center;margin-bottom:48px}
+header h1{font-size:2.5em;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{color:var(--muted);margin-top:8px}
+.search{max-width:400px;margin:0 auto 32px}
+.search input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #334155;background:var(--card);color:var(--text);font-size:1em}
+.search input:focus{outline:none;border-color:var(--accent)}
+.section{margin-bottom:48px}
+.section h2{font-size:1.3em;margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
+.card{background:var(--card);border-radius:12px;padding:20px;text-decoration:none;color:inherit;display:block;border:1px solid rgba(255,255,255,0.05);transition:all 0.2s}
+.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(233,69,96,0.15)}
+.card h3{font-size:1em;margin-bottom:6px}
+.card p{color:var(--muted);font-size:0.85em;margin-bottom:10px}
+.card .meta{display:flex;gap:8px;flex-wrap:wrap}
+.badge{padding:3px 10px;border-radius:12px;font-size:0.7em;font-weight:600}
+.b-free{background:rgba(34,197,94,0.2);color:#22c55e}
+.b-paid{background:rgba(233,69,96,0.2);color:#e94560}
+.b-saas{background:rgba(59,130,246,0.2);color:#3b82f6}
+.b-tool{background:rgba(245,158,11,0.2);color:#f59e0b}
+.b-game{background:rgba(168,85,247,0.2);color:#a855f7}
+.b-doc{background:rgba(100,116,139,0.2);color:#94a3b8}
+.stats{display:flex;gap:24px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
+.stat{text-align:center}
+.stat .num{font-size:1.8em;font-weight:800;color:var(--gold)}
+.stat .label{font-size:0.8em;color:var(--muted)}
+footer{text-align:center;padding:40px;color:var(--muted);font-size:0.85em}
 </style>
 </head>
 <body>
 <div class="container">
+<header>
 <h1>🍁 PlanByInnovations</h1>
-<p class="sub">All projects — permanently hosted on GitHub Pages</p>
+<p>All projects — permanently hosted on GitHub Pages</p>
+</header>
 
-<div class="section">
-<h2>🌐 Main Websites</h2>
-<div class="grid">
-<a href="unified/" class="card"><h3>🇨🇦 StudynCanada + UniPrep <span class="badge b-free">FREE</span></h3><p>Education consulting + free college prep tools</p></a>
-</div>
-</div>
-
-<div class="section">
-<h2>🎮 Apps & Games</h2>
-<div class="grid">
-<a href="vocab_prototype.html" class="card"><h3>📚 Vocab Master Pro <span class="badge b-app">APP</span></h3><p>2,540 words, 5 difficulty levels</p></a>
-<a href="questmind.html" class="card"><h3>🏰 QuestMind <span class="badge b-app">APP</span></h3><p>3,103 quiz questions</p></a>
-<a href="family-planner.html" class="card"><h3>📋 Family Planner <span class="badge b-tool">PDF</span></h3><p>75-page printable planner</p></a>
-<a href="Family-Command-Center-Planner-2026.pdf" class="card"><h3>⬇️ Planner PDF <span class="badge b-tool">PDF</span></h3><p>Direct PDF download</p></a>
-</div>
+<div class="stats">
+<div class="stat"><div class="num">30+</div><div class="label">Live Apps</div></div>
+<div class="stat"><div class="num">500+</div><div class="label">AI Prompts</div></div>
+<div class="stat"><div class="num">15</div><div class="label">Notion Templates</div></div>
+<div class="stat"><div class="num">7</div><div class="label">Proposal Templates</div></div>
+<div class="stat"><div class="num">20</div><div class="label">Strategy Docs</div></div>
 </div>
 
-<div class="section">
-<h2>🛠️ Tools & Dashboards</h2>
+<div class="search"><input type="text" placeholder="🔍 Search projects..." oninput="filterCards(this.value)"></div>
+
+<!-- GAMES -->
+<div class="section" id="games">
+<h2>🎮 Games</h2>
 <div class="grid">
-<a href="validator.html" class="card"><h3>🔍 Validator <span class="badge b-tool">TOOL</span></h3><p>Quality checks for all projects</p></a>
-<a href="project-status.html" class="card"><h3>📊 Project Status <span class="badge b-tool">TOOL</span></h3><p>All tasks and completion %</p></a>
-<a href="dashboard.html" class="card"><h3>📈 Dashboard <span class="badge b-tool">TOOL</span></h3><p>All links in one page</p></a>
-<a href="crm.html" class="card"><h3>📊 CRM Tool <span class="badge b-tool">TOOL</span></h3><p>Customer relationship management</p></a>
-<a href="pnphomes.html" class="card"><h3>🏠 Property Manager <span class="badge b-tool">TOOL</span></h3><p>Property management system</p></a>
-<a href="meal-planner.html" class="card"><h3>🍽️ Meal Planner <span class="badge b-tool">TOOL</span></h3><p>Weekly meal planning</p></a>
-<a href="chore-chart.html" class="card"><h3>✅ Chore Chart <span class="badge b-tool">TOOL</span></h3><p>Family chore management</p></a>
-<a href="pitch-deck.html" class="card"><h3>📊 Pitch Deck <span class="badge b-tool">TOOL</span></h3><p>Business presentation</p></a>
-<a href="integration-visual.html" class="card"><h3>🔄 Integration Visual <span class="badge b-tool">TOOL</span></h3><p>Business funnel diagram</p></a>
+<a href="vocab_prototype.html" class="card"><h3>📚 Vocab Master Pro</h3><p>2,540 words, 5 levels, mobile-optimized</p><div class="meta"><span class="badge b-game">Game</span><span class="badge b-free">Free</span></div></a>
+<a href="questmind.html" class="card"><h3>🏰 QuestMind</h3><p>Wizard Academy quiz game, 3,103 questions</p><div class="meta"><span class="badge b-game">Game</span><span class="badge b-free">Free</span></div></a>
+<a href="chess-training/index.html" class="card"><h3>♟️ Chess Master Pro</h3><p>AI opponent, puzzles, lessons, ELO rating</p><div class="meta"><span class="badge b-game">Game</span><span class="badge b-paid">$9.99</span></div></a>
+<a href="chess-training/landing.html" class="card"><h3>♟️ Chess Landing Page</h3><p>Gumroad sales page for chess game</p><div class="meta"><span class="badge b-tool">Sales</span></div></a>
 </div>
 </div>
 
-<div class="section">
-<h2>📄 Documents</h2>
+<!-- SAAS PRODUCTS -->
+<div class="section" id="saas">
+<h2>🚀 SaaS Products</h2>
 <div class="grid">
-<a href="AMAZON-EXECUTION-GUIDE.md" class="card"><h3>🛒 Amazon Guide <span class="badge b-doc">DOC</span></h3><p>Step-by-step listing guide</p></a>
-<a href="20K-REVENUE-PLAN.md" class="card"><h3>💰 Revenue Plan <span class="badge b-doc">DOC</span></h3><p>$20K revenue strategies</p></a>
-<a href="APPS-PUBLISHING-GUIDE.md" class="card"><h3>📱 Publishing Guide <span class="badge b-doc">DOC</span></h3><p>App Store & Play Store guide</p></a>
-<a href="BUSINESS-INTEGRATION-PLAN.md" class="card"><h3>🎓 Integration Plan <span class="badge b-doc">DOC</span></h3><p>UniPrep + StudynCanada plan</p></a>
-<a href="ETSY-AMAZON-MARKETING-PLAN.md" class="card"><h3>🛒 Marketing Plan <span class="badge b-doc">DOC</span></h3><p>Etsy & Amazon strategy</p></a>
-<a href="REVENUE-CLARITY.md" class="card"><h3>📊 Revenue Clarity <span class="badge b-doc">DOC</span></h3><p>$34M projection breakdown</p></a>
-<a href="university-prep-RESEARCH.md" class="card"><h3>🔬 Research <span class="badge b-doc">DOC</span></h3><p>UniPrep source data</p></a>
-<a href="validation-system.md" class="card"><h3>✅ Validation System <span class="badge b-doc">DOC</span></h3><p>QA documentation</p></a>
+<a href="student-saas/index.html" class="card"><h3>🎓 UniPrep SaaS</h3><p>Student success platform, $9.99-$49.99/mo</p><div class="meta"><span class="badge b-saas">SaaS</span><span class="badge b-paid">$9.99/mo</span></div></a>
+<a href="property-saas/index.html" class="card"><h3>🏠 RentBoss</h3><p>Property management, $29-$149/mo</p><div class="meta"><span class="badge b-saas">SaaS</span><span class="badge b-paid">$29/mo</span></div></a>
+<a href="finance/index.html" class="card"><h3>💰 FinanceHub</h3><p>Personal & business finance, tax tracking</p><div class="meta"><span class="badge b-saas">SaaS</span><span class="badge b-free">Free</span></div></a>
 </div>
 </div>
 
-<div class="section">
-<h2>📸 Assets</h2>
+<!-- BUSINESS TOOLS -->
+<div class="section" id="business">
+<h2>💼 Business Tools</h2>
 <div class="grid">
-<a href="app-assets/" class="card"><h3>🎨 App Icons <span class="badge b-tool">ASSET</span></h3><p>All icon sizes for iOS/Android</p></a>
-<a href="screenshots/" class="card"><h3>📸 Screenshots <span class="badge b-tool">ASSET</span></h3><p>Planner mockup screenshots</p></a>
-<a href="apps/" class="card"><h3>⚙️ Capacitor Configs <span class="badge b-tool">CONFIG</span></h3><p>Mobile app configurations</p></a>
+<a href="sales-crm.html" class="card"><h3>📊 Sales CRM</h3><p>Lead tracking, pipeline, activity log</p><div class="meta"><span class="badge b-tool">Tool</span><span class="badge b-free">Free</span></div></a>
+<a href="agii-landing.html" class="card"><h3>⚡ Agii.ca Landing</h3><p>Optimized landing page for consulting</p><div class="meta"><span class="badge b-tool">Website</span></div></a>
+<a href="proposals/index.html" class="card"><h3>📄 Proposal Templates</h3><p>4 proposals + SOW + pricing calculator</p><div class="meta"><span class="badge b-tool">Templates</span><span class="badge b-paid">$49.99</span></div></a>
+<a href="proposals/PRICING-CALCULATOR.html" class="card"><h3>🧮 Pricing Calculator</h3><p>Interactive service pricing tool</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
+<a href="pitch-deck.html" class="card"><h3>📊 Pitch Deck</h3><p>Startup presentation template</p><div class="meta"><span class="badge b-tool">Template</span></div></a>
+<a href="crm.html" class="card"><h3>👥 CRM</h3><p>Client relationship management</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
+<a href="business-planner.html" class="card"><h3>📋 Business Planner</h3><p>Business planning template</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
 </div>
 </div>
+
+<!-- DIGITAL PRODUCTS -->
+<div class="section" id="products">
+<h2>📦 Digital Products</h2>
+<div class="grid">
+<a href="ai-prompts/index.html" class="card"><h3>🤖 500+ AI Prompts</h3><p>ChatGPT, Midjourney, Claude prompts</p><div class="meta"><span class="badge b-paid">$19.99</span></div></a>
+<a href="notion-templates/index.html" class="card"><h3>📝 Notion Templates</h3><p>15 business & productivity templates</p><div class="meta"><span class="badge b-paid">$29.99</span></div></a>
+<a href="family-planner.html" class="card"><h3>📋 Family Planner</h3><p>75-page printable planner</p><div class="meta"><span class="badge b-paid">$4.99</span></div></a>
+<a href="meal-planner.html" class="card"><h3>🍽️ Meal Planner</h3><p>Weekly meal planning template</p><div class="meta"><span class="badge b-paid">$2.99</span></div></a>
+<a href="budget-tracker.html" class="card"><h3>💰 Budget Tracker</h3><p>Personal finance tracking</p><div class="meta"><span class="badge b-paid">$2.99</span></div></a>
+<a href="chore-chart.html" class="card"><h3>✅ Chore Chart</h3><p>Family task management</p><div class="meta"><span class="badge b-paid">$2.99</span></div></a>
 </div>
+</div>
+
+<!-- WEBSITES -->
+<div class="section" id="websites">
+<h2>🌐 Websites</h2>
+<div class="grid">
+<a href="unified/index.html" class="card"><h3>🇨🇦 StudynCanada</h3><p>Education consulting + UniPrep tools</p><div class="meta"><span class="badge b-free">Free</span></div></a>
+<a href="unified/portal/login.html" class="card"><h3>🎓 Student Portal</h3><p>17 universities, recommendation engine</p><div class="meta"><span class="badge b-tool">Portal</span></div></a>
+<a href="index.html" class="card"><h3>🏠 Dashboard Hub</h3><p>This portal — all projects index</p><div class="meta"><span class="badge b-tool">Portal</span></div></a>
+</div>
+</div>
+
+<!-- EDUCATION -->
+<div class="section" id="education">
+<h2>📚 Education Tools</h2>
+<div class="grid">
+<a href="unified/uniprep/index.html" class="card"><h3>📚 UniPrep Tools</h3><p>GPA tracker, college finder, checklist</p><div class="meta"><span class="badge b-free">Free</span></div></a>
+<a href="game-test-runner.html" class="card"><h3>🧪 Game Test Runner</h3><p>QA testing for games</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
+<a href="student-saas/pricing.html" class="card"><h3>💎 UniPrep Pricing</h3><p>Subscription tiers</p><div class="meta"><span class="badge b-tool">Sales</span></div></a>
+</div>
+</div>
+
+<!-- STRATEGY DOCS -->
+<div class="section" id="strategy">
+<h2>📊 Strategy Documents</h2>
+<div class="grid">
+<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/AGII-200K-PLAN.md" class="card"><h3>🚀 $200K Revenue Plan</h3><p>Path to $200K/month</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
+<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/COLD-EMAIL-QUICKSTART.md" class="card"><h3>📧 Cold Email Guide</h3><p>5-touch email sequence</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
+<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/LINKEDIN-LEAD-GENERATION.md" class="card"><h3>💼 LinkedIn System</h3><p>Complete lead gen strategy</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
+<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/ETSY-BOOST-PLAN.md" class="card"><h3>🛒 Etsy Boost Plan</h3><p>30-day sales strategy</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
+<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/JOB-DESCRIPTIONS.md" class="card"><h3>👥 Job Descriptions</h3><p>5 roles to hire</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
+</div>
+</div>
+
+</div>
+
+<footer>
+<p>© 2026 PlanByInnovations • All projects on GitHub Pages</p>
+<p><a href="https://github.com/AgiiTrade/Jefferson" style="color:var(--gold)">GitHub Repository</a></p>
+</footer>
+
+<script>
+function filterCards(query){
+    query=query.toLowerCase();
+    document.querySelectorAll('.card').forEach(card=>{
+        const text=card.textContent.toLowerCase();
+        card.style.display=text.includes(query)?'block':'none';
+    });
+}
+</script>
 </body>
 </html>
