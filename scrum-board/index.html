@@ -125,6 +125,14 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="stat"><span class="dot red"></span><span>Blocked:</span><span class="num" id="stat-blocked">0</span></div>
 <div class="stat">📌 Points: <span class="num" id="stat-points">0</span>/<span id="stat-total-points">0</span></div>
 <div class="stat">📅 Days Left: <span class="num" id="stat-days">12</span></div>
+<div class="stat" style="margin-left:auto">
+<select id="filter-category" onchange="renderBoard()" style="background:var(--bg);color:var(--text);border:1px solid var(--border);padding:4px 8px;border-radius:4px;font-size:0.85em">
+<option value="all">🏷️ All Categories</option>
+<option value="professional">💼 Professional</option>
+<option value="personal">👤 Personal</option>
+<option value="family">👨‍👩‍👧‍👦 Family</option>
+</select>
+</div>
 </div>
 
 <div class="board-container" id="board">
@@ -206,13 +214,21 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </select>
 </div>
 <div class="modal-section">
-<label>Tags (comma separated)</label>
-<input type="text" id="task-tags" placeholder="agii, urgent, client">
+<label>Category</label>
+<select id="task-category">
+<option value="professional">💼 Professional</option>
+<option value="personal">👤 Personal</option>
+<option value="family">👨‍👩‍👧‍👦 Family</option>
+</select>
 </div>
 </div>
 <div class="modal-section">
 <label>Notes</label>
 <textarea id="task-notes" placeholder="Add notes, decisions, updates..."></textarea>
+</div>
+<div class="modal-section">
+<label>Tags (comma separated)</label>
+<input type="text" id="task-tags" placeholder="agii, urgent, client">
 </div>
 </div>
 <div class="modal-actions">
@@ -274,9 +290,13 @@ const COLUMNS = [
 function renderBoard() {
     const board = document.getElementById('board');
     const tasks = Store.get('tasks');
+    const categoryFilter = document.getElementById('filter-category').value;
+    
+    // Filter by category
+    const filteredTasks = categoryFilter === 'all' ? tasks : tasks.filter(t => t.category === categoryFilter);
     
     board.innerHTML = COLUMNS.map(col => {
-        const colTasks = tasks.filter(t => t.column === col.id);
+        const colTasks = filteredTasks.filter(t => t.column === col.id);
         return `
         <div class="column" data-column="${col.id}">
             <div class="column-header">
@@ -298,12 +318,17 @@ function renderBoard() {
 
 function renderCard(task) {
     const priorityIcons = { highest: '🔴', high: '🟠', medium: '🟡', low: '🟢', lowest: '⚪' };
+    const categoryIcons = { professional: '💼', personal: '👤', family: '👨‍👩‍👧‍👦' };
+    const categoryColors = { professional: '#0052cc', personal: '#6554c0', family: '#36b37e' };
     const hasNotes = task.notes && task.notes.trim().length > 0;
     
     return `
     <div class="card" draggable="true" ondragstart="handleDragStart(event, '${task.id}')" onclick="showTaskDetail('${task.id}')">
         ${hasNotes ? '<span class="card-notes-indicator" title="Has notes">📝</span>' : ''}
-        <span class="card-type ${task.type}">${task.type}</span>
+        <div style="display:flex;gap:6px;margin-bottom:8px">
+            <span class="card-type ${task.type}">${task.type}</span>
+            <span style="display:inline-block;padding:2px 6px;border-radius:3px;font-size:0.65em;font-weight:700;background:${categoryColors[task.category] || '#8795a5'};color:white">${categoryIcons[task.category] || '📋'} ${task.category || 'professional'}</span>
+        </div>
         <div class="card-title">${task.summary}</div>
         ${task.desc ? `<div class="card-desc">${task.desc}</div>` : ''}
         <div class="card-footer">
@@ -390,6 +415,7 @@ function showTaskDetail(taskId) {
     document.getElementById('task-points').value = task.points;
     document.getElementById('task-assignee').value = task.assignee || 'A';
     document.getElementById('task-column').value = task.column;
+    document.getElementById('task-category').value = task.category || 'professional';
     document.getElementById('task-tags').value = (task.tags || []).join(', ');
     document.getElementById('task-notes').value = task.notes || '';
     document.getElementById('delete-btn').style.display = 'block';
@@ -407,6 +433,7 @@ function saveTask() {
         points: parseInt(document.getElementById('task-points').value),
         assignee: document.getElementById('task-assignee').value,
         column: document.getElementById('task-column').value,
+        category: document.getElementById('task-category').value,
         tags: document.getElementById('task-tags').value.split(',').map(t => t.trim()).filter(t => t),
         notes: document.getElementById('task-notes').value,
         updatedAt: Date.now()
@@ -499,12 +526,24 @@ function init() {
     // Add demo tasks if empty
     if (Store.get('tasks').length === 0) {
         Store.set('tasks', [
-            { id: 'SF-DEMO1', summary: 'Close Agii.ca client deal', desc: 'Follow up with warm leads, send proposals', type: 'story', priority: 'highest', points: 8, assignee: 'A', column: 'todo', tags: ['agii', 'revenue'], notes: 'Call John at 2pm', createdAt: Date.now() },
-            { id: 'SF-DEMO2', summary: 'Upload products to Gumroad', desc: 'Chess, AI Prompts, Notion Templates', type: 'task', priority: 'high', points: 5, assignee: 'A', column: 'todo', tags: ['gumroad', 'passive'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO3', summary: 'Post on LinkedIn', desc: 'Share thought leadership content', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'progress', tags: ['linkedin', 'marketing'], notes: 'Post #2 ready', createdAt: Date.now() },
-            { id: 'SF-DEMO4', summary: 'Set up Etsy ads', desc: 'Start $1/day for Family Planner', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'backlog', tags: ['etsy'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO5', summary: 'Fix vocab game bug', desc: 'Duplicate answer options issue', type: 'bug', priority: 'high', points: 3, assignee: 'A', column: 'done', tags: ['vocab'], notes: 'Fixed and deployed', createdAt: Date.now() },
-            { id: 'SF-DEMO6', summary: 'Build student portal', desc: 'Login, dashboard, recommendations', type: 'epic', priority: 'high', points: 13, assignee: 'A', column: 'done', tags: ['student', 'saas'], notes: 'Live on GitHub', createdAt: Date.now() }
+            // PROFESSIONAL
+            { id: 'SF-DEMO1', summary: 'Close Agii.ca client deal', desc: 'Follow up with warm leads, send proposals', type: 'story', priority: 'highest', points: 8, assignee: 'A', column: 'todo', category: 'professional', tags: ['agii', 'revenue'], notes: 'Call John at 2pm', createdAt: Date.now() },
+            { id: 'SF-DEMO2', summary: 'Upload products to Gumroad', desc: 'Chess, AI Prompts, Notion Templates', type: 'task', priority: 'high', points: 5, assignee: 'A', column: 'todo', category: 'professional', tags: ['gumroad', 'passive'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO3', summary: 'Post on LinkedIn', desc: 'Share thought leadership content', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'progress', category: 'professional', tags: ['linkedin', 'marketing'], notes: 'Post #2 ready', createdAt: Date.now() },
+            { id: 'SF-DEMO4', summary: 'Set up Etsy ads', desc: 'Start $1/day for Family Planner', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'backlog', category: 'professional', tags: ['etsy'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO5', summary: 'Send 50 cold emails', desc: 'Using Apollo.io for Agii leads', type: 'task', priority: 'high', points: 3, assignee: 'A', column: 'todo', category: 'professional', tags: ['cold-email', 'agii'], notes: '', createdAt: Date.now() },
+            // PERSONAL
+            { id: 'SF-DEMO6', summary: 'Update LinkedIn profile', desc: 'New headline and About section', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'todo', category: 'personal', tags: ['linkedin'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO7', summary: 'Review investment portfolio', desc: 'Check RRSP, TFSA, RESP balances', type: 'task', priority: 'low', points: 1, assignee: 'A', column: 'backlog', category: 'personal', tags: ['finance'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO8', summary: 'Gym - 3x this week', desc: 'Cardio + weights', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'progress', category: 'personal', tags: ['health'], notes: 'Went Monday', createdAt: Date.now() },
+            // FAMILY
+            { id: 'SF-DEMO9', summary: 'Plan weekend family outing', desc: 'Research activities for kids', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'todo', category: 'family', tags: ['kids', 'weekend'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO10', summary: 'Kids dentist appointment', desc: 'Book for next week', type: 'task', priority: 'high', points: 1, assignee: 'A', column: 'todo', category: 'family', tags: ['health', 'kids'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO11', summary: 'FamilyShield setup', desc: 'Install Chrome extension on kids computers', type: 'task', priority: 'high', points: 3, assignee: 'A', column: 'progress', category: 'family', tags: ['security', 'kids'], notes: 'Download from GitHub', createdAt: Date.now() },
+            // DONE
+            { id: 'SF-DEMO12', summary: 'Fix vocab game bug', desc: 'Duplicate answer options issue', type: 'bug', priority: 'high', points: 3, assignee: 'A', column: 'done', category: 'professional', tags: ['vocab'], notes: 'Fixed and deployed', createdAt: Date.now() },
+            { id: 'SF-DEMO13', summary: 'Build student portal', desc: 'Login, dashboard, recommendations', type: 'epic', priority: 'high', points: 13, assignee: 'A', column: 'done', category: 'professional', tags: ['student', 'saas'], notes: 'Live on GitHub', createdAt: Date.now() },
+            { id: 'SF-DEMO14', summary: 'Pay electricity bill', desc: '', type: 'task', priority: 'medium', points: 1, assignee: 'A', column: 'done', category: 'family', tags: ['bills'], notes: 'Paid March 28', createdAt: Date.now() }
         ]);
     }
     
