@@ -63,6 +63,20 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 .card-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
 .card-tag{padding:2px 6px;border-radius:3px;font-size:0.65em;background:rgba(0,0,0,0.05)}
 
+/* URGECY BADGES */
+.urgency-badge{display:inline-block;padding:4px 8px;border-radius:4px;font-size:0.7em;font-weight:700;margin:6px 0}
+.urgency-badge.overdue{background:#ffebe6;color:#ff5630;animation:pulse 1.5s infinite}
+.urgency-badge.due-today{background:#ffebe6;color:#ff5630;animation:pulse 1.5s infinite}
+.urgency-badge.due-soon{background:#fff7e6;color:#ff8b00}
+.urgency-badge.due-approaching{background:#deebff;color:#0052cc}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
+
+/* URGENCY CARD STYLES */
+.card.overdue{border-color:#ff5630!important}
+.card.due-today{border-color:#ff5630!important}
+.card.due-soon{border-color:#ffab00!important}
+.card.due-approaching{border-color:#0052cc!important}
+
 /* ADD CARD */
 .add-card{padding:12px;border-radius:8px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:0.85em;width:100%;text-align:left;transition:0.2s}
 .add-card:hover{border-color:var(--accent);color:var(--text);background:rgba(0,82,204,0.05)}
@@ -115,6 +129,7 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <div class="stat"><span class="icon">📥</span><span class="num" id="stat-todo">0</span><span class="label">To Do</span></div>
 <div class="stat"><span class="icon">🔄</span><span class="num" id="stat-progress">0</span><span class="label">In Progress</span></div>
 <div class="stat"><span class="icon">✅</span><span class="num" id="stat-done">0</span><span class="label">Done</span></div>
+<div class="stat"><span class="icon">⚠️</span><span class="num" id="stat-urgent" style="color:#ff5630">0</span><span class="label">Due Soon (5d)</span></div>
 <div class="stat"><span class="icon">📊</span><span class="num" id="stat-total">0</span><span class="label">Total</span></div>
 </div>
 
@@ -222,7 +237,14 @@ function renderBoard() {
     ];
     
     board.innerHTML = columns.map(col => {
-        const colTasks = filtered.filter(t => t.status === col.id);
+        const colTasks = filtered.filter(t => t.status === col.id).sort((a, b) => {
+            // Sort by due date (earliest first), then by priority
+            if (a.due && b.due) return new Date(a.due) - new Date(b.due);
+            if (a.due) return -1;
+            if (b.due) return 1;
+            const priorityOrder = { high: 0, medium: 1, low: 2 };
+            return (priorityOrder[a.priority] || 1) - (priorityOrder[b.priority] || 1);
+        });
         return `
         <div class="column">
             <div class="column-header">
@@ -245,10 +267,43 @@ function renderCard(task) {
     const catLabel = { professional: '💼 Pro', personal: '👤 Personal', family: '👨‍👩‍👧‍👦 Family' }[task.category] || '💼 Pro';
     const hasNotes = task.notes && task.notes.length > 0;
     const dueStr = task.due ? new Date(task.due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-    const isOverdue = task.due && new Date(task.due) < new Date() && task.status !== 'done';
+    
+    // Due date urgency calculation
+    let urgencyClass = '';
+    let urgencyBadge = '';
+    let urgencyBorder = '';
+    if (task.due && task.status !== 'done') {
+        const today = new Date();
+        today.setHours(0,0,0,0);
+        const dueDate = new Date(task.due);
+        dueDate.setHours(0,0,0,0);
+        const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
+        
+        if (daysLeft < 0) {
+            // OVERDUE
+            urgencyClass = 'overdue';
+            urgencyBadge = `<span class="urgency-badge overdue">⚠️ ${Math.abs(daysLeft)}d overdue</span>`;
+            urgencyBorder = 'border-left: 4px solid #ff5630; background: #fff3f0;';
+        } else if (daysLeft === 0) {
+            // DUE TODAY
+            urgencyClass = 'due-today';
+            urgencyBadge = `<span class="urgency-badge due-today">🔥 Due TODAY</span>`;
+            urgencyBorder = 'border-left: 4px solid #ff5630; background: #fff3f0;';
+        } else if (daysLeft <= 2) {
+            // DUE IN 1-2 DAYS
+            urgencyClass = 'due-soon';
+            urgencyBadge = `<span class="urgency-badge due-soon">⏰ ${daysLeft}d left</span>`;
+            urgencyBorder = 'border-left: 4px solid #ffab00; background: #fffae6;';
+        } else if (daysLeft <= 5) {
+            // DUE IN 3-5 DAYS
+            urgencyClass = 'due-approaching';
+            urgencyBadge = `<span class="urgency-badge due-approaching">📅 ${daysLeft}d left</span>`;
+            urgencyBorder = 'border-left: 4px solid #0052cc; background: #f0f5ff;';
+        }
+    }
     
     return `
-    <div class="card" draggable="true" ondragstart="handleDragStart(event,'${task.id}')" onclick="showTaskDetail('${task.id}')">
+    <div class="card ${urgencyClass}" draggable="true" ondragstart="handleDragStart(event,'${task.id}')" onclick="showTaskDetail('${task.id}')" style="${urgencyBorder}">
         ${hasNotes ? '<span class="card-notes" title="Has notes">📝</span>' : ''}
         <div class="card-header">
             <span class="card-category ${catClass}">${catLabel}</span>
@@ -256,9 +311,10 @@ function renderCard(task) {
         </div>
         <div class="card-title">${task.title}</div>
         ${task.desc ? `<div class="card-desc">${task.desc}</div>` : ''}
+        ${urgencyBadge}
         <div class="card-footer">
             <span class="card-id">${task.id}</span>
-            ${dueStr ? `<span class="card-date" style="color:${isOverdue ? 'var(--red)' : 'var(--text2)'}">${isOverdue ? '⚠️ ' : '📅 '}${dueStr}</span>` : ''}
+            ${dueStr ? `<span class="card-date" style="font-weight:600">📅 ${dueStr}</span>` : ''}
         </div>
         ${task.tags && task.tags.length ? `<div class="card-tags">${task.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>` : ''}
     </div>`;
@@ -272,6 +328,16 @@ function updateStats() {
     document.getElementById('stat-progress').textContent = filtered.filter(t => t.status === 'progress').length;
     document.getElementById('stat-done').textContent = filtered.filter(t => t.status === 'done').length;
     document.getElementById('stat-total').textContent = filtered.length;
+    
+    // Count urgent tasks (due within 5 days, not done)
+    const today = new Date(); today.setHours(0,0,0,0);
+    const urgentCount = filtered.filter(t => {
+        if (!t.due || t.status === 'done') return false;
+        const due = new Date(t.due); due.setHours(0,0,0,0);
+        const days = Math.ceil((due - today) / (1000*60*60*24));
+        return days <= 5;
+    }).length;
+    document.getElementById('stat-urgent').textContent = urgentCount;
     
     // Category counts
     document.getElementById('count-all').textContent = ` (${tasks.length})`;
