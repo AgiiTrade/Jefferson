@@ -3,217 +3,148 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>ScrumFlow — Daily Task Board</title>
+<title>TaskFlow — Daily Task Dashboard</title>
 <style>
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0c0f1a;--card:#161b2e;--card2:#1e2540;--border:#2a3150;--accent:#0052cc;--accent2:#6554c0;--green:#36b37e;--yellow:#ffab00;--red:#ff5630;--blue:#0065ff;--text:#c5cee0;--text2:#8795a5;--white:#fff}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+:root{--bg:#0c0f1a;--card:#161b2e;--card2:#1e2540;--border:#2a3150;--accent:#0052cc;--green:#36b37e;--yellow:#ffab00;--red:#ff5630;--blue:#0065ff;--purple:#6554c0;--text:#c5cee0;--text2:#8795a5}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
+
 /* HEADER */
-.header{background:var(--card);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header{background:var(--card);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
 .header-left{display:flex;align-items:center;gap:16px}
-.logo{font-size:1.3em;font-weight:800;color:var(--accent)}
-.logo span{color:var(--accent2)}
-.sprint-info{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg);border-radius:6px;font-size:0.85em}
-.sprint-badge{background:var(--green);color:white;padding:2px 8px;border-radius:10px;font-size:0.7em;font-weight:700}
+.logo{font-size:1.4em;font-weight:800;color:var(--accent)}
+.date-display{color:var(--text2);font-size:0.9em}
 .header-right{display:flex;gap:8px}
 .header-btn{padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:0.85em;transition:0.2s}
 .header-btn:hover{background:var(--card2);border-color:var(--accent)}
 .header-btn.primary{background:var(--accent);border-color:var(--accent);color:white}
-/* STATS BAR */
-.stats-bar{display:flex;gap:12px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
-.stat{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg);border-radius:6px;white-space:nowrap;font-size:0.85em}
-.stat .dot{width:8px;height:8px;border-radius:50%}
-.stat .dot.blue{background:var(--blue)}
-.stat .dot.yellow{background:var(--yellow)}
-.stat .dot.green{background:var(--green)}
-.stat .dot.red{background:var(--red)}
-.stat .num{font-weight:700}
+
+/* STATS */
+.stats{display:flex;gap:16px;padding:16px 24px;background:var(--card);border-bottom:1px solid var(--border);flex-wrap:wrap}
+.stat{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg);border-radius:8px}
+.stat .icon{font-size:1.2em}
+.stat .num{font-weight:700;font-size:1.1em}
+.stat .label{color:var(--text2);font-size:0.85em}
+
+/* CATEGORY TABS */
+.tabs{display:flex;gap:4px;padding:16px 24px;background:var(--card);border-bottom:1px solid var(--border)}
+.tab{padding:8px 16px;border-radius:6px;cursor:pointer;font-size:0.9em;transition:0.2s;background:var(--bg);border:1px solid transparent}
+.tab:hover{border-color:var(--border)}
+.tab.active{background:var(--accent);color:white;border-color:var(--accent)}
+.tab .count{margin-left:6px;opacity:0.7}
+
 /* BOARD */
-.board-container{display:flex;gap:16px;padding:20px;overflow-x:auto;min-height:calc(100vh - 130px)}
-.column{min-width:300px;max-width:320px;flex-shrink:0;background:var(--card);border-radius:12px;display:flex;flex-direction:column;max-height:calc(100vh - 160px)}
+.board{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px 24px;min-height:calc(100vh - 220px)}
+@media(max-width:900px){.board{grid-template-columns:1fr}}
+
+.column{background:var(--card);border-radius:12px;display:flex;flex-direction:column;max-height:calc(100vh - 250px)}
 .column-header{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.column-title{font-weight:700;font-size:0.95em;display:flex;align-items:center;gap:8px}
+.column-title{font-weight:700;display:flex;align-items:center;gap:8px}
 .column-count{background:var(--bg);padding:2px 8px;border-radius:10px;font-size:0.8em;color:var(--text2)}
 .column-body{padding:12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
-.column-body.drag-over{background:rgba(0,82,204,0.05)}
+.column-body.drag-over{background:rgba(0,82,204,0.05);border-radius:8px}
+
 /* CARDS */
-.card{background:var(--card2);border-radius:8px;padding:12px;cursor:grab;transition:0.2s;border:1px solid transparent;position:relative}
+.card{background:var(--card2);border-radius:8px;padding:14px;cursor:grab;transition:0.2s;border:1px solid transparent;position:relative}
 .card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
 .card.dragging{opacity:0.5;transform:rotate(2deg)}
-.card-type{display:inline-block;padding:2px 6px;border-radius:3px;font-size:0.65em;font-weight:700;text-transform:uppercase;margin-bottom:8px}
-.card-type.story{background:var(--green);color:white}
-.card-type.task{background:var(--blue);color:white}
-.card-type.bug{background:var(--red);color:white}
-.card-type.epic{background:var(--accent2);color:white}
-.card-title{font-weight:600;font-size:0.9em;margin-bottom:8px;line-height:1.4}
-.card-desc{font-size:0.8em;color:var(--text2);margin-bottom:10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.card-category{display:inline-block;padding:3px 8px;border-radius:4px;font-size:0.7em;font-weight:700}
+.cat-professional{background:var(--accent);color:white}
+.cat-personal{background:var(--purple);color:white}
+.cat-family{background:var(--green);color:white}
+.card-priority{font-size:0.9em}
+.card-title{font-weight:600;font-size:0.95em;margin-bottom:6px;line-height:1.4}
+.card-desc{font-size:0.8em;color:var(--text2);margin-bottom:10px;line-height:1.4}
 .card-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.75em}
-.card-priority{display:flex;align-items:center;gap:4px}
-.priority-icon{font-size:1em}
-.card-meta{display:flex;gap:8px;color:var(--text2)}
 .card-id{font-family:monospace;color:var(--text2)}
-.card-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.7em;font-weight:700;color:white}
-.card-points{background:var(--bg);padding:2px 6px;border-radius:4px;font-weight:600}
+.card-date{color:var(--text2)}
+.card-notes{position:absolute;top:10px;right:10px;font-size:0.85em;cursor:pointer}
 .card-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
 .card-tag{padding:2px 6px;border-radius:3px;font-size:0.65em;background:rgba(255,255,255,0.05)}
-.card-notes-indicator{position:absolute;top:8px;right:8px;font-size:0.8em;cursor:pointer}
+
 /* ADD CARD */
-.add-card-btn{padding:10px;border-radius:8px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:0.85em;width:100%;text-align:left;transition:0.2s}
-.add-card-btn:hover{border-color:var(--accent);color:var(--text);background:rgba(0,82,204,0.05)}
+.add-card{padding:12px;border-radius:8px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:0.85em;width:100%;text-align:left;transition:0.2s}
+.add-card:hover{border-color:var(--accent);color:var(--text);background:rgba(0,82,204,0.05)}
+
 /* MODAL */
 .modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
 .modal.show{display:flex}
-.modal-content{background:var(--card);border-radius:12px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto}
+.modal-content{background:var(--card);border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
 .modal-header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
 .modal-header h2{font-size:1.2em}
 .modal-close{background:none;border:none;color:var(--text2);font-size:1.5em;cursor:pointer}
 .modal-body{padding:20px}
-.modal-section{margin-bottom:20px}
-.modal-section label{display:block;font-size:0.85em;color:var(--text2);margin-bottom:6px;font-weight:600}
-.modal-section input,.modal-section select,.modal-section textarea{width:100%;padding:10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9em;font-family:inherit}
-.modal-section textarea{min-height:100px;resize:vertical}
-.modal-section input:focus,.modal-section select:focus,.modal-section textarea:focus{outline:none;border-color:var(--accent)}
-.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.form-group{margin-bottom:16px}
+.form-group label{display:block;font-size:0.85em;color:var(--text2);margin-bottom:6px;font-weight:600}
+.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9em;font-family:inherit}
+.form-group textarea{min-height:80px;resize:vertical}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent)}
+.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
 .modal-actions{display:flex;gap:8px;justify-content:flex-end;padding:20px;border-top:1px solid var(--border)}
 .btn{padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-weight:600;font-size:0.9em;transition:0.2s}
 .btn-primary{background:var(--accent);color:white}
 .btn-primary:hover{background:#0065ff}
 .btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}
 .btn-danger{background:var(--red);color:white}
-/* NOTES PANEL */
-.notes-panel{background:var(--bg);border-radius:8px;padding:16px;margin-top:12px;border:1px solid var(--border)}
-.notes-panel h4{margin-bottom:12px;font-size:0.9em;color:var(--accent)}
-.notes-list{max-height:200px;overflow-y:auto}
+
+/* NOTES IN MODAL */
+.notes-section{background:var(--bg);border-radius:8px;padding:12px;margin-top:12px;border:1px solid var(--border)}
+.notes-section h4{font-size:0.85em;color:var(--accent);margin-bottom:8px}
 .note-item{padding:8px;background:var(--card2);border-radius:6px;margin-bottom:6px;font-size:0.85em}
-.note-item .note-time{font-size:0.75em;color:var(--text2);margin-top:4px}
-.note-input{display:flex;gap:8px;margin-top:12px}
-.note-input input{flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.85em}
-.note-input button{padding:8px 12px;border-radius:6px;border:none;background:var(--accent);color:white;cursor:pointer;font-size:0.85em}
-/* SPRINT PLANNER */
-.sprint-panel{background:var(--card);border-radius:12px;padding:20px;margin:20px}
-.sprint-panel h3{margin-bottom:16px}
-.sprint-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
-.sprint-stat{background:var(--bg);padding:12px;border-radius:8px;text-align:center}
-.sprint-stat .num{font-size:1.5em;font-weight:700}
-.sprint-stat .label{font-size:0.8em;color:var(--text2)}
-/* RESPONSIVE */
-@media(max-width:768px){.board-container{flex-direction:column}.column{min-width:100%;max-width:100%}}
+.note-item .note-time{font-size:0.7em;color:var(--text2);margin-top:4px}
+.note-add{display:flex;gap:8px;margin-top:8px}
+.note-add input{flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.85em}
+.note-add button{padding:8px 12px;border-radius:6px;border:none;background:var(--accent);color:white;cursor:pointer;font-size:0.85em}
 </style>
 </head>
 <body>
 
 <div class="header">
 <div class="header-left">
-<div class="logo">Scrum<span>Flow</span></div>
-<div class="sprint-info">
-<span>Sprint 1</span>
-<span class="sprint-badge">ACTIVE</span>
-<span>Mar 31 - Apr 11</span>
-</div>
+<div class="logo">📋 TaskFlow</div>
+<div class="date-display" id="date-display"></div>
 </div>
 <div class="header-right">
-<button class="header-btn" onclick="showSprintPlanner()">📊 Sprint</button>
-<button class="header-btn" onclick="exportBoard()">📥 Export</button>
-<button class="header-btn primary" onclick="showAddTask()">+ Create</button>
+<button class="header-btn" onclick="exportTasks()">📥 Export</button>
+<button class="header-btn primary" onclick="showAddTask()">+ New Task</button>
 </div>
 </div>
 
-<div class="stats-bar">
-<div class="stat"><span class="dot blue"></span><span>To Do:</span><span class="num" id="stat-todo">0</span></div>
-<div class="stat"><span class="dot yellow"></span><span>In Progress:</span><span class="num" id="stat-progress">0</span></div>
-<div class="stat"><span class="dot green"></span><span>Done:</span><span class="num" id="stat-done">0</span></div>
-<div class="stat"><span class="dot red"></span><span>Blocked:</span><span class="num" id="stat-blocked">0</span></div>
-<div class="stat">📌 Points: <span class="num" id="stat-points">0</span>/<span id="stat-total-points">0</span></div>
-<div class="stat">📅 Days Left: <span class="num" id="stat-days">12</span></div>
-<div class="stat" style="margin-left:auto">
-<select id="filter-category" onchange="renderBoard()" style="background:var(--bg);color:var(--text);border:1px solid var(--border);padding:4px 8px;border-radius:4px;font-size:0.85em">
-<option value="all">🏷️ All Categories</option>
-<option value="professional">💼 Professional</option>
-<option value="personal">👤 Personal</option>
-<option value="family">👨‍👩‍👧‍👦 Family</option>
-</select>
-</div>
+<div class="stats">
+<div class="stat"><span class="icon">📥</span><span class="num" id="stat-todo">0</span><span class="label">To Do</span></div>
+<div class="stat"><span class="icon">🔄</span><span class="num" id="stat-progress">0</span><span class="label">In Progress</span></div>
+<div class="stat"><span class="icon">✅</span><span class="num" id="stat-done">0</span><span class="label">Done</span></div>
+<div class="stat"><span class="icon">📊</span><span class="num" id="stat-total">0</span><span class="label">Total</span></div>
 </div>
 
-<div class="board-container" id="board">
-<!-- Columns will be rendered by JS -->
+<div class="tabs">
+<div class="tab active" onclick="filterCategory('all')">All<span class="count" id="count-all"></span></div>
+<div class="tab" onclick="filterCategory('professional')">💼 Professional<span class="count" id="count-professional"></span></div>
+<div class="tab" onclick="filterCategory('personal')">👤 Personal<span class="count" id="count-personal"></span></div>
+<div class="tab" onclick="filterCategory('family')">👨‍👩‍👧‍👦 Family<span class="count" id="count-family"></span></div>
 </div>
+
+<div class="board" id="board"></div>
 
 <!-- Task Modal -->
 <div class="modal" id="task-modal">
 <div class="modal-content">
 <div class="modal-header">
-<h2 id="modal-title">Create Task</h2>
+<h2 id="modal-title">New Task</h2>
 <button class="modal-close" onclick="closeModal()">&times;</button>
 </div>
 <div class="modal-body">
-<div class="modal-row">
-<div class="modal-section">
-<label>Summary</label>
-<input type="text" id="task-summary" placeholder="What needs to be done?">
+<div class="form-group">
+<label>Task Title</label>
+<input type="text" id="task-title" placeholder="What needs to be done?">
 </div>
-<div class="modal-section">
-<label>Task ID</label>
-<input type="text" id="task-id" placeholder="AUTO" readonly>
-</div>
-</div>
-<div class="modal-section">
+<div class="form-group">
 <label>Description</label>
-<textarea id="task-desc" placeholder="Add details, acceptance criteria, links..."></textarea>
+<textarea id="task-desc" placeholder="Add details..."></textarea>
 </div>
-<div class="modal-row">
-<div class="modal-section">
-<label>Type</label>
-<select id="task-type">
-<option value="task">📋 Task</option>
-<option value="story">📖 Story</option>
-<option value="bug">🐛 Bug</option>
-<option value="epic">🎯 Epic</option>
-</select>
-</div>
-<div class="modal-section">
-<label>Priority</label>
-<select id="task-priority">
-<option value="highest">🔴 Highest</option>
-<option value="high">🟠 High</option>
-<option value="medium" selected>🟡 Medium</option>
-<option value="low">🟢 Low</option>
-<option value="lowest">⚪ Lowest</option>
-</select>
-</div>
-</div>
-<div class="modal-row">
-<div class="modal-section">
-<label>Story Points</label>
-<select id="task-points">
-<option value="1">1</option>
-<option value="2">2</option>
-<option value="3" selected>3</option>
-<option value="5">5</option>
-<option value="8">8</option>
-<option value="13">13</option>
-</select>
-</div>
-<div class="modal-section">
-<label>Assignee</label>
-<select id="task-assignee">
-<option value="A">Arfeen</option>
-<option value="U">Unassigned</option>
-</select>
-</div>
-</div>
-<div class="modal-row">
-<div class="modal-section">
-<label>Column</label>
-<select id="task-column">
-<option value="backlog">📥 Backlog</option>
-<option value="todo">📋 To Do</option>
-<option value="progress">🔄 In Progress</option>
-<option value="review">👀 Review</option>
-<option value="done">✅ Done</option>
-</select>
-</div>
-<div class="modal-section">
+<div class="form-row">
+<div class="form-group">
 <label>Category</label>
 <select id="task-category">
 <option value="professional">💼 Professional</option>
@@ -221,14 +152,40 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 <option value="family">👨‍👩‍👧‍👦 Family</option>
 </select>
 </div>
+<div class="form-group">
+<label>Priority</label>
+<select id="task-priority">
+<option value="high">🔴 High</option>
+<option value="medium" selected>🟡 Medium</option>
+<option value="low">🟢 Low</option>
+</select>
 </div>
-<div class="modal-section">
-<label>Notes</label>
-<textarea id="task-notes" placeholder="Add notes, decisions, updates..."></textarea>
 </div>
-<div class="modal-section">
+<div class="form-row">
+<div class="form-group">
+<label>Status</label>
+<select id="task-status">
+<option value="todo">📥 To Do</option>
+<option value="progress">🔄 In Progress</option>
+<option value="done">✅ Done</option>
+</select>
+</div>
+<div class="form-group">
+<label>Due Date</label>
+<input type="date" id="task-due">
+</div>
+</div>
+<div class="form-group">
 <label>Tags (comma separated)</label>
-<input type="text" id="task-tags" placeholder="agii, urgent, client">
+<input type="text" id="task-tags" placeholder="urgent, agii, kids">
+</div>
+<div class="notes-section" id="notes-section" style="display:none">
+<h4>📝 Notes</h4>
+<div id="notes-list"></div>
+<div class="note-add">
+<input type="text" id="new-note" placeholder="Add a note...">
+<button onclick="addNote()">+</button>
+</div>
 </div>
 </div>
 <div class="modal-actions">
@@ -239,76 +196,42 @@ body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;b
 </div>
 </div>
 
-<!-- Sprint Planner Modal -->
-<div class="modal" id="sprint-modal">
-<div class="modal-content">
-<div class="modal-header">
-<h2>📊 Sprint Planner</h2>
-<button class="modal-close" onclick="document.getElementById('sprint-modal').classList.remove('show')">&times;</button>
-</div>
-<div class="modal-body">
-<div class="sprint-stats">
-<div class="sprint-stat"><div class="num" id="sprint-total">0</div><div class="label">Total Tasks</div></div>
-<div class="sprint-stat"><div class="num" id="sprint-done">0</div><div class="label">Completed</div></div>
-<div class="sprint-stat"><div class="num" id="sprint-points">0</div><div class="label">Points Done</div></div>
-<div class="sprint-stat"><div class="num" id="sprint-velocity">0</div><div class="label">Velocity/Day</div></div>
-</div>
-<div class="modal-section">
-<label>Sprint Goal</label>
-<textarea id="sprint-goal" placeholder="What do you want to achieve this sprint?">Close 2 Agii.ca clients, launch Gumroad store, complete 500+ AI prompts</textarea>
-</div>
-<div class="modal-section">
-<label>Daily Standup Notes</label>
-<textarea id="standup-notes" placeholder="Yesterday: ... Today: ... Blockers: ..."></textarea>
-</div>
-</div>
-<div class="modal-actions">
-<button class="btn btn-secondary" onclick="document.getElementById('sprint-modal').classList.remove('show')">Close</button>
-<button class="btn btn-primary" onclick="saveSprint()">Save Sprint</button>
-</div>
-</div>
-</div>
-
 <script>
-// ===== DATA STORE =====
 const Store = {
-    get(key) { return JSON.parse(localStorage.getItem('sf_'+key) || '[]'); },
-    set(key, data) { localStorage.setItem('sf_'+key, JSON.stringify(data)); },
-    id() { return 'SF-' + Math.random().toString(36).substr(2,5).toUpperCase(); }
+    get(key) { return JSON.parse(localStorage.getItem('tf_'+key) || '[]'); },
+    set(key, data) { localStorage.setItem('tf_'+key, JSON.stringify(data)); },
+    id() { return 'T-' + Math.random().toString(36).substr(2,4).toUpperCase(); }
 };
 
-// ===== COLUMNS =====
-const COLUMNS = [
-    { id: 'backlog', name: '📥 Backlog', color: '#8795a5' },
-    { id: 'todo', name: '📋 To Do', color: '#0065ff' },
-    { id: 'progress', name: '🔄 In Progress', color: '#ffab00' },
-    { id: 'review', name: '👀 Review', color: '#6554c0' },
-    { id: 'done', name: '✅ Done', color: '#36b37e' }
-];
+let currentFilter = 'all';
+let editingTaskId = null;
+let draggedTaskId = null;
 
-// ===== RENDER BOARD =====
+// Date display
+document.getElementById('date-display').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
+
 function renderBoard() {
     const board = document.getElementById('board');
     const tasks = Store.get('tasks');
-    const categoryFilter = document.getElementById('filter-category').value;
+    const filtered = currentFilter === 'all' ? tasks : tasks.filter(t => t.category === currentFilter);
     
-    // Filter by category
-    const filteredTasks = categoryFilter === 'all' ? tasks : tasks.filter(t => t.category === categoryFilter);
+    const columns = [
+        { id: 'todo', name: '📥 To Do', icon: '' },
+        { id: 'progress', name: '🔄 In Progress', icon: '' },
+        { id: 'done', name: '✅ Done', icon: '' }
+    ];
     
-    board.innerHTML = COLUMNS.map(col => {
-        const colTasks = filteredTasks.filter(t => t.column === col.id);
+    board.innerHTML = columns.map(col => {
+        const colTasks = filtered.filter(t => t.status === col.id);
         return `
-        <div class="column" data-column="${col.id}">
+        <div class="column">
             <div class="column-header">
                 <div class="column-title">${col.name}</div>
                 <span class="column-count">${colTasks.length}</span>
             </div>
-            <div class="column-body" 
-                ondragover="handleDragOver(event)" 
-                ondrop="handleDrop(event, '${col.id}')"
-                ondragleave="handleDragLeave(event)">
-                ${colTasks.map(task => renderCard(task)).join('')}
-                <button class="add-card-btn" onclick="showAddTask('${col.id}')">+ Create</button>
+            <div class="column-body" ondragover="handleDragOver(event)" ondrop="handleDrop(event,'${col.id}')" ondragleave="handleDragLeave(event)">
+                ${colTasks.map(t => renderCard(t)).join('')}
+                <button class="add-card" onclick="showAddTask('${col.id}')">+ Add Task</button>
             </div>
         </div>`;
     }).join('');
@@ -317,134 +240,128 @@ function renderBoard() {
 }
 
 function renderCard(task) {
-    const priorityIcons = { highest: '🔴', high: '🟠', medium: '🟡', low: '🟢', lowest: '⚪' };
-    const categoryIcons = { professional: '💼', personal: '👤', family: '👨‍👩‍👧‍👦' };
-    const categoryColors = { professional: '#0052cc', personal: '#6554c0', family: '#36b37e' };
-    const hasNotes = task.notes && task.notes.trim().length > 0;
+    const priorityIcons = { high: '🔴', medium: '🟡', low: '🟢' };
+    const catClass = 'cat-' + (task.category || 'professional');
+    const catLabel = { professional: '💼 Pro', personal: '👤 Personal', family: '👨‍👩‍👧‍👦 Family' }[task.category] || '💼 Pro';
+    const hasNotes = task.notes && task.notes.length > 0;
+    const dueStr = task.due ? new Date(task.due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
+    const isOverdue = task.due && new Date(task.due) < new Date() && task.status !== 'done';
     
     return `
-    <div class="card" draggable="true" ondragstart="handleDragStart(event, '${task.id}')" onclick="showTaskDetail('${task.id}')">
-        ${hasNotes ? '<span class="card-notes-indicator" title="Has notes">📝</span>' : ''}
-        <div style="display:flex;gap:6px;margin-bottom:8px">
-            <span class="card-type ${task.type}">${task.type}</span>
-            <span style="display:inline-block;padding:2px 6px;border-radius:3px;font-size:0.65em;font-weight:700;background:${categoryColors[task.category] || '#8795a5'};color:white">${categoryIcons[task.category] || '📋'} ${task.category || 'professional'}</span>
+    <div class="card" draggable="true" ondragstart="handleDragStart(event,'${task.id}')" onclick="showTaskDetail('${task.id}')">
+        ${hasNotes ? '<span class="card-notes" title="Has notes">📝</span>' : ''}
+        <div class="card-header">
+            <span class="card-category ${catClass}">${catLabel}</span>
+            <span class="card-priority">${priorityIcons[task.priority] || '🟡'}</span>
         </div>
-        <div class="card-title">${task.summary}</div>
+        <div class="card-title">${task.title}</div>
         ${task.desc ? `<div class="card-desc">${task.desc}</div>` : ''}
         <div class="card-footer">
-            <div class="card-priority">
-                <span class="priority-icon">${priorityIcons[task.priority] || '🟡'}</span>
-                <span class="card-id">${task.id}</span>
-            </div>
-            <div class="card-meta">
-                <span class="card-points">${task.points}pt</span>
-                <span class="card-avatar">${task.assignee || 'U'}</span>
-            </div>
+            <span class="card-id">${task.id}</span>
+            ${dueStr ? `<span class="card-date" style="color:${isOverdue ? 'var(--red)' : 'var(--text2)'}">${isOverdue ? '⚠️ ' : '📅 '}${dueStr}</span>` : ''}
         </div>
         ${task.tags && task.tags.length ? `<div class="card-tags">${task.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>` : ''}
     </div>`;
 }
 
-// ===== DRAG & DROP =====
-let draggedTaskId = null;
-
-function handleDragStart(e, taskId) {
-    draggedTaskId = taskId;
-    e.target.classList.add('dragging');
-    e.dataTransfer.effectAllowed = 'move';
-}
-
-function handleDragOver(e) {
-    e.preventDefault();
-    e.currentTarget.classList.add('drag-over');
-}
-
-function handleDragLeave(e) {
-    e.currentTarget.classList.remove('drag-over');
-}
-
-function handleDrop(e, columnId) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('drag-over');
+function updateStats() {
+    const tasks = Store.get('tasks');
+    const filtered = currentFilter === 'all' ? tasks : tasks.filter(t => t.category === currentFilter);
     
+    document.getElementById('stat-todo').textContent = filtered.filter(t => t.status === 'todo').length;
+    document.getElementById('stat-progress').textContent = filtered.filter(t => t.status === 'progress').length;
+    document.getElementById('stat-done').textContent = filtered.filter(t => t.status === 'done').length;
+    document.getElementById('stat-total').textContent = filtered.length;
+    
+    // Category counts
+    document.getElementById('count-all').textContent = ` (${tasks.length})`;
+    document.getElementById('count-professional').textContent = ` (${tasks.filter(t => t.category === 'professional').length})`;
+    document.getElementById('count-personal').textContent = ` (${tasks.filter(t => t.category === 'personal').length})`;
+    document.getElementById('count-family').textContent = ` (${tasks.filter(t => t.category === 'family').length})`;
+}
+
+function filterCategory(cat) {
+    currentFilter = cat;
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    event.target.closest('.tab').classList.add('active');
+    renderBoard();
+}
+
+// Drag & Drop
+function handleDragStart(e, id) { draggedTaskId = id; e.target.classList.add('dragging'); }
+function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
+function handleDrop(e, status) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
     if (draggedTaskId) {
         const tasks = Store.get('tasks');
         const task = tasks.find(t => t.id === draggedTaskId);
-        if (task) {
-            task.column = columnId;
-            task.updatedAt = Date.now();
-            Store.set('tasks', tasks);
-            renderBoard();
-        }
+        if (task) { task.status = status; Store.set('tasks', tasks); renderBoard(); }
     }
     draggedTaskId = null;
 }
 
-// ===== TASK MODAL =====
-let editingTaskId = null;
-
-function showAddTask(column = 'todo') {
+// Modal
+function showAddTask(status = 'todo') {
     editingTaskId = null;
-    document.getElementById('modal-title').textContent = 'Create Task';
-    document.getElementById('task-id').value = Store.id();
-    document.getElementById('task-summary').value = '';
+    document.getElementById('modal-title').textContent = 'New Task';
+    document.getElementById('task-title').value = '';
     document.getElementById('task-desc').value = '';
-    document.getElementById('task-type').value = 'task';
+    document.getElementById('task-category').value = currentFilter === 'all' ? 'professional' : currentFilter;
     document.getElementById('task-priority').value = 'medium';
-    document.getElementById('task-points').value = '3';
-    document.getElementById('task-assignee').value = 'A';
-    document.getElementById('task-column').value = column;
+    document.getElementById('task-status').value = status;
+    document.getElementById('task-due').value = '';
     document.getElementById('task-tags').value = '';
-    document.getElementById('task-notes').value = '';
+    document.getElementById('notes-section').style.display = 'none';
     document.getElementById('delete-btn').style.display = 'none';
     document.getElementById('task-modal').classList.add('show');
 }
 
-function showTaskDetail(taskId) {
+function showTaskDetail(id) {
     const tasks = Store.get('tasks');
-    const task = tasks.find(t => t.id === taskId);
+    const task = tasks.find(t => t.id === id);
     if (!task) return;
     
-    editingTaskId = taskId;
+    editingTaskId = id;
     document.getElementById('modal-title').textContent = 'Edit Task';
-    document.getElementById('task-id').value = task.id;
-    document.getElementById('task-summary').value = task.summary;
+    document.getElementById('task-title').value = task.title;
     document.getElementById('task-desc').value = task.desc || '';
-    document.getElementById('task-type').value = task.type;
-    document.getElementById('task-priority').value = task.priority;
-    document.getElementById('task-points').value = task.points;
-    document.getElementById('task-assignee').value = task.assignee || 'A';
-    document.getElementById('task-column').value = task.column;
     document.getElementById('task-category').value = task.category || 'professional';
+    document.getElementById('task-priority').value = task.priority;
+    document.getElementById('task-status').value = task.status;
+    document.getElementById('task-due').value = task.due || '';
     document.getElementById('task-tags').value = (task.tags || []).join(', ');
-    document.getElementById('task-notes').value = task.notes || '';
     document.getElementById('delete-btn').style.display = 'block';
+    
+    // Show notes
+    document.getElementById('notes-section').style.display = 'block';
+    renderNotes(task.notes || []);
+    
     document.getElementById('task-modal').classList.add('show');
 }
 
 function saveTask() {
     const tasks = Store.get('tasks');
-    const taskData = {
-        id: document.getElementById('task-id').value,
-        summary: document.getElementById('task-summary').value,
+    const data = {
+        id: editingTaskId || Store.id(),
+        title: document.getElementById('task-title').value,
         desc: document.getElementById('task-desc').value,
-        type: document.getElementById('task-type').value,
-        priority: document.getElementById('task-priority').value,
-        points: parseInt(document.getElementById('task-points').value),
-        assignee: document.getElementById('task-assignee').value,
-        column: document.getElementById('task-column').value,
         category: document.getElementById('task-category').value,
+        priority: document.getElementById('task-priority').value,
+        status: document.getElementById('task-status').value,
+        due: document.getElementById('task-due').value,
         tags: document.getElementById('task-tags').value.split(',').map(t => t.trim()).filter(t => t),
-        notes: document.getElementById('task-notes').value,
         updatedAt: Date.now()
     };
     
     if (editingTaskId) {
         const idx = tasks.findIndex(t => t.id === editingTaskId);
-        if (idx >= 0) tasks[idx] = { ...tasks[idx], ...taskData };
+        if (idx >= 0) { data.notes = tasks[idx].notes || []; tasks[idx] = { ...tasks[idx], ...data }; }
     } else {
-        taskData.createdAt = Date.now();
-        tasks.push(taskData);
+        data.notes = [];
+        data.createdAt = Date.now();
+        tasks.push(data);
     }
     
     Store.set('tasks', tasks);
@@ -453,115 +370,74 @@ function saveTask() {
 }
 
 function deleteTask() {
-    if (!editingTaskId) return;
-    if (!confirm('Delete this task?')) return;
-    
-    const tasks = Store.get('tasks').filter(t => t.id !== editingTaskId);
-    Store.set('tasks', tasks);
+    if (!editingTaskId || !confirm('Delete this task?')) return;
+    Store.set('tasks', Store.get('tasks').filter(t => t.id !== editingTaskId));
     closeModal();
     renderBoard();
 }
 
-function closeModal() {
-    document.getElementById('task-modal').classList.remove('show');
+function closeModal() { document.getElementById('task-modal').classList.remove('show'); }
+
+// Notes
+function renderNotes(notes) {
+    const list = document.getElementById('notes-list');
+    list.innerHTML = notes.map((n, i) => `
+        <div class="note-item">
+            ${n.text}
+            <div class="note-time">${new Date(n.time).toLocaleString()}</div>
+        </div>
+    `).join('') || '<div style="color:var(--text2);font-size:0.85em">No notes yet</div>';
 }
 
-// ===== STATS =====
-function updateStats() {
-    const tasks = Store.get('tasks');
-    const todo = tasks.filter(t => t.column === 'todo').length;
-    const progress = tasks.filter(t => t.column === 'progress').length;
-    const done = tasks.filter(t => t.column === 'done').length;
-    const blocked = tasks.filter(t => t.column === 'blocked').length;
-    const totalPoints = tasks.reduce((s, t) => s + (t.points || 0), 0);
-    const donePoints = tasks.filter(t => t.column === 'done').reduce((s, t) => s + (t.points || 0), 0);
+function addNote() {
+    const input = document.getElementById('new-note');
+    if (!input.value.trim() || !editingTaskId) return;
     
-    document.getElementById('stat-todo').textContent = todo;
-    document.getElementById('stat-progress').textContent = progress;
-    document.getElementById('stat-done').textContent = done;
-    document.getElementById('stat-blocked').textContent = blocked;
-    document.getElementById('stat-points').textContent = donePoints;
-    document.getElementById('stat-total-points').textContent = totalPoints;
-}
-
-// ===== SPRINT =====
-function showSprintPlanner() {
     const tasks = Store.get('tasks');
-    const total = tasks.length;
-    const done = tasks.filter(t => t.column === 'done').length;
-    const donePoints = tasks.filter(t => t.column === 'done').reduce((s, t) => s + (t.points || 0), 0);
+    const task = tasks.find(t => t.id === editingTaskId);
+    if (!task.notes) task.notes = [];
+    task.notes.push({ text: input.value.trim(), time: Date.now() });
+    Store.set('tasks', tasks);
     
-    document.getElementById('sprint-total').textContent = total;
-    document.getElementById('sprint-done').textContent = done;
-    document.getElementById('sprint-points').textContent = donePoints;
-    document.getElementById('sprint-velocity').textContent = total > 0 ? Math.round(done/12*10)/10 : 0;
-    
-    document.getElementById('sprint-modal').classList.add('show');
+    input.value = '';
+    renderNotes(task.notes);
 }
 
-function saveSprint() {
-    const sprintData = {
-        goal: document.getElementById('sprint-goal').value,
-        standup: document.getElementById('standup-notes').value,
-        updatedAt: Date.now()
-    };
-    Store.set('sprint', sprintData);
-    document.getElementById('sprint-modal').classList.remove('show');
-}
-
-// ===== EXPORT =====
-function exportBoard() {
-    const tasks = Store.get('tasks');
-    const data = JSON.stringify(tasks, null, 2);
+// Export
+function exportTasks() {
+    const data = JSON.stringify(Store.get('tasks'), null, 2);
     const blob = new Blob([data], { type: 'application/json' });
     const url = URL.createObjectURL(blob);
     const a = document.createElement('a');
     a.href = url;
-    a.download = `scrumflow-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.download = `taskflow-${new Date().toISOString().split('T')[0]}.json`;
     a.click();
 }
 
-// ===== INIT =====
+// Init
 function init() {
-    // Add demo tasks if empty
     if (Store.get('tasks').length === 0) {
         Store.set('tasks', [
-            // PROFESSIONAL
-            { id: 'SF-DEMO1', summary: 'Close Agii.ca client deal', desc: 'Follow up with warm leads, send proposals', type: 'story', priority: 'highest', points: 8, assignee: 'A', column: 'todo', category: 'professional', tags: ['agii', 'revenue'], notes: 'Call John at 2pm', createdAt: Date.now() },
-            { id: 'SF-DEMO2', summary: 'Upload products to Gumroad', desc: 'Chess, AI Prompts, Notion Templates', type: 'task', priority: 'high', points: 5, assignee: 'A', column: 'todo', category: 'professional', tags: ['gumroad', 'passive'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO3', summary: 'Post on LinkedIn', desc: 'Share thought leadership content', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'progress', category: 'professional', tags: ['linkedin', 'marketing'], notes: 'Post #2 ready', createdAt: Date.now() },
-            { id: 'SF-DEMO4', summary: 'Set up Etsy ads', desc: 'Start $1/day for Family Planner', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'backlog', category: 'professional', tags: ['etsy'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO5', summary: 'Send 50 cold emails', desc: 'Using Apollo.io for Agii leads', type: 'task', priority: 'high', points: 3, assignee: 'A', column: 'todo', category: 'professional', tags: ['cold-email', 'agii'], notes: '', createdAt: Date.now() },
-            // PERSONAL
-            { id: 'SF-DEMO6', summary: 'Update LinkedIn profile', desc: 'New headline and About section', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'todo', category: 'personal', tags: ['linkedin'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO7', summary: 'Review investment portfolio', desc: 'Check RRSP, TFSA, RESP balances', type: 'task', priority: 'low', points: 1, assignee: 'A', column: 'backlog', category: 'personal', tags: ['finance'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO8', summary: 'Gym - 3x this week', desc: 'Cardio + weights', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'progress', category: 'personal', tags: ['health'], notes: 'Went Monday', createdAt: Date.now() },
-            // FAMILY
-            { id: 'SF-DEMO9', summary: 'Plan weekend family outing', desc: 'Research activities for kids', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'todo', category: 'family', tags: ['kids', 'weekend'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO10', summary: 'Kids dentist appointment', desc: 'Book for next week', type: 'task', priority: 'high', points: 1, assignee: 'A', column: 'todo', category: 'family', tags: ['health', 'kids'], notes: '', createdAt: Date.now() },
-            { id: 'SF-DEMO11', summary: 'FamilyShield setup', desc: 'Install Chrome extension on kids computers', type: 'task', priority: 'high', points: 3, assignee: 'A', column: 'progress', category: 'family', tags: ['security', 'kids'], notes: 'Download from GitHub', createdAt: Date.now() },
-            // DONE
-            { id: 'SF-DEMO12', summary: 'Fix vocab game bug', desc: 'Duplicate answer options issue', type: 'bug', priority: 'high', points: 3, assignee: 'A', column: 'done', category: 'professional', tags: ['vocab'], notes: 'Fixed and deployed', createdAt: Date.now() },
-            { id: 'SF-DEMO13', summary: 'Build student portal', desc: 'Login, dashboard, recommendations', type: 'epic', priority: 'high', points: 13, assignee: 'A', column: 'done', category: 'professional', tags: ['student', 'saas'], notes: 'Live on GitHub', createdAt: Date.now() },
-            { id: 'SF-DEMO14', summary: 'Pay electricity bill', desc: '', type: 'task', priority: 'medium', points: 1, assignee: 'A', column: 'done', category: 'family', tags: ['bills'], notes: 'Paid March 28', createdAt: Date.now() }
+            { id: 'T-001', title: 'Close Agii.ca client deal', desc: 'Follow up with warm leads', category: 'professional', priority: 'high', status: 'todo', tags: ['agii', 'revenue'], notes: [{text:'Call John at 2pm', time: Date.now()}], due: '2026-04-02', createdAt: Date.now() },
+            { id: 'T-002', title: 'Upload products to Gumroad', desc: 'Chess, AI Prompts, Notion Templates', category: 'professional', priority: 'high', status: 'todo', tags: ['gumroad'], notes: [], due: '2026-04-01', createdAt: Date.now() },
+            { id: 'T-003', title: 'Post on LinkedIn', desc: 'Share thought leadership content', category: 'professional', priority: 'medium', status: 'progress', tags: ['linkedin'], notes: [{text:'Post #2 ready to publish', time: Date.now()}], due: '', createdAt: Date.now() },
+            { id: 'T-004', title: 'Set up Etsy ads', desc: '$1/day for Family Planner', category: 'professional', priority: 'medium', status: 'todo', tags: ['etsy'], notes: [], due: '', createdAt: Date.now() },
+            { id: 'T-005', title: 'Send 50 cold emails', desc: 'Using Apollo.io for Agii leads', category: 'professional', priority: 'high', status: 'todo', tags: ['cold-email'], notes: [], due: '2026-04-03', createdAt: Date.now() },
+            { id: 'T-006', title: 'Update LinkedIn profile', desc: 'New headline and About section', category: 'personal', priority: 'medium', status: 'todo', tags: ['linkedin'], notes: [], due: '', createdAt: Date.now() },
+            { id: 'T-007', title: 'Review investment portfolio', desc: 'Check RRSP, TFSA, RESP', category: 'personal', priority: 'low', status: 'todo', tags: ['finance'], notes: [], due: '', createdAt: Date.now() },
+            { id: 'T-008', title: 'Gym 3x this week', desc: 'Cardio + weights', category: 'personal', priority: 'medium', status: 'progress', tags: ['health'], notes: [{text:'Went Monday', time: Date.now()}], due: '', createdAt: Date.now() },
+            { id: 'T-009', title: 'Plan weekend family outing', desc: 'Research activities for kids', category: 'family', priority: 'medium', status: 'todo', tags: ['kids'], notes: [], due: '2026-04-05', createdAt: Date.now() },
+            { id: 'T-010', title: 'Kids dentist appointment', desc: 'Book for next week', category: 'family', priority: 'high', status: 'todo', tags: ['kids', 'health'], notes: [], due: '2026-04-01', createdAt: Date.now() },
+            { id: 'T-011', title: 'FamilyShield setup', desc: 'Install Chrome extension on kids computers', category: 'family', priority: 'high', status: 'progress', tags: ['security', 'kids'], notes: [{text:'Downloaded from GitHub', time: Date.now()}], due: '', createdAt: Date.now() },
+            { id: 'T-012', title: 'Fix vocab game bug', desc: 'Duplicate answer options', category: 'professional', priority: 'high', status: 'done', tags: ['vocab'], notes: [{text:'Fixed and deployed', time: Date.now()}], due: '', createdAt: Date.now() },
+            { id: 'T-013', title: 'Build student portal', desc: 'Login, dashboard, recommendations', category: 'professional', priority: 'high', status: 'done', tags: ['student'], notes: [{text:'Live on GitHub', time: Date.now()}], due: '', createdAt: Date.now() },
+            { id: 'T-014', title: 'Pay electricity bill', desc: '', category: 'family', priority: 'medium', status: 'done', tags: ['bills'], notes: [{text:'Paid March 28', time: Date.now()}], due: '', createdAt: Date.now() }
         ]);
     }
-    
-    // Load sprint data
-    const sprintData = Store.get('sprint');
-    if (sprintData.goal) {
-        document.getElementById('sprint-goal').value = sprintData.goal;
-        document.getElementById('standup-notes').value = sprintData.standup || '';
-    }
-    
     renderBoard();
 }
 
-// Keyboard shortcut
-document.addEventListener('keydown', (e) => {
-    if (e.key === 'Escape') closeModal();
-    if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); showAddTask(); }
-});
+document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); showAddTask(); } });
 
 init();
 </script>
