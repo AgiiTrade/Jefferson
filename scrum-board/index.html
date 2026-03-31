@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>ScrumFlow — Daily Task Board</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0c0f1a;--card:#161b2e;--card2:#1e2540;--border:#2a3150;--accent:#0052cc;--accent2:#6554c0;--green:#36b37e;--yellow:#ffab00;--red:#ff5630;--blue:#0065ff;--text:#c5cee0;--text2:#8795a5;--white:#fff}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow-x:hidden}
+/* HEADER */
+.header{background:var(--card);padding:12px 20px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border);position:sticky;top:0;z-index:100}
+.header-left{display:flex;align-items:center;gap:16px}
+.logo{font-size:1.3em;font-weight:800;color:var(--accent)}
+.logo span{color:var(--accent2)}
+.sprint-info{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg);border-radius:6px;font-size:0.85em}
+.sprint-badge{background:var(--green);color:white;padding:2px 8px;border-radius:10px;font-size:0.7em;font-weight:700}
+.header-right{display:flex;gap:8px}
+.header-btn{padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:0.85em;transition:0.2s}
+.header-btn:hover{background:var(--card2);border-color:var(--accent)}
+.header-btn.primary{background:var(--accent);border-color:var(--accent);color:white}
+/* STATS BAR */
+.stats-bar{display:flex;gap:12px;padding:12px 20px;background:var(--card);border-bottom:1px solid var(--border);overflow-x:auto}
+.stat{display:flex;align-items:center;gap:8px;padding:6px 12px;background:var(--bg);border-radius:6px;white-space:nowrap;font-size:0.85em}
+.stat .dot{width:8px;height:8px;border-radius:50%}
+.stat .dot.blue{background:var(--blue)}
+.stat .dot.yellow{background:var(--yellow)}
+.stat .dot.green{background:var(--green)}
+.stat .dot.red{background:var(--red)}
+.stat .num{font-weight:700}
+/* BOARD */
+.board-container{display:flex;gap:16px;padding:20px;overflow-x:auto;min-height:calc(100vh - 130px)}
+.column{min-width:300px;max-width:320px;flex-shrink:0;background:var(--card);border-radius:12px;display:flex;flex-direction:column;max-height:calc(100vh - 160px)}
+.column-header{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.column-title{font-weight:700;font-size:0.95em;display:flex;align-items:center;gap:8px}
+.column-count{background:var(--bg);padding:2px 8px;border-radius:10px;font-size:0.8em;color:var(--text2)}
+.column-body{padding:12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
+.column-body.drag-over{background:rgba(0,82,204,0.05)}
+/* CARDS */
+.card{background:var(--card2);border-radius:8px;padding:12px;cursor:grab;transition:0.2s;border:1px solid transparent;position:relative}
+.card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.3)}
+.card.dragging{opacity:0.5;transform:rotate(2deg)}
+.card-type{display:inline-block;padding:2px 6px;border-radius:3px;font-size:0.65em;font-weight:700;text-transform:uppercase;margin-bottom:8px}
+.card-type.story{background:var(--green);color:white}
+.card-type.task{background:var(--blue);color:white}
+.card-type.bug{background:var(--red);color:white}
+.card-type.epic{background:var(--accent2);color:white}
+.card-title{font-weight:600;font-size:0.9em;margin-bottom:8px;line-height:1.4}
+.card-desc{font-size:0.8em;color:var(--text2);margin-bottom:10px;line-height:1.4;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.card-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.75em}
+.card-priority{display:flex;align-items:center;gap:4px}
+.priority-icon{font-size:1em}
+.card-meta{display:flex;gap:8px;color:var(--text2)}
+.card-id{font-family:monospace;color:var(--text2)}
+.card-avatar{width:24px;height:24px;border-radius:50%;background:var(--accent);display:flex;align-items:center;justify-content:center;font-size:0.7em;font-weight:700;color:white}
+.card-points{background:var(--bg);padding:2px 6px;border-radius:4px;font-weight:600}
+.card-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
+.card-tag{padding:2px 6px;border-radius:3px;font-size:0.65em;background:rgba(255,255,255,0.05)}
+.card-notes-indicator{position:absolute;top:8px;right:8px;font-size:0.8em;cursor:pointer}
+/* ADD CARD */
+.add-card-btn{padding:10px;border-radius:8px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:0.85em;width:100%;text-align:left;transition:0.2s}
+.add-card-btn:hover{border-color:var(--accent);color:var(--text);background:rgba(0,82,204,0.05)}
+/* MODAL */
+.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.8);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
+.modal.show{display:flex}
+.modal-content{background:var(--card);border-radius:12px;width:100%;max-width:700px;max-height:90vh;overflow-y:auto}
+.modal-header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
+.modal-header h2{font-size:1.2em}
+.modal-close{background:none;border:none;color:var(--text2);font-size:1.5em;cursor:pointer}
+.modal-body{padding:20px}
+.modal-section{margin-bottom:20px}
+.modal-section label{display:block;font-size:0.85em;color:var(--text2);margin-bottom:6px;font-weight:600}
+.modal-section input,.modal-section select,.modal-section textarea{width:100%;padding:10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9em;font-family:inherit}
+.modal-section textarea{min-height:100px;resize:vertical}
+.modal-section input:focus,.modal-section select:focus,.modal-section textarea:focus{outline:none;border-color:var(--accent)}
+.modal-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end;padding:20px;border-top:1px solid var(--border)}
+.btn{padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-weight:600;font-size:0.9em;transition:0.2s}
+.btn-primary{background:var(--accent);color:white}
+.btn-primary:hover{background:#0065ff}
+.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}
+.btn-danger{background:var(--red);color:white}
+/* NOTES PANEL */
+.notes-panel{background:var(--bg);border-radius:8px;padding:16px;margin-top:12px;border:1px solid var(--border)}
+.notes-panel h4{margin-bottom:12px;font-size:0.9em;color:var(--accent)}
+.notes-list{max-height:200px;overflow-y:auto}
+.note-item{padding:8px;background:var(--card2);border-radius:6px;margin-bottom:6px;font-size:0.85em}
+.note-item .note-time{font-size:0.75em;color:var(--text2);margin-top:4px}
+.note-input{display:flex;gap:8px;margin-top:12px}
+.note-input input{flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.85em}
+.note-input button{padding:8px 12px;border-radius:6px;border:none;background:var(--accent);color:white;cursor:pointer;font-size:0.85em}
+/* SPRINT PLANNER */
+.sprint-panel{background:var(--card);border-radius:12px;padding:20px;margin:20px}
+.sprint-panel h3{margin-bottom:16px}
+.sprint-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:16px}
+.sprint-stat{background:var(--bg);padding:12px;border-radius:8px;text-align:center}
+.sprint-stat .num{font-size:1.5em;font-weight:700}
+.sprint-stat .label{font-size:0.8em;color:var(--text2)}
+/* RESPONSIVE */
+@media(max-width:768px){.board-container{flex-direction:column}.column{min-width:100%;max-width:100%}}
+</style>
+</head>
+<body>
+
+<div class="header">
+<div class="header-left">
+<div class="logo">Scrum<span>Flow</span></div>
+<div class="sprint-info">
+<span>Sprint 1</span>
+<span class="sprint-badge">ACTIVE</span>
+<span>Mar 31 - Apr 11</span>
+</div>
+</div>
+<div class="header-right">
+<button class="header-btn" onclick="showSprintPlanner()">📊 Sprint</button>
+<button class="header-btn" onclick="exportBoard()">📥 Export</button>
+<button class="header-btn primary" onclick="showAddTask()">+ Create</button>
+</div>
+</div>
+
+<div class="stats-bar">
+<div class="stat"><span class="dot blue"></span><span>To Do:</span><span class="num" id="stat-todo">0</span></div>
+<div class="stat"><span class="dot yellow"></span><span>In Progress:</span><span class="num" id="stat-progress">0</span></div>
+<div class="stat"><span class="dot green"></span><span>Done:</span><span class="num" id="stat-done">0</span></div>
+<div class="stat"><span class="dot red"></span><span>Blocked:</span><span class="num" id="stat-blocked">0</span></div>
+<div class="stat">📌 Points: <span class="num" id="stat-points">0</span>/<span id="stat-total-points">0</span></div>
+<div class="stat">📅 Days Left: <span class="num" id="stat-days">12</span></div>
+</div>
+
+<div class="board-container" id="board">
+<!-- Columns will be rendered by JS -->
+</div>
+
+<!-- Task Modal -->
+<div class="modal" id="task-modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2 id="modal-title">Create Task</h2>
+<button class="modal-close" onclick="closeModal()">&times;</button>
+</div>
+<div class="modal-body">
+<div class="modal-row">
+<div class="modal-section">
+<label>Summary</label>
+<input type="text" id="task-summary" placeholder="What needs to be done?">
+</div>
+<div class="modal-section">
+<label>Task ID</label>
+<input type="text" id="task-id" placeholder="AUTO" readonly>
+</div>
+</div>
+<div class="modal-section">
+<label>Description</label>
+<textarea id="task-desc" placeholder="Add details, acceptance criteria, links..."></textarea>
+</div>
+<div class="modal-row">
+<div class="modal-section">
+<label>Type</label>
+<select id="task-type">
+<option value="task">📋 Task</option>
+<option value="story">📖 Story</option>
+<option value="bug">🐛 Bug</option>
+<option value="epic">🎯 Epic</option>
+</select>
+</div>
+<div class="modal-section">
+<label>Priority</label>
+<select id="task-priority">
+<option value="highest">🔴 Highest</option>
+<option value="high">🟠 High</option>
+<option value="medium" selected>🟡 Medium</option>
+<option value="low">🟢 Low</option>
+<option value="lowest">⚪ Lowest</option>
+</select>
+</div>
+</div>
+<div class="modal-row">
+<div class="modal-section">
+<label>Story Points</label>
+<select id="task-points">
+<option value="1">1</option>
+<option value="2">2</option>
+<option value="3" selected>3</option>
+<option value="5">5</option>
+<option value="8">8</option>
+<option value="13">13</option>
+</select>
+</div>
+<div class="modal-section">
+<label>Assignee</label>
+<select id="task-assignee">
+<option value="A">Arfeen</option>
+<option value="U">Unassigned</option>
+</select>
+</div>
+</div>
+<div class="modal-row">
+<div class="modal-section">
+<label>Column</label>
+<select id="task-column">
+<option value="backlog">📥 Backlog</option>
+<option value="todo">📋 To Do</option>
+<option value="progress">🔄 In Progress</option>
+<option value="review">👀 Review</option>
+<option value="done">✅ Done</option>
+</select>
+</div>
+<div class="modal-section">
+<label>Tags (comma separated)</label>
+<input type="text" id="task-tags" placeholder="agii, urgent, client">
+</div>
+</div>
+<div class="modal-section">
+<label>Notes</label>
+<textarea id="task-notes" placeholder="Add notes, decisions, updates..."></textarea>
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn btn-danger" id="delete-btn" onclick="deleteTask()" style="display:none">Delete</button>
+<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
+<button class="btn btn-primary" onclick="saveTask()">Save</button>
+</div>
+</div>
+</div>
+
+<!-- Sprint Planner Modal -->
+<div class="modal" id="sprint-modal">
+<div class="modal-content">
+<div class="modal-header">
+<h2>📊 Sprint Planner</h2>
+<button class="modal-close" onclick="document.getElementById('sprint-modal').classList.remove('show')">&times;</button>
+</div>
+<div class="modal-body">
+<div class="sprint-stats">
+<div class="sprint-stat"><div class="num" id="sprint-total">0</div><div class="label">Total Tasks</div></div>
+<div class="sprint-stat"><div class="num" id="sprint-done">0</div><div class="label">Completed</div></div>
+<div class="sprint-stat"><div class="num" id="sprint-points">0</div><div class="label">Points Done</div></div>
+<div class="sprint-stat"><div class="num" id="sprint-velocity">0</div><div class="label">Velocity/Day</div></div>
+</div>
+<div class="modal-section">
+<label>Sprint Goal</label>
+<textarea id="sprint-goal" placeholder="What do you want to achieve this sprint?">Close 2 Agii.ca clients, launch Gumroad store, complete 500+ AI prompts</textarea>
+</div>
+<div class="modal-section">
+<label>Daily Standup Notes</label>
+<textarea id="standup-notes" placeholder="Yesterday: ... Today: ... Blockers: ..."></textarea>
+</div>
+</div>
+<div class="modal-actions">
+<button class="btn btn-secondary" onclick="document.getElementById('sprint-modal').classList.remove('show')">Close</button>
+<button class="btn btn-primary" onclick="saveSprint()">Save Sprint</button>
+</div>
+</div>
+</div>
+
+<script>
+// ===== DATA STORE =====
+const Store = {
+    get(key) { return JSON.parse(localStorage.getItem('sf_'+key) || '[]'); },
+    set(key, data) { localStorage.setItem('sf_'+key, JSON.stringify(data)); },
+    id() { return 'SF-' + Math.random().toString(36).substr(2,5).toUpperCase(); }
+};
+
+// ===== COLUMNS =====
+const COLUMNS = [
+    { id: 'backlog', name: '📥 Backlog', color: '#8795a5' },
+    { id: 'todo', name: '📋 To Do', color: '#0065ff' },
+    { id: 'progress', name: '🔄 In Progress', color: '#ffab00' },
+    { id: 'review', name: '👀 Review', color: '#6554c0' },
+    { id: 'done', name: '✅ Done', color: '#36b37e' }
+];
+
+// ===== RENDER BOARD =====
+function renderBoard() {
+    const board = document.getElementById('board');
+    const tasks = Store.get('tasks');
+    
+    board.innerHTML = COLUMNS.map(col => {
+        const colTasks = tasks.filter(t => t.column === col.id);
+        return `
+        <div class="column" data-column="${col.id}">
+            <div class="column-header">
+                <div class="column-title">${col.name}</div>
+                <span class="column-count">${colTasks.length}</span>
+            </div>
+            <div class="column-body" 
+                ondragover="handleDragOver(event)" 
+                ondrop="handleDrop(event, '${col.id}')"
+                ondragleave="handleDragLeave(event)">
+                ${colTasks.map(task => renderCard(task)).join('')}
+                <button class="add-card-btn" onclick="showAddTask('${col.id}')">+ Create</button>
+            </div>
+        </div>`;
+    }).join('');
+    
+    updateStats();
+}
+
+function renderCard(task) {
+    const priorityIcons = { highest: '🔴', high: '🟠', medium: '🟡', low: '🟢', lowest: '⚪' };
+    const hasNotes = task.notes && task.notes.trim().length > 0;
+    
+    return `
+    <div class="card" draggable="true" ondragstart="handleDragStart(event, '${task.id}')" onclick="showTaskDetail('${task.id}')">
+        ${hasNotes ? '<span class="card-notes-indicator" title="Has notes">📝</span>' : ''}
+        <span class="card-type ${task.type}">${task.type}</span>
+        <div class="card-title">${task.summary}</div>
+        ${task.desc ? `<div class="card-desc">${task.desc}</div>` : ''}
+        <div class="card-footer">
+            <div class="card-priority">
+                <span class="priority-icon">${priorityIcons[task.priority] || '🟡'}</span>
+                <span class="card-id">${task.id}</span>
+            </div>
+            <div class="card-meta">
+                <span class="card-points">${task.points}pt</span>
+                <span class="card-avatar">${task.assignee || 'U'}</span>
+            </div>
+        </div>
+        ${task.tags && task.tags.length ? `<div class="card-tags">${task.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>` : ''}
+    </div>`;
+}
+
+// ===== DRAG & DROP =====
+let draggedTaskId = null;
+
+function handleDragStart(e, taskId) {
+    draggedTaskId = taskId;
+    e.target.classList.add('dragging');
+    e.dataTransfer.effectAllowed = 'move';
+}
+
+function handleDragOver(e) {
+    e.preventDefault();
+    e.currentTarget.classList.add('drag-over');
+}
+
+function handleDragLeave(e) {
+    e.currentTarget.classList.remove('drag-over');
+}
+
+function handleDrop(e, columnId) {
+    e.preventDefault();
+    e.currentTarget.classList.remove('drag-over');
+    
+    if (draggedTaskId) {
+        const tasks = Store.get('tasks');
+        const task = tasks.find(t => t.id === draggedTaskId);
+        if (task) {
+            task.column = columnId;
+            task.updatedAt = Date.now();
+            Store.set('tasks', tasks);
+            renderBoard();
+        }
+    }
+    draggedTaskId = null;
+}
+
+// ===== TASK MODAL =====
+let editingTaskId = null;
+
+function showAddTask(column = 'todo') {
+    editingTaskId = null;
+    document.getElementById('modal-title').textContent = 'Create Task';
+    document.getElementById('task-id').value = Store.id();
+    document.getElementById('task-summary').value = '';
+    document.getElementById('task-desc').value = '';
+    document.getElementById('task-type').value = 'task';
+    document.getElementById('task-priority').value = 'medium';
+    document.getElementById('task-points').value = '3';
+    document.getElementById('task-assignee').value = 'A';
+    document.getElementById('task-column').value = column;
+    document.getElementById('task-tags').value = '';
+    document.getElementById('task-notes').value = '';
+    document.getElementById('delete-btn').style.display = 'none';
+    document.getElementById('task-modal').classList.add('show');
+}
+
+function showTaskDetail(taskId) {
+    const tasks = Store.get('tasks');
+    const task = tasks.find(t => t.id === taskId);
+    if (!task) return;
+    
+    editingTaskId = taskId;
+    document.getElementById('modal-title').textContent = 'Edit Task';
+    document.getElementById('task-id').value = task.id;
+    document.getElementById('task-summary').value = task.summary;
+    document.getElementById('task-desc').value = task.desc || '';
+    document.getElementById('task-type').value = task.type;
+    document.getElementById('task-priority').value = task.priority;
+    document.getElementById('task-points').value = task.points;
+    document.getElementById('task-assignee').value = task.assignee || 'A';
+    document.getElementById('task-column').value = task.column;
+    document.getElementById('task-tags').value = (task.tags || []).join(', ');
+    document.getElementById('task-notes').value = task.notes || '';
+    document.getElementById('delete-btn').style.display = 'block';
+    document.getElementById('task-modal').classList.add('show');
+}
+
+function saveTask() {
+    const tasks = Store.get('tasks');
+    const taskData = {
+        id: document.getElementById('task-id').value,
+        summary: document.getElementById('task-summary').value,
+        desc: document.getElementById('task-desc').value,
+        type: document.getElementById('task-type').value,
+        priority: document.getElementById('task-priority').value,
+        points: parseInt(document.getElementById('task-points').value),
+        assignee: document.getElementById('task-assignee').value,
+        column: document.getElementById('task-column').value,
+        tags: document.getElementById('task-tags').value.split(',').map(t => t.trim()).filter(t => t),
+        notes: document.getElementById('task-notes').value,
+        updatedAt: Date.now()
+    };
+    
+    if (editingTaskId) {
+        const idx = tasks.findIndex(t => t.id === editingTaskId);
+        if (idx >= 0) tasks[idx] = { ...tasks[idx], ...taskData };
+    } else {
+        taskData.createdAt = Date.now();
+        tasks.push(taskData);
+    }
+    
+    Store.set('tasks', tasks);
+    closeModal();
+    renderBoard();
+}
+
+function deleteTask() {
+    if (!editingTaskId) return;
+    if (!confirm('Delete this task?')) return;
+    
+    const tasks = Store.get('tasks').filter(t => t.id !== editingTaskId);
+    Store.set('tasks', tasks);
+    closeModal();
+    renderBoard();
+}
+
+function closeModal() {
+    document.getElementById('task-modal').classList.remove('show');
+}
+
+// ===== STATS =====
+function updateStats() {
+    const tasks = Store.get('tasks');
+    const todo = tasks.filter(t => t.column === 'todo').length;
+    const progress = tasks.filter(t => t.column === 'progress').length;
+    const done = tasks.filter(t => t.column === 'done').length;
+    const blocked = tasks.filter(t => t.column === 'blocked').length;
+    const totalPoints = tasks.reduce((s, t) => s + (t.points || 0), 0);
+    const donePoints = tasks.filter(t => t.column === 'done').reduce((s, t) => s + (t.points || 0), 0);
+    
+    document.getElementById('stat-todo').textContent = todo;
+    document.getElementById('stat-progress').textContent = progress;
+    document.getElementById('stat-done').textContent = done;
+    document.getElementById('stat-blocked').textContent = blocked;
+    document.getElementById('stat-points').textContent = donePoints;
+    document.getElementById('stat-total-points').textContent = totalPoints;
+}
+
+// ===== SPRINT =====
+function showSprintPlanner() {
+    const tasks = Store.get('tasks');
+    const total = tasks.length;
+    const done = tasks.filter(t => t.column === 'done').length;
+    const donePoints = tasks.filter(t => t.column === 'done').reduce((s, t) => s + (t.points || 0), 0);
+    
+    document.getElementById('sprint-total').textContent = total;
+    document.getElementById('sprint-done').textContent = done;
+    document.getElementById('sprint-points').textContent = donePoints;
+    document.getElementById('sprint-velocity').textContent = total > 0 ? Math.round(done/12*10)/10 : 0;
+    
+    document.getElementById('sprint-modal').classList.add('show');
+}
+
+function saveSprint() {
+    const sprintData = {
+        goal: document.getElementById('sprint-goal').value,
+        standup: document.getElementById('standup-notes').value,
+        updatedAt: Date.now()
+    };
+    Store.set('sprint', sprintData);
+    document.getElementById('sprint-modal').classList.remove('show');
+}
+
+// ===== EXPORT =====
+function exportBoard() {
+    const tasks = Store.get('tasks');
+    const data = JSON.stringify(tasks, null, 2);
+    const blob = new Blob([data], { type: 'application/json' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `scrumflow-export-${new Date().toISOString().split('T')[0]}.json`;
+    a.click();
+}
+
+// ===== INIT =====
+function init() {
+    // Add demo tasks if empty
+    if (Store.get('tasks').length === 0) {
+        Store.set('tasks', [
+            { id: 'SF-DEMO1', summary: 'Close Agii.ca client deal', desc: 'Follow up with warm leads, send proposals', type: 'story', priority: 'highest', points: 8, assignee: 'A', column: 'todo', tags: ['agii', 'revenue'], notes: 'Call John at 2pm', createdAt: Date.now() },
+            { id: 'SF-DEMO2', summary: 'Upload products to Gumroad', desc: 'Chess, AI Prompts, Notion Templates', type: 'task', priority: 'high', points: 5, assignee: 'A', column: 'todo', tags: ['gumroad', 'passive'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO3', summary: 'Post on LinkedIn', desc: 'Share thought leadership content', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'progress', tags: ['linkedin', 'marketing'], notes: 'Post #2 ready', createdAt: Date.now() },
+            { id: 'SF-DEMO4', summary: 'Set up Etsy ads', desc: 'Start $1/day for Family Planner', type: 'task', priority: 'medium', points: 2, assignee: 'A', column: 'backlog', tags: ['etsy'], notes: '', createdAt: Date.now() },
+            { id: 'SF-DEMO5', summary: 'Fix vocab game bug', desc: 'Duplicate answer options issue', type: 'bug', priority: 'high', points: 3, assignee: 'A', column: 'done', tags: ['vocab'], notes: 'Fixed and deployed', createdAt: Date.now() },
+            { id: 'SF-DEMO6', summary: 'Build student portal', desc: 'Login, dashboard, recommendations', type: 'epic', priority: 'high', points: 13, assignee: 'A', column: 'done', tags: ['student', 'saas'], notes: 'Live on GitHub', createdAt: Date.now() }
+        ]);
+    }
+    
+    // Load sprint data
+    const sprintData = Store.get('sprint');
+    if (sprintData.goal) {
+        document.getElementById('sprint-goal').value = sprintData.goal;
+        document.getElementById('standup-notes').value = sprintData.standup || '';
+    }
+    
+    renderBoard();
+}
+
+// Keyboard shortcut
+document.addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') closeModal();
+    if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); showAddTask(); }
+});
+
+init();
+</script>
+</body>
+</html>
