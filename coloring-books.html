@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>🎨 Coloring Books — PlanByInnovations</title>
+<link rel="stylesheet" href="css/animations.css">
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--accent:#e94560;--gold:#FFD700;--text:#f1f5f9;--muted:#94a3b8}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:40px 20px}
+.container{max-width:1200px;margin:0 auto}
+header{text-align:center;margin-bottom:48px}
+header h1{font-size:2.8em;background:linear-gradient(135deg,#ff6b6b,#ffa502,#ff6348,#ff4757);-webkit-background-clip:text;-webkit-text-fill-color:transparent;animation:fadeInUp 0.6s ease-out}
+header p{color:var(--muted);margin-top:8px;font-size:1.1em;animation:fadeInUp 0.6s ease-out 0.1s both}
+.stats{display:flex;gap:32px;justify-content:center;margin-bottom:48px;flex-wrap:wrap}
+.stat{text-align:center;animation:fadeInUp 0.6s ease-out both}
+.stat .num{font-size:2.2em;font-weight:800;color:var(--gold)}
+.stat .label{font-size:0.85em;color:var(--muted)}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(320px,1fr));gap:24px}
+.book-card{background:var(--card);border-radius:16px;overflow:hidden;border:1px solid rgba(255,255,255,0.05);transition:all 0.3s ease}
+.book-card:hover{transform:translateY(-6px);box-shadow:0 16px 40px rgba(0,0,0,0.3);border-color:var(--accent)}
+.book-cover{height:200px;display:flex;align-items:center;justify-content:center;font-size:4em;position:relative;overflow:hidden}
+.book-cover::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(233,69,96,0.2),rgba(255,165,2,0.2))}
+.book-info{padding:20px}
+.book-info h3{font-size:1.2em;margin-bottom:8px}
+.book-info p{color:var(--muted);font-size:0.9em;margin-bottom:12px}
+.book-meta{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.badge{padding:4px 12px;border-radius:12px;font-size:0.75em;font-weight:600}
+.b-enhanced{background:rgba(255,165,2,0.2);color:#ffa502}
+.b-v3{background:rgba(34,197,94,0.2);color:#22c55e}
+.b-v2{background:rgba(59,130,246,0.2);color:#3b82f6}
+.b-pdf{background:rgba(168,85,247,0.2);color:#a855f7}
+.download-btn{display:inline-block;margin-top:12px;padding:8px 20px;background:var(--accent);color:white;border:none;border-radius:8px;cursor:pointer;font-weight:600;transition:all 0.2s;text-decoration:none;font-size:0.9em}
+.download-btn:hover{background:#d63851;transform:scale(1.05)}
+.amazon-link{display:block;text-align:center;margin-top:48px;padding:32px;background:linear-gradient(135deg,#ff9500,#ff6600);border-radius:16px;text-decoration:none;color:white;font-size:1.2em;font-weight:700;transition:all 0.3s}
+.amazon-link:hover{transform:scale(1.02);box-shadow:0 12px 32px rgba(255,149,0,0.3)}
+.back-link{display:inline-block;margin-bottom:24px;color:var(--accent);text-decoration:none;font-weight:500}
+.back-link:hover{text-decoration:underline}
+footer{text-align:center;padding:40px;color:var(--muted);font-size:0.85em}
+</style>
+</head>
+<body>
+<div class="container">
+<a href="index.html" class="back-link">← Back to All Projects</a>
+
+<header>
+<h1>🎨 Kids Coloring Books</h1>
+<p>Beautiful coloring books for kids — available on Amazon KDP</p>
+</header>
+
+<div class="stats">
+<div class="stat delay-1"><div class="num">10</div><div class="label">Book Titles</div></div>
+<div class="stat delay-2"><div class="num">3</div><div class="label">Versions Each</div></div>
+<div class="stat delay-3"><div class="num">30+</div><div class="label">PDFs Ready</div></div>
+<div class="stat delay-4"><div class="num">🎨</div><div class="label">Print-Ready</div></div>
+</div>
+
+<div class="grid">
+
+<div class="book-card reveal">
+<div class="book-cover" style="background:linear-gradient(135deg,#2d5016,#4a7c23)">🦕</div>
+<div class="book-info">
+<h3>Dinosaur Adventures</h3>
+<p>Roaring dinosaurs, prehistoric scenes, and fun facts for dino-loving kids!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-1">
+<div class="book-cover" style="background:linear-gradient(135deg,#1a3a5c,#2980b9)">🌊</div>
+<div class="book-info">
+<h3>Under the Sea</h3>
+<p>Ocean creatures, coral reefs, and underwater adventures!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-2">
+<div class="book-cover" style="background:linear-gradient(135deg,#6c3483,#a569bd)">🦄</div>
+<div class="book-info">
+<h3>Magical Unicorns</h3>
+<p>Enchanted unicorns, rainbows, and fairy tale scenes!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-3">
+<div class="book-cover" style="background:linear-gradient(135deg,#784212,#b7950b)">🚀</div>
+<div class="book-info">
+<h3>Space Adventures</h3>
+<p>Rockets, planets, astronauts, and cosmic exploration!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-4">
+<div class="book-cover" style="background:linear-gradient(135deg,#b7950b,#f39c12)">🐶</div>
+<div class="book-info">
+<h3>Cute Puppies & Kittens</h3>
+<p>Adorable pets doing funny things!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-5">
+<div class="book-cover" style="background:linear-gradient(135deg,#1e8449,#27ae60)">🚛</div>
+<div class="book-info">
+<h3>Cool Trucks & Cars</h3>
+<p>Monster trucks, race cars, and awesome vehicles!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal">
+<div class="book-cover" style="background:linear-gradient(135deg,#c0392b,#e74c3c)">🏰</div>
+<div class="book-info">
+<h3>Princess Castle</h3>
+<p>Castles, crowns, carriages, and royal adventures!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-1">
+<div class="book-cover" style="background:linear-gradient(135deg,#2c3e50,#34495e)">🐛</div>
+<div class="book-info">
+<h3>Bugs & Butterflies</h3>
+<p>Colorful insects, butterflies, and garden critters!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-2">
+<div class="book-cover" style="background:linear-gradient(135deg,#6c3483,#8e44ad)">🔤</div>
+<div class="book-info">
+<h3>ABC Animal Alphabet</h3>
+<p>Learn letters with adorable animals from A to Z!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+<div class="book-card reveal delay-3">
+<div class="book-cover" style="background:linear-gradient(135deg,#196f3d,#27ae60)">🐮</div>
+<div class="book-info">
+<h3>Farm Animals</h3>
+<p>Cows, chickens, horses, and life on the farm!</p>
+<div class="book-meta">
+<span class="badge b-enhanced">Enhanced</span>
+<span class="badge b-v3">v3</span>
+<span class="badge b-pdf">PDF</span>
+</div>
+<a href="#" class="download-btn">View on Amazon →</a>
+</div>
+</div>
+
+</div>
+
+<a href="https://kdp.amazon.com" class="amazon-link" target="_blank">
+📦 Publish on Amazon KDP → Your books are print-ready!
+</a>
+
+<footer>
+<p>🎨 PlanByInnovations — Coloring Books Collection</p>
+</footer>
+</div>
+<script src="js/scroll-reveal.js"></script>
+</body>
+</html>

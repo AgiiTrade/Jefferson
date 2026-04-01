@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="css/animations.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>PlanByInnovations — All Projects</title>
@@ -40,8 +41,8 @@ footer{text-align:center;padding:40px;color:var(--muted);font-size:0.85em}
 <body>
 <div class="container">
 <header>
-<h1>🍁 PlanByInnovations</h1>
-<p>All projects — permanently hosted on GitHub Pages</p>
+<h1 class="animate-fade-up">🍁 PlanByInnovations</h1>
+<p class="animate-fade-up delay-1">All projects — permanently hosted on GitHub Pages</p>
 </header>
 
 <div class="stats">
@@ -86,6 +87,14 @@ footer{text-align:center;padding:40px;color:var(--muted);font-size:0.85em}
 <a href="pitch-deck.html" class="card"><h3>📊 Pitch Deck</h3><p>Startup presentation template</p><div class="meta"><span class="badge b-tool">Template</span></div></a>
 <a href="crm.html" class="card"><h3>👥 CRM</h3><p>Client relationship management</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
 <a href="business-planner.html" class="card"><h3>📋 Business Planner</h3><p>Business planning template</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
+</div>
+</div>
+
+<!-- COLORING BOOKS -->
+<div class="section" id="coloring">
+<h2>🎨 Coloring Books</h2>
+<div class="grid">
+<a href="coloring-books.html" class="card"><h3>🎨 Kids Coloring Books</h3><p>10 titles, 30+ print-ready PDFs for Amazon KDP</p><div class="meta"><span class="badge b-paid">Amazon KDP</span></div></a>
 </div>
 </div>
 
@@ -150,5 +159,6 @@ function filterCards(query){
     });
 }
 </script>
+<script src="js/scroll-reveal.js"></script>
 </body>
 </html>

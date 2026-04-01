@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="css/animations.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Transactions — FinanceHub</title>
@@ -66,5 +67,6 @@ function deleteTx(id){if(confirm('Delete?')){FinanceApp.deleteTransaction(id);lo
 document.getElementById('tx-type').addEventListener('change',function(){const sel=document.getElementById('tx-category');sel.innerHTML='';(this.value==='income'?FinanceApp.categories.income:FinanceApp.categories.expense).forEach(c=>{sel.innerHTML+=`<option>${c}</option>`;});});
 loadTransactions();
 </script>
+<script src="js/scroll-reveal.js"></script>
 </body>
 </html>

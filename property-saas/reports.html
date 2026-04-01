@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="css/animations.css">
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Reports — RentBoss</title>
@@ -223,12 +224,15 @@
     function printTaxReport() {
       const content = document.getElementById('taxPrintArea').innerHTML;
       const w = window.open('', '_blank');
-      w.document.write(`<html><head><title>RentBoss Tax Report</title><style>body{font-family:system-ui;padding:40px;color:#2c3e50;}h3{color:#1a2744;}</style></head><body><h1>🏠 RentBoss Tax Report</h1>${content}</body></html>`);
+      w.document.write(`<html><head>
+<link rel="stylesheet" href="css/animations.css"><title>RentBoss Tax Report</title><style>body{font-family:system-ui;padding:40px;color:#2c3e50;}h3{color:#1a2744;}</style></head><body><h1>🏠 RentBoss Tax Report</h1>${content}<script src="js/scroll-reveal.js"></script>
+</body></html>`);
       w.document.close();
       w.print();
     }
 
     document.addEventListener('DOMContentLoaded', renderReports);
   </script>
+<script src="js/scroll-reveal.js"></script>
 </body>
 </html>

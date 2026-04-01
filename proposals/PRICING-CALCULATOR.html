@@ -1,6 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+<link rel="stylesheet" href="css/animations.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Pricing Calculator | Agilitas Innovations</title>
@@ -216,7 +217,8 @@ const mn=document.getElementById('monthlyNote').textContent;
 const date=new Date().toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 const valid=new Date(Date.now()+30*86400000).toLocaleDateString('en-US',{year:'numeric',month:'long',day:'numeric'});
 
-let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Quote — ${cn}</title>
+let html=`<!DOCTYPE html><html><head>
+<link rel="stylesheet" href="css/animations.css"><meta charset="UTF-8"><title>Quote — ${cn}</title>
 <style>*{margin:0;padding:0;box-sizing:border-box}body{font-family:system-ui,sans-serif;padding:40px;color:#222;max-width:800px;margin:0 auto}
 h1{color:#1a3a5c;font-size:1.8em;margin-bottom:4px}h2{color:#1a3a5c;font-size:1.2em;margin:24px 0 12px;padding-bottom:6px;border-bottom:2px solid #d4a843}
 .meta{color:#666;font-size:.9em;margin-bottom:24px}.meta strong{color:#222}
@@ -246,6 +248,7 @@ ${disc?'<tr class="discount"><td>Bundle Discount (10%)</td><td class="amt">'+dis
 ${mn?'<div class="note">'+mn+'</div>':''}
 <div class="note">All prices in USD. HST applies for Canadian clients. Payment terms per signed SOW.</div>
 <div class="footer">This quote is valid for 30 days. Pricing subject to change after validity period.<br>Agilitas Innovations Inc. — agii.ca — [EMAIL] — [PHONE]</div>
+<script src="js/scroll-reveal.js"></script>
 </body></html>`;
 
 const w=window.open('','_blank');w.document.write(html);w.document.close();setTimeout(()=>w.print(),500);
@@ -271,5 +274,6 @@ updateCalc();showToast('Calculator reset');
 document.querySelectorAll('input[type=checkbox]').forEach(c=>c.addEventListener('change',updateCalc));
 updateCalc();
 </script>
+<script src="js/scroll-reveal.js"></script>
 </body>
 </html>
