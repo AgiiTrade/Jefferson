@@ -2,6 +2,7 @@
 <html lang="en">
 <head>
 <link rel="stylesheet" href="css/animations.css">
+<link rel="stylesheet" href="css/game-graphics.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Chess Master Pro — Train. Play. Win.</title>
@@ -140,6 +141,20 @@ body{font-family:'Segoe UI',system-ui,sans-serif;background:var(--bg);color:var(
 <script>
 // ===== CHESS ENGINE =====
 const PIECES={K:'♔',Q:'♕',R:'♖',B:'♗',N:'♘',P:'♙',k:'♚',q:'♛',r:'♜',b:'♝',n:'♞',p:'♟'};
+const SVG_PIECES={
+  K:'<svg class="chess-piece-svg" width="45" height="45"><use href="#wK"/></svg>',
+  Q:'<svg class="chess-piece-svg" width="45" height="45"><use href="#wQ"/></svg>',
+  R:'<svg class="chess-piece-svg" width="45" height="45"><use href="#wR"/></svg>',
+  B:'<svg class="chess-piece-svg" width="45" height="45"><use href="#wB"/></svg>',
+  N:'<svg class="chess-piece-svg" width="45" height="45"><use href="#wN"/></svg>',
+  P:'<svg class="chess-piece-svg" width="45" height="45"><use href="#wP"/></svg>',
+  k:'<svg class="chess-piece-svg" width="45" height="45"><use href="#bK"/></svg>',
+  q:'<svg class="chess-piece-svg" width="45" height="45"><use href="#bQ"/></svg>',
+  r:'<svg class="chess-piece-svg" width="45" height="45"><use href="#bR"/></svg>',
+  b:'<svg class="chess-piece-svg" width="45" height="45"><use href="#bB"/></svg>',
+  n:'<svg class="chess-piece-svg" width="45" height="45"><use href="#bN"/></svg>',
+  p:'<svg class="chess-piece-svg" width="45" height="45"><use href="#bP"/></svg>'
+};
 const PIECE_VALUES={p:100,n:320,b:330,r:500,q:900,k:20000,P:100,N:320,B:330,R:500,Q:900,K:20000};
 const PST_PAWN=[[0,0,0,0,0,0,0,0],[50,50,50,50,50,50,50,50],[10,10,20,30,30,20,10,10],[5,5,10,25,25,10,5,5],[0,0,0,20,20,0,0,0],[5,-5,-10,0,0,-10,-5,5],[5,10,10,-20,-20,10,10,5],[0,0,0,0,0,0,0,0]];
 const PST_KNIGHT=[[-50,-40,-30,-30,-30,-30,-40,-50],[-40,-20,0,0,0,0,-20,-40],[-30,0,10,15,15,10,0,-30],[-30,5,15,20,20,15,5,-30],[-30,0,15,20,20,15,0,-30],[-30,5,10,15,15,10,5,-30],[-40,-20,0,5,5,0,-20,-40],[-50,-40,-30,-30,-30,-30,-40,-50]];
@@ -502,7 +517,7 @@ if(selected&&selected.r===row&&selected.c===col)sq.classList.add('selected');
 if(lastMove&&((lastMove.from[0]===row&&lastMove.from[1]===col)||(lastMove.to[0]===row&&lastMove.to[1]===col)))sq.classList.add('last-move');
 const kPos=findKing(turn);if(kPos&&kPos[0]===row&&kPos[1]===col&&isInCheck(turn))sq.classList.add('check');
 if(legalMoves.some(m=>m[0]===row&&m[1]===col)){sq.classList.add(board[row][col]?'legal-capture':'legal');}
-sq.textContent=board[row][col]?PIECES[board[row][col]]:'';
+sq.innerHTML=board[row][col]?SVG_PIECES[board[row][col]]:'';
 sq.onclick=()=>handleClick(row,col);
 boardEl.appendChild(sq);
 }
