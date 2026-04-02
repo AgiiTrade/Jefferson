@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Agii.ca Outreach System</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0f172a;--card:#1e293b;--accent:#3b82f6;--gold:#f59e0b;--text:#f1f5f9;--muted:#94a3b8;--border:#334155;--success:#22c55e;--danger:#ef4444}
+body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:20px}
+.container{max-width:1400px;margin:0 auto}
+.header{text-align:center;margin-bottom:30px}
+.header h1{font-size:2em;color:var(--gold)}
+.header p{color:var(--muted);margin-top:5px}
+.grid{display:grid;grid-template-columns:1fr 1fr; gap:24px;margin-bottom:30px}
+.card{background:var(--card);border:1px solid var(--border);border-radius:16px;padding:24px}
+.card h2{font-size:1.2em;margin-bottom:16px;color:var(--accent);display:flex;align-items:center;gap:8px}
+.full-width{grid-column:1 / -1}
+label{display:block;margin-bottom:6px;font-size:.9em;color:var(--muted)}
+input,select,textarea{width:100%;padding:12px;border:1px solid var(--border);border-radius:8px;background:rgba(0,0,0,.2);color:var(--text);font-size:1em;margin-bottom:16px}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--accent)}
+button{background:var(--accent);color:white;border:none;padding:12px 24px;border-radius:8px;cursor:pointer;font-weight:600;transition:.2s;display:inline-flex;align-items:center;gap:6px}
+button:hover{background:#2563eb}
+button.secondary{background:transparent;border:1px solid var(--border);color:var(--text)}
+button.secondary:hover{background:rgba(255,255,255,.05)}
+button.success{background:var(--success)}
+button.danger{background:var(--danger)}
+.btn-group{display:flex;gap:8px;flex-wrap:wrap}
+.badge{display:inline-block;padding:4px 10px;border-radius:12px;font-size:.75em;font-weight:600;background:rgba(59,130,246,.2);color:#60a5fa}
+.tag{display:inline-block;padding:2px 8px;border-radius:6px;font-size:.7em;background:rgba(245,158,11,.2);color:#fbbf24;margin-right:4px;margin-bottom:4px}
+textarea{min-height:120px;resize:vertical}
+pre{background:rgba(0,0,0,.3);padding:16px;border-radius:8px;overflow-x:auto;font-size:.9em;line-height:1.5}
+.stats{display:flex;gap:24px;margin-bottom:24px;flex-wrap:wrap}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:16px;text-align:center;min-width:120px}
+.stat .num{font-size:1.8em;font-weight:700;color:var(--gold)}
+.stat .label{font-size:.8em;color:var(--muted)}
+table{width:100%;border-collapse:collapse;margin-top:12px}
+th,td{text-align:left;padding:10px;border-bottom:1px solid var(--border)}
+th{color:var(--muted);font-size:.85em;text-transform:uppercase}
+tr:hover{background:rgba(255,255,255,.02)}
+.tabs{display:flex;gap:10px;margin-bottom:24px}
+.tab{background:transparent;border:1px solid var(--border);color:var(--text);padding:10px 20px;border-radius:8px;cursor:pointer}
+.tab.active{background:var(--accent);border-color:var(--accent)}
+.hidden{display:none}
+.copy-icon{font-size:1.2em;cursor:pointer;opacity:.6;transition:.2s}
+.copy-icon:hover{opacity:1}
+.merge-tag{cursor:pointer;color:var(--gold);text-decoration:underline}
+.success-msg{color:var(--success)}
+</style>
+</head>
+<body>
+<div class="container">
+<div class="header">
+<h1>📬 Agii.ca Outreach System</h1>
+<p>One‑click templates • Personalization • Campaign tracker • No more copy‑paste</p>
+</div>
+
+<div class="tabs">
+<button class="tab active" onclick="showTab('email')">📧 Cold Email</button>
+<button class="tab" onclick="showTab('linkedin')">💼 LinkedIn</button>
+<button class="tab" onclick="showTab('campaigns')">📊 Campaigns</button>
+<button class="tab" onclick="showTab('settings')">⚙️ Settings</button>
+</div>
+
+<!-- COLD EMAIL TAB -->
+<div id="email" class="tab-content">
+<div class="grid">
+<div class="card">
+<h2>📧 Email Templates</h2>
+<label>Sequence</label>
+<select id="email-sequence">
+<option value="intro">Intro (4‑touch)</option>
+<option value="followup">Follow‑up (3‑touch)</option>
+<option value="re-engagement">Re‑engagement</option>
+</select>
+<label>Template Style</label>
+<select id="email-style">
+<option value="direct">Direct / ROI Focused</option>
+<option value="curiosity">Curiosity Hook</option>
+<option value="social-proof">Social Proof</option>
+</select>
+<label>Personalization Fields</label>
+<div id="merge-fields" style="display:flex;flex-wrap:wrap;gap:8px;margin-bottom:16px">
+<span class="merge-tag" onclick="insertField('{{firstName}}')">{{firstName}}</span>
+<span class="merge-tag" onclick="insertField('{{companyName}}')">{{companyName}}</span>
+<span class="merge-tag" onclick="insertField('{{industry}}')">{{industry}}</span>
+<span class="merge-tag" onclick="insertField('{{title}}')">{{title}}</span>
+<span class="merge-tag" onclick="insertField('{{city}}')">{{city}}</span>
+<span class="merge-tag" onclick="insertField('{{revenue}}')">{{revenue}}</span>
+</div>
+<label>Subject Line</label>
+<input type="text" id="email-subject" placeholder="Enter subject or use template…">
+<label>Email Body</label>
+<textarea id="email-body" placeholder="Compose your email…"></textarea>
+<div class="btn-group">
+<button onclick="generateEmailTemplate()">🔄 Generate Template</button>
+<button class="success" onclick="copyEmail()">📋 Copy to Clipboard</button>
+<button class="secondary" onclick="previewEmail()">👁️ Preview</button>
+</div>
+</div>
+
+<div class="card">
+<h2>🎯 Quick Personalization</h2>
+<label>First Name</label>
+<input type="text" id="firstName" placeholder="e.g. Sarah">
+<label>Company Name</label>
+<input type="text" id="companyName" placeholder="e.g. Acme Corp">
+<label>Industry / Role</label>
+<input type="text" id="industry" placeholder="e.g. Logistics">
+<label>Job Title</label>
+<input type="text" id="title" placeholder="e.g. CTO">
+<label>Location (City)</label>
+<input type="text" id="city" placeholder="e.g. Toronto">
+<label>Revenue Range (optional)</label>
+<input type="text" id="revenue" placeholder="e.g. $50M‑$200M">
+<div class="btn-group" style="margin-top:20px">
+<button class="secondary" onclick="fillRandom()">🎲 Random Demo</button>
+<button class="secondary" onclick="clearFields()">🗑️ Clear</button>
+</div>
+</div>
+</div>
+
+<div class="card full-width">
+<h2>📋 Generated Emails (Ready to Send)</h2>
+<div id="generated-list"></div>
+</div>
+</div>
+
+<!-- LINKEDIN TAB -->
+<div id="linkedin" class="tab-content hidden">
+<div class="grid">
+<div class="card">
+<h2>💼 LinkedIn Templates</h2>
+<label>Message Type</label>
+<select id="linkedin-type">
+<option value="connection">Connection Request (300 char)</option>
+<option value="dm-intro">DM Intro (First Message)</option>
+<option value="dm-followup">Follow‑up (3‑day)</option>
+<option value="value-bite">Value Bite (quick tip)</option>
+</select>
+<label>Tone</label>
+<select id="linkedin-tone">
+<option value="professional">Professional</option>
+<option value="friendly">Friendly & Casual</option>
+<option value=" Bold">Bold / Disruptive</option>
+</select>
+<div class="btn-group" style="margin:16px 0">
+<button onclick="generateLinkedInTemplate()">🔄 Generate</button>
+<button class="success" onclick="copyLinkedIn()">📋 Copy</button>
+</div>
+</div>
+
+<div class="card">
+<h2>📝 Preview</h2>
+<div id="linkedin-preview" style="min-height:150px"></div>
+</div>
+</div>
+
+<div class="card full-width">
+<h2>📋 Saved LinkedIn Messages</h2>
+<div id="linkedin-list"></div>
+</div>
+</div>
+
+<!-- CAMPAIGNS TAB -->
+<div id="campaigns" class="tab-content hidden">
+<div class="stats">
+<div class="stat"><div class="num" id="stat-emails">0</div><div class="label">Emails Generated</div></div>
+<div class="stat"><div class="num" id="stat-linkedin">0</div><div class="label">LinkedIn Messages</div></div>
+<div class="stat"><div class="num" id="stat-replies">0</div><div class="label">Replies Tracked</div></div>
+</div>
+<div class="card full-width">
+<h2>📊 Campaign Tracker</h2>
+<p style="color:var(--muted);margin-bottom:16px">Manually mark when you send an email or get a reply. This keeps your numbers visible without bugging you. You can also export / import this data.</p>
+<div class="btn-group" style="margin-bottom:16px">
+<button onclick="exportData()">📤 Export CSV</button>
+<button class="secondary" onclick="document.getElementById('import-file').click()">📥 Import CSV</button>
+<input type="file" id="import-file" accept=".csv" style="display:none" onchange="importData(this)">
+<button class="danger" onclick="clearAllData()">🗑️ Reset All</button>
+</div>
+<table>
+<thead><tr><th>Date</th><th>Type</th><th>Prospect</th><th>Template</th><th>Sent</th><th>Replied</th></tr></thead>
+<tbody id="campaign-table"></tbody>
+</table>
+</div>
+</div>
+
+<!-- SETTINGS TAB -->
+<div id="settings" class="tab-content hidden">
+<div class="grid">
+<div class="card">
+<h2>⚙️ Email Settings</h2>
+<label>Your Name</label>
+<input type="text" id="settings-name" value="Arfeen Ahmad">
+<label>Your Title</label>
+<input type="text" id="settings-title" value="Founder, Agilitas Innovations">
+<label>Company Name</label>
+<input type="text" id="settings-company" value="Agilitas Innovations">
+<label>Website</label>
+<input type="text" id="settings-website" value="https://agii.ca">
+<label>Calendly / Booking Link</label>
+<input type="text" id="settings-calendly" placeholder="https://calendly.com/...">
+<button onclick="saveSettings()">💾 Save</button>
+</div>
+<div class="card">
+<h2>🔐 Brand & Compliance</h2>
+<label>Signature</label>
+<textarea id="settings-signature" placeholder="Best, Arfeen...">Best,
+Arfeen Ahmad
+Founder, Agilitas Innovations
+agii.ca</textarea>
+<label>Unsubscribe / Opt‑out line</label>
+<input type="text" id="settings-unsubscribe" value="Reply STOP to unsubscribe">
+<label>Attachments (optional)</label>
+<input type="text" id="settings-attachment" placeholder="PDF or case study filename">
+</div>
+</div>
+<script src="app.js"></script>
+</body>
+</html>
