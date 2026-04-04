@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>AI Modernizer | Transform Legacy Systems</title>
+<title>Agii Intelligence | Transform Legacy Systems</title>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <style>
 :root{
@@ -62,7 +62,7 @@ footer{padding:32px 0;text-align:center;color:var(--text2);font-size:0.9rem;bord
 <div class="wrap">
 <header>
 <div class="header-inner">
-<div class="logo">AI Modernizer</div>
+<div class="logo">Agii Intelligence</div>
 <nav class="nav">
 <a href="#" onclick="scrollTo('demo')">Demo</a>
 <a href="#" onclick="scrollTo('contact')">Contact</a>
@@ -71,8 +71,8 @@ footer{padding:32px 0;text-align:center;color:var(--text2);font-size:0.9rem;bord
 </header>
 
 <section class="hero">
-<h1>AI-Led Transformation</h1>
-<p>Modernize legacy systems 10x faster with our AI platform. Automated discovery, planning, execution, and validation — all in lockstep.</p>
+<h1>Agii Intelligence Platform</h1>
+<p>Modernize legacy systems 10x faster with Agii Intelligence. Automated discovery, planning, execution, and validation — all in lockstep.</p>
 <a href="#" class="cta-btn" onclick="showDemo()">Try Demo →</a>
 </section>
 
@@ -86,7 +86,7 @@ footer{padding:32px 0;text-align:center;color:var(--text2);font-size:0.9rem;bord
 </section>
 
 <section class="section">
-<h2>The AI Platform</h2>
+<h2>The Agii Platform</h2>
 <div class="phases">
 <div class="phase-card"><h3>01 AI-Assisted Discovery</h3><p>Discover the DNA of your legacy stack. Auto-generated documentation and mapped user journeys from actual source code.</p></div>
 <div class="phase-card"><h3>02 Agentic Planning</h3><p>Blueprint your future architecture. Generate specifications, validate them with your team, and lock in a low-risk roadmap.</p></div>
@@ -116,7 +116,7 @@ function calculateTotal(items) {
 </section>
 
 <footer>
-<p>&copy; 2026 AI Modernizer. All rights reserved.</p>
+<p>&copy; 2026 Agii Intelligence. All rights reserved.</p>
 </footer>
 </div>
 
@@ -141,6 +141,12 @@ function submitDemo(){
 function submitContact(){
   const email=document.getElementById('email').value.trim();
   if(email){alert('Thanks! We\'ll contact you at '+email);}}
+// Diagram: How Demo Works
+// 1. User pastes code into textarea
+// 2. Click 'Analyze Code' -> runDemo()
+// 3. JS reads code -> shows 'Analyzing...' -> setTimeout 1.5s
+// 4. Displays simulated results: line count, function detected, refactor proposal, test count
+// In production, setTimeout would be replaced by fetch() to a backend AI service.
 </script>
 </body>
 </html>
