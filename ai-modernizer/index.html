@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AI Modernizer | Transform Legacy Systems</title>
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<style>
+:root{
+--bg: #0a0a0a;
+--card: #121212;
+--accent: #0052cc;
+--text: #e8eaed;
+--text2: #9aa0a6;
+--border: #333;
+}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
+.wrap{max-width:1200px;margin:0 auto;padding:20px}
+/* HEADER */
+header{padding:24px 0;border-bottom:1px solid var(--border)}
+.header-inner{display:flex;justify-content:space-between;align-items:center}
+.logo{font-weight:800;font-size:1.2rem;color:var(--accent)}
+.nav a{color:var(--text2);text-decoration:none;margin-left:24px}
+.nav a:hover{color:var(--accent)}
+/* HERO */
+.hero{padding:80px 20px;text-align:center}
+.hero h1{font-size:2.5rem;margin-bottom:16px;background:linear-gradient(90deg,#0052cc,#6c5ce7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p{font-size:1.1rem;color:var(--text2);max-width:800px;margin:0 auto 24px}
+.cta-btn{background:var(--accent);color:#fff;padding:12px 28px;border-radius:50px;text-decoration:none;font-weight:600;transition:0.2s}
+.cta-btn:hover{opacity:0.9}
+/* TRUST BAR */
+.trust{padding:32px 0;background:var(--card);text-align:center;color:var(--text2);font-size:0.9rem}
+/* MODERN IMPERATIVE */
+.section{padding:60px 0}
+.section h2{font-size:1.8rem;margin-bottom:16px}
+/* PHASES */
+.phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
+.phase-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:0.2s}
+.phase-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
+.phase-card h3{font-size:1.1rem;margin-bottom:8px;color:var(--accent)}
+.phase-card p{font-size:0.9rem;color:var(--text2)}
+/* CTA FORM */
+.cta-form{max-width:450px;margin:40px auto;text-align:center}
+.cta-form input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);margin-bottom:12px}
+.cta-form button{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
+/* DEMO */
+.demo{padding:40px 0;background:var(--card)}
+.demo h2{margin-bottom:20px}
+.demo textarea{width:100%;height:200px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:12px;margin-bottom:12px;resize:vertical;font-family:monospace}
+.demo button{padding:12px 24px;background:var(--accent);color:#fff;border:none;border-radius:50px;cursor:pointer}
+.demo-output{margin-top:20px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;font-family:monospace;display:none}
+/* FOOTER */
+footer{padding:32px 0;text-align:center;color:var(--text2);font-size:0.9rem;border-top:1px solid var(--border);margin-top:60px}
+/* RESP */
+@media(max-width:600px){
+.hero h1{font-size:2rem}
+.header-inner{flex-direction:column;gap:12px}
+}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+<div class="header-inner">
+<div class="logo">AI Modernizer</div>
+<nav class="nav">
+<a href="#" onclick="scrollTo('demo')">Demo</a>
+<a href="#" onclick="scrollTo('contact')">Contact</a>
+</nav>
+</div>
+</header>
+
+<section class="hero">
+<h1>AI-Led Transformation</h1>
+<p>Modernize legacy systems 10x faster with our AI platform. Automated discovery, planning, execution, and validation — all in lockstep.</p>
+<a href="#" class="cta-btn" onclick="showDemo()">Try Demo →</a>
+</section>
+
+<section class="trust">
+<p>Built by veterans of Google, Amazon, Lovable and Intuit</p>
+</section>
+
+<section class="section">
+<h2>The Modern Imperative</h2>
+<p style="color:var(--text2)">Modernization isn’t just a tech swap. It’s the difference between a system that holds you back and one that continues to evolve and propels you forward leveraging AI.</p>
+</section>
+
+<section class="section">
+<h2>The AI Platform</h2>
+<div class="phases">
+<div class="phase-card"><h3>01 AI-Assisted Discovery</h3><p>Discover the DNA of your legacy stack. Auto-generated documentation and mapped user journeys from actual source code.</p></div>
+<div class="phase-card"><h3>02 Agentic Planning</h3><p>Blueprint your future architecture. Generate specifications, validate them with your team, and lock in a low-risk roadmap.</p></div>
+<div class="phase-card"><h3>03 AI-Assisted Execution</h3><p>Agents co-author every module. High-speed refactoring and test generation while engineers focus on design and validation.</p></div>
+<div class="phase-card"><h3>04 Reliability Mesh</h3><p>Ensure business-critical logic remains intact. Logic parity testing and zero‑risk release with audit-ready documentation.</p></div>
+</div>
+</section>
+
+<section class="section" style="text-align:center" id="contact">
+<h2>Architect your transformation</h2>
+<p style="color:var(--text2);max-width:800px;margin:20px auto 30px">Join the league of forward-thinking CTOs/CIOs leveraging AI-native infrastructure to outpace the market.</p>
+<div class="cta-form">
+<input type="email" placeholder="Enter your work email" id="email">
+<button onclick="submitContact()">Request Access</button>
+</div>
+</section>
+
+<section class="demo" id="demo">
+<h2>Interactive Demo</h2>
+<p style="color:var(--text2);margin-bottom:20px">Paste a short code snippet to see AI-assisted discovery in action.</p>
+<textarea id="demoCode" placeholder="// Paste your code here...
+function calculateTotal(items) {
+    return items.reduce((sum, i) => sum + i.price, 0);
+}"></textarea>
+<div><button onclick="runDemo()">Analyze Code</button></div>
+<div id="demoOutput" class="demo-output"></div>
+</section>
+
+<footer>
+<p>&copy; 2026 AI Modernizer. All rights reserved.</p>
+</footer>
+</div>
+
+<script>
+function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
+function runDemo(){
+  const code=document.getElementById('demoCode').value.trim();
+  const out=document.getElementById('demoOutput');
+  if(!code){alert('Please paste some code first');return}
+  out.style.display='block';
+  out.textContent='Analyzing...';
+  setTimeout(()=>{out.textContent=`Analysis complete.\n\n• Identified ${code.split('\n').length} lines\n• Detected function(s)\n• Proposed refactoring: Simulated\n• Generated tests: 3\n\n(Full AI engine deployment pending.)`;},1500);
+}
+function submitDemo(){
+  const code=document.getElementById('demoCode').value.trim();
+  const out=document.getElementById('demoOutput');
+  if(!code){alert('Please paste some code');return}
+  out.style.display='block';
+  out.textContent='Running advanced analysis...';
+  setTimeout(()=>{out.textContent=`Advanced analysis complete.\n\nCode complexity: Low\nTech debt: ~0.2w\nSuggested modernization steps:\n1. Extract service layer\n2. Add TypeScript types\n3. Introduce automated tests\n\nThis is a simulated demo for the landing page. In production, this would call real AI services.`;},2000);
+}
+function submitContact(){
+  const email=document.getElementById('email').value.trim();
+  if(email){alert('Thanks! We\'ll contact you at '+email);}}
+</script>
+</body>
+</html>
