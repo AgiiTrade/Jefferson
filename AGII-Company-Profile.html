@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>AGII – AI Integration & Modernization</title>
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+:root{--pri:#0a0a0a;--acc:#0052cc;--gold:#d69e2e;--bg:#f7fafc;--card:#fff;--text:#2d3748;--light:#e2e8f0;}
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:'Inter',sans-serif;background:#e2e8f0;color:var(--text);line-height:1.6}
+.deck{max-width:900px;margin:40px auto;background:#fff;box-shadow:0 10px 40px rgba(0,0,0,.1);overflow:hidden}
+.slide{padding:60px 50px;min-height:700px;page-break-after:always;border-bottom:1px solid var(--light);position:relative}
+.slide:last-child{border-bottom:none}
+.slide h1{font-size:2.4rem;font-weight:800;color:var(--pri);margin-bottom:12px;line-height:1.1}
+.slide h2{font-size:1.8rem;font-weight:700;color:var(--pri);margin-bottom:16px}
+.slide h3{font-size:1.2rem;font-weight:600;color:var(--acc);margin-bottom:10px}
+.slide p{font-size:1rem;line-height:1.7;color:#4a5568;margin-bottom:12px}
+.hero{display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;background:linear-gradient(135deg,var(--pri) 0%,var(--acc) 100%);color:#fff;min-height:750px}
+.hero h1{color:#fff;font-size:3rem;margin-bottom:12px}
+.hero .subtitle{font-size:1.2rem;opacity:.9;margin-bottom:30px;font-weight:300}
+.hero .brand{font-size:.95rem;opacity:.75;margin-top:40px}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin:20px 0}
+.card{background:var(--card);border-left:4px solid var(--acc);padding:20px;border-radius:0 8px 8px 0;box-shadow:0 2px 8px rgba(0,0,0,.06)}
+.card h4{font-size:1rem;font-weight:700;color:var(--pri);margin-bottom:6px}
+.card p{font-size:.9rem;margin:0}
+.stat-box{display:inline-flex;flex-direction:column;align-items:center;padding:20px 30px;background:#edf2f7;border-radius:12px;min-width:140px;margin:8px}
+.stat-box .num{font-size:2rem;font-weight:800;color:var(--acc)}
+.stat-box .label{font-size:.85rem;color:#718096;margin-top:4px}
+.service-list{list-style:none;margin:15px 0}
+.service-list li{padding:10px 15px;margin:8px 0;background:#edf2f7;border-radius:6px;display:flex;align-items:center;gap:12px;font-weight:500}
+.service-list li .icon{font-size:1.3rem}
+.ai-section{background:linear-gradient(180deg,#e6f0fa 0%,#f7fafc 100%);border-radius:16px;padding:30px;margin:20px 0}
+.ai-section h3{color:var(--acc);margin-bottom:15px}
+.case-study{background:#fff;border:1px solid var(--light);border-radius:10px;padding:20px;margin:12px 0}
+.case-study h4{color:var(--pri);margin-bottom:8px}
+.case-study p{font-size:.9rem;margin:0}
+.tag{display:inline-block;background:#bee3f8;color:var(--acc);padding:3px 10px;border-radius:20px;font-size:.8rem;font-weight:600;margin:4px}
+.contact-box{background:var(--pri);color:#fff;padding:40px;border-radius:16px;text-align:center;margin-top:20px}
+.contact-box h2{color:#fff;margin-bottom:20px}
+.contact-box a{color:var(--gold);text-decoration:none;font-weight:600}
+.footer{text-align:center;padding:30px;color:#a0aec0;font-size:.85rem}
+.num-bullet{display:flex;gap:20px;margin:15px 0}
+.num-bullet .box{flex:1;background:#f7fafc;padding:15px;border-radius:8px;border:1px solid var(--light)}
+.num-bullet .box h4{color:var(--acc);font-size:1.5rem;margin-bottom:5px}
+.num-bullet .box p{font-size:.85rem;margin:0}
+@media print{
+body{background:#fff}.deck{box-shadow:none}.slide{min-height:auto;page-break-after:always}
+}
+@media(max-width:700px){
+.slide{padding:30px 20px}.grid{grid-template-columns:1fr}.hero h1{font-size:2rem}.num-bullet{flex-direction:column}}
+</style>
+</head>
+<body>
+<div class="deck">
+
+<!-- SLIDE 1: COVER -->
+<div class="slide hero">
+<div style="font-size:5rem;margin-bottom:20px;">⚡</div>
+<h1>AGII</h1>
+<p class="subtitle">AI‑Led Transformation for Enterprise Systems</p>
+<p style="max-width:600px;opacity:.9;font-size:1rem;">Empowering enterprises with AI‑driven modernization, integration, and software engineering.</p>
+<p class="brand">accounts@agii.ca • agii.ca</p>
+</div>
+
+<!-- SLIDE 2: ABOUT US -->
+<div class="slide">
+<h2>About AGII</h2>
+<p><strong>Empowering Your Success Through Expertise</strong></p>
+<p>AGII Innovations Inc. is a trusted Business Consulting and Managed Services Provider. Our mission is to drive client success with tailored solutions backed by deep industry knowledge.</p>
+<p>Our team comprises seasoned consultants with diverse expertise across multiple sectors and technology domains. <strong>33+ years of combined professional experience</strong> deliver software and AI solutions that empower businesses across industries.</p>
+<div class="stats-box" style="display:flex;gap:15px;flex-wrap:wrap;margin:20px 0;">
+<div class="stat-box"><div class="num">20+</div><div class="label">Years Experience</div></div>
+<div class="stat-box"><div class="num">150+</div><div class="label">Clients Worldwide</div></div>
+<div class="stat-box"><div class="num">30+</div><div class="label">Domains Served</div></div>
+<div class="stat-box"><div class="num">4</div><div class="label">Continents</div></div>
+</div>
+<p style="color:#718096;font-size:.9rem;margin-top:10px;">We partner with clients to create tech solutions that streamline operations and foster growth — smooth, hassle‑free business processes.</p>
+</div>
+
+<!-- SLIDE 3: WHAT WE DO -->
+<div class="slide">
+<h2>Our Capabilities</h2>
+<div class="grid">
+<div class="card"><h4>🤖 AI Integration & Modernization</h4><p>Embed LLMs, computer‑vision, NLP into existing workflows. Legacy code automated refactoring.</p></div>
+<div class="card"><h4>📊 Data & Analytics</h4><p>Turn raw data into actionable insights; dashboards and predictive models.</p></div>
+<div class="card"><h4>☁️ Cloud & DevOps</h4><p>Cloud strategy, migration, CI/CD automation; scalable, secure infrastructure.</p></div>
+<div class="card"><h4>🖥️ Software Development</h4><p>Custom applications, mobile (iOS/Android/x‑platform), web platforms, API engineering.</p></div>
+<div class="card"><h4>🔗 Integrations & Automation</h4><p>Oracle Integration Cloud (OIC) and custom connectors; process automation.</p></div>
+<div class="card"><h4>👥 Talent Augmentation</h4><p>On‑demand engineering & consulting talent to scale your teams.</p></div>
+</div>
+</div>
+
+<!-- SLIDE 4: WHY AI NOW -->
+<div class="slide">
+<h2>Enterprise AI: Why Now?</h2>
+<div style="display:grid;grid-template-columns:repeat(2,1fr);gap:15px;margin:20px 0;">
+<div class="stat-box"><div class="num">40%</div><div class="label">Dev cost reduction</div></div>
+<div class="stat-box"><div class="num">6–18 mo</div><div class="label">Legacy integration time saved</div></div>
+<div class="stat-box"><div class="num">60%</div><div class="label">AI roles unfilled – we automate the gap</div></div>
+<div class="stat-box"><div class="num">$2.6B</div><div class="label">Pharma dev cost offset by AI</div></div>
+</div>
+<p style="font-size:.9rem;color:#718096">Sources: Accenture, McKinsey, LinkedIn Workforce Report, PwC.</p>
+</div>
+
+<!-- SLIDE 5: ADOPTION BARRIERS & SOLUTIONS -->
+<div class="slide">
+<h2>Overcoming AI Barriers</h2>
+<div class="num-bullet">
+<div class="box"><h4>🔒 Legacy Integration</h4><p>6–18 mo saved; automated discovery maps stack in days.</p></div>
+<div class="box"><h4>🎓 Resistance & Skills</h4><p>Transparent AI reasoning; team stays in control while AI agents handle heavy lifting.</p></div>
+<div class="box"><h4>⚖️ Compliance & Bias</h4><p>Audit‑ready docs, explainable AI, logic parity testing.</p></div>
+<div class="box"><h4>⚙️ Change Management</h4><p>Co‑authoring, continuous verification, zero‑risk release.</p></div>
+</div>
+</div>
+
+<!-- SLIDE 6: AI / ML IN ACTION -->
+<div class="slide">
+<h2>AI/ML Impact by Industry</h2>
+
+<div class="case-study">
+<h4>💊 Pharma & Life Sciences</h4>
+<p>AI can offset drug development cost by up to <strong>40%</strong> (Accenture). Clinical trial duration reduced by <strong>15–20%</strong>, saving ~$200M per cycle. Drug repurposing accelerates timelines by <strong>80–90%</strong>.</p>
+<div style="margin-top:8px;"><span class="tag">Drug Discovery</span><span class="tag">Trial Optimization</span><span class="tag">Cost Reduction</span></div>
+</div>
+
+<div class="case-study">
+<h4>🏦 Financial Services</h4>
+<p>Automated compliance monitoring reduces operational overhead by <strong>30%</strong>. AI‑driven fraud detection improves accuracy by <strong>60%</strong> while lowering false positives.</p>
+<div style="margin-top:8px;"><span class="tag">Fraud Detection</span><span class="tag">Risk Modeling</span><span class="tag">Compliance</span></div>
+</div>
+
+<div class="case-study">
+<h4>🏭 Manufacturing & Logistics</h4>
+<p>Predictive maintenance reduces unplanned downtime by <strong>45%</strong>. Supply chain optimization trims inventory costs by <strong>20–25%</strong>.</p>
+<div style="margin-top:8px;"><span class="tag">Predictive Maintenance</span><span class="tag">Supply Chain</span><span class="tag">Inventory</span></div>
+</div>
+
+<div class="case-study">
+<h4>🏥 Healthcare</h4>
+<p>Adverse event monitoring costs reduced by up to <strong>$150M</strong>. AI‑assisted diagnostics improve early detection rates.</p>
+<div style="margin-top:8px;"><span class="tag">Diagnostics</span><span class="tag">Monitoring</span><span class="tag">Patient Outcomes</span></div>
+</div>
+</div>
+
+<!-- SLIDE 7: INDUSTRIES -->
+<div class="slide">
+<h2>Industries We Serve</h2>
+<p>30+ domains; 150+ clients across 4 continents and 16 countries.</p>
+<div style="display:flex;flex-wrap:wrap;gap:10px;margin:20px 0;">
+<span class="tag">Automotive</span><span class="tag">Banking</span><span class="tag">Energy</span><span class="tag">Telecom</span><span class="tag">Logistics</span><span class="tag">Financial Services</span><span class="tag">Healthcare</span><span class="tag">Pharma</span><span class="tag">Manufacturing</span><span class="tag">Retail</span><span class="tag">Government</span><span class="tag">Education</span><span class="tag">Insurance</span>
+</div>
+<h3 style="margin-top:30px;">Global Footprint</h3>
+<p>Headquartered in Canada, with technology & talent centers across four continents — revolutionizing customer delivery.</p>
+</div>
+
+<!-- SLIDE 8: WHY AGII -->
+<div class="slide">
+<h2>Why Customers Choose AGII</h2>
+<div class="grid">
+<div class="card"><h4>✅ Proven Track Record</h4><p>33+ years combined experience; 150+ satisfied customers.</p></div>
+<div class="card"><h4>✅ Innovation‑First</h4><p>Deep technical expertise + creative problem‑solving; always ahead of the curve.</p></div>
+<div class="card"><h4>✅ AI‑Ready</h4><p>Enterprise AI integration from discovery to deployment — modernize legacy, unlock new value.</p></div>
+<div class="card"><h4>✅ Client‑Centric</h4><p>Tailored solutions, transparent communication, long‑term partnerships, not templates.</p></div>
+</div>
+</div>
+
+<!-- SLIDE 9: CONTACT -->
+<div class="slide">
+<div style="text-align:center;padding-top:80px;">
+<h2 style="margin-bottom:10px;">Let's Build Together</h2>
+<p style="max-width:500px;margin:0 auto 30px;color:#718096;">Ready to transform your business with AI‑powered solutions and expert consulting?</p>
+<div class="contact-box">
+<h2>Contact Us</h2>
+<p style="color:#fff;font-size:1.1rem;margin-bottom:30px;">We're here to help you modernize, scale, and grow.</p>
+<div style="font-size:1.3rem;">
+<strong>accounts@agii.ca</strong><br>
+</div>
+<p style="color:#fff;font-size:1rem;margin-top:20px;">office@agii.ca • agii.ca</p>
+</div>
+</div>
+<div class="footer">© 2026 AGII Innovations Inc. All rights reserved.</div>
+</div>
+
+</div>
+<script>
+// Optional: Print helper
+document.addEventListener('keydown',e=>{if(e.ctrlKey&&e.shiftKey&&e.key==='P'){window.print();}});
+</script>
+</body>
+</html>
