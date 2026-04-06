@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>GroceryTrack Pro – POS & Reporting</title>
+<title>Best Way Grocery — POS & Reporting</title>
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -11,8 +11,9 @@
 <div class="app">
 <!-- HEADER -->
 <header>
-<h1>🛒 GroceryTrack Pro</h1>
-<p class="tagline">Scan • Sell • Report – Anytime</p>
+<h1>🛒 Best Way Grocery</h1>
+<p class="tagline">Scan • Sell • Report — Brampton, Ontario</p>
+<p class="tax-info">Ontario HST 13% on taxable items • Basic groceries zero-rated (Canada CRA)</p>
 </header>
 
 <!-- NAVIGATION -->
@@ -68,7 +69,7 @@
 <div id="inv-table-wrap">
 <table id="inv-table">
 <thead>
-<tr><th>Barcode</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Actions</th></tr>
+<tr><th>Barcode</th><th>Name</th><th>Category</th><th>Price</th><th>Stock</th><th>Tax</th><th>Actions</th></tr>
 </thead>
 <tbody></tbody>
 </table>
@@ -84,6 +85,7 @@
 <div><label>Category</label><input type="text" name="category" list="cat-list" required></div>
 <div><label>Price ($)</label><input type="number" name="price" step="0.01" min="0" required></div>
 <div><label>Stock</label><input type="number" name="stock" min="0" required></div>
+<div class="checkbox-wrap"><label><input type="checkbox" name="taxable"> Taxable (HST 13%)</label><p class="hint">Check for snacks, candy, prepared foods, beverages. Leave unchecked for basic groceries.</p></div>
 </div>
 <datalist id="cat-list"></datalist>
 <div class="form-actions">
@@ -95,8 +97,8 @@
 
 <div class="card">
 <h2>Import Inventory</h2>
-<p>Paste CSV (barcode, name, category, price, stock) — one item per line:</p>
-<textarea id="csv-import" rows="6" placeholder="012345678901,Organic Apples,Produce,1.49,120"></textarea>
+<p>Paste CSV — one item per line (barcode, name, category, price, stock, taxable/taxfree):</p>
+<textarea id="csv-import" rows="6" placeholder="1001,Basmati Rice 10lb,Rice & Grains,18.99,80,taxfree"></textarea>
 <button id="btn-import">Import CSV</button>
 </div>
 </section>
@@ -113,7 +115,7 @@
 <div id="sales-table-wrap">
 <table id="sales-table">
 <thead>
-<tr><th>Date &amp; Time</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr>
+<tr><th>Date &amp; Time</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>HST</th><th>Total</th></tr>
 </thead>
 <tbody></tbody>
 </table>
@@ -130,7 +132,7 @@
 <select id="report-period">
 <option value="today">Today</option>
 <option value="week">This Week</option>
-<option value="month">This Month</option>
+<option value="month" selected>This Month</option>
 <option value="year">This Year</option>
 <option value="all">All Time</option>
 <option value="custom">Custom Range</option>
@@ -145,30 +147,32 @@
 </div>
 
 <div id="report-output" class="card hidden">
-<h2>📊 Sales Report</h2>
+<h2>📊 Sales Report — Best Way Grocery</h2>
 <p id="report-period-label" class="report-period"></p>
 
 <div class="stats-grid">
 <div class="stat-card"><div class="stat-num" id="r-total-sales">0</div><div class="stat-label">Total Sales</div></div>
-<div class="stat-card"><div class="stat-num" id="r-total-revenue">$0</div><div class="stat-label">Revenue</div></div>
+<div class="stat-card"><div class="stat-num" id="r-total-revenue">$0</div><div class="stat-label">Subtotal (Before Tax)</div></div>
+<div class="stat-card"><div class="stat-num" id="r-total-tax">$0</div><div class="stat-label">HST Collected</div></div>
+<div class="stat-card"><div class="stat-num" id="r-total-with-tax">$0</div><div class="stat-label">Total (After Tax)</div></div>
 <div class="stat-card"><div class="stat-num" id="r-avg-sale">$0</div><div class="stat-label">Avg Sale</div></div>
 <div class="stat-card"><div class="stat-num" id="r-items-sold">0</div><div class="stat-label">Items Sold</div></div>
 </div>
 
 <h3>Top Selling Items</h3>
-<div id="report-top-items"><table><thead><tr><th>Item</th><th>Qty Sold</th><th>Revenue</th></tr></thead><tbody></tbody></table></div>
+<div id="report-top-items"><table><thead><tr><th>Item</th><th>Qty Sold</th><th>Revenue</th><th>HST</th></tr></thead><tbody></tbody></table></div>
 
 <h3>Sales by Category</h3>
-<div id="report-categories"><table><thead><tr><th>Category</th><th>Items</th><th>Revenue</th><th>% of Total</th></tr></thead><tbody></tbody></table></div>
+<div id="report-categories"><table><thead><tr><th>Category</th><th>Items</th><th>Revenue</th><th>HST</th><th>% of Total</th></tr></thead><tbody></tbody></table></div>
 
 <h3>Hourly Breakdown</h3>
-<div id="report-hourly"><table><thead><tr><th>Hour</th><th>Sales</th><th>Revenue</th></tr></thead><tbody></tbody></table></div>
+<div id="report-hourly"><table><thead><tr><th>Hour</th><th>Sales</th><th>Revenue</th><th>HST</th></tr></thead><tbody></tbody></table></div>
 
 <h3>Daily Breakdown</h3>
-<div id="report-daily"><table><thead><tr><th>Date</th><th>Sales</th><th>Revenue</th></tr></thead><tbody></tbody></table></div>
+<div id="report-daily"><table><thead><tr><th>Date</th><th>Sales</th><th>Revenue</th><th>HST</th></tr></thead><tbody></tbody></table></div>
 
 <h3>Full Transaction List</h3>
-<div id="report-transactions"><table><thead><tr><th>Time</th><th>Item</th><th>Qty</th><th>Total</th></tr></thead><tbody></tbody></table></div>
+<div id="report-transactions"><table><thead><tr><th>Time</th><th>Item</th><th>Qty</th><th>Unit Price</th><th>Total</th></tr></thead><tbody></tbody></table></div>
 
 <div class="report-actions">
 <button id="btn-export-csv" class="btn-secondary">📥 Export CSV</button>
@@ -182,10 +186,22 @@
 <div class="card">
 <h2>Store Settings</h2>
 <div class="form-grid">
-<div><label>Store Name</label><input type="text" id="store-name" placeholder="My Grocery Store"></div>
+<div><label>Store Name</label><input type="text" id="store-name" value="Best Way"></div>
 <div><label>Currency Symbol</label><input type="text" id="currency-symbol" value="$" maxlength="3"></div>
 </div>
 <button id="btn-save-settings">Save Settings</button>
+</div>
+
+<div class="card">
+<h2>Tax Information (Ontario)</h2>
+<table>
+<thead><tr><th>Item Type</th><th>Tax Rate</th><th>Examples</th></tr></thead>
+<tbody>
+<tr><td>Basic Groceries</td><td>0% (Zero-Rated)</td><td>Rice, dal, spices, fresh produce, meat, dairy, bread, eggs, flour, sugar, tea, cooking oil</td></tr>
+<tr><td>Taxable Items</td><td>13% HST</td><td>Snacks, candy, cookies, chips, prepared foods, soft drinks, household items</td></tr>
+</tbody>
+</table>
+<p class="hint">Per Canada Revenue Agency (CRA) — basic groceries are zero-rated. Snack foods, candy, prepared foods, and beverages are subject to 13% HST (5% GST + 8% PST).</p>
 </div>
 
 <div class="card">

@@ -1,18 +1,18 @@
-// GroceryTrack Pro — Main Application
+// GroceryTrack Pro — Best Way Grocery, Brampton ON
 (function(){
 "use strict";
 
-// ── Storage Keys ─────────────────────────────────────────
+const HST_RATE = 0.13; // Ontario HST = 5% GST + 8% PST
+
 const SK = {
   inv:    "gtp.inventory",
   sales:  "gtp.sales",
   cfg:    "gtp.config"
 };
 
-// ── State ────────────────────────────────────────────────
 let inventory = JSON.parse(localStorage.getItem(SK.inv)) || DEFAULT_INVENTORY.map(i=>({...i}));
 let sales     = JSON.parse(localStorage.getItem(SK.sales)) || [];
-let config    = JSON.parse(localStorage.getItem(SK.cfg)) || { storeName:"My Grocery Store", currency:"$" };
+let config    = JSON.parse(localStorage.getItem(SK.cfg)) || { storeName:"Best Way", currency:"$", hstRate:HST_RATE };
 let currentItem = null;
 let editIndex   = null;
 
@@ -27,6 +27,11 @@ const $  = s => document.querySelector(s);
 const $$ = s => document.querySelectorAll(s);
 const fmt = n => config.currency + parseFloat(n).toFixed(2);
 const esc = s => String(s).replace(/[<>"'&]/g,c=>({"<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;","&":"&amp;"}[c]));
+
+function calcTax(price, taxable){
+  if(!taxable) return 0;
+  return +(price * config.hstRate).toFixed(2);
+}
 
 // ── Tabs ─────────────────────────────────────────────────
 $$(".nav-btn").forEach(btn=>{
@@ -47,10 +52,12 @@ function lookupBarcode(){
   const item = inventory.find(i=>i.barcode===val);
   if(!item){ alert("Item not found for barcode: "+val); $("#scan-result").classList.add("hidden"); return; }
   currentItem = item;
-  $("#item-name").textContent   = item.name;
+  const tax = calcTax(item.price, item.taxable);
+  const totalWithTax = +(item.price + tax).toFixed(2);
+  $("#item-name").textContent     = item.name;
   $("#item-category").textContent = item.category;
-  $("#item-price").textContent  = fmt(item.price);
-  $("#item-stock").textContent  = item.stock + " in stock";
+  $("#item-price").textContent    = fmt(item.price) + (item.taxable ? " + " + fmt(tax) + " HST" : " (Tax Free)");
+  $("#item-stock").textContent    = item.stock + " in stock";
   $("#sell-qty").value = 1;
   $("#sell-qty").max = item.stock;
   $("#scan-result").classList.remove("hidden");
@@ -65,8 +72,28 @@ function sellItem(){
   const qty = parseInt($("#sell-qty").value)||1;
   if(qty < 1 || qty > currentItem.stock){ alert("Invalid quantity. Stock: "+currentItem.stock); return; }
   const now = new Date().toISOString();
-  const total = +(currentItem.price * qty).toFixed(2);
-  sales.push({ id:Date.now(), timestamp:now, barcode:currentItem.barcode, name:currentItem.name, category:currentItem.category, qty, unitPrice:currentItem.price, total });
+  const unitTax = calcTax(currentItem.price, currentItem.taxable);
+  const unitTotal = +(currentItem.price + unitTax).toFixed(2);
+  const subtotal = +(currentItem.price * qty).toFixed(2);
+  const taxTotal = +(unitTax * qty).toFixed(2);
+  const total = +(unitTotal * qty).toFixed(2);
+
+  sales.push({
+    id: Date.now(),
+    timestamp: now,
+    barcode: currentItem.barcode,
+    name: currentItem.name,
+    category: currentItem.category,
+    qty,
+    unitPrice: currentItem.price,
+    unitTax,
+    unitTotal,
+    subtotal,
+    taxTotal,
+    total,
+    taxable: currentItem.taxable
+  });
+
   currentItem.stock -= qty;
   save();
   renderRecentSales();
@@ -76,21 +103,22 @@ function sellItem(){
 }
 $("#btn-sell").addEventListener("click", sellItem);
 
-// ── Recent Sales (Scan tab) ──────────────────────────────
+// ── Recent Sales ─────────────────────────────────────────
 function renderRecentSales(){
   const el = $("#recent-sales");
   const recent = sales.slice(-20).reverse();
   if(!recent.length){ el.innerHTML = '<p class="empty">No sales yet</p>'; return; }
   el.innerHTML = recent.map(s=>{
     const d = new Date(s.timestamp);
-    const ts = d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
-    return `<div class="sale-item"><span>${ts}</span><span>${esc(s.name)} ×${s.qty}</span><span>${fmt(s.total)}</span></div>`;
+    const ts = d.toLocaleDateString() + " " + d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+    const taxBadge = s.taxable ? ' <span class="badge-tax">+HST</span>' : '';
+    return `<div class="sale-item"><span>${ts}</span><span>${esc(s.name)} ×${s.qty}${taxBadge}</span><span>${fmt(s.total)}</span></div>`;
   }).join("");
 }
 
 // ── Quick Items ──────────────────────────────────────────
 function renderQuickItems(){
-  const popular = inventory.slice(0, 12);
+  const popular = inventory.slice(0,15);
   $("#quick-items").innerHTML = popular.map((it,i)=>`<div class="quick-item" data-idx="${i}">${esc(it.name)}</div>`).join("");
   $$(".quick-item").forEach(el=>{
     el.addEventListener("click",()=>{
@@ -109,16 +137,15 @@ function renderInventory(filter){
   $("#inv-table tbody").innerHTML = list.map((it,i)=>{
     const realIdx = inventory.indexOf(it);
     const lowStock = it.stock < 10 ? ' style="color:var(--danger)"' : '';
+    const taxTag = it.taxable ? '<span class="badge-tax">Taxable</span>' : '<span class="badge-free">Tax Free</span>';
     return `<tr>
       <td>${esc(it.barcode)}</td><td>${esc(it.name)}</td><td>${esc(it.category)}</td>
-      <td>${fmt(it.price)}</td><td${lowStock}>${it.stock}</td>
+      <td>${fmt(it.price)}</td><td${lowStock}>${it.stock}</td><td>${taxTag}</td>
       <td><button class="btn-edit" data-idx="${realIdx}">✏️</button> <button class="btn-del" data-idx="${realIdx}">🗑️</button></td>
     </tr>`;
   }).join("");
-  // Populate category datalist
   const cats = [...new Set(inventory.map(i=>i.category))].sort();
   $("#cat-list").innerHTML = cats.map(c=>`<option value="${esc(c)}">`).join("");
-  // Bind edit/delete
   $$(".btn-edit").forEach(b=> b.addEventListener("click",()=> startEdit(parseInt(b.dataset.idx))));
   $$(".btn-del").forEach(b=> b.addEventListener("click",()=> deleteItem(parseInt(b.dataset.idx))));
 }
@@ -132,6 +159,7 @@ function startEdit(idx){
   const f = $("#item-form");
   f.barcode.value = it.barcode; f.name.value = it.name; f.category.value = it.category;
   f.price.value = it.price; f.stock.value = it.stock;
+  f.taxable.checked = it.taxable;
   $("#btn-save-item").textContent = "Update Item";
   $("#btn-cancel-edit").classList.remove("hidden");
 }
@@ -145,7 +173,14 @@ $("#btn-cancel-edit").addEventListener("click", cancelEdit);
 $("#item-form").addEventListener("submit", e=>{
   e.preventDefault();
   const f = e.target;
-  const item = { barcode:f.barcode.value.trim(), name:f.name.value.trim(), category:f.category.value.trim(), price:parseFloat(f.price.value)||0, stock:parseInt(f.stock.value)||0 };
+  const item = {
+    barcode: f.barcode.value.trim(),
+    name: f.name.value.trim(),
+    category: f.category.value.trim(),
+    price: parseFloat(f.price.value)||0,
+    stock: parseInt(f.stock.value)||0,
+    taxable: f.taxable.checked
+  };
   if(editIndex !== null){ inventory[editIndex] = item; }
   else{
     if(inventory.find(i=>i.barcode===item.barcode)){ alert("Barcode already exists!"); return; }
@@ -166,13 +201,18 @@ $("#btn-import").addEventListener("click",()=>{
   lines.forEach(line=>{
     const parts = line.split(",").map(p=>p.trim());
     if(parts.length < 5) return;
-    const [barcode,name,category,price,stock] = parts;
+    const [barcode,name,category,price,stock,taxFlag] = parts;
     if(inventory.find(i=>i.barcode===barcode)) return;
-    inventory.push({ barcode, name, category, price:parseFloat(price)||0, stock:parseInt(stock)||0 });
+    inventory.push({
+      barcode, name, category,
+      price: parseFloat(price)||0,
+      stock: parseInt(stock)||0,
+      taxable: (taxFlag||"").toLowerCase() === "taxable"
+    });
     added++;
   });
   save(); renderInventory(); $("#csv-import").value = "";
-  alert("Imported "+added+" new items.");
+  alert("Imported "+added+" new items. Format: barcode,name,category,price,stock,taxable/taxfree");
 });
 
 // ── Sales Log Tab ────────────────────────────────────────
@@ -184,8 +224,11 @@ function renderSalesLog(from, to){
   const sorted = filtered.slice().reverse();
   $("#sales-table tbody").innerHTML = sorted.map(s=>{
     const d = new Date(s.timestamp);
-    const ts = d.toLocaleDateString() + " " + d.toLocaleTimeString([], {hour:"2-digit",minute:"2-digit"});
-    return `<tr><td>${ts}</td><td>${esc(s.name)}</td><td>${s.qty}</td><td>${fmt(s.unitPrice)}</td><td>${fmt(s.total)}</td></tr>`;
+    const ts = d.toLocaleDateString() + " " + d.toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
+    return `<tr>
+      <td>${ts}</td><td>${esc(s.name)}</td><td>${s.qty}</td>
+      <td>${fmt(s.unitPrice)}</td><td>${fmt(s.unitTax)}</td><td>${fmt(s.total)}</td>
+    </tr>`;
   }).join("");
 }
 $("#btn-filter-sales").addEventListener("click",()=> renderSalesLog($("#sales-from").value, $("#sales-to").value));
@@ -213,73 +256,81 @@ function getPeriodRange(){
 function generateReport(){
   const {from,to,label} = getPeriodRange();
   const filtered = sales.filter(s=> s.timestamp >= from && s.timestamp <= to);
-  const totalSales = filtered.length;
-  const totalRevenue = filtered.reduce((a,s)=>a+s.total,0);
-  const avgSale = totalSales ? totalRevenue/totalSales : 0;
-  const itemsSold = filtered.reduce((a,s)=>a+s.qty,0);
+  const totalSales   = filtered.length;
+  const totalRevenue = filtered.reduce((a,s)=>a+s.subtotal,0);
+  const totalTax     = filtered.reduce((a,s)=>a+s.taxTotal,0);
+  const totalWithTax = filtered.reduce((a,s)=>a+s.total,0);
+  const avgSale      = totalSales ? totalWithTax/totalSales : 0;
+  const itemsSold    = filtered.reduce((a,s)=>a+s.qty,0);
 
-  // Period label
   const fromD = new Date(from).toLocaleDateString();
   const toD   = new Date(to).toLocaleDateString();
   $("#report-period-label").textContent = `Period: ${fromD} — ${toD}`;
 
-  // Summary
-  $("#r-total-sales").textContent  = totalSales;
+  $("#r-total-sales").textContent   = totalSales;
   $("#r-total-revenue").textContent = fmt(totalRevenue);
-  $("#r-avg-sale").textContent = fmt(avgSale);
-  $("#r-items-sold").textContent = itemsSold;
+  $("#r-total-tax").textContent     = fmt(totalTax);
+  $("#r-total-with-tax").textContent= fmt(totalWithTax);
+  $("#r-avg-sale").textContent      = fmt(avgSale);
+  $("#r-items-sold").textContent    = itemsSold;
 
   // Top items
   const itemMap = {};
   filtered.forEach(s=>{
-    if(!itemMap[s.name]) itemMap[s.name] = {qty:0,revenue:0};
+    if(!itemMap[s.name]) itemMap[s.name]={qty:0,revenue:0,tax:0};
     itemMap[s.name].qty += s.qty;
-    itemMap[s.name].revenue += s.total;
+    itemMap[s.name].revenue += s.subtotal;
+    itemMap[s.name].tax += s.taxTotal;
   });
   const topItems = Object.entries(itemMap).sort((a,b)=>b[1].qty-a[1].qty).slice(0,15);
-  $("#report-top-items table tbody").innerHTML = topItems.map(([name,d])=>`<tr><td>${esc(name)}</td><td>${d.qty}</td><td>${fmt(d.revenue)}</td></tr>`).join("") || '<tr><td colspan="3">No data</td></tr>';
+  $("#report-top-items table tbody").innerHTML = topItems.map(([name,d])=>{
+    return `<tr><td>${esc(name)}</td><td>${d.qty}</td><td>${fmt(d.revenue)}</td><td>${fmt(d.tax)}</td></tr>`;
+  }).join("") || '<tr><td colspan="4">No data</td></tr>';
 
   // Categories
   const catMap = {};
   filtered.forEach(s=>{
     const cat = s.category || "Other";
-    if(!catMap[cat]) catMap[cat] = {items:0,revenue:0};
+    if(!catMap[cat]) catMap[cat]={items:0,revenue:0,tax:0};
     catMap[cat].items += s.qty;
-    catMap[cat].revenue += s.total;
+    catMap[cat].revenue += s.subtotal;
+    catMap[cat].tax += s.taxTotal;
   });
   const cats = Object.entries(catMap).sort((a,b)=>b[1].revenue-a[1].revenue);
   $("#report-categories table tbody").innerHTML = cats.map(([cat,d])=>{
     const pct = totalRevenue ? ((d.revenue/totalRevenue)*100).toFixed(1) : "0.0";
-    return `<tr><td>${esc(cat)}</td><td>${d.items}</td><td>${fmt(d.revenue)}</td><td>${pct}%</td></tr>`;
-  }).join("") || '<tr><td colspan="4">No data</td></tr>';
+    return `<tr><td>${esc(cat)}</td><td>${d.items}</td><td>${fmt(d.revenue)}</td><td>${fmt(d.tax)}</td><td>${pct}%</td></tr>`;
+  }).join("") || '<tr><td colspan="5">No data</td></tr>';
 
   // Hourly
   const hourMap = {};
-  for(let h=0;h<24;h++) hourMap[h]={sales:0,revenue:0};
+  for(let h=0;h<24;h++) hourMap[h]={sales:0,revenue:0,tax:0};
   filtered.forEach(s=>{
     const h = new Date(s.timestamp).getHours();
-    hourMap[h].sales++; hourMap[h].revenue += s.total;
+    hourMap[h].sales++; hourMap[h].revenue += s.subtotal; hourMap[h].tax += s.taxTotal;
   });
-  $("#report-hourly table tbody").innerHTML = Object.entries(hourMap).filter(([,d])=>d.sales).map(([h,d])=>`<tr><td>${h}:00</td><td>${d.sales}</td><td>${fmt(d.revenue)}</td></tr>`).join("") || '<tr><td colspan="3">No data</td></tr>';
+  $("#report-hourly table tbody").innerHTML = Object.entries(hourMap).filter(([,d])=>d.sales).map(([h,d])=>{
+    return `<tr><td>${h}:00</td><td>${d.sales}</td><td>${fmt(d.revenue)}</td><td>${fmt(d.tax)}</td></tr>`;
+  }).join("") || '<tr><td colspan="4">No data</td></tr>';
 
   // Daily
   const dayMap = {};
   filtered.forEach(s=>{
     const day = s.timestamp.slice(0,10);
-    if(!dayMap[day]) dayMap[day]={sales:0,revenue:0};
-    dayMap[day].sales++; dayMap[day].revenue += s.total;
+    if(!dayMap[day]) dayMap[day]={sales:0,revenue:0,tax:0};
+    dayMap[day].sales++; dayMap[day].revenue += s.subtotal; dayMap[day].tax += s.taxTotal;
   });
-  $("#report-daily table tbody").innerHTML = Object.entries(dayMap).sort().map(([d,vals])=>`<tr><td>${d}</td><td>${vals.sales}</td><td>${fmt(vals.revenue)}</td></tr>`).join("") || '<tr><td colspan="3">No data</td></tr>';
+  $("#report-daily table tbody").innerHTML = Object.entries(dayMap).sort().map(([d,vals])=>{
+    return `<tr><td>${d}</td><td>${vals.sales}</td><td>${fmt(vals.revenue)}</td><td>${fmt(vals.tax)}</td></tr>`;
+  }).join("") || '<tr><td colspan="4">No data</td></tr>';
 
   // Full transactions
   $("#report-transactions table tbody").innerHTML = filtered.map(s=>{
     const ts = new Date(s.timestamp).toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"});
-    return `<tr><td>${ts}</td><td>${esc(s.name)}</td><td>${s.qty}</td><td>${fmt(s.total)}</td></tr>`;
-  }).join("") || '<tr><td colspan="4">No transactions</td></tr>';
+    return `<tr><td>${ts}</td><td>${esc(s.name)}</td><td>${s.qty}</td><td>${fmt(s.unitPrice)}</td><td>${fmt(s.total)}</td></tr>`;
+  }).join("") || '<tr><td colspan="5">No transactions</td></tr>';
 
   $("#report-output").classList.remove("hidden");
-
-  // Store for export
   window._reportData = filtered;
 }
 
@@ -287,14 +338,14 @@ function generateReport(){
 $("#btn-export-csv").addEventListener("click",()=>{
   const data = window._reportData || [];
   if(!data.length){ alert("No data to export"); return; }
-  const header = "Date,Time,Item,Category,Qty,Unit Price,Total\n";
+  const header = "Date,Time,Item,Category,Qty,Unit Price,Subtotal,HST,Total\n";
   const rows = data.map(s=>{
     const d = new Date(s.timestamp);
-    return [d.toLocaleDateString(),d.toLocaleTimeString(),s.name,s.category,s.qty,s.unitPrice,s.total].map(v=>'"'+v+'"').join(",");
+    return [d.toLocaleDateString(),d.toLocaleTimeString(),s.name,s.category,s.qty,s.unitPrice,s.subtotal,s.taxTotal,s.total].map(v=>'"'+v+'"').join(",");
   }).join("\n");
   const blob = new Blob([header+rows], {type:"text/csv"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download="grocery-report.csv"; a.click();
+  const a = document.createElement("a"); a.href=url; a.download="best-way-report.csv"; a.click();
   URL.revokeObjectURL(url);
 });
 
@@ -313,7 +364,7 @@ $("#btn-save-settings").addEventListener("click",()=>{
 $("#btn-export-data").addEventListener("click",()=>{
   const blob = new Blob([JSON.stringify({inventory,sales,config},null,2)],{type:"application/json"});
   const url = URL.createObjectURL(blob);
-  const a = document.createElement("a"); a.href=url; a.download="grocery-backup.json"; a.click();
+  const a = document.createElement("a"); a.href=url; a.download="best-way-backup.json"; a.click();
   URL.revokeObjectURL(url);
 });
 
@@ -338,12 +389,12 @@ $("#btn-import-data").addEventListener("click",()=>{
 });
 
 $("#btn-clear-sales").addEventListener("click",()=>{
-  if(!confirm("Clear ALL sales history? This cannot be undone.")) return;
+  if(!confirm("Clear ALL sales history?")) return;
   sales = []; save(); renderRecentSales(); renderSalesLog();
 });
 
 $("#btn-reset-all").addEventListener("click",()=>{
-  if(!confirm("Reset EVERYTHING (inventory, sales, settings)? This cannot be undone.")) return;
+  if(!confirm("Reset EVERYTHING?")) return;
   localStorage.removeItem(SK.inv); localStorage.removeItem(SK.sales); localStorage.removeItem(SK.cfg);
   location.reload();
 });

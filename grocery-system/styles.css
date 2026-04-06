@@ -3,13 +3,14 @@
 :root{
 --bg:#0f1117;--surface:#1a1d27;--surface2:#242833;--border:#2e3345;
 --text:#e4e7ef;--text2:#8891a5;--accent:#3b82f6;--accent-hover:#2563eb;
---success:#22c55e;--danger:#ef4444;--warning:#f59e0b;
+--success:#22c55e;--danger:#ef4444;--warning:#f59e0b;--gold:#d69e2e;
 }
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 .app{max-width:1100px;margin:0 auto;padding:20px}
 header{text-align:center;padding:30px 0 20px}
-header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--accent),#8b5cf6);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header h1{font-size:2rem;font-weight:800;background:linear-gradient(135deg,var(--success),var(--accent));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
 .tagline{color:var(--text2);font-size:.9rem;margin-top:4px}
+.tax-info{color:var(--gold);font-size:.8rem;margin-top:6px;opacity:.8}
 nav{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:20px;border-bottom:1px solid var(--border);padding-bottom:12px}
 .nav-btn{background:var(--surface2);color:var(--text2);border:1px solid var(--border);padding:8px 16px;border-radius:8px;cursor:pointer;font-size:.85rem;font-weight:600;transition:.2s}
 .nav-btn:hover{border-color:var(--accent);color:var(--text)}
@@ -27,6 +28,8 @@ button{cursor:pointer;font-family:inherit;font-weight:600;border:none;border-rad
 .btn-danger{background:var(--danger);color:#fff}.btn-danger:hover{background:#dc2626}
 .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{border-color:var(--accent)}
 .badge{background:var(--accent);color:#fff;font-size:.75rem;padding:2px 10px;border-radius:20px;margin-left:8px}
+.badge-tax{display:inline-block;background:var(--warning);color:#000;font-size:.7rem;padding:1px 8px;border-radius:10px;font-weight:600}
+.badge-free{display:inline-block;background:var(--success);color:#fff;font-size:.7rem;padding:1px 8px;border-radius:10px;font-weight:600}
 .tag{display:inline-block;background:var(--surface2);border:1px solid var(--border);color:var(--text2);padding:2px 10px;border-radius:20px;font-size:.8rem}
 .price{color:var(--success);font-weight:700;font-size:1rem}
 .stock{color:var(--warning);font-size:.85rem}
@@ -45,12 +48,16 @@ td{color:var(--text)}
 tr:hover td{background:var(--surface2)}
 .form-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-bottom:12px}
 .form-grid label{display:block;color:var(--text2);font-size:.8rem;margin-bottom:4px}
+.checkbox-wrap{display:flex;flex-direction:column;gap:4px}
+.checkbox-wrap label{display:flex;align-items:center;gap:8px;font-size:.9rem;color:var(--text);cursor:pointer}
+.checkbox-wrap input[type="checkbox"]{width:18px;height:18px;accent-color:var(--accent)}
+.hint{color:var(--text2);font-size:.75rem;margin-top:4px;font-style:italic}
 .form-actions{display:flex;gap:10px;margin-top:8px}
 .search-bar{margin-bottom:12px}
-.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:12px;margin-bottom:20px}
-.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:20px;text-align:center}
-.stat-num{font-size:1.8rem;font-weight:800;color:var(--accent)}
-.stat-label{font-size:.8rem;color:var(--text2);margin-top:4px}
+.stats-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:12px;margin-bottom:20px}
+.stat-card{background:var(--surface2);border:1px solid var(--border);border-radius:10px;padding:16px;text-align:center}
+.stat-num{font-size:1.6rem;font-weight:800;color:var(--accent)}
+.stat-label{font-size:.75rem;color:var(--text2);margin-top:4px}
 .date-filter{display:flex;gap:10px;align-items:center;flex-wrap:wrap;margin-bottom:12px}
 .date-filter label{font-size:.85rem;color:var(--text2)}
 .date-filter input{width:auto;min-width:140px}
@@ -73,4 +80,5 @@ body{background:#fff;color:#000}
 .nav-btn,.search-bar,.form-actions,.sell-row,.quick-grid,.report-actions{display:none}
 .card{border:1px solid #ccc;page-break-inside:avoid}
 .stat-card{background:#f5f5f5}
+header h1{-webkit-text-fill-color:#000}
 }
