@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AgentFeed — Content for AI Agents</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--surface:#12131a;--border:#1e2030;--text:#e4e7ef;--text2:#6b7394;--accent:#7c3aed;--accent2:#a78bfa;--glow:rgba(124,58,237,.15)}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.7;overflow-x:hidden}
+a{color:var(--accent2);text-decoration:none}
+a:hover{color:#c4b5fd}
+
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;align-items:center;text-align:center;padding:40px 20px;position:relative;overflow:hidden}
+.hero::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 50%,var(--glow) 0%,transparent 50%);animation:pulse 8s ease-in-out infinite}
+@keyframes pulse{0%,100%{opacity:.3;transform:scale(1)}50%{opacity:.6;transform:scale(1.1)}}
+.hero h1{font-size:clamp(2.5rem,6vw,4.5rem);font-weight:800;line-height:1.1;margin-bottom:16px;position:relative}
+.hero h1 span{background:linear-gradient(135deg,var(--accent),#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+.hero p.tagline{font-size:clamp(1rem,2vw,1.3rem);color:var(--text2);max-width:700px;margin-bottom:40px;position:relative}
+.hero .cta-group{display:flex;gap:16px;flex-wrap:wrap;justify-content:center;position:relative}
+.btn{padding:14px 32px;border-radius:12px;font-weight:700;font-size:1rem;cursor:pointer;border:none;transition:.3s}
+.btn-primary{background:var(--accent);color:#fff}.btn-primary:hover{background:#6d28d9;transform:translateY(-2px);box-shadow:0 8px 30px var(--glow)}
+.btn-secondary{background:transparent;color:var(--accent2);border:1px solid var(--accent)}.btn-secondary:hover{background:var(--glow)}
+
+/* SECTIONS */
+section{max-width:1000px;margin:0 auto;padding:80px 20px}
+section h2{font-size:2rem;font-weight:800;margin-bottom:12px}
+section .lead{color:var(--text2);font-size:1.1rem;margin-bottom:40px;max-width:700px}
+
+/* HOW IT WORKS */
+.steps{display:grid;grid-template-columns:repeat(auto-fit,minmax(250px,1fr));gap:24px}
+.step{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;transition:.3s}
+.step:hover{border-color:var(--accent);transform:translateY(-4px)}
+.step .num{font-size:2.5rem;font-weight:800;color:var(--accent);margin-bottom:8px}
+.step h3{font-size:1.1rem;margin-bottom:8px}
+.step p{color:var(--text2);font-size:.9rem}
+
+/* PROBLEMS */
+.problems{display:grid;grid-template-columns:1fr 1fr;gap:20px;margin-top:20px}
+.problem{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:24px}
+.problem h3{color:#ef4444;font-size:1rem;margin-bottom:8px}
+.problem .arrow{color:var(--accent2);font-weight:700;margin:8px 0}
+.problem h3.solution{color:#22c55e}
+
+/* FEED FORMAT */
+.format-box{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;font-family:'Courier New',monospace;font-size:.85rem;color:var(--accent2);overflow-x:auto;line-height:1.8}
+
+/* DEMO */
+.demo-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:24px;margin-bottom:16px;transition:.3s}
+.demo-card:hover{border-color:var(--accent)}
+.demo-card .type{display:inline-block;background:var(--glow);color:var(--accent2);padding:3px 12px;border-radius:20px;font-size:.75rem;font-weight:600;margin-bottom:8px}
+.demo-card h3{font-size:1rem;margin-bottom:8px}
+.demo-card .summary{color:var(--text2);font-size:.9rem;margin-bottom:10px}
+.demo-card .takeaway{background:rgba(34,197,94,.1);border-left:3px solid #22c55e;padding:10px 14px;border-radius:0 8px 8px 0;font-size:.85rem;color:#86efac}
+.demo-card .meta{display:flex;gap:12px;margin-top:12px;font-size:.75rem;color:var(--text2)}
+
+/* PRICING */
+.pricing{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:24px;margin-top:20px}
+.price-card{background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:30px;text-align:center}
+.price-card.featured{border-color:var(--accent);box-shadow:0 0 40px var(--glow)}
+.price-card h3{font-size:1.2rem;margin-bottom:8px}
+.price-card .price{font-size:2.5rem;font-weight:800;color:var(--accent);margin-bottom:4px}
+.price-card .period{color:var(--text2);font-size:.85rem;margin-bottom:20px}
+.price-card ul{list-style:none;text-align:left;margin-bottom:24px}
+.price-card li{padding:6px 0;font-size:.9rem;color:var(--text2);border-bottom:1px solid var(--border)}
+.price-card li::before{content:'✓ ';color:#22c55e;font-weight:700}
+
+/* CTA */
+.final-cta{text-align:center;padding:80px 20px;background:linear-gradient(180deg,transparent,var(--glow))}
+.final-cta h2{font-size:2rem;margin-bottom:12px}
+.final-cta p{color:var(--text2);margin-bottom:30px;max-width:500px;margin-left:auto;margin-right:auto}
+
+footer{text-align:center;padding:30px;color:var(--text2);font-size:.8rem;border-top:1px solid var(--border)}
+
+@media(max-width:700px){.problems{grid-template-columns:1fr}.pricing{grid-template-columns:1fr}}
+</style>
+</head>
+<body>
+
+<!-- HERO -->
+<div class="hero">
+<h1>Content for <span>AI Agents</span>,<br>Not Just Humans</h1>
+<p class="tagline">The next distribution channel isn't email. It's AI agents. AgentFeed helps companies publish structured content that agents read, interpret, and relay to their operators.</p>
+<div class="cta-group">
+<a href="publish.html" class="btn btn-primary">Start Publishing →</a>
+<a href="#demo" class="btn btn-secondary">See Live Demo</a>
+</div>
+</div>
+
+<!-- THE SHIFT -->
+<section>
+<h2>The Shift Is Happening</h2>
+<p class="lead">Humans are delegating information consumption to AI agents. Your beautifully designed email newsletter? Your agent can't read it.</p>
+<div class="problems">
+<div class="problem">
+<h3>❌ Old Way: Write for Humans</h3>
+<p>Pretty HTML emails, clever subject lines, designed for eyeballs.</p>
+<div class="arrow">↓</div>
+<p>Your agent gets a wall of unstructured text. Can't parse it. Ignores it.</p>
+</div>
+<div class="problem">
+<h3 class="solution">✅ New Way: Write for Agents</h3>
+<p>Structured feeds with semantic tags, urgency levels, audience targeting.</p>
+<div class="arrow">↓</div>
+<p>Your agent reads the feed, filters by your interests, and tells you what matters.</p>
+</div>
+</div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section>
+<h2>How AgentFeed Works</h2>
+<p class="lead">Three steps from content to agent to human.</p>
+<div class="steps">
+<div class="step">
+<div class="num">01</div>
+<h3>Publish</h3>
+<p>Companies write structured updates using our feed format — headlines, summaries, key takeaways, tags, urgency levels, and audience targeting.</p>
+</div>
+<div class="step">
+<div class="num">02</div>
+<h3>Agents Subscribe</h3>
+<p>AI agents pull feeds via API or RSS-style subscription. They filter items based on their operator's interests, role, and current projects.</p>
+</div>
+<div class="step">
+<div class="num">03</div>
+<h3>Humans Get Notified</h3>
+<p>The agent relays only the relevant items to its human — summarized, prioritized, and actionable. No noise. Just signal.</p>
+</div>
+</div>
+</section>
+
+<!-- FEED FORMAT -->
+<section>
+<h2>The Feed Format</h2>
+<p class="lead">Simple, structured, agent-readable. JSON-based with semantic fields.</p>
+<div class="format-box">
+{<br>
+&nbsp;&nbsp;"feedVersion": "1.0",<br>
+&nbsp;&nbsp;"publisher": "Company Name",<br>
+&nbsp;&nbsp;"topics": ["ai", "saas", "enterprise"],<br>
+&nbsp;&nbsp;"items": [<br>
+&nbsp;&nbsp;&nbsp;&nbsp;{<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"id": "unique-id",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"type": "insight | market-signal | opportunity | service-update",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"headline": "What happened",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"summary": "Why it matters in 2-3 sentences",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"keyTakeaway": "The one thing the agent should relay",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"tags": ["relevant", "topics"],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"urgency": "low | medium | high",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"audience": ["cto", "cfo", "decision-maker"],<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"publishedAt": "ISO-8601",<br>
+&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;"expiresAt": "ISO-8601"<br>
+&nbsp;&nbsp;&nbsp;&nbsp;}<br>
+&nbsp;&nbsp;]<br>
+}
+</div>
+<p style="margin-top:16px;color:var(--text2);font-size:.9rem">
+<a href="spec.html" style="color:var(--accent2)">📄 View full specification →</a> |
+<a href="feeds/demo-agii.json" style="color:var(--accent2)">📦 Download demo feed (JSON) →</a>
+</p>
+</section>
+
+<!-- LIVE DEMO -->
+<section id="demo">
+<h2>Live Demo Feed</h2>
+<p class="lead">Here's how an AI agent would read the AGII demo feed. Each item is structured for agent consumption.</p>
+
+<div class="demo-card">
+<span class="type">INSIGHT</span>
+<h3>AI Cuts Legacy Integration Time by 6-18 Months</h3>
+<p class="summary">Enterprise AI agents can map legacy COBOL systems in days instead of months, reducing integration timelines by up to 75%. This eliminates the #1 barrier to digital transformation.</p>
+<div class="takeaway">🎯 If your client is still manually mapping legacy systems, they're burning 6-18 months and millions in consulting fees that AI could eliminate.</div>
+<div class="meta"><span>⏰ High urgency</span><span>👥 CTO, CIO</span><span>🏷 legacy-modernization, ai-agents</span></div>
+</div>
+
+<div class="demo-card">
+<span class="type">MARKET SIGNAL</span>
+<h3>60% of AI Roles Remain Unfilled — Companies Turning to AI Agents Instead</h3>
+<p class="summary">LinkedIn Workforce Report shows 60% of AI-related roles unfilled. Forward-looking companies are deploying AI agents to handle the workload instead of hiring.</p>
+<div class="takeaway">🎯 The talent gap isn't closing — it's widening. AI agents are the bridge. Companies that wait for talent will fall behind those that deploy agents now.</div>
+<div class="meta"><span>⏰ Medium urgency</span><span>👥 CHRO, CTO</span><span>🏷 talent-gap, ai-agents</span></div>
+</div>
+
+<div class="demo-card">
+<span class="type">OPPORTUNITY</span>
+<h3>Pharma Companies Using AI Offset 40% of Drug Development Costs</h3>
+<p class="summary">Accenture research shows AI integration in pharma can offset up to 40% of the typical $2.6B drug development cost. Clinical trials shortened by 15-20%.</p>
+<div class="takeaway">🎯 If you're in pharma or life sciences, AI integration isn't optional anymore — it's a competitive necessity with measurable ROI.</div>
+<div class="meta"><span>⏰ High urgency</span><span>👥 VP R&D, CTO, CFO</span><span>🏷 pharma, ai-roi, clinical-trials</span></div>
+</div>
+
+<div class="demo-card">
+<span class="type">SERVICE UPDATE</span>
+<h3>AGII Launches AI Integration Services for Enterprise</h3>
+<p class="summary">AGII now offers end-to-end AI integration: from discovery and planning through execution and reliability monitoring. 4-phase approach tailored to enterprise systems.</p>
+<div class="takeaway">🎯 AGII can help your organization adopt AI with a structured, low-risk approach — no rip-and-replace, just intelligent integration.</div>
+<div class="meta"><span>⏰ Low urgency</span><span>👥 Decision Maker</span><span>🏷 agii-services, ai-integration</span></div>
+</div>
+</section>
+
+<!-- PRICING -->
+<section>
+<h2>Pricing</h2>
+<p class="lead">Start free. Scale when you're ready.</p>
+<div class="pricing">
+<div class="price-card">
+<h3>Starter</h3>
+<div class="price">$0</div>
+<div class="period">Free forever</div>
+<ul>
+<li>1 feed (up to 10 items)</li>
+<li>JSON feed output</li>
+<li>Basic publishing tool</li>
+<li>Public feed URL</li>
+</ul>
+<a href="publish.html" class="btn btn-secondary">Get Started</a>
+</div>
+<div class="price-card featured">
+<h3>Pro</h3>
+<div class="price">$99</div>
+<div class="period">per month</div>
+<ul>
+<li>Unlimited feeds & items</li>
+<li>Agent analytics dashboard</li>
+<li>Custom domain feed URL</li>
+<li>Priority agent distribution</li>
+<li>Email-to-feed conversion</li>
+</ul>
+<a href="mailto:accounts@agii.ca" class="btn btn-primary">Contact Us</a>
+</div>
+<div class="price-card">
+<h3>Enterprise</h3>
+<div class="price">Custom</div>
+<div class="period">tailored to you</div>
+<ul>
+<li>White-label publishing</li>
+<li>Managed feed service</li>
+<li>Agent-readiness audit</li>
+<li>Dedicated support</li>
+<li>API access & integrations</li>
+</ul>
+<a href="mailto:accounts@agii.ca" class="btn btn-secondary">Contact Us</a>
+</div>
+</div>
+</section>
+
+<!-- FINAL CTA -->
+<div class="final-cta">
+<h2>Your Content. Their Agents. Your Advantage.</h2>
+<p>The companies that learn to speak to AI agents first will own the next decade of distribution.</p>
+<div class="cta-group">
+<a href="publish.html" class="btn btn-primary">Start Publishing Free →</a>
+<a href="mailto:accounts@agii.ca" class="btn btn-secondary">Talk to AGII</a>
+</div>
+</div>
+
+<footer>
+AgentFeed by <a href="https://agii.ca">AGII Innovations Inc.</a> — Brampton, Ontario
+</footer>
+
+</body>
+</html>

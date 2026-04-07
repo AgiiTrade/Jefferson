@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>AgentFeed — Specification v1.0</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
+*{margin:0;padding:0;box-sizing:border-box}
+:root{--bg:#0a0a0f;--surface:#12131a;--border:#1e2030;--text:#e4e7ef;--text2:#6b7394;--accent:#7c3aed;--accent2:#a78bfa}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.8}
+.container{max-width:800px;margin:0 auto;padding:40px 20px}
+header{margin-bottom:40px}
+header h1{font-size:2rem;font-weight:800;margin-bottom:8px}
+header h1 span{background:linear-gradient(135deg,var(--accent),#ec4899);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
+header p{color:var(--text2);font-size:1rem}
+h2{font-size:1.3rem;font-weight:700;margin:30px 0 12px;color:var(--accent2)}
+h3{font-size:1rem;font-weight:600;margin:20px 0 8px}
+p{margin-bottom:12px;color:var(--text)}
+code{background:var(--surface);color:var(--accent2);padding:2px 8px;border-radius:4px;font-family:'Courier New',monospace;font-size:.85rem}
+pre{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:20px;overflow-x:auto;font-family:'Courier New',monospace;font-size:.8rem;color:var(--accent2);margin:12px 0;line-height:1.7}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:.85rem}
+th,td{padding:10px 12px;text-align:left;border-bottom:1px solid var(--border)}
+th{color:var(--text2);font-weight:600;font-size:.75rem;text-transform:uppercase}
+td code{font-size:.8rem}
+.badge{display:inline-block;background:rgba(124,58,237,.2);color:var(--accent2);padding:2px 10px;border-radius:12px;font-size:.75rem;font-weight:600}
+.required{color:#ef4444;font-size:.7rem}
+.optional{color:var(--text2);font-size:.7rem}
+nav{margin-bottom:30px;padding-bottom:20px;border-bottom:1px solid var(--border)}
+nav a{color:var(--accent2);margin-right:16px;font-size:.9rem}
+nav a:hover{color:#c4b5fd}
+footer{margin-top:60px;padding-top:20px;border-top:1px solid var(--border);color:var(--text2);font-size:.8rem;text-align:center}
+</style>
+</head>
+<body>
+<div class="container">
+
+<nav><a href="index.html">← Home</a> <a href="publish.html">Publisher</a> <a href="feeds/demo-agii.json">Demo Feed</a></nav>
+
+<header>
+<h1>📄 AgentFeed <span>Specification v1.0</span></h1>
+<p>The open standard for publishing content that AI agents can read, interpret, and relay.</p>
+</header>
+
+<h2>Overview</h2>
+<p>AgentFeed is a JSON-based feed format designed for AI agent consumption. Unlike RSS (designed for human readers) or API responses (designed for applications), AgentFeed is structured specifically for AI agents to parse, filter, and relay to their human operators.</p>
+
+<h2>Feed Structure</h2>
+<pre>{
+  "feedVersion": "1.0",
+  "publisher": "string <span class='required'>required</span>",
+  "publisherUrl": "string <span class='optional'>optional</span>",
+  "feedUrl": "string <span class='optional'>optional</span>",
+  "lastUpdated": "ISO-8601 <span class='required'>required</span>",
+  "language": "ISO-639-1 <span class='optional'>optional</span> (default: en)",
+  "topics": ["string"] <span class='optional'>optional</span>,
+  "items": [Item] <span class='required'>required</span>
+}</pre>
+
+<h3>Feed Fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>feedVersion</code></td><td>string</td><td>Format version. Current: <code>"1.0"</code></td></tr>
+<tr><td><code>publisher</code></td><td>string</td><td>Company or individual name</td></tr>
+<tr><td><code>publisherUrl</code></td><td>string</td><td>URL to publisher's website</td></tr>
+<tr><td><code>feedUrl</code></td><td>string</td><td>Canonical URL of this feed</td></tr>
+<tr><td><code>lastUpdated</code></td><td>ISO-8601</td><td>When the feed was last modified</td></tr>
+<tr><td><code>language</code></td><td>string</td><td>ISO-639-1 language code (en, fr, es, hi, ur, etc.)</td></tr>
+<tr><td><code>topics</code></td><td>string[]</td><td>Global topics for the entire feed</td></tr>
+<tr><td><code>items</code></td><td>Item[]</td><td>Array of feed items (see below)</td></tr>
+</table>
+
+<h2>Item Structure</h2>
+<pre>{
+  "id": "string <span class='required'>required</span>",
+  "type": "string <span class='required'>required</span>",
+  "headline": "string <span class='required'>required</span>",
+  "summary": "string <span class='required'>required</span>",
+  "keyTakeaway": "string <span class='required'>required</span>",
+  "tags": ["string"] <span class='optional'>optional</span>,
+  "urgency": "string <span class='optional'>optional</span>",
+  "audience": ["string"] <span class='optional'>optional</span>",
+  "publishedAt": "ISO-8601 <span class='required'>required</span>",
+  "expiresAt": "ISO-8601 <span class='optional'>optional</span>",
+  "cta": {
+    "text": "string",
+    "url": "string"
+  } <span class='optional'>optional</span>,
+  "source": "string <span class='optional'>optional</span>",
+  "image": "string URL <span class='optional'>optional</span>"
+}</pre>
+
+<h3>Item Fields</h3>
+<table>
+<tr><th>Field</th><th>Type</th><th>Description</th></tr>
+<tr><td><code>id</code></td><td>string</td><td>Unique identifier within the feed</td></tr>
+<tr><td><code>type</code></td><td>string</td><td>Content type (see below)</td></tr>
+<tr><td><code>headline</code></td><td>string</td><td>What happened — concise, factual</td></tr>
+<tr><td><code>summary</code></td><td>string</td><td>Why it matters — 2-3 sentences</td></tr>
+<tr><td><code>keyTakeaway</code></td><td>string</td><td>The ONE thing the agent should relay</td></tr>
+<tr><td><code>tags</code></td><td>string[]</td><td>Topic tags for filtering</td></tr>
+<tr><td><code>urgency</code></td><td>string</td><td><code>low</code>, <code>medium</code>, or <code>high</code></td></tr>
+<tr><td><code>audience</code></td><td>string[]</td><td>Target roles (cto, cfo, ceo, marketing, etc.)</td></tr>
+<tr><td><code>publishedAt</code></td><td>ISO-8601</td><td>When the item was published</td></tr>
+<tr><td><code>expiresAt</code></td><td>ISO-8601</td><td>When the item should no longer be surfaced</td></tr>
+<tr><td><code>cta</code></td><td>object</td><td>Optional call-to-action with text and URL</td></tr>
+<tr><td><code>source</code></td><td>string</td><td>Source URL or reference</td></tr>
+<tr><td><code>image</code></td><td>string</td><td>Optional image URL</td></tr>
+</table>
+
+<h2>Item Types</h2>
+<table>
+<tr><th>Type</th><th>Description</th><th>Example</th></tr>
+<tr><td><code>insight</code></td><td>Data-driven observation or finding</td><td>"AI reduces dev costs by 40%"</td></tr>
+<tr><td><code>market-signal</code></td><td>Trend or market movement</td><td>"60% of AI roles unfilled"</td></tr>
+<tr><td><code>opportunity</code></td><td>Actionable opportunity</td><td>"Pharma offsetting $2.6B with AI"</td></tr>
+<tr><td><code>service-update</code></td><td>Company service or capability update</td><td>"AGII launches AI integration"</td></tr>
+<tr><td><code>product-launch</code></td><td>New product announcement</td><td>"AgentFeed v1.0 released"</td></tr>
+<tr><td><code>case-study</code></td><td>Client success story</td><td>"How Company X saved $5M"</td></tr>
+<tr><td><code>research</code></td><td>Research findings or report</td><td>"McKinsey: AI adoption survey"</td></tr>
+</table>
+
+<h2>Agent Behavior Guidelines</h2>
+<p>When an AI agent processes an AgentFeed, it should:</p>
+<ol style="margin-left:20px;margin-bottom:20px">
+<li><strong>Filter by relevance</strong> — Match <code>tags</code> and <code>audience</code> against the operator's interests and role.</li>
+<li><strong>Respect urgency</strong> — Surface <code>high</code> urgency items immediately. Batch <code>medium</code> into daily digests. Surface <code>low</code> only when contextually relevant.</li>
+<li><strong>Check expiration</strong> — Never surface items past their <code>expiresAt</code> date.</li>
+<li><strong>Relay the takeaway</strong> — The <code>keyTakeaway</code> field is designed to be the agent's primary message to the operator. Summarize further if needed.</li>
+<li><strong>Preserve attribution</strong> — Always credit the publisher when relaying content.</li>
+</ol>
+
+<h2>Discovery</h2>
+<p>Publishers can make their feeds discoverable by adding a meta tag to their website:</p>
+<pre>&lt;link rel="agentfeed" type="application/json" href="https://yourdomain.com/agentfeed.json"&gt;</pre>
+<p>Agents can discover feeds by checking for this tag, similar to how RSS autodiscovery works.</p>
+
+<h2>Versioning</h2>
+<p>The <code>feedVersion</code> field indicates the spec version. Future versions will be backward-compatible — new fields added, existing fields preserved. Breaking changes will increment the major version.</p>
+
+<footer>
+AgentFeed Specification v1.0 — Published April 2026<br>
+<a href="index.html" style="color:var(--accent2)">AgentFeed by AGII Innovations Inc.</a>
+</footer>
+
+</div>
+</body>
+</html>

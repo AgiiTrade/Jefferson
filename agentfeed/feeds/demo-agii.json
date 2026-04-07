@@ -1,0 +1,75 @@
+{
+  "feedVersion": "1.0",
+  "publisher": "AGII Innovations Inc.",
+  "publisherUrl": "https://agii.ca",
+  "feedUrl": "https://agiitrade.github.io/Jefferson/agentfeed/feeds/demo-agii.json",
+  "lastUpdated": "2026-04-06T21:00:00Z",
+  "language": "en",
+  "topics": ["ai-integration", "digital-transformation", "enterprise-technology", "legacy-modernization"],
+  "items": [
+    {
+      "id": "agii-001",
+      "type": "insight",
+      "headline": "AI Cuts Legacy Integration Time by 6-18 Months",
+      "summary": "Enterprise AI agents can map legacy COBOL systems in days instead of months, reducing integration timelines by up to 75%. This eliminates the #1 barrier to digital transformation.",
+      "keyTakeaway": "If your client is still manually mapping legacy systems, they're burning 6-18 months and millions in consulting fees that AI could eliminate.",
+      "tags": ["legacy-modernization", "ai-agents", "cost-reduction"],
+      "urgency": "high",
+      "audience": ["cto", "cio", "digital-transformation-lead"],
+      "publishedAt": "2026-04-06T14:00:00Z",
+      "expiresAt": "2026-07-06T14:00:00Z"
+    },
+    {
+      "id": "agii-002",
+      "type": "market-signal",
+      "headline": "60% of AI Roles Remain Unfilled — Companies Turning to AI Agents Instead",
+      "summary": "LinkedIn Workforce Report shows 60% of AI-related roles unfilled. Forward-looking companies are deploying AI agents to handle the workload instead of hiring.",
+      "keyTakeaway": "The talent gap isn't closing — it's widening. AI agents are the bridge. Companies that wait for talent will fall behind those that deploy agents now.",
+      "tags": ["talent-gap", "ai-agents", "workforce"],
+      "urgency": "medium",
+      "audience": ["chro", "cto", "hiring-manager"],
+      "publishedAt": "2026-04-05T10:00:00Z",
+      "expiresAt": "2026-06-05T10:00:00Z"
+    },
+    {
+      "id": "agii-003",
+      "type": "opportunity",
+      "headline": "Pharma Companies Using AI Offset 40% of Drug Development Costs",
+      "summary": "Accenture research shows AI integration in pharma can offset up to 40% of the typical $2.6B drug development cost. Clinical trials shortened by 15-20%, saving ~$200M per cycle.",
+      "keyTakeaway": "If you're in pharma or life sciences, AI integration isn't optional anymore — it's a competitive necessity with measurable ROI.",
+      "tags": ["pharma", "ai-roi", "drug-development", "clinical-trials"],
+      "urgency": "high",
+      "audience": ["vp-rd", "cto", "cfo"],
+      "publishedAt": "2026-04-04T09:00:00Z",
+      "expiresAt": "2026-10-04T09:00:00Z"
+    },
+    {
+      "id": "agii-004",
+      "type": "service-update",
+      "headline": "AGII Launches AI Integration Services for Enterprise",
+      "summary": "AGII now offers end-to-end AI integration: from discovery and planning through execution and reliability monitoring. 4-phase approach tailored to enterprise systems.",
+      "keyTakeaway": "AGII can help your organization adopt AI with a structured, low-risk approach — no rip-and-replace, just intelligent integration.",
+      "tags": ["agii-services", "ai-integration", "enterprise"],
+      "urgency": "low",
+      "audience": ["decision-maker", "project-manager"],
+      "publishedAt": "2026-04-03T12:00:00Z",
+      "expiresAt": "2026-12-31T23:59:59Z",
+      "cta": {
+        "text": "Contact AGII",
+        "url": "mailto:accounts@agii.ca"
+      }
+    },
+    {
+      "id": "agii-005",
+      "type": "insight",
+      "headline": "Manufacturing: Predictive Maintenance Reduces Downtime by 45%",
+      "summary": "AI-driven predictive maintenance in manufacturing reduces unplanned downtime by 45%. Supply chain optimization further trims inventory costs by 20-25%.",
+      "keyTakeaway": "Manufacturers sitting on years of sensor data are leaving money on the table. AI can turn that data into predictive insights that directly impact the bottom line.",
+      "tags": ["manufacturing", "predictive-maintenance", "supply-chain"],
+      "urgency": "medium",
+      "audience": ["vp-operations", "plant-manager", "cio"],
+      "publishedAt": "2026-04-02T08:00:00Z",
+      "expiresAt": "2026-09-02T08:00:00Z"
+    }
+  ]
+}
