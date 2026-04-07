@@ -3,11 +3,11 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>AgentFeed — Publish</title>
+<title>AgentFeed Publisher — Create Agent-Readable Feeds</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap');
 *{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0a0a0f;--surface:#12131a;--surface2:#1a1b25;--border:#1e2030;--text:#e4e7ef;--text2:#6b7394;--accent:#7c3aed;--accent2:#a78bfa;--success:#22c55e;--danger:#ef4444;--warning:#f59e0b}
+:root{--bg:#0a0a0f;--surface:#12131a;--surface2:#1a1b25;--border:#1e2030;--text:#e4e7ef;--text2:#6b7394;--accent:#7c3aed;--accent2:#a78bfa;--success:#22c55e;--danger:#ef4444}
 body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);line-height:1.6}
 .container{max-width:1100px;margin:0 auto;padding:20px}
 header{text-align:center;padding:30px 0}
@@ -57,7 +57,10 @@ button{cursor:pointer;font-family:inherit;font-weight:600;border:none;border-rad
 
 <header>
 <h1>📝 AgentFeed <span>Publisher</span></h1>
-<p>Create agent-readable content feeds in minutes</p>
+<p>Build and publish agent‑readable content feeds in minutes</p>
+<div class="nav-links">
+<a href="index.html">← Back to Home</a>
+</div>
 </header>
 
 <div class="layout">
@@ -70,7 +73,7 @@ button{cursor:pointer;font-family:inherit;font-weight:600;border:none;border-rad
 <h2>📡 Feed Settings</h2>
 <div class="form-row"><label>Publisher Name</label><input type="text" id="publisher" placeholder="Your Company Name"></div>
 <div class="form-row"><label>Publisher URL</label><input type="text" id="publisherUrl" placeholder="https://yourcompany.com"></div>
-<div class="form-row"><label>Topics (comma-separated)</label><input type="text" id="topics" placeholder="ai, saas, enterprise, consulting"></div>
+<div class="form-row"><label>Topics (comma‑separated)</label><input type="text" id="topics" placeholder="ai, saas, enterprise, consulting"></div>
 <div class="form-row"><label>Language</label>
 <select id="language"><option value="en">English</option><option value="fr">French</option><option value="es">Spanish</option><option value="hi">Hindi</option><option value="ur">Urdu</option></select>
 </div>
@@ -97,9 +100,9 @@ button{cursor:pointer;font-family:inherit;font-weight:600;border:none;border-rad
 <div class="form-row"><label>Urgency</label>
 <select id="itemUrgency"><option value="low">Low</option><option value="medium" selected>Medium</option><option value="high">High</option></select>
 </div>
-<div class="form-row"><label>Audience (comma-separated)</label><input type="text" id="itemAudience" placeholder="cto, cfo, decision-maker"></div>
+<div class="form-row"><label>Audience (comma‑separated)</label><input type="text" id="itemAudience" placeholder="cto, cfo, decision-maker"></div>
 </div>
-<div class="form-row"><label>Tags (comma-separated)</label><input type="text" id="itemTags" placeholder="ai, integration, roi"></div>
+<div class="form-row"><label>Tags (comma‑separated)</label><input type="text" id="itemTags" placeholder="ai, integration, roi"></div>
 <div class="form-row"><label>CTA Text (optional)</label><input type="text" id="itemCtaText" placeholder="Contact Us"></div>
 <div class="form-row"><label>CTA URL (optional)</label><input type="text" id="itemCtaUrl" placeholder="https://yourcompany.com/contact"></div>
 <button class="btn-primary" onclick="addItem()">Add Item to Feed</button>
@@ -138,7 +141,7 @@ button{cursor:pointer;font-family:inherit;font-weight:600;border:none;border-rad
 <input type="text" id="feedUrl" placeholder="https://yourdomain.com/feed.json" oninput="updateFeedUrl()">
 <button class="btn-secondary" onclick="copyUrl()">Copy URL</button>
 </div>
-<p style="color:var(--text2);font-size:.8rem;margin-top:12px">Agents subscribe to this URL and pull updates on a schedule.</p>
+<p style="color:var(--text2);font-size:.8rem;margin-top:12px">AI agents subscribe to this URL and pull updates on a schedule.</p>
 </div>
 </div>
 
@@ -264,7 +267,13 @@ function esc(s){ return String(s).replace(/[<>"'&]/g,c=>({'<':'&lt;','>':'&gt;',
 ['publisher','publisherUrl','topics','language'].forEach(id=>{
   document.getElementById(id).addEventListener('input', generateFeed);
 });
-</script>
 
+// Load saved state if any
+const savedItems = localStorage.getItem('agentfeed.items');
+if(savedItems){
+  items = JSON.parse(savedItems);
+  renderItems(); generateFeed();
+}
+</script>
 </body>
 </html>
