@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ApplyPro — Job Search & Resume Tailoring</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+<div class="app">
+
+<header>
+<h1>🎯 <span>ApplyPro</span></h1>
+<p class="tagline">Search → Tailor → Apply → Track — Your automated job search system</p>
+</header>
+
+<nav>
+<button class="nav-btn active" data-tab="search">🔍 Job Search</button>
+<button class="nav-btn" data-tab="tailor">📄 Tailor Resume</button>
+<button class="nav-btn" data-tab="cover">✉️ Cover Letter</button>
+<button class="nav-btn" data-tab="pipeline">📊 Pipeline</button>
+<button class="nav-btn" data-tab="settings">⚙️ Settings</button>
+</nav>
+
+<!-- JOB SEARCH TAB -->
+<section id="tab-search" class="tab active">
+<div class="card">
+<h2>🔍 Search Job Boards</h2>
+<p style="color:var(--text2);font-size:.85rem;margin-bottom:12px">Click a source to open in a new tab. Search for <strong>Program Director/Manager</strong> and <strong>Project Director/Manager</strong> remote positions. When you find a match, paste the job description below.</p>
+<div class="sources-grid" id="jobSources"></div>
+</div>
+
+<div class="card">
+<h2>➕ Add Job</h2>
+<form id="addJobForm">
+<div class="form-grid">
+<div class="form-row"><label>Job Title *</label><input type="text" name="jobTitle" placeholder="e.g., Senior Program Director" required></div>
+<div class="form-row"><label>Company</label><input type="text" name="jobCompany" placeholder="e.g., Royal Bank of Canada"></div>
+</div>
+<div class="form-grid">
+<div class="form-row"><label>Location</label><input type="text" name="jobLocation" placeholder="e.g., Remote (Canada)"></div>
+<div class="form-row"><label>Salary</label><input type="text" name="jobSalary" placeholder="e.g., $150K-$200K CAD"></div>
+</div>
+<div class="checkbox-row"><input type="checkbox" name="jobRemote" id="jobRemote" checked><label for="jobRemote">Remote Position</label></div>
+<div class="form-row"><label>Job URL</label><input type="text" name="jobUrl" placeholder="https://linkedin.com/jobs/..."></div>
+<div class="form-row"><label>Job Description *</label><textarea name="jobDesc" placeholder="Paste the full job description here for resume tailoring and match scoring..." required></textarea></div>
+<button type="submit" class="btn-primary">Add Job & Score Match</button>
+</form>
+</div>
+
+<div class="card">
+<h2>📋 Saved Jobs <span id="jobCount" style="color:var(--accent2);font-size:.8rem"></span></h2>
+<div id="savedJobs"></div>
+</div>
+</section>
+
+<!-- TAILOR RESUME TAB -->
+<section id="tab-tailor" class="tab">
+<div class="card">
+<h2>📄 Tailored Resume</h2>
+<p style="color:var(--text2);font-size:.85rem;margin-bottom:16px">Select a job from the Search tab and click "Tailor Resume" to generate a customized version based on keyword matching.</p>
+<div id="tailorOutput"><p class="empty">No job selected. Go to Search → add a job with description → click "Tailor Resume".</p></div>
+<div class="tailored-actions" id="tailorActions"></div>
+</div>
+</section>
+
+<!-- COVER LETTER TAB -->
+<section id="tab-cover" class="tab">
+<div class="card">
+<h2>✉️ Cover Letter</h2>
+<p style="color:var(--text2);font-size:.85rem;margin-bottom:16px">Click "Cover Letter" on any saved job to auto-generate a tailored cover letter.</p>
+<div id="coverOutput"><p class="empty">No job selected. Go to Search → click "Cover Letter" on a saved job.</p></div>
+<div class="cover-actions" id="coverActions"></div>
+</div>
+</section>
+
+<!-- PIPELINE TAB -->
+<section id="tab-pipeline" class="tab">
+<div class="stats-bar">
+<div class="stat-box"><div class="num" id="stat-total">0</div><div class="label">Total Applied</div></div>
+<div class="stat-box"><div class="num" id="stat-interviews">0</div><div class="label">In Interviews</div></div>
+<div class="stat-box"><div class="num" id="stat-offers">0</div><div class="label">Offers</div></div>
+<div class="stat-box"><div class="num" id="stat-response">0%</div><div class="label">Response Rate</div></div>
+</div>
+<div class="card">
+<h2>📊 Application Pipeline</h2>
+<div class="pipeline-board" id="pipelineBoard"></div>
+</div>
+</section>
+
+<!-- SETTINGS TAB -->
+<section id="tab-settings" class="tab">
+<div class="card">
+<h2>⚙️ Settings</h2>
+<div class="form-row"><label>Mode</label>
+<select id="setting-mode">
+<option value="personal">Personal Use</option>
+<option value="agency">Agency / Sellable</option>
+</select>
+</div>
+<p style="color:var(--text2);font-size:.8rem;margin-top:8px">In Agency mode, you can white-label this system for clients. The resume tailoring engine, cover letter generator, and pipeline tracker become your sellable product.</p>
+</div>
+
+<div class="card">
+<h2>📦 Sellable Product Info</h2>
+<p style="color:var(--text2);font-size:.9rem;margin-bottom:12px">ApplyPro can be packaged and sold as:</p>
+<ul style="margin-left:20px;color:var(--text2);font-size:.9rem;line-height:2">
+<li><strong>SaaS ($29-99/mo per user)</strong> — Host this system, add Stripe, charge monthly</li>
+<li><strong>Agency Service ($500-2000/client)</strong> — Run job searches for clients, deliver tailored resumes & pipeline tracking</li>
+<li><strong>White-Label ($2,000-10,000)</strong> — License the system to career coaches, recruiting firms, outplacement agencies</li>
+<li><strong>Resume Tailoring API ($0.10/use)</strong> — Sell access to the keyword matching & resume generation engine</li>
+</ul>
+</div>
+
+<div class="card">
+<h2>💾 Data Management</h2>
+<button class="btn-secondary" id="btn-export-all">📤 Export All Data</button>
+<button class="btn-secondary" id="btn-import-all">📥 Import Data</button>
+<button class="btn-danger" id="btn-clear-all" style="margin-top:8px">🗑️ Clear All Data</button>
+</div>
+</section>
+
+</div>
+
+<div class="toast" id="toast"></div>
+
+<script src="resume.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
