@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Agii Intelligence | AI-Powered Legacy Modernization</title>
+<link rel="stylesheet" href="/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+<div class="bg-grid"></div>
+
+<header>
+<div class="header-inner">
+  <div class="logo">⬡ Agii Intelligence</div>
+  <nav class="nav">
+    <a href="#platform">Platform</a>
+    <a href="#services">Services</a>
+    <a href="#demo">Demo</a>
+    <a href="#contact">Contact</a>
+  </nav>
+</div>
+</header>
+
+<section class="hero">
+<h1>Modernize Legacy Systems<br>10× Faster with AI</h1>
+<p>Automated discovery, planning, execution, and validation — Agii Intelligence agents co-author every module while your team stays in control.</p>
+<a href="#demo" class="cta-btn" onclick="scrollTo('demo')">Try Live Demo →</a>
+</section>
+
+<section class="stats-bar">
+<div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+  <div class="stat-box"><div class="stat-num">20+</div><div class="stat-label">Years Experience</div></div>
+  <div class="stat-box"><div class="stat-num">150+</div><div class="stat-label">Clients Worldwide</div></div>
+  <div class="stat-box"><div class="stat-num">30+</div><div class="stat-label">Industries Served</div></div>
+  <div class="stat-box"><div class="stat-num" id="stat-analyses">0</div><div class="stat-label">Code Analyses Run</div></div>
+</div>
+</section>
+
+<section class="section" id="platform">
+<div class="wrap">
+<h2>The Agii Platform</h2>
+<p class="sub">Four phases. Full automation. Human oversight at every step.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>01 AI-Assisted Discovery</h3>
+    <p>Auto-document your legacy stack. Map user journeys from actual source code. Generate integration specs in days, not months.</p>
+  </div>
+  <div class="info-card">
+    <h3>02 Agentic Planning</h3>
+    <p>Blueprint your future architecture. Generate specifications, validate with your team, lock in a low-risk roadmap.</p>
+  </div>
+  <div class="info-card">
+    <h3>03 AI-Assisted Execution</h3>
+    <p>Agents co-author every module. High-speed refactoring and test generation while engineers focus on design.</p>
+  </div>
+  <div class="info-card">
+    <h3>04 Reliability Mesh</h3>
+    <p>Logic parity testing, zero-risk release, audit-ready documentation. Business-critical logic stays intact.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="section" id="services">
+<div class="wrap">
+<h2>Enterprise AI — Why Now?</h2>
+<p class="sub">Industry research. Proven delivery models. Real outcomes.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>💰 40% Cost Reduction</h3>
+    <p>Automated code analysis and refactoring cuts development costs. Accenture research shows AI offsets costs by up to 40%.</p>
+  </div>
+  <div class="info-card">
+    <h3>⏱️ Weeks Not Months</h3>
+    <p>Average legacy integration takes 6–18 months. Agii's automated discovery maps your stack and generates specs in days.</p>
+  </div>
+  <div class="info-card">
+    <h3>👥 Skills Gap Solved</h3>
+    <p>60% of AI roles are unfilled. Agii agents handle the heavy lifting — your team focuses on strategy and validation.</p>
+  </div>
+  <div class="info-card">
+    <h3>🔒 Compliance Ready</h3>
+    <p>Reliability Mesh provides audit-ready documentation, logic parity testing, and explainable AI outputs for regulated industries.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<section id="demo">
+<div class="wrap">
+<div class="demo-section">
+  <h2>🔬 Live Code Analysis</h2>
+  <p class="sub">Paste any JavaScript or Python code — get real analysis with modernization score, issues, refactoring roadmap, and test suggestions.</p>
+
+  <div class="demo-grid">
+    <div class="demo-input">
+      <h3>Input Code</h3>
+      <div class="demo-controls">
+        <select class="lang-select" id="langSelect">
+          <option value="auto">Auto-detect</option>
+          <option value="javascript">JavaScript</option>
+          <option value="python">Python</option>
+        </select>
+        <button class="btn-run" id="runBtn" onclick="runDemo()">⚡ Analyze Code</button>
+      </div>
+      <textarea id="demoCode" placeholder="// Paste your code here...
+function calculateTotal(items) {
+    var total = 0;
+    for (var i = 0; i < items.length; i++) {
+        total += items[i].price * items[i].quantity;
+    }
+    if (total > 1000) {
+        total = total * 0.9;
+    }
+    return total;
+}
+
+function processOrder(order, customer, discount, tax, shipping, insurance) {
+    var subtotal = calculateTotal(order.items);
+    var result = subtotal - discount;
+    result = result + (result * tax);
+    result = result + shipping + insurance;
+    return result;
+}" style="margin-top:12px"></textarea>
+    </div>
+    <div class="demo-output">
+      <h3>Analysis Results</h3>
+      <div class="demo-output-box" id="demoOutput">
+        <p class="placeholder">Paste code on the left and click "Analyze Code" to see real results from the Agii analysis engine.</p>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="contact-section" id="contact">
+<div class="wrap">
+<h2>Get Started</h2>
+<p class="sub" style="margin:0 auto">Schedule a demo or request a modernization assessment for your legacy systems.</p>
+<p style="margin-top:16px;color:var(--text2)">📞 647-838-3442 | 647-830-4286</p>
+<div class="contact-form">
+  <input type="email" placeholder="Enter your work email" id="contactEmail">
+  <textarea placeholder="Tell us about your legacy system (optional)" id="contactMessage" rows="3"></textarea>
+  <button onclick="submitContact()">Request Access</button>
+  <p class="success-msg" id="contactSuccess">✓ Thanks! We'll be in touch shortly.</p>
+</div>
+</div>
+</section>
+
+<footer>
+<p>© 2026 Agii Intelligence Inc. All rights reserved.</p>
+</footer>
+
+<script src="/app.js"></script>
+</body>
+</html>
