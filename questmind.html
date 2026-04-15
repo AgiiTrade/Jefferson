@@ -11,8 +11,9 @@
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
 :root{--purple:#7c3aed;--cyan:#06b6d4;--gold:#f59e0b;--red:#ef4444;--green:#10b981;--blue:#3b82f6;--dark:#0f0d24;--card:rgba(255,255,255,.08);}
 body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow:hidden;height:100vh;width:100vw;user-select:none;}
-.screen{display:none;position:absolute;top:0;left:0;width:100%;height:100%;flex-direction:column;align-items:center;justify-content:center;z-index:5;}
+.screen{display:none;position:absolute;top:0;left:0;width:100%;height:100%;flex-direction:column;align-items:center;justify-content:center;z-index:5;opacity:0;transform:translateY(16px) scale(.985);}
 .screen.active{display:flex;}
+.screen.screen-enter{animation:screenPop .35s ease forwards;}
 .btn{padding:14px 28px;border:none;border-radius:14px;font-family:'Fredoka',sans-serif;font-size:1em;font-weight:600;cursor:pointer;transition:transform .1s;margin:5px;}
 .btn:active{transform:scale(.94);}
 .btn-p{background:linear-gradient(135deg,#7c3aed,#a78bfa);color:#fff;box-shadow:0 4px 20px rgba(124,58,237,.5);}
@@ -96,6 +97,7 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 @keyframes glow{0%,100%{box-shadow:0 0 5px rgba(124,58,237,.5)}50%{box-shadow:0 0 25px rgba(124,58,237,.8),0 0 50px rgba(124,58,237,.4)}}
 @keyframes shake{0%,100%{transform:translateX(0)}25%{transform:translateX(-5px)}75%{transform:translateX(5px)}}
 @keyframes fadeIn{from{opacity:0;transform:translateY(20px)}to{opacity:1;transform:translateY(0)}}
+@keyframes screenPop{from{opacity:0;transform:translateY(16px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
 @keyframes slideUp{from{opacity:0;transform:translateY(50px)}to{opacity:1;transform:translateY(0)}}
 @keyframes sparkle{0%,100%{opacity:0;transform:scale(0)}50%{opacity:1;transform:scale(1)}}
 @keyframes monsterIdle{0%,100%{transform:translateY(0) rotate(0deg)}25%{transform:translateY(-5px) rotate(-2deg)}75%{transform:translateY(-3px) rotate(2deg)}}
@@ -241,7 +243,11 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 
 /* Map floating decorations */
 @keyframes mapFloat{0%,100%{transform:translateY(0) scale(1)}50%{transform:translateY(-8px) scale(1.05)}}
+@keyframes zoneUnlock{0%,100%{filter:drop-shadow(0 0 4px rgba(251,191,36,.25))}50%{filter:drop-shadow(0 0 16px rgba(251,191,36,.8))}}
+@keyframes zoneTap{0%{transform:translate(-50%,-50%) scale(1)}50%{transform:translate(-50%,-50%) scale(1.15)}100%{transform:translate(-50%,-50%) scale(1)}}
 .zone{animation:mapFloat 4s ease-in-out infinite}
+.zone-unlocked .zone-i{animation:zoneUnlock 2.4s ease-in-out infinite}
+.zone-tap{animation:zoneTap .25s ease}
 .zone:nth-child(2){animation-delay:.5s}
 .zone:nth-child(3){animation-delay:1s}
 .zone:nth-child(4){animation-delay:1.5s}
@@ -646,8 +652,12 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 
 // ============ SCREEN MANAGEMENT ============
 function showScreen(id){
-  document.querySelectorAll('.screen').forEach(s=>s.classList.remove('active'));
-  document.getElementById(id).classList.add('active');
+  document.querySelectorAll('.screen').forEach(s=>{
+    s.classList.remove('active','screen-enter');
+  });
+  const next = document.getElementById(id);
+  next.classList.add('active');
+  requestAnimationFrame(()=>next.classList.add('screen-enter'));
 }
 
 // ============ BATTLE FUNCTIONS (early definition) ============
@@ -659,8 +669,37 @@ function updateHUD(){
 }
 
 function showDmgNum(dmg, isPlayer, isCorrect){
-  // Simple damage number display - can be enhanced later
-  console.log(`Damage: ${dmg}, Player: ${isPlayer}, Correct: ${isCorrect}`);
+  const target = document.getElementById(isPlayer ? 'b-player' : 'b-mon');
+  if(!target) return;
+  const rect = target.getBoundingClientRect();
+  const el = document.createElement('div');
+  el.className = 'dmg-num';
+  el.textContent = `${isCorrect ? '+' : '-'}${dmg}`;
+  el.style.left = (rect.left + rect.width/2 - 10) + 'px';
+  el.style.top = (rect.top + 20) + 'px';
+  el.style.color = isCorrect ? '#34d399' : '#f87171';
+  el.style.textShadow = isCorrect ? '0 0 12px rgba(52,211,153,.7)' : '0 0 12px rgba(248,113,113,.7)';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1000);
+}
+
+function showSpellEffect(type){
+  const icons = {fire:'🔥', ice:'❄️', thunder:'⚡', heal:'💚'};
+  const cls = {fire:'attack-fire', ice:'attack-ice', thunder:'attack-lightning', heal:'attack-fire'};
+  const el = document.createElement('div');
+  el.className = cls[type] || 'attack-fire';
+  el.textContent = icons[type] || '✨';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 550);
+}
+
+function popLevelUp(){
+  const el = document.createElement('div');
+  el.className = 'level-up';
+  el.style.cssText = 'position:fixed;top:16%;left:50%;transform:translateX(-50%);z-index:250;text-shadow:0 0 18px rgba(251,191,36,.8);';
+  el.textContent = 'LEVEL UP!';
+  document.body.appendChild(el);
+  setTimeout(()=>el.remove(), 1200);
 }
 
 function startRandomBattle() {
@@ -1390,10 +1429,11 @@ function buildMap(){
   ZONES.forEach((z,i)=>{
     const p = pos[i];
     const el = document.createElement('div');
-    el.className = 'zone' + (S.lv < z.lv ? ' locked' : '');
-    el.style.cssText = `left:${p.x}%;top:${p.y}%;position:absolute;transform:translate(-50%,-50%);`;
-    el.innerHTML = `<div class="zone-i">${z.ic}</div><div class="zone-n">${z.nm}</div><div class="zone-l">${S.lv<z.lv?'🔒 Lv.'+z.lv:'⚔️ Fight!'}</div>`;
-    if(S.lv >= z.lv) el.onclick = () => startRandomBattle();
+    const unlocked = S.lv >= z.lv;
+    el.className = 'zone' + (unlocked ? ' zone-unlocked' : ' locked');
+    el.style.cssText = `left:${p.x}%;top:${p.y}%;position:absolute;transform:translate(-50%,-50%);animation-delay:${i*0.15}s;`;
+    el.innerHTML = `<div class="zone-i">${z.ic}</div><div class="zone-n">${z.nm}</div><div class="zone-l">${unlocked?'⚔️ Fight!':'🔒 Lv.'+z.lv}</div>`;
+    if(unlocked) el.onclick = () => { el.classList.add('zone-tap'); setTimeout(()=>el.classList.remove('zone-tap'), 260); startRandomBattle(); };
     c.appendChild(el);
   });
   
@@ -1438,6 +1478,8 @@ function beginBattle(zi){
   
   // Set monster
   document.getElementById('b-mon').innerHTML = mon.ic;
+  document.getElementById('b-mon').classList.remove('mon-enter');
+  requestAnimationFrame(()=>document.getElementById('b-mon').classList.add('mon-enter'));
   document.getElementById('b-mon-nm').textContent = mon.nm + ' (Lv.' + (zi+1) + ')';
   document.getElementById('b-mon-hp').style.width = '100%';
   document.getElementById('b-mon-attack').textContent = '';
@@ -1478,6 +1520,8 @@ function castSpell(id){
     S.mp -= costs.heal;
     const heal = 20 + Math.floor(S.lv * 2);
     S.hp = Math.min(S.maxHp, S.hp + heal);
+    showSpellEffect('heal');
+    showDmgNum(heal, true, true);
     document.getElementById('b-msg').textContent = `You healed ${heal} HP!`;
     B.canAct = false;
     setTimeout(()=>{B.canAct=true;showQuestion();}, 1000);
@@ -1553,6 +1597,11 @@ function answer(idx){
     dmg = S.atk + Math.floor(Math.random() * 10);
     if(B.spell) dmg = Math.floor(dmg * 1.5);
     B.monHp -= dmg;
+    showDmgNum(dmg, false, false);
+    if(B.spell) showSpellEffect(B.spell);
+    const mon = document.getElementById('b-mon');
+    if(mon){mon.classList.add('hit'); setTimeout(()=>mon.classList.remove('hit'), 320);}
+    spawnBattleParticles(B.spell === 'fire' ? '#fb7185' : B.spell === 'ice' ? '#7dd3fc' : B.spell === 'thunder' ? '#fbbf24' : '#c084fc', 18);
     document.getElementById('b-msg').textContent = `Correct! You dealt ${dmg} damage!`;
     document.getElementById('b-mon-hp').style.width = Math.max(0, B.monHp/B.monMaxHp*100) + '%';
     S.xp += 10;
@@ -1643,6 +1692,7 @@ function winBattle(){
   while(S.xp >= S.xpNeed){
     S.xp -= S.xpNeed;
     S.lv++;
+    popLevelUp();
     S.xpNeed = Math.floor(S.xpNeed * 1.5);
     S.maxHp += 10;
     S.hp = S.maxHp;
@@ -1657,6 +1707,7 @@ function winBattle(){
   
   document.getElementById('r-title').textContent = ' Victory!';
   document.getElementById('r-icon').textContent = '🏆';
+  document.getElementById('r-icon').classList.add('victory-bounce');
   document.getElementById('r-xp').textContent = '+' + 50;
   document.getElementById('r-gold').textContent = '+' + goldEarned;
   document.getElementById('r-correct').textContent = B.correct + '/' + B.asked;
@@ -1673,6 +1724,7 @@ function loseBattle(){
   
   document.getElementById('r-title').textContent = ' Defeated!';
   document.getElementById('r-icon').textContent = '💀';
+  document.getElementById('r-icon').classList.remove('victory-bounce');
   document.getElementById('r-xp').textContent = '+5';
   document.getElementById('r-gold').textContent = '-10';
   document.getElementById('r-correct').textContent = B.correct + '/' + B.asked;
