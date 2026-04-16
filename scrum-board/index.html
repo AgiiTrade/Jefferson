@@ -1,713 +1,467 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="css/animations.css">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>TaskFlow — Daily Task Dashboard</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#f4f5f7;--card:#fff;--card2:#fafbfc;--border:#dfe1e6;--accent:#0052cc;--green:#36b37e;--yellow:#ffab00;--red:#ff5630;--blue:#0065ff;--purple:#6554c0;--text:#172b4d;--text2:#5e6c84}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh}
-
-/* HEADER */
-.header{background:var(--card);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;border-bottom:1px solid var(--border)}
-.header-left{display:flex;align-items:center;gap:16px}
-.logo{font-size:1.4em;font-weight:800;color:var(--accent)}
-.date-display{color:var(--text2);font-size:0.9em}
-.header-right{display:flex;gap:8px}
-.header-btn{padding:8px 16px;border-radius:6px;border:1px solid var(--border);background:transparent;color:var(--text);cursor:pointer;font-size:0.85em;transition:0.2s}
-.header-btn:hover{background:var(--card2);border-color:var(--accent)}
-.header-btn.primary{background:var(--accent);border-color:var(--accent);color:white}
-
-/* STATS */
-.stats{display:flex;gap:16px;padding:16px 24px;background:var(--card);border-bottom:1px solid var(--border);flex-wrap:wrap}
-.stat{display:flex;align-items:center;gap:8px;padding:8px 16px;background:var(--bg);border-radius:8px}
-.stat .icon{font-size:1.2em}
-.stat .num{font-weight:700;font-size:1.1em}
-.stat .label{color:var(--text2);font-size:0.85em}
-
-/* CATEGORY TABS */
-.tabs{display:flex;gap:4px;padding:16px 24px;background:var(--card);border-bottom:1px solid var(--border)}
-.tab{padding:8px 16px;border-radius:6px;cursor:pointer;font-size:0.9em;transition:0.2s;background:var(--bg);border:1px solid transparent}
-.tab:hover{border-color:var(--border)}
-.tab.active{background:var(--accent);color:white;border-color:var(--accent)}
-.tab .count{margin-left:6px;opacity:0.7}
-
-/* BOARD */
-.board{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;padding:20px 24px;min-height:calc(100vh - 220px)}
-@media(max-width:900px){.board{grid-template-columns:1fr;padding:12px}.column{max-height:400px}.header{flex-direction:column;gap:12px;text-align:center}.header-right{flex-wrap:wrap;justify-content:center}.stats{justify-content:center;padding:12px}.tabs{overflow-x:auto;padding:12px;gap:8px}.tab{white-space:nowrap;padding:6px 12px;font-size:0.8em}}
-@media(max-width:600px){.board{padding:8px;gap:10px}.column-header{padding:12px}.column-body{padding:8px}.card{padding:10px}.card-title{font-size:0.9em}.card-desc{font-size:0.75em}.stats{flex-wrap:wrap;gap:8px;padding:8px 12px}.stat{padding:6px 10px;font-size:0.85em}.stat .num{font-size:1em}.stat .label{font-size:0.75em}.header{padding:12px 16px}.logo{font-size:1.2em}.header-btn{padding:6px 12px;font-size:0.8em}.modal-content{margin:10px;max-height:85vh}.form-row{grid-template-columns:1fr}.tabs{padding:8px 12px}.tab{padding:5px 10px;font-size:0.75em}}
-
-.column{background:var(--card);border-radius:12px;display:flex;flex-direction:column;max-height:calc(100vh - 250px)}
-.column-header{padding:16px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.column-title{font-weight:700;display:flex;align-items:center;gap:8px}
-.column-count{background:var(--bg);padding:2px 8px;border-radius:10px;font-size:0.8em;color:var(--text2)}
-.column-body{padding:12px;overflow-y:auto;flex:1;display:flex;flex-direction:column;gap:10px}
-.column-body.drag-over{background:rgba(0,82,204,0.05);border-radius:8px}
-
-/* CARDS */
-.card{background:var(--card2);border-radius:8px;padding:14px;cursor:grab;transition:0.2s;border:1px solid transparent;position:relative}
-.card:hover{border-color:var(--accent);transform:translateY(-1px);box-shadow:0 4px 12px rgba(0,0,0,0.1)}
-.card.dragging{opacity:0.5;transform:rotate(2deg)}
-.card-header{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
-.card-category{display:inline-block;padding:3px 8px;border-radius:4px;font-size:0.7em;font-weight:700}
-.cat-professional{background:var(--accent);color:white}
-.cat-personal{background:var(--purple);color:white}
-.cat-family{background:var(--green);color:white}
-.card-priority{font-size:0.9em}
-.card-title{font-weight:600;font-size:0.95em;margin-bottom:6px;line-height:1.4}
-.card-desc{font-size:0.8em;color:var(--text2);margin-bottom:10px;line-height:1.4}
-.card-footer{display:flex;justify-content:space-between;align-items:center;font-size:0.75em}
-.card-id{font-family:monospace;color:var(--text2)}
-.card-date{color:var(--text2)}
-.card-notes{position:absolute;top:10px;right:10px;font-size:0.85em;cursor:pointer}
-.card-tags{display:flex;gap:4px;margin-top:8px;flex-wrap:wrap}
-.card-tag{padding:2px 6px;border-radius:3px;font-size:0.65em;background:rgba(0,0,0,0.05)}
-
-/* URGECY BADGES */
-.urgency-badge{display:inline-block;padding:4px 8px;border-radius:4px;font-size:0.7em;font-weight:700;margin:6px 0}
-.urgency-badge.overdue{background:#ffebe6;color:#ff5630;animation:pulse 1.5s infinite}
-.urgency-badge.due-today{background:#ffebe6;color:#ff5630;animation:pulse 1.5s infinite}
-.urgency-badge.due-soon{background:#fff7e6;color:#ff8b00}
-.urgency-badge.due-approaching{background:#deebff;color:#0052cc}
-@keyframes pulse{0%,100%{opacity:1}50%{opacity:0.7}}
-
-/* URGENCY CARD STYLES */
-.card.overdue{border-color:#ff5630!important}
-.card.due-today{border-color:#ff5630!important}
-.card.due-soon{border-color:#ffab00!important}
-.card.due-approaching{border-color:#0052cc!important}
-
-/* ADD CARD */
-.add-card{padding:12px;border-radius:8px;border:1px dashed var(--border);background:transparent;color:var(--text2);cursor:pointer;font-size:0.85em;width:100%;text-align:left;transition:0.2s}
-.add-card:hover{border-color:var(--accent);color:var(--text);background:rgba(0,82,204,0.05)}
-
-/* MODAL */
-.modal{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.5);display:none;align-items:center;justify-content:center;z-index:200;padding:20px}
-.modal.show{display:flex}
-.modal-content{background:var(--card);border-radius:12px;width:100%;max-width:600px;max-height:90vh;overflow-y:auto}
-.modal-header{padding:20px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:center}
-.modal-header h2{font-size:1.2em}
-.modal-close{background:none;border:none;color:var(--text2);font-size:1.5em;cursor:pointer}
-.modal-body{padding:20px}
-.form-group{margin-bottom:16px}
-.form-group label{display:block;font-size:0.85em;color:var(--text2);margin-bottom:6px;font-weight:600}
-.form-group input,.form-group select,.form-group textarea{width:100%;padding:10px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.9em;font-family:inherit}
-.form-group textarea{min-height:80px;resize:vertical}
-.form-group input:focus,.form-group select:focus,.form-group textarea:focus{outline:none;border-color:var(--accent)}
-.form-row{display:grid;grid-template-columns:1fr 1fr;gap:12px}
-.modal-actions{display:flex;gap:8px;justify-content:flex-end;padding:20px;border-top:1px solid var(--border)}
-.btn{padding:10px 20px;border-radius:6px;border:none;cursor:pointer;font-weight:600;font-size:0.9em;transition:0.2s}
-.btn-primary{background:var(--accent);color:white}
-.btn-primary:hover{background:#0065ff}
-.btn-secondary{background:var(--card2);color:var(--text);border:1px solid var(--border)}
-
-/* OAUTH BUTTONS */
-.oauth-btn{display:flex;align-items:center;justify-content:center;gap:12px;width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:white;color:var(--text);font-size:0.95em;font-weight:500;cursor:pointer;margin-bottom:10px;transition:0.2s}
-.oauth-btn:hover{background:var(--card2);border-color:var(--accent)}
-.oauth-btn svg{flex-shrink:0}
-.btn-danger{background:var(--red);color:white}
-
-/* NOTES IN MODAL */
-.notes-section{background:var(--bg);border-radius:8px;padding:12px;margin-top:12px;border:1px solid var(--border)}
-.notes-section h4{font-size:0.85em;color:var(--accent);margin-bottom:8px}
-.note-item{padding:8px;background:#fff;border:1px solid var(--border);border-radius:6px;margin-bottom:6px;font-size:0.85em}
-.note-item .note-time{font-size:0.7em;color:var(--text2);margin-top:4px}
-.note-add{display:flex;gap:8px;margin-top:8px}
-.note-add input{flex:1;padding:8px;border-radius:6px;border:1px solid var(--border);background:var(--bg);color:var(--text);font-size:0.85em}
-.note-add button{padding:8px 12px;border-radius:6px;border:none;background:var(--accent);color:white;cursor:pointer;font-size:0.85em}
-</style>
-<!-- Firebase SDK (optional - works without it in demo mode) -->
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-app-compat.js" onerror="console.log('Firebase not loaded - running in demo mode')"></script>
-<script src="https://www.gstatic.com/firebasejs/10.7.0/firebase-auth-compat.js" onerror=""></script>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>TaskFlow, Scrum Kanban Dashboard</title>
+  <link rel="stylesheet" href="../css/animations.css" />
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.development.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.development.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    *,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+    :root{
+      --bg:#F5F3EE;--surface:#FFFFFF;--surface2:#F0EDE6;--border:#E2DDD5;
+      --text:#1C1917;--text2:#78716C;--text3:#A8A29E;
+      --primary:#C2410C;--primary-light:#FED7AA;--primary-bg:#FFF7ED;
+      --blue:#1D4ED8;--blue-light:#DBEAFE;--green:#15803D;--green-light:#DCFCE7;
+      --amber:#B45309;--amber-light:#FEF3C7;--red:#B91C1C;--red-light:#FEE2E2;
+      --purple:#7C3AED;--purple-light:#EDE9FE;
+      --shadow:0 1px 3px rgba(0,0,0,.08),0 1px 2px rgba(0,0,0,.06);
+      --shadow-md:0 4px 6px rgba(0,0,0,.07),0 2px 4px rgba(0,0,0,.06);
+      --shadow-lg:0 10px 15px rgba(0,0,0,.08),0 4px 6px rgba(0,0,0,.05);
+      --radius:10px;--radius-sm:6px;--radius-lg:16px;
+      --font:'Plus Jakarta Sans',sans-serif;
+    }
+    body{font-family:var(--font);background:var(--bg);color:var(--text)}
+    button,input,textarea,select{font-family:var(--font)}
+    button{cursor:pointer;border:none;background:none}
+    .app{display:flex;height:100vh;overflow:hidden;font-size:14px}
+    .sidebar{width:220px;background:var(--surface);border-right:1px solid var(--border);display:flex;flex-direction:column;flex-shrink:0}
+    .sidebar-logo{padding:18px 18px 14px;border-bottom:1px solid var(--border)}
+    .sidebar-logo h1{font-size:18px;font-weight:800;letter-spacing:-.5px}.sidebar-logo h1 span{color:var(--primary)}
+    .sidebar-logo p{font-size:11px;color:var(--text3);margin-top:3px}
+    .sidebar-nav{flex:1;padding:10px 8px;overflow-y:auto}
+    .nav-section{margin-bottom:18px}.nav-label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--text3);padding:0 10px;margin-bottom:6px}
+    .nav-item{display:flex;align-items:center;gap:10px;padding:9px 10px;border-radius:var(--radius-sm);transition:all .15s;color:var(--text2);font-size:13px;font-weight:500;width:100%;text-align:left}
+    .nav-item:hover{background:var(--surface2);color:var(--text)}.nav-item.active{background:var(--primary-bg);color:var(--primary);font-weight:700}
+    .nav-badge{margin-left:auto;background:var(--primary);color:#fff;font-size:10px;font-weight:700;padding:2px 6px;border-radius:99px}
+    .sidebar-bottom{padding:10px 8px;border-top:1px solid var(--border)}
+    .main{flex:1;display:flex;flex-direction:column;overflow:hidden}
+    .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:0 22px;height:56px;display:flex;align-items:center;gap:12px;flex-shrink:0}
+    .topbar-title{font-size:16px;font-weight:700;letter-spacing:-.3px;flex:1}.topbar-title span{font-size:12px;color:var(--text3);font-weight:400;margin-left:8px}
+    .content{flex:1;overflow-y:auto;padding:22px}
+    .btn{display:inline-flex;align-items:center;gap:7px;padding:8px 16px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;transition:all .15s;line-height:1}
+    .btn-primary{background:var(--primary);color:#fff}.btn-primary:hover{background:#9A3412}
+    .btn-secondary{background:var(--surface2);color:var(--text);border:1px solid var(--border)}.btn-secondary:hover{background:var(--border)}
+    .btn-ghost{color:var(--text2)}.btn-ghost:hover{background:var(--surface2);color:var(--text)}
+    .btn-sm{padding:5px 10px;font-size:12px}.btn-icon{width:32px;height:32px;padding:0;justify-content:center;border-radius:var(--radius-sm)}
+    .fab{position:fixed;bottom:24px;right:24px;width:52px;height:52px;border-radius:50%;background:var(--primary);color:#fff;font-size:24px;display:flex;align-items:center;justify-content:center;box-shadow:var(--shadow-lg),0 0 0 4px var(--primary-light);z-index:50;transition:all .2s}
+    .fab:hover{transform:scale(1.08)}
+    .quick-menu{position:fixed;bottom:88px;right:24px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow-lg);padding:6px;z-index:55;min-width:170px;animation:fadeInUp .18s ease}
+    .quick-menu-item{display:flex;align-items:center;gap:9px;padding:8px 11px;border-radius:var(--radius-sm);font-size:13px;font-weight:500;color:var(--text);transition:background .1s}
+    .quick-menu-item:hover{background:var(--surface2)}
+    .stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin-bottom:22px}
+    .stat-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:16px 18px;box-shadow:var(--shadow)}
+    .stat-card .label{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.6px;color:var(--text3);margin-bottom:7px}
+    .stat-card .value{font-size:26px;font-weight:800;letter-spacing:-1px}.stat-card .sub{font-size:11px;color:var(--text3);margin-top:3px}
+    .stat-card.warning .value{color:var(--amber)}.stat-card.danger .value{color:var(--red)}
+    .dash-grid{display:grid;grid-template-columns:1fr 320px;gap:18px}
+    .section-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:14px}
+    .section-title{font-size:14px;font-weight:800;letter-spacing:-.3px;color:var(--text)} .section-sub{font-size:11px;color:var(--text3);margin-top:1px}
+    .card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow)}
+    .task-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:13px 15px;cursor:pointer;transition:all .15s}
+    .task-card:hover{box-shadow:var(--shadow-md);border-color:var(--text3);transform:translateY(-1px)}
+    .task-card.due-soon{border-left:3px solid var(--amber)!important}.task-card.overdue{border-left:3px solid var(--red)!important}
+    .task-card-header{display:flex;align-items:flex-start;gap:10px;margin-bottom:7px}.task-card-title{font-size:13px;font-weight:600;flex:1;line-height:1.4}
+    .task-card-body{font-size:12px;color:var(--text2);line-height:1.5;margin-bottom:9px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+    .task-card-footer{display:flex;align-items:center;gap:7px;flex-wrap:wrap}.task-card-meta{display:flex;align-items:center;gap:4px;font-size:11px;color:var(--text3)}
+    .tag{display:inline-flex;align-items:center;padding:2px 7px;border-radius:99px;font-size:11px;font-weight:600}
+    .priority-high{background:var(--red-light);color:var(--red)}.priority-medium{background:var(--amber-light);color:var(--amber)}.priority-low{background:var(--green-light);color:var(--green)}
+    .cat-professional{background:var(--blue-light);color:var(--blue)}.cat-personal{background:var(--purple-light);color:var(--purple)}.cat-family{background:var(--green-light);color:var(--green)}
+    .status-todo{background:var(--surface2);color:var(--text2)}.status-in-progress{background:var(--blue-light);color:var(--blue)}.status-done{background:var(--green-light);color:var(--green)}
+    .avatar{width:24px;height:24px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:10px;font-weight:700;color:#fff;flex-shrink:0;border:2px solid #fff}
+    .avatar-sm{width:20px;height:20px;font-size:9px}.avatar-lg{width:44px;height:44px;font-size:16px}.avatar-stack{display:flex;flex-direction:row-reverse}.avatar-stack .avatar{margin-left:-7px}
+    .board{display:grid;grid-template-columns:repeat(3,1fr);gap:14px;align-items:start}
+    .board-col{background:var(--surface2);border-radius:var(--radius);padding:14px}.board-col-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+    .board-col-title{font-size:13px;font-weight:700}.board-col-count{background:var(--border);color:var(--text2);font-size:11px;font-weight:700;padding:2px 8px;border-radius:99px}
+    .board-tasks{display:flex;flex-direction:column;gap:9px;min-height:70px}.filter-bar{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:18px}
+    .filter-btn{padding:5px 11px;border-radius:99px;font-size:12px;font-weight:600;border:1.5px solid var(--border);color:var(--text2);background:var(--surface)} .filter-btn.active{background:var(--primary);color:#fff;border-color:var(--primary)}
+    .search-wrap{position:relative}.search-wrap input{padding:7px 11px 7px 32px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;width:210px;outline:none;background:var(--surface);transition:all .15s}
+    .search-wrap input:focus{border-color:var(--primary);width:250px}.search-icon{position:absolute;left:9px;top:50%;transform:translateY(-50%);color:var(--text3);font-size:13px}
+    .overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px;backdrop-filter:blur(2px)}
+    .modal{background:var(--surface);border-radius:var(--radius-lg);box-shadow:0 20px 40px rgba(0,0,0,.15);width:100%;max-width:540px;max-height:92vh;overflow-y:auto;animation:fadeInUp .2s ease}
+    .modal-wide{max-width:700px}.modal-header{padding:18px 22px 0;display:flex;align-items:flex-start;justify-content:space-between;gap:12px}.modal-title{font-size:17px;font-weight:800;letter-spacing:-.4px}
+    .modal-body{padding:18px 22px}.modal-footer{padding:0 22px 18px;display:flex;justify-content:flex-end;gap:8px}.modal-close{background:var(--surface2);width:28px;height:28px;border-radius:50%;display:flex;align-items:center;justify-content:center;color:var(--text2);flex-shrink:0;margin-top:2px}
+    .form-group{margin-bottom:14px}.form-label{display:block;font-size:12px;font-weight:700;color:var(--text2);margin-bottom:5px;letter-spacing:.2px}
+    .form-input,.form-textarea,.form-select{width:100%;padding:8px 11px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:13px;color:var(--text);background:var(--surface);outline:none}
+    .form-input:focus,.form-textarea:focus,.form-select:focus{border-color:var(--primary)}.form-textarea{resize:vertical;min-height:75px;line-height:1.5}.form-row{display:grid;grid-template-columns:1fr 1fr;gap:11px}
+    .detail-tabs{display:flex;gap:0;border-bottom:1.5px solid var(--border);margin-bottom:14px}.detail-tab{padding:7px 13px;font-size:12px;font-weight:700;color:var(--text3);cursor:pointer;border-bottom:2px solid transparent;margin-bottom:-1.5px}.detail-tab.active{color:var(--primary);border-bottom-color:var(--primary)}
+    .user-picker{display:flex;flex-wrap:wrap;gap:7px;padding:8px;background:var(--surface2);border-radius:var(--radius-sm);border:1.5px solid var(--border)}
+    .user-chip{display:flex;align-items:center;gap:6px;padding:4px 9px 4px 4px;background:var(--surface);border:1.5px solid var(--border);border-radius:99px;cursor:pointer;transition:all .15s;font-size:12px;font-weight:600}
+    .user-chip.selected{border-color:var(--primary);background:var(--primary-bg)} .subtask-list,.note-list,.upcoming-list{display:flex;flex-direction:column;gap:7px}
+    .subtask-item{display:flex;align-items:center;gap:8px;padding:7px 9px;background:var(--surface2);border-radius:var(--radius-sm)}
+    .subtask-check{width:15px;height:15px;border-radius:4px;border:2px solid var(--border);cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;background:var(--surface)}.subtask-check.done{background:var(--green);border-color:var(--green);color:#fff;font-size:9px}
+    .subtask-text{flex:1;font-size:12px}.subtask-text.done{text-decoration:line-through;color:var(--text3)}.subtask-del{color:var(--text3);font-size:13px;padding:2px}.subtask-add,.note-add{display:flex;gap:7px}.subtask-add input,.note-add textarea{flex:1;padding:7px 10px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-size:12px;outline:none;background:var(--surface)}
+    .note-item{background:var(--amber-light);border-radius:var(--radius-sm);padding:9px 11px;position:relative}.note-text{font-size:12px;line-height:1.5}.note-time{font-size:10px;color:var(--amber);margin-top:3px}.note-del{position:absolute;top:6px;right:8px;color:var(--amber)}
+    .reminder-banner{background:linear-gradient(135deg,#FEF3C7,#FDE68A);border:1px solid #FCD34D;border-radius:var(--radius);padding:12px 16px;margin-bottom:18px;display:flex;align-items:flex-start;gap:11px}
+    .upcoming-item{display:flex;align-items:flex-start;gap:11px;padding:11px 13px;background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);cursor:pointer;transition:all .15s}.upcoming-item:hover{border-color:var(--text3)}
+    .upcoming-info{flex:1;min-width:0}.upcoming-title{font-size:13px;font-weight:600;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.upcoming-meta{font-size:11px;color:var(--text3);margin-top:2px}
+    .event-card{background:var(--surface);border:1px solid var(--border);border-left:3px solid var(--blue);border-radius:var(--radius);padding:11px 13px;cursor:pointer;transition:all .15s}.event-card:hover{box-shadow:var(--shadow-md);transform:translateY(-1px)}
+    .event-title{font-size:13px;font-weight:600;margin-bottom:4px}.event-meta{font-size:11px;color:var(--text3);display:flex;gap:9px;flex-wrap:wrap}
+    .users-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:14px}.user-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:18px;text-align:center}
+    .progress{height:4px;background:var(--surface2);border-radius:99px;overflow:hidden}.progress-bar{height:100%;background:var(--primary);border-radius:99px;transition:width .3s}
+    .empty{display:flex;flex-direction:column;align-items:center;justify-content:center;padding:40px 20px;color:var(--text3);text-align:center}.empty .eicon{font-size:36px;margin-bottom:10px}.empty h3{font-size:14px;font-weight:700;color:var(--text2);margin-bottom:3px}.empty p{font-size:12px}
+    .cal-header{display:flex;align-items:center;gap:12px;margin-bottom:18px;flex-wrap:wrap}.cal-nav{display:flex;align-items:center;gap:4px}.cal-title{font-size:17px;font-weight:800;letter-spacing:-.5px}.cal-mode-toggle{display:flex;background:var(--surface2);border-radius:var(--radius-sm);padding:3px;gap:2px}.cal-mode-btn{padding:5px 11px;border-radius:4px;font-size:12px;font-weight:600;color:var(--text2)}.cal-mode-btn.active{background:var(--surface);color:var(--text);box-shadow:var(--shadow)}
+    .cal-grid,.week-grid{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden}.cal-weekdays{display:grid;grid-template-columns:repeat(7,1fr);border-bottom:1px solid var(--border)}.cal-weekday{padding:9px 0;text-align:center;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}.cal-days{display:grid;grid-template-columns:repeat(7,1fr)}
+    .cal-day{min-height:82px;padding:7px;border-right:1px solid var(--border);border-bottom:1px solid var(--border);cursor:pointer;transition:background .1s}.cal-day:hover{background:var(--surface2)}.cal-day:nth-child(7n){border-right:none}.cal-day.other-month .cal-day-num{color:var(--text3)}.cal-day-num{font-size:12px;font-weight:600;margin-bottom:4px;width:24px;height:24px;display:flex;align-items:center;justify-content:center;border-radius:50%}.cal-day.today .cal-day-num{background:var(--primary);color:#fff}.cal-event{font-size:10px;padding:2px 5px;border-radius:3px;margin-bottom:2px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;font-weight:600}.cal-event.event-type{background:var(--blue-light);color:var(--blue)}.cal-event.task-type{background:var(--primary-bg);color:var(--primary)}.cal-event.overdue-type{background:var(--red-light);color:var(--red)}.cal-more{font-size:10px;color:var(--text3);font-weight:600}
+    .week-header{display:grid;grid-template-columns:56px repeat(7,1fr);border-bottom:1px solid var(--border)}.week-day-header{padding:10px 6px;text-align:center;border-left:1px solid var(--border)}.week-day-header .day-name{font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.5px;color:var(--text3)}.week-day-header .day-num{font-size:18px;font-weight:800;margin-top:2px}.week-day-header.today .day-num{color:var(--primary)}.week-body{display:grid;grid-template-columns:56px repeat(7,1fr);max-height:380px;overflow-y:auto}.week-time-col{border-right:1px solid var(--border)}.week-time-slot{height:44px;display:flex;align-items:flex-start;padding:4px 6px;font-size:10px;color:var(--text3);font-weight:600;border-bottom:1px solid var(--surface2)}.week-day-col{border-left:1px solid var(--border)}.week-slot{height:44px;border-bottom:1px solid var(--surface2);padding:2px 3px}.week-event,.week-task{font-size:10px;padding:2px 5px;border-radius:3px;font-weight:600;margin-bottom:1px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;cursor:pointer}.week-event{background:var(--blue-light);color:var(--blue)}.week-task{background:var(--primary-bg);color:var(--primary)}
+    @media(max-width:1180px){.stat-grid{grid-template-columns:repeat(2,1fr)}.dash-grid{grid-template-columns:1fr}.users-grid{grid-template-columns:repeat(2,1fr)}}
+    @media(max-width:900px){.sidebar{display:none}.content{padding:14px}.board{grid-template-columns:1fr}.users-grid{grid-template-columns:1fr}.search-wrap input,.search-wrap input:focus{width:100%}.form-row{grid-template-columns:1fr}}
+  </style>
 </head>
 <body>
+  <div id="root"></div>
+  <script type="text/babel">
+    const { useState, useEffect } = React;
 
-<div class="header">
-<div class="header-left">
-<div class="logo">📋 TaskFlow</div>
-<div class="date-display" id="date-display"></div>
-</div>
-<div class="header-right">
-<span id="user-display" style="font-size:0.85em;color:var(--text2);margin-right:8px"></span>
-<button class="header-btn" onclick="exportTasks()">📥 Export</button>
-<button class="header-btn primary" onclick="showAddTask()">+ New Task</button>
-<button class="header-btn" id="auth-btn" onclick="handleAuth()">Sign In</button>
-</div>
-</div>
-
-<div class="stats">
-<div class="stat"><span class="icon">📥</span><span class="num" id="stat-todo">0</span><span class="label">To Do</span></div>
-<div class="stat"><span class="icon">🔄</span><span class="num" id="stat-progress">0</span><span class="label">In Progress</span></div>
-<div class="stat"><span class="icon">✅</span><span class="num" id="stat-done">0</span><span class="label">Done</span></div>
-<div class="stat"><span class="icon">⚠️</span><span class="num" id="stat-urgent" style="color:#ff5630">0</span><span class="label">Due Soon (5d)</span></div>
-<div class="stat"><span class="icon">📊</span><span class="num" id="stat-total">0</span><span class="label">Total</span></div>
-</div>
-
-<div class="tabs">
-<div class="tab active" onclick="filterCategory('all')">All<span class="count" id="count-all"></span></div>
-<div class="tab" onclick="filterCategory('professional')">💼 Professional<span class="count" id="count-professional"></span></div>
-<div class="tab" onclick="filterCategory('personal')">👤 Personal<span class="count" id="count-personal"></span></div>
-<div class="tab" onclick="filterCategory('family')">👨‍👩‍👧‍👦 Family<span class="count" id="count-family"></span></div>
-</div>
-
-<div class="board" id="board"></div>
-
-<!-- Auth Modal -->
-<div class="modal" id="auth-modal">
-<div class="modal-content" style="max-width:400px;text-align:center">
-<div class="modal-header">
-<h2>Welcome to TaskFlow</h2>
-<button class="modal-close" onclick="document.getElementById('auth-modal').classList.remove('show')">&times;</button>
-</div>
-<div class="modal-body" style="padding:32px">
-<div style="font-size:3em;margin-bottom:16px">📋</div>
-<p style="color:var(--text2);margin-bottom:24px">Sign in to sync your tasks across devices</p>
-
-<button class="oauth-btn google" onclick="signInWithGoogle()">
-<svg width="18" height="18" viewBox="0 0 18 18"><path fill="#4285F4" d="M17.64 9.2c0-.637-.057-1.251-.164-1.84H9v3.481h4.844c-.209 1.125-.843 2.078-1.796 2.717v2.258h2.908c1.702-1.567 2.684-3.875 2.684-6.615z"/><path fill="#34A853" d="M9 18c2.43 0 4.467-.806 5.956-2.18l-2.908-2.259c-.806.54-1.837.86-3.048.86-2.344 0-4.328-1.584-5.036-3.711H.957v2.332C2.438 15.983 5.482 18 9 18z"/><path fill="#FBBC05" d="M3.964 10.71c-.18-.54-.282-1.117-.282-1.71s.102-1.17.282-1.71V4.958H.957C.347 6.173 0 7.548 0 9s.348 2.827.957 4.042l3.007-2.332z"/><path fill="#EA4335" d="M9 3.58c1.321 0 2.508.454 3.44 1.345l2.582-2.58C13.463.891 11.426 0 9 0 5.482 0 2.438 2.017.957 4.958L3.964 7.29C4.672 5.163 6.656 3.58 9 3.58z"/></svg>
-Continue with Google
-</button>
-
-<button class="oauth-btn microsoft" onclick="signInWithMicrosoft()">
-<svg width="18" height="18" viewBox="0 0 18 18"><rect fill="#F25022" x="1" y="1" width="7" height="7"/><rect fill="#7FBA00" x="10" y="1" width="7" height="7"/><rect fill="#00A4EF" x="1" y="10" width="7" height="7"/><rect fill="#FFB900" x="10" y="10" width="7" height="7"/></svg>
-Continue with Microsoft
-</button>
-
-<div style="margin:20px 0;color:var(--text2);font-size:0.85em">— or —</div>
-
-<div class="form-group">
-<input type="email" id="login-email" placeholder="Email address">
-</div>
-<div class="form-group">
-<input type="password" id="login-password" placeholder="Password">
-</div>
-<button class="btn btn-primary" style="width:100%;margin-bottom:8px" onclick="signInWithEmail()">Sign In</button>
-<button class="btn btn-secondary" style="width:100%" onclick="signUpWithEmail()">Create Account</button>
-
-<p id="auth-error" style="color:var(--red);margin-top:12px;font-size:0.85em;display:none"></p>
-</div>
-</div>
-</div>
-
-<!-- Task Modal -->
-<div class="modal" id="task-modal">
-<div class="modal-content">
-<div class="modal-header">
-<h2 id="modal-title">New Task</h2>
-<button class="modal-close" onclick="closeModal()">&times;</button>
-</div>
-<div class="modal-body">
-<div class="form-group">
-<label>Task Title</label>
-<input type="text" id="task-title" placeholder="What needs to be done?">
-</div>
-<div class="form-group">
-<label>Description</label>
-<textarea id="task-desc" placeholder="Add details..."></textarea>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label>Category</label>
-<select id="task-category">
-<option value="professional">💼 Professional</option>
-<option value="personal">👤 Personal</option>
-<option value="family">👨‍👩‍👧‍👦 Family</option>
-</select>
-</div>
-<div class="form-group">
-<label>Priority</label>
-<select id="task-priority">
-<option value="high">🔴 High</option>
-<option value="medium" selected>🟡 Medium</option>
-<option value="low">🟢 Low</option>
-</select>
-</div>
-</div>
-<div class="form-row">
-<div class="form-group">
-<label>Status</label>
-<select id="task-status">
-<option value="todo">📥 To Do</option>
-<option value="progress">🔄 In Progress</option>
-<option value="done">✅ Done</option>
-</select>
-</div>
-<div class="form-group">
-<label>Due Date</label>
-<input type="date" id="task-due">
-</div>
-</div>
-<div class="form-group">
-<label>Tags (comma separated)</label>
-<input type="text" id="task-tags" placeholder="urgent, agii, kids">
-</div>
-<div class="notes-section" id="notes-section" style="display:none">
-<h4>📝 Notes</h4>
-<div id="notes-list"></div>
-<div class="note-add">
-<input type="text" id="new-note" placeholder="Add a note...">
-<button onclick="addNote()">+</button>
-</div>
-</div>
-</div>
-<div class="modal-actions">
-<button class="btn btn-danger" id="delete-btn" onclick="deleteTask()" style="display:none">Delete</button>
-<button class="btn btn-secondary" onclick="closeModal()">Cancel</button>
-<button class="btn btn-primary" onclick="saveTask()">Save</button>
-</div>
-</div>
-</div>
-
-<script>
-const Store = {
-    get(key) { return JSON.parse(localStorage.getItem('tf_'+key) || '[]'); },
-    set(key, data) { localStorage.setItem('tf_'+key, JSON.stringify(data)); },
-    id() { return 'T-' + Math.random().toString(36).substr(2,4).toUpperCase(); }
-};
-
-let currentFilter = 'all';
-let editingTaskId = null;
-let draggedTaskId = null;
-
-// Date display
-document.getElementById('date-display').textContent = new Date().toLocaleDateString('en-US', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' });
-
-function renderBoard() {
-    const board = document.getElementById('board');
-    const tasks = Store.get('tasks');
-    const filtered = currentFilter === 'all' ? tasks : tasks.filter(t => t.category === currentFilter);
-    
-    const columns = [
-        { id: 'todo', name: '📥 To Do', icon: '' },
-        { id: 'progress', name: '🔄 In Progress', icon: '' },
-        { id: 'done', name: '✅ Done', icon: '' }
-    ];
-    
-    board.innerHTML = columns.map(col => {
-        const colTasks = filtered.filter(t => t.status === col.id).sort((a, b) => {
-            // Sort by due date (earliest first), then by priority
-            if (a.due && b.due) return new Date(a.due) - new Date(b.due);
-            if (a.due) return -1;
-            if (b.due) return 1;
-            const priorityOrder = { high: 0, medium: 1, low: 2 };
-            return (priorityOrder[a.priority] || 1) - (priorityOrder[b.priority] || 1);
-        });
-        return `
-        <div class="column">
-            <div class="column-header">
-                <div class="column-title">${col.name}</div>
-                <span class="column-count">${colTasks.length}</span>
-            </div>
-            <div class="column-body" ondragover="handleDragOver(event)" ondrop="handleDrop(event,'${col.id}')" ondragleave="handleDragLeave(event)">
-                ${colTasks.map(t => renderCard(t)).join('')}
-                <button class="add-card" onclick="showAddTask('${col.id}')">+ Add Task</button>
-            </div>
-        </div>`;
-    }).join('');
-    
-    updateStats();
-}
-
-function renderCard(task) {
-    const priorityIcons = { high: '🔴', medium: '🟡', low: '🟢' };
-    const catClass = 'cat-' + (task.category || 'professional');
-    const catLabel = { professional: '💼 Pro', personal: '👤 Personal', family: '👨‍👩‍👧‍👦 Family' }[task.category] || '💼 Pro';
-    const hasNotes = task.notes && task.notes.length > 0;
-    const dueStr = task.due ? new Date(task.due).toLocaleDateString('en-US', { month: 'short', day: 'numeric' }) : '';
-    
-    // Due date urgency calculation
-    let urgencyClass = '';
-    let urgencyBadge = '';
-    let urgencyBorder = '';
-    if (task.due && task.status !== 'done') {
-        const today = new Date();
-        today.setHours(0,0,0,0);
-        const dueDate = new Date(task.due);
-        dueDate.setHours(0,0,0,0);
-        const daysLeft = Math.ceil((dueDate - today) / (1000 * 60 * 60 * 24));
-        
-        if (daysLeft < 0) {
-            // OVERDUE
-            urgencyClass = 'overdue';
-            urgencyBadge = `<span class="urgency-badge overdue">⚠️ ${Math.abs(daysLeft)}d overdue</span>`;
-            urgencyBorder = 'border-left: 4px solid #ff5630; background: #fff3f0;';
-        } else if (daysLeft === 0) {
-            // DUE TODAY
-            urgencyClass = 'due-today';
-            urgencyBadge = `<span class="urgency-badge due-today">🔥 Due TODAY</span>`;
-            urgencyBorder = 'border-left: 4px solid #ff5630; background: #fff3f0;';
-        } else if (daysLeft <= 2) {
-            // DUE IN 1-2 DAYS
-            urgencyClass = 'due-soon';
-            urgencyBadge = `<span class="urgency-badge due-soon">⏰ ${daysLeft}d left</span>`;
-            urgencyBorder = 'border-left: 4px solid #ffab00; background: #fffae6;';
-        } else if (daysLeft <= 5) {
-            // DUE IN 3-5 DAYS
-            urgencyClass = 'due-approaching';
-            urgencyBadge = `<span class="urgency-badge due-approaching">📅 ${daysLeft}d left</span>`;
-            urgencyBorder = 'border-left: 4px solid #0052cc; background: #f0f5ff;';
-        }
-    }
-    
-    return `
-    <div class="card ${urgencyClass}" draggable="true" ondragstart="handleDragStart(event,'${task.id}')" onclick="showTaskDetail('${task.id}')" style="${urgencyBorder}">
-        ${hasNotes ? '<span class="card-notes" title="Has notes">📝</span>' : ''}
-        <div class="card-header">
-            <span class="card-category ${catClass}">${catLabel}</span>
-            <span class="card-priority">${priorityIcons[task.priority] || '🟡'}</span>
-        </div>
-        <div class="card-title">${task.title}</div>
-        ${task.desc ? `<div class="card-desc">${task.desc}</div>` : ''}
-        ${urgencyBadge}
-        <div class="card-footer">
-            <span class="card-id">${task.id}</span>
-            ${dueStr ? `<span class="card-date" style="font-weight:600">📅 ${dueStr}</span>` : ''}
-        </div>
-        ${task.tags && task.tags.length ? `<div class="card-tags">${task.tags.map(t => `<span class="card-tag">${t}</span>`).join('')}</div>` : ''}
-    </div>`;
-}
-
-function updateStats() {
-    const tasks = Store.get('tasks');
-    const filtered = currentFilter === 'all' ? tasks : tasks.filter(t => t.category === currentFilter);
-    
-    document.getElementById('stat-todo').textContent = filtered.filter(t => t.status === 'todo').length;
-    document.getElementById('stat-progress').textContent = filtered.filter(t => t.status === 'progress').length;
-    document.getElementById('stat-done').textContent = filtered.filter(t => t.status === 'done').length;
-    document.getElementById('stat-total').textContent = filtered.length;
-    
-    // Count urgent tasks (due within 5 days, not done)
-    const today = new Date(); today.setHours(0,0,0,0);
-    const urgentCount = filtered.filter(t => {
-        if (!t.due || t.status === 'done') return false;
-        const due = new Date(t.due); due.setHours(0,0,0,0);
-        const days = Math.ceil((due - today) / (1000*60*60*24));
-        return days <= 5;
-    }).length;
-    document.getElementById('stat-urgent').textContent = urgentCount;
-    
-    // Category counts
-    document.getElementById('count-all').textContent = ` (${tasks.length})`;
-    document.getElementById('count-professional').textContent = ` (${tasks.filter(t => t.category === 'professional').length})`;
-    document.getElementById('count-personal').textContent = ` (${tasks.filter(t => t.category === 'personal').length})`;
-    document.getElementById('count-family').textContent = ` (${tasks.filter(t => t.category === 'family').length})`;
-}
-
-function filterCategory(cat) {
-    currentFilter = cat;
-    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
-    event.target.closest('.tab').classList.add('active');
-    renderBoard();
-}
-
-// Drag & Drop
-function handleDragStart(e, id) { draggedTaskId = id; e.target.classList.add('dragging'); }
-function handleDragOver(e) { e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
-function handleDragLeave(e) { e.currentTarget.classList.remove('drag-over'); }
-function handleDrop(e, status) {
-    e.preventDefault();
-    e.currentTarget.classList.remove('drag-over');
-    if (draggedTaskId) {
-        const tasks = Store.get('tasks');
-        const task = tasks.find(t => t.id === draggedTaskId);
-        if (task) { task.status = status; Store.set('tasks', tasks); renderBoard(); }
-    }
-    draggedTaskId = null;
-}
-
-// Modal
-function showAddTask(status = 'todo') {
-    editingTaskId = null;
-    document.getElementById('modal-title').textContent = 'New Task';
-    document.getElementById('task-title').value = '';
-    document.getElementById('task-desc').value = '';
-    document.getElementById('task-category').value = currentFilter === 'all' ? 'professional' : currentFilter;
-    document.getElementById('task-priority').value = 'medium';
-    document.getElementById('task-status').value = status;
-    document.getElementById('task-due').value = '';
-    document.getElementById('task-tags').value = '';
-    document.getElementById('notes-section').style.display = 'none';
-    document.getElementById('delete-btn').style.display = 'none';
-    document.getElementById('task-modal').classList.add('show');
-}
-
-function showTaskDetail(id) {
-    const tasks = Store.get('tasks');
-    const task = tasks.find(t => t.id === id);
-    if (!task) return;
-    
-    editingTaskId = id;
-    document.getElementById('modal-title').textContent = 'Edit Task';
-    document.getElementById('task-title').value = task.title;
-    document.getElementById('task-desc').value = task.desc || '';
-    document.getElementById('task-category').value = task.category || 'professional';
-    document.getElementById('task-priority').value = task.priority;
-    document.getElementById('task-status').value = task.status;
-    document.getElementById('task-due').value = task.due || '';
-    document.getElementById('task-tags').value = (task.tags || []).join(', ');
-    document.getElementById('delete-btn').style.display = 'block';
-    
-    // Show notes
-    document.getElementById('notes-section').style.display = 'block';
-    renderNotes(task.notes || []);
-    
-    document.getElementById('task-modal').classList.add('show');
-}
-
-function saveTask() {
-    const tasks = Store.get('tasks');
-    const data = {
-        id: editingTaskId || Store.id(),
-        title: document.getElementById('task-title').value,
-        desc: document.getElementById('task-desc').value,
-        category: document.getElementById('task-category').value,
-        priority: document.getElementById('task-priority').value,
-        status: document.getElementById('task-status').value,
-        due: document.getElementById('task-due').value,
-        tags: document.getElementById('task-tags').value.split(',').map(t => t.trim()).filter(t => t),
-        updatedAt: Date.now()
+    const uid = () => Math.random().toString(36).slice(2, 10);
+    const todayStr = () => new Date().toISOString().split('T')[0];
+    const TODAY = todayStr();
+    const fmtDate = (s, opts = { month: 'short', day: 'numeric' }) => s ? new Date(s + 'T12:00:00').toLocaleDateString('en-US', opts) : '';
+    const fmtDateTime = (d, t) => {
+      if (!d) return '';
+      const base = fmtDate(d, { month: 'short', day: 'numeric' });
+      if (!t) return base;
+      const [h, m] = t.split(':');
+      const ampm = +h >= 12 ? 'pm' : 'am';
+      const hr = +h % 12 || 12;
+      return `${base} · ${hr}:${m}${ampm}`;
     };
-    
-    if (editingTaskId) {
-        const idx = tasks.findIndex(t => t.id === editingTaskId);
-        if (idx >= 0) { data.notes = tasks[idx].notes || []; tasks[idx] = { ...tasks[idx], ...data }; }
-    } else {
-        data.notes = [];
-        data.createdAt = Date.now();
-        tasks.push(data);
+    const daysDiff = s => {
+      if (!s) return null;
+      return Math.ceil((new Date(s + ' 00:00:00') - new Date(todayStr() + ' 00:00:00')) / 864e5);
+    };
+    const isDueSoon = s => { const d = daysDiff(s); return d !== null && d >= 0 && d <= 2; };
+    const isOverdue = s => { const d = daysDiff(s); return d !== null && d < 0; };
+    const initials = n => (n || '').split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
+    const COLORS = ['#C2410C','#1D4ED8','#15803D','#7C3AED','#B45309','#0F766E','#BE185D','#4338CA'];
+
+    const STORAGE_KEY = 'taskflow-v2';
+    const DEFAULT_USERS = [
+      {id:'u1',name:'Alex Morgan',email:'alex@example.com',color:COLORS[0]},
+      {id:'u2',name:'Sam Rivera',email:'sam@example.com',color:COLORS[1]},
+      {id:'u3',name:'Jordan Kim',email:'jordan@example.com',color:COLORS[2]},
+    ];
+    const SAMPLE_TASKS = [
+      {id:'t1',title:'Q3 Report Review',description:'Review and finalize the Q3 performance report before the board meeting.',dueDate:TODAY,priority:'high',status:'in-progress',category:'professional',assignedUsers:['u1','u2'],subtasks:[{id:'s1',text:'Gather data from all departments',done:true},{id:'s2',text:'Draft executive summary',done:false}],notes:[],tags:['report','finance'],createdAt:new Date().toISOString()},
+      {id:'t2',title:'Grocery Shopping',description:'Buy groceries for the week including fresh produce.',dueDate:'',priority:'medium',status:'todo',category:'family',assignedUsers:['u1'],subtasks:[],notes:[{id:'n1',text:'Check if we need olive oil',createdAt:new Date().toISOString()}],tags:['shopping'],createdAt:new Date().toISOString()},
+      {id:'t3',title:'Update Portfolio Website',description:'Add recent projects to portfolio and refresh design.',dueDate:'',priority:'low',status:'done',category:'personal',assignedUsers:['u3'],subtasks:[],notes:[],tags:['website','design'],createdAt:new Date().toISOString()},
+    ];
+    const SAMPLE_EVENTS = [
+      {id:'e1',title:'Team Standup',description:'Daily team standup meeting.',date:TODAY,time:'09:00',location:'Zoom',assignedUsers:['u1','u2','u3'],createdAt:new Date().toISOString()},
+    ];
+
+    function loadData() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) return JSON.parse(raw);
+      return { tasks: SAMPLE_TASKS, events: SAMPLE_EVENTS, users: DEFAULT_USERS };
     }
-    
-    Store.set('tasks', tasks);
-    closeModal();
-    renderBoard();
-}
 
-function deleteTask() {
-    if (!editingTaskId || !confirm('Delete this task?')) return;
-    Store.set('tasks', Store.get('tasks').filter(t => t.id !== editingTaskId));
-    closeModal();
-    renderBoard();
-}
+    function saveData(data) {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
 
-function closeModal() { document.getElementById('task-modal').classList.remove('show'); }
+    function Av({ user, size = '', style = {} }) {
+      if (!user) return null;
+      const cls = `avatar${size === 'lg' ? ' avatar-lg' : size === 'sm' ? ' avatar-sm' : ''}`;
+      return <div className={cls} style={{ background: user.color, ...style }} title={user.name}>{initials(user.name)}</div>;
+    }
 
-// Notes
-function renderNotes(notes) {
-    const list = document.getElementById('notes-list');
-    list.innerHTML = notes.map((n, i) => `
-        <div class="note-item">
-            ${n.text}
-            <div class="note-time">${new Date(n.time).toLocaleString()}</div>
+    function AvStack({ userIds, users, max = 3 }) {
+      const shown = userIds.slice(0, max).map(id => users.find(u => u.id === id)).filter(Boolean);
+      const extra = userIds.length - max;
+      return <div className="avatar-stack" style={{ justifyContent: 'flex-end' }}>{extra > 0 && <div className="avatar" style={{ background:'#ccc', color:'#666', fontSize:9, marginLeft:-7 }}>+{extra}</div>}{[...shown].reverse().map(u => <Av key={u.id} user={u} />)}</div>;
+    }
+
+    const PTag = ({ p }) => <span className={`tag priority-${p}`}>{({high:'🔴 High',medium:'🟡 Med',low:'🟢 Low'})[p] || p}</span>;
+    const CTag = ({ c }) => <span className={`tag cat-${c}`}>{({professional:'💼 Pro',personal:'👤 Personal',family:'👨‍👩‍👧‍👦 Family'})[c] || c}</span>;
+
+    function UserPicker({ users, selected, onChange, max = 5 }) {
+      return <div>
+        <div className="user-picker">
+          {users.map(u => {
+            const sel = selected.includes(u.id);
+            const dis = !sel && selected.length >= max;
+            return <div key={u.id} className={`user-chip${sel ? ' selected' : ''}`} style={{ opacity: dis ? .5 : 1, cursor: dis ? 'not-allowed' : 'pointer' }} onClick={() => { if (dis) return; onChange(sel ? selected.filter(i => i !== u.id) : [...selected, u.id]); }}>
+              <Av user={u} size="sm" /><span>{u.name.split(' ')[0]}</span>{sel && <span>✓</span>}
+            </div>;
+          })}
+          {users.length === 0 && <span style={{fontSize:12,color:'var(--text3)',padding:'4px 8px'}}>No users yet</span>}
         </div>
-    `).join('') || '<div style="color:var(--text2);font-size:0.85em">No notes yet</div>';
-}
-
-function addNote() {
-    const input = document.getElementById('new-note');
-    if (!input.value.trim() || !editingTaskId) return;
-    
-    const tasks = Store.get('tasks');
-    const task = tasks.find(t => t.id === editingTaskId);
-    if (!task.notes) task.notes = [];
-    task.notes.push({ text: input.value.trim(), time: Date.now() });
-    Store.set('tasks', tasks);
-    
-    input.value = '';
-    renderNotes(task.notes);
-}
-
-// Export
-function exportTasks() {
-    const data = JSON.stringify(Store.get('tasks'), null, 2);
-    const blob = new Blob([data], { type: 'application/json' });
-    const url = URL.createObjectURL(blob);
-    const a = document.createElement('a');
-    a.href = url;
-    a.download = `taskflow-${new Date().toISOString().split('T')[0]}.json`;
-    a.click();
-}
-
-// Init
-function init() {
-    if (Store.get('tasks').length === 0) {
-        Store.set('tasks', [
-            { id: 'T-001', title: 'Close Agii.ca client deal', desc: 'Follow up with warm leads', category: 'professional', priority: 'high', status: 'todo', tags: ['agii', 'revenue'], notes: [{text:'Call John at 2pm', time: Date.now()}], due: '2026-04-02', createdAt: Date.now() },
-            { id: 'T-002', title: 'Upload products to Gumroad', desc: 'Chess, AI Prompts, Notion Templates', category: 'professional', priority: 'high', status: 'todo', tags: ['gumroad'], notes: [], due: '2026-04-01', createdAt: Date.now() },
-            { id: 'T-003', title: 'Post on LinkedIn', desc: 'Share thought leadership content', category: 'professional', priority: 'medium', status: 'progress', tags: ['linkedin'], notes: [{text:'Post #2 ready to publish', time: Date.now()}], due: '', createdAt: Date.now() },
-            { id: 'T-004', title: 'Set up Etsy ads', desc: '$1/day for Family Planner', category: 'professional', priority: 'medium', status: 'todo', tags: ['etsy'], notes: [], due: '', createdAt: Date.now() },
-            { id: 'T-005', title: 'Send 50 cold emails', desc: 'Using Apollo.io for Agii leads', category: 'professional', priority: 'high', status: 'todo', tags: ['cold-email'], notes: [], due: '2026-04-03', createdAt: Date.now() },
-            { id: 'T-006', title: 'Update LinkedIn profile', desc: 'New headline and About section', category: 'personal', priority: 'medium', status: 'todo', tags: ['linkedin'], notes: [], due: '', createdAt: Date.now() },
-            { id: 'T-007', title: 'Review investment portfolio', desc: 'Check RRSP, TFSA, RESP', category: 'personal', priority: 'low', status: 'todo', tags: ['finance'], notes: [], due: '', createdAt: Date.now() },
-            { id: 'T-008', title: 'Gym 3x this week', desc: 'Cardio + weights', category: 'personal', priority: 'medium', status: 'progress', tags: ['health'], notes: [{text:'Went Monday', time: Date.now()}], due: '', createdAt: Date.now() },
-            { id: 'T-009', title: 'Plan weekend family outing', desc: 'Research activities for kids', category: 'family', priority: 'medium', status: 'todo', tags: ['kids'], notes: [], due: '2026-04-05', createdAt: Date.now() },
-            { id: 'T-010', title: 'Kids dentist appointment', desc: 'Book for next week', category: 'family', priority: 'high', status: 'todo', tags: ['kids', 'health'], notes: [], due: '2026-04-01', createdAt: Date.now() },
-            { id: 'T-011', title: 'FamilyShield setup', desc: 'Install Chrome extension on kids computers', category: 'family', priority: 'high', status: 'progress', tags: ['security', 'kids'], notes: [{text:'Downloaded from GitHub', time: Date.now()}], due: '', createdAt: Date.now() },
-            { id: 'T-012', title: 'Fix vocab game bug', desc: 'Duplicate answer options', category: 'professional', priority: 'high', status: 'done', tags: ['vocab'], notes: [{text:'Fixed and deployed', time: Date.now()}], due: '', createdAt: Date.now() },
-            { id: 'T-013', title: 'Build student portal', desc: 'Login, dashboard, recommendations', category: 'professional', priority: 'high', status: 'done', tags: ['student'], notes: [{text:'Live on GitHub', time: Date.now()}], due: '', createdAt: Date.now() },
-            { id: 'T-014', title: 'Pay electricity bill', desc: '', category: 'family', priority: 'medium', status: 'done', tags: ['bills'], notes: [{text:'Paid March 28', time: Date.now()}], due: '', createdAt: Date.now() }
-        ]);
+        <div style={{fontSize:11,color:'var(--text3)',marginTop:4}}>Select up to {max} users · {selected.length}/{max} selected</div>
+      </div>;
     }
-    renderBoard();
-}
 
-document.addEventListener('keydown', e => { if (e.key === 'Escape') closeModal(); if (e.key === 'n' && e.ctrlKey) { e.preventDefault(); showAddTask(); } });
-
-// ===== AUTHENTICATION =====
-const Auth = {
-    // Firebase config - REPLACE WITH YOUR OWN
-    config: {
-        apiKey: "YOUR_API_KEY",
-        authDomain: "YOUR_PROJECT.firebaseapp.com",
-        projectId: "YOUR_PROJECT"
-    },
-    
-    currentUser: null,
-    
-    init() {
-        // Check for saved user
-        const saved = localStorage.getItem('tf_user');
-        if (saved) {
-            this.currentUser = JSON.parse(saved);
-            this.updateUI();
-        }
-        
-        // Load Firebase if available
-        if (typeof firebase !== 'undefined') {
-            firebase.initializeApp(this.config);
-            firebase.auth().onAuthStateChanged(user => {
-                if (user) {
-                    this.currentUser = {
-                        uid: user.uid,
-                        email: user.email,
-                        name: user.displayName || user.email.split('@')[0],
-                        photo: user.photoURL
-                    };
-                    localStorage.setItem('tf_user', JSON.stringify(this.currentUser));
-                    this.updateUI();
-                    document.getElementById('auth-modal').classList.remove('show');
-                }
-            });
-        }
-    },
-    
-    updateUI() {
-        const display = document.getElementById('user-display');
-        const authBtn = document.getElementById('auth-btn');
-        
-        if (this.currentUser) {
-            display.innerHTML = this.currentUser.photo 
-                ? `<img src="${this.currentUser.photo}" style="width:24px;height:24px;border-radius:50%;vertical-align:middle;margin-right:6px">${this.currentUser.name}`
-                : `👤 ${this.currentUser.name}`;
-            authBtn.textContent = 'Sign Out';
-            authBtn.onclick = () => this.signOut();
-        } else {
-            display.innerHTML = '';
-            authBtn.textContent = 'Sign In';
-            authBtn.onclick = () => showAuthModal();
-        }
-    },
-    
-    async signInWithGoogle() {
-        if (typeof firebase !== 'undefined') {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            await firebase.auth().signInWithPopup(provider);
-        } else {
-            // Demo mode - simulate login
-            this.currentUser = { uid: 'demo', email: 'demo@taskflow.com', name: 'Demo User', photo: null };
-            localStorage.setItem('tf_user', JSON.stringify(this.currentUser));
-            this.updateUI();
-            document.getElementById('auth-modal').classList.remove('show');
-        }
-    },
-    
-    async signInWithMicrosoft() {
-        if (typeof firebase !== 'undefined') {
-            const provider = new firebase.auth.OAuthProvider('microsoft.com');
-            await firebase.auth().signInWithPopup(provider);
-        } else {
-            alert('Add Firebase to enable Microsoft login');
-        }
-    },
-    
-    async signInWithEmail(email, password) {
-        if (typeof firebase !== 'undefined') {
-            await firebase.auth().signInWithEmailAndPassword(email, password);
-        } else {
-            // Demo mode
-            this.currentUser = { uid: 'email-'+Date.now(), email, name: email.split('@')[0], photo: null };
-            localStorage.setItem('tf_user', JSON.stringify(this.currentUser));
-            this.updateUI();
-            document.getElementById('auth-modal').classList.remove('show');
-        }
-    },
-    
-    async signUpWithEmail(email, password, name) {
-        if (typeof firebase !== 'undefined') {
-            const cred = await firebase.auth().createUserWithEmailAndPassword(email, password);
-            await cred.user.updateProfile({ displayName: name || email.split('@')[0] });
-        } else {
-            this.currentUser = { uid: 'new-'+Date.now(), email, name: name || email.split('@')[0], photo: null };
-            localStorage.setItem('tf_user', JSON.stringify(this.currentUser));
-            this.updateUI();
-            document.getElementById('auth-modal').classList.remove('show');
-        }
-    },
-    
-    async signOut() {
-        if (typeof firebase !== 'undefined') {
-            await firebase.auth().signOut();
-        }
-        this.currentUser = null;
-        localStorage.removeItem('tf_user');
-        this.updateUI();
+    function TaskCard({ task, users, onClick }) {
+      const soon = isDueSoon(task.dueDate), over = isOverdue(task.dueDate), done = task.status === 'done';
+      const doneCount = (task.subtasks || []).filter(s => s.done).length;
+      return <div className={`task-card${soon && !done ? ' due-soon' : ''}${over && !done ? ' overdue' : ''}`} onClick={() => onClick(task)} style={{opacity: done ? .72 : 1}}>
+        <div className="task-card-header"><div className="task-card-title">{task.title}</div><PTag p={task.priority} /></div>
+        {task.description && <div className="task-card-body">{task.description}</div>}
+        {!!task.subtasks?.length && <div style={{marginBottom:8}}><span style={{fontSize:10,color:'var(--text3)'}}>Subtasks {doneCount}/{task.subtasks.length}</span><div className="progress" style={{marginTop:3}}><div className="progress-bar" style={{width:`${task.subtasks.length ? (doneCount / task.subtasks.length) * 100 : 0}%`}} /></div></div>}
+        <div className="task-card-footer">
+          <CTag c={task.category} />
+          {task.dueDate && <span className="task-card-meta" style={{color: over && !done ? 'var(--red)' : soon && !done ? 'var(--amber)' : 'var(--text3)'}}>📅 {over && !done ? 'Overdue · ' : soon && !done ? 'Due soon · ' : ''}{fmtDate(task.dueDate)}</span>}
+          {!!task.tags?.length && <span className="task-card-meta">🏷 {task.tags.slice(0,2).join(', ')}</span>}
+          {!!task.assignedUsers?.length && <div style={{marginLeft:'auto'}}><AvStack userIds={task.assignedUsers} users={users} /></div>}
+        </div>
+      </div>;
     }
-};
 
-function showAuthModal() { document.getElementById('auth-modal').classList.add('show'); }
-
-function handleAuth() { showAuthModal(); }
-
-function signInWithGoogle() { Auth.signInWithGoogle(); }
-function signInWithMicrosoft() { Auth.signInWithMicrosoft(); }
-
-function signInWithEmail() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    if (!email || !password) {
-        showAuthError('Please enter email and password');
-        return;
+    function TaskModal({ task, users, onSave, onDelete, onClose, defaultDate = '' }) {
+      const isNew = !task?.id;
+      const [form, setForm] = useState(isNew ? {title:'',description:'',dueDate:defaultDate || '',priority:'medium',status:'todo',category:'professional',assignedUsers:[],subtasks:[],notes:[],tags:''} : {...task, tags:(task.tags || []).join(', ')});
+      const [tab, setTab] = useState('details');
+      const [newSub, setNewSub] = useState('');
+      const [newNote, setNewNote] = useState('');
+      const set = (k,v) => setForm(f => ({...f,[k]:v}));
+      const addSub = () => { if (!newSub.trim()) return; set('subtasks', [...form.subtasks, {id:uid(), text:newSub.trim(), done:false}]); setNewSub(''); };
+      const addNote = () => { if (!newNote.trim()) return; set('notes', [...form.notes, {id:uid(), text:newNote.trim(), createdAt:new Date().toISOString()}]); setNewNote(''); };
+      const save = () => { if (!form.title.trim()) return; onSave({...form, id: form.id || uid(), tags: form.tags.split(',').map(t => t.trim()).filter(Boolean), createdAt: form.createdAt || new Date().toISOString()}); };
+      const tabs = {details:'📋 Details',people:'👥 People',subtasks:'☑️ Subtasks',notes:'📝 Notes'};
+      return <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal modal-wide">
+          <div className="modal-header"><div><div className="modal-title">{isNew ? '✨ New Task' : '✏️ Edit Task'}</div></div><button className="modal-close" onClick={onClose}>✕</button></div>
+          <div className="modal-body">
+            <div className="detail-tabs">{Object.entries(tabs).map(([k,v]) => <div key={k} className={`detail-tab${tab === k ? ' active' : ''}`} onClick={() => setTab(k)}>{v}</div>)}</div>
+            {tab === 'details' && <>
+              <div className="form-group"><label className="form-label">Task Title *</label><input className="form-input" value={form.title} onChange={e => set('title', e.target.value)} placeholder="What needs to be done?" /></div>
+              <div className="form-group"><label className="form-label">Description</label><textarea className="form-textarea" value={form.description} onChange={e => set('description', e.target.value)} placeholder="Add more context..." /></div>
+              <div className="form-row">
+                <div className="form-group"><label className="form-label">Due Date</label><input type="date" className="form-input" value={form.dueDate} onChange={e => set('dueDate', e.target.value)} /></div>
+                <div className="form-group"><label className="form-label">Priority</label><select className="form-select" value={form.priority} onChange={e => set('priority', e.target.value)}><option value="high">🔴 High</option><option value="medium">🟡 Medium</option><option value="low">🟢 Low</option></select></div>
+              </div>
+              <div className="form-row">
+                <div className="form-group"><label className="form-label">Status</label><select className="form-select" value={form.status} onChange={e => set('status', e.target.value)}><option value="todo">📥 To Do</option><option value="in-progress">🔄 In Progress</option><option value="done">✅ Done</option></select></div>
+                <div className="form-group"><label className="form-label">Category</label><select className="form-select" value={form.category} onChange={e => set('category', e.target.value)}><option value="professional">💼 Professional</option><option value="personal">👤 Personal</option><option value="family">👨‍👩‍👧‍👦 Family</option></select></div>
+              </div>
+              <div className="form-group"><label className="form-label">Tags</label><input className="form-input" value={form.tags} onChange={e => set('tags', e.target.value)} placeholder="tag1, tag2, tag3" /></div>
+            </>}
+            {tab === 'people' && <div className="form-group"><label className="form-label">Assigned Users</label><UserPicker users={users} selected={form.assignedUsers} onChange={v => set('assignedUsers', v)} max={5} /></div>}
+            {tab === 'subtasks' && <>
+              <div className="subtask-list">{form.subtasks.length === 0 ? <div style={{fontSize:12,color:'var(--text3)',padding:'6px 0'}}>No subtasks yet</div> : form.subtasks.map(s => <div key={s.id} className="subtask-item"><div className={`subtask-check${s.done ? ' done' : ''}`} onClick={() => set('subtasks', form.subtasks.map(x => x.id === s.id ? {...x, done: !x.done} : x))}>{s.done && '✓'}</div><span className={`subtask-text${s.done ? ' done' : ''}`}>{s.text}</span><span className="subtask-del" onClick={() => set('subtasks', form.subtasks.filter(x => x.id !== s.id))}>✕</span></div>)}</div>
+              <div className="subtask-add"><input value={newSub} onChange={e => setNewSub(e.target.value)} onKeyDown={e => e.key === 'Enter' && addSub()} placeholder="Add subtask..." /><button className="btn btn-secondary btn-sm" onClick={addSub}>+ Add</button></div>
+            </>}
+            {tab === 'notes' && <>
+              <div className="note-list">{form.notes.length === 0 ? <div style={{fontSize:12,color:'var(--text3)',padding:'6px 0'}}>No notes yet</div> : form.notes.map(n => <div key={n.id} className="note-item"><div className="note-text">{n.text}</div><div className="note-time">{fmtDate(n.createdAt?.split('T')[0])}</div><span className="note-del" onClick={() => set('notes', form.notes.filter(x => x.id !== n.id))}>✕</span></div>)}</div>
+              <div className="note-add"><textarea value={newNote} onChange={e => setNewNote(e.target.value)} placeholder="Add a note..." /><button className="btn btn-secondary btn-sm" style={{alignSelf:'flex-end'}} onClick={addNote}>+ Add</button></div>
+            </>}
+          </div>
+          <div className="modal-footer">{!isNew && <button className="btn btn-ghost btn-sm" style={{color:'var(--red)',marginRight:'auto'}} onClick={() => { if (window.confirm('Delete this task?')) onDelete(task.id); }}>🗑 Delete</button>}<button className="btn btn-secondary" onClick={onClose}>Cancel</button><button className="btn btn-primary" onClick={save} disabled={!form.title.trim()}>{isNew ? '✨ Create' : '💾 Save'}</button></div>
+        </div>
+      </div>;
     }
-    Auth.signInWithEmail(email, password).catch(e => showAuthError(e.message));
-}
 
-function signUpWithEmail() {
-    const email = document.getElementById('login-email').value;
-    const password = document.getElementById('login-password').value;
-    if (!email || !password) {
-        showAuthError('Please enter email and password');
-        return;
+    function EventModal({ event, users, onSave, onDelete, onClose, defaultDate = '' }) {
+      const isNew = !event?.id;
+      const [form, setForm] = useState(isNew ? {title:'',description:'',date:defaultDate || TODAY,time:'09:00',location:'',assignedUsers:[]} : {...event});
+      const set = (k,v) => setForm(f => ({...f,[k]:v}));
+      const save = () => { if (!form.title.trim()) return; onSave({...form, id:form.id || uid(), createdAt:form.createdAt || new Date().toISOString()}); };
+      return <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal">
+          <div className="modal-header"><div className="modal-title">{isNew ? '📅 New Event' : '✏️ Edit Event'}</div><button className="modal-close" onClick={onClose}>✕</button></div>
+          <div className="modal-body">
+            <div className="form-group"><label className="form-label">Event Title *</label><input className="form-input" value={form.title} onChange={e => set('title', e.target.value)} placeholder="Event name" /></div>
+            <div className="form-group"><label className="form-label">Description</label><textarea className="form-textarea" value={form.description} onChange={e => set('description', e.target.value)} placeholder="Details..." /></div>
+            <div className="form-row"><div className="form-group"><label className="form-label">Date *</label><input type="date" className="form-input" value={form.date} onChange={e => set('date', e.target.value)} /></div><div className="form-group"><label className="form-label">Time</label><input type="time" className="form-input" value={form.time} onChange={e => set('time', e.target.value)} /></div></div>
+            <div className="form-group"><label className="form-label">Location</label><input className="form-input" value={form.location} onChange={e => set('location', e.target.value)} placeholder="Office, Zoom, etc." /></div>
+            <div className="form-group"><label className="form-label">Attendees</label><UserPicker users={users} selected={form.assignedUsers} onChange={v => set('assignedUsers', v)} max={5} /></div>
+          </div>
+          <div className="modal-footer">{!isNew && <button className="btn btn-ghost btn-sm" style={{color:'var(--red)',marginRight:'auto'}} onClick={() => { if (window.confirm('Delete?')) onDelete(event.id); }}>🗑 Delete</button>}<button className="btn btn-secondary" onClick={onClose}>Cancel</button><button className="btn btn-primary" onClick={save} disabled={!form.title.trim()}>{isNew ? '✨ Create' : '💾 Save'}</button></div>
+        </div>
+      </div>;
     }
-    if (password.length < 6) {
-        showAuthError('Password must be at least 6 characters');
-        return;
+
+    function UserModal({ onSave, onClose, usedColors }) {
+      const [form, setForm] = useState({ name:'', email:'', color: COLORS.find(c => !usedColors.includes(c)) || COLORS[0] });
+      const set = (k,v) => setForm(f => ({...f,[k]:v}));
+      return <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
+        <div className="modal">
+          <div className="modal-header"><div className="modal-title">👤 Add User</div><button className="modal-close" onClick={onClose}>✕</button></div>
+          <div className="modal-body">
+            <div className="form-group"><label className="form-label">Full Name *</label><input className="form-input" value={form.name} onChange={e => set('name', e.target.value)} placeholder="Jane Smith" /></div>
+            <div className="form-group"><label className="form-label">Email</label><input className="form-input" value={form.email} onChange={e => set('email', e.target.value)} placeholder="jane@example.com" /></div>
+            <div className="form-group"><label className="form-label">Avatar Color</label><div style={{display:'flex',gap:7,flexWrap:'wrap'}}>{COLORS.map(c => <div key={c} onClick={() => set('color', c)} style={{width:26,height:26,borderRadius:'50%',background:c,cursor:'pointer',border: form.color === c ? '3px solid var(--text)' : '3px solid transparent'}} />)}</div></div>
+          </div>
+          <div className="modal-footer"><button className="btn btn-secondary" onClick={onClose}>Cancel</button><button className="btn btn-primary" onClick={() => form.name.trim() && onSave({...form, id:uid()})}>Add User</button></div>
+        </div>
+      </div>;
     }
-    Auth.signUpWithEmail(email, password).catch(e => showAuthError(e.message));
-}
 
-function showAuthError(msg) {
-    const el = document.getElementById('auth-error');
-    el.textContent = msg;
-    el.style.display = 'block';
-    setTimeout(() => el.style.display = 'none', 5000);
-}
+    function ReminderBanner({ tasks, events }) {
+      const items = [
+        ...tasks.filter(t => t.status !== 'done' && isDueSoon(t.dueDate)).map(t => ({...t,_t:'task'})),
+        ...tasks.filter(t => t.status !== 'done' && isOverdue(t.dueDate)).map(t => ({...t,_t:'overdue'})),
+        ...events.filter(e => isDueSoon(e.date)).map(e => ({...e,_t:'event'}))
+      ];
+      if (!items.length) return null;
+      return <div className="reminder-banner"><div style={{fontSize:20,flexShrink:0}}>🔔</div><div><div style={{fontSize:13,color:'var(--amber)',fontWeight:700}}>{items.length} item{items.length > 1 ? 's' : ''} need attention</div><div style={{display:'flex',flexDirection:'column',gap:2,marginTop:4}}>{items.slice(0,3).map(it => <div key={it.id} style={{fontSize:12,color:'var(--text2)'}}>{it._t === 'overdue' ? '⚠️ Overdue' : it._t === 'event' ? '📅 Event' : '📋 Task'}: <strong>{it.title}</strong> · {fmtDate(it.dueDate || it.date)}</div>)}{items.length > 3 && <div style={{fontSize:11,color:'var(--text3)'}}>+{items.length - 3} more</div>}</div></div></div>;
+    }
 
-// Initialize auth
-Auth.init();
+    function Dashboard({ tasks, events, users, onOpenTask, onOpenEvent, onNewTask, onNewEvent }) {
+      const todo = tasks.filter(t => t.status === 'todo').length;
+      const inp = tasks.filter(t => t.status === 'in-progress').length;
+      const soon = tasks.filter(t => t.status !== 'done' && isDueSoon(t.dueDate)).length;
+      const over = tasks.filter(t => t.status !== 'done' && isOverdue(t.dueDate)).length;
+      const upcoming = [
+        ...events.filter(e => e.date >= TODAY).sort((a,b) => (a.date + (a.time || '00:00')).localeCompare(b.date + (b.time || '00:00'))).slice(0,4).map(e => ({...e,_t:'event',_s:e.date + (e.time || '00:00')})),
+        ...tasks.filter(t => t.dueDate && t.dueDate >= TODAY && t.status !== 'done').sort((a,b) => a.dueDate.localeCompare(b.dueDate)).slice(0,4).map(t => ({...t,_t:'task',_s:t.dueDate}))
+      ].sort((a,b) => a._s.localeCompare(b._s)).slice(0,6);
+      const recent = tasks.slice().sort((a,b) => (b.createdAt || '').localeCompare(a.createdAt || '')).slice(0,4);
+      return <div>
+        <ReminderBanner tasks={tasks} events={events} />
+        <div className="stat-grid">
+          <div className="stat-card"><div className="label">📥 To Do</div><div className="value">{todo}</div><div className="sub">waiting</div></div>
+          <div className="stat-card"><div className="label">🔄 In Progress</div><div className="value" style={{color:'var(--blue)'}}>{inp}</div><div className="sub">active</div></div>
+          <div className="stat-card warning"><div className="label">⚡ Due Soon</div><div className="value">{soon}</div><div className="sub">within 2 days</div></div>
+          <div className="stat-card danger"><div className="label">⚠️ Overdue</div><div className="value">{over}</div><div className="sub">need attention</div></div>
+        </div>
+        <div className="dash-grid">
+          <div>
+            <div className="section-header"><div><div className="section-title">Recent Tasks</div><div className="section-sub">{tasks.length} total</div></div><button className="btn btn-primary btn-sm" onClick={onNewTask}>+ New Task</button></div>
+            <div style={{display:'flex',flexDirection:'column',gap:9}}>{recent.length === 0 ? <div className="empty"><div className="eicon">📋</div><h3>No tasks yet</h3><p>Create your first task</p></div> : recent.map(t => <TaskCard key={t.id} task={t} users={users} onClick={onOpenTask} />)}</div>
+          </div>
+          <div>
+            <div className="section-header"><div><div className="section-title">Upcoming</div><div className="section-sub">Tasks & events</div></div><button className="btn btn-secondary btn-sm" onClick={onNewEvent}>+ Event</button></div>
+            <div className="upcoming-list">{upcoming.length === 0 ? <div className="empty"><div className="eicon">🗓</div><h3>Nothing upcoming</h3><p>Schedule is clear</p></div> : upcoming.map(it => <div key={it.id} className="upcoming-item" onClick={() => it._t === 'event' ? onOpenEvent(it) : onOpenTask(it)}><div style={{width:9,height:9,borderRadius:'50%',background:it._t === 'event' ? 'var(--blue)' : 'var(--primary)',flexShrink:0,marginTop:5}} /><div className="upcoming-info"><div className="upcoming-title">{it.title}</div><div className="upcoming-meta">{it._t === 'event' ? `📅 ${fmtDateTime(it.date,it.time)}` : `📋 Due ${fmtDate(it.dueDate)}`}{it.location ? ` · 📍${it.location}` : ''}</div></div>{it.assignedUsers?.length > 0 && <AvStack userIds={it.assignedUsers} users={users} max={3} />}</div>)}</div>
+            <div style={{marginTop:18}}><div className="section-header"><div className="section-title">Today's Events</div></div><div style={{display:'flex',flexDirection:'column',gap:7}}>{events.filter(e => e.date === TODAY).length === 0 ? <div style={{fontSize:12,color:'var(--text3)'}}>No events today</div> : events.filter(e => e.date === TODAY).map(e => <div key={e.id} className="event-card" onClick={() => onOpenEvent(e)}><div className="event-title">{e.title}</div><div className="event-meta">{e.time && <span>🕐 {e.time}</span>}{e.location && <span>📍 {e.location}</span>}{e.assignedUsers?.length > 0 && <span>👥 {e.assignedUsers.length}</span>}</div></div>)}</div></div>
+          </div>
+        </div>
+      </div>;
+    }
 
-init();
-</script>
-<script src="js/scroll-reveal.js"></script>
+    function BoardView({ tasks, users, onOpenTask, onNewTask, filter, setFilter, search, setSearch, onDropTask }) {
+      const filtered = tasks.filter(t => {
+        if (filter === 'professional') return t.category === 'professional';
+        if (filter === 'personal') return t.category === 'personal';
+        if (filter === 'family') return t.category === 'family';
+        if (filter === 'due-soon') return isDueSoon(t.dueDate) && t.status !== 'done';
+        if (filter === 'overdue') return isOverdue(t.dueDate) && t.status !== 'done';
+        return true;
+      }).filter(t => !search || t.title.toLowerCase().includes(search.toLowerCase()) || (t.description || '').toLowerCase().includes(search.toLowerCase()));
+      const cols = [{id:'todo',l:'📥 To Do'},{id:'in-progress',l:'🔄 In Progress'},{id:'done',l:'✅ Done'}];
+      const [dragged, setDragged] = useState(null);
+      return <div>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18,flexWrap:'wrap'}}>
+          <div className="filter-bar" style={{marginBottom:0,flex:1}}>{[{v:'all',l:'All'},{v:'professional',l:'💼 Pro'},{v:'personal',l:'👤 Personal'},{v:'family',l:'👨‍👩‍👧‍👦 Family'},{v:'due-soon',l:'⚡ Due Soon'},{v:'overdue',l:'⚠️ Overdue'}].map(f => <button key={f.v} className={`filter-btn${filter === f.v ? ' active' : ''}`} onClick={() => setFilter(f.v)}>{f.l}</button>)}</div>
+          <div className="search-wrap"><span className="search-icon">🔍</span><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." /></div>
+          <button className="btn btn-primary btn-sm" onClick={onNewTask}>+ New Task</button>
+        </div>
+        <div className="board">{cols.map(col => { const ct = filtered.filter(t => t.status === col.id); return <div key={col.id} className="board-col" onDragOver={e => e.preventDefault()} onDrop={() => { if (dragged) onDropTask(dragged, col.id); setDragged(null); }}><div className="board-col-header"><div className="board-col-title">{col.l}</div><span className="board-col-count">{ct.length}</span></div><div className="board-tasks">{ct.length === 0 ? <div style={{textAlign:'center',padding:'20px 0',color:'var(--text3)',fontSize:11}}>No tasks</div> : ct.map(t => <div key={t.id} draggable onDragStart={() => setDragged(t.id)}><TaskCard task={t} users={users} onClick={onOpenTask} /></div>)}</div></div>; })}</div>
+      </div>;
+    }
+
+    function CalendarView({ tasks, events, users, onOpenTask, onOpenEvent, onNewEvent, onNewTask }) {
+      const [mode, setMode] = useState('month');
+      const [cur, setCur] = useState(new Date());
+      const [sel, setSel] = useState(null);
+      const yr = cur.getFullYear(), mo = cur.getMonth();
+      const DAYS = ['Sun','Mon','Tue','Wed','Thu','Fri','Sat'];
+      const MONTHS = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+      const firstDay = new Date(yr, mo, 1).getDay();
+      const dim = new Date(yr, mo + 1, 0).getDate();
+      const dimp = new Date(yr, mo, 0).getDate();
+      const cells = [];
+      for (let i = 0; i < firstDay; i++) cells.push({date:`${yr}-${String(mo === 0 ? 12 : mo).padStart(2,'0')}-${String(dimp - firstDay + 1 + i).padStart(2,'0')}`,o:true});
+      for (let d = 1; d <= dim; d++) cells.push({date:`${yr}-${String(mo + 1).padStart(2,'0')}-${String(d).padStart(2,'0')}`,o:false});
+      while (cells.length % 7 !== 0) { const idx = cells.length - firstDay - dim + 1; cells.push({date:`${yr}-${String(mo + 2 > 12 ? 1 : mo + 2).padStart(2,'0')}-${String(idx).padStart(2,'0')}`,o:true}); }
+      const nav = d => { const n = new Date(cur); n.setMonth(n.getMonth() + d); setCur(n); };
+      const navW = d => { const n = new Date(cur); n.setDate(n.getDate() + d * 7); setCur(n); };
+      const getWS = d => { const s = new Date(d); s.setDate(s.getDate() - s.getDay()); return s; };
+      const ws = getWS(cur);
+      const wds = Array.from({length:7}, (_,i) => { const d = new Date(ws); d.setDate(d.getDate() + i); return d; });
+      const HOURS = Array.from({length:11}, (_,i) => i + 8);
+      const selItems = sel ? { evs: events.filter(e => e.date === sel), tsks: tasks.filter(t => t.dueDate === sel && t.status !== 'done') } : null;
+      return <div>
+        <div className="cal-header"><div className="cal-nav"><button className="btn btn-secondary btn-icon" onClick={() => mode === 'month' ? nav(-1) : navW(-1)}>‹</button><button className="btn btn-ghost btn-sm" onClick={() => setCur(new Date())}>Today</button><button className="btn btn-secondary btn-icon" onClick={() => mode === 'month' ? nav(1) : navW(1)}>›</button></div><div className="cal-title">{mode === 'month' ? `${MONTHS[mo]} ${yr}` : `Week of ${ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`}</div><div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center'}}><button className="btn btn-secondary btn-sm" onClick={() => onNewEvent()}>+ Event</button><button className="btn btn-primary btn-sm" onClick={() => onNewTask()}>+ Task</button><div className="cal-mode-toggle"><div className={`cal-mode-btn${mode === 'month' ? ' active' : ''}`} onClick={() => setMode('month')}>Month</div><div className={`cal-mode-btn${mode === 'week' ? ' active' : ''}`} onClick={() => setMode('week')}>Week</div></div></div></div>
+        {mode === 'month' && <div className="cal-grid"><div className="cal-weekdays">{DAYS.map(d => <div key={d} className="cal-weekday">{d}</div>)}</div><div className="cal-days">{cells.map((cell,i) => { const evs = events.filter(e => e.date === cell.date), tsks = tasks.filter(t => t.dueDate === cell.date && t.status !== 'done'); const all = [...evs,...tsks]; return <div key={i} className={`cal-day${cell.o ? ' other-month' : ''}${cell.date === TODAY ? ' today' : ''}`} onClick={() => setSel(sel === cell.date ? null : cell.date)}><div className="cal-day-num">{+cell.date.split('-')[2]}</div>{evs.slice(0,1).map(e => <div key={e.id} className="cal-event event-type">{e.title}</div>)}{tsks.slice(0, evs.length ? 1 : 2).map(t => <div key={t.id} className={`cal-event ${isOverdue(t.dueDate) ? 'overdue-type' : 'task-type'}`}>{t.title}</div>)}{all.length > 2 && <div className="cal-more">+{all.length - 2} more</div>}</div>; })}</div></div>}
+        {mode === 'week' && <div className="week-grid"><div className="week-header"><div style={{borderRight:'1px solid var(--border)',padding:'10px 6px'}} />{wds.map((d,i) => { const ds = d.toISOString().split('T')[0]; return <div key={i} className={`week-day-header${ds === TODAY ? ' today' : ''}`}><div className="day-name">{DAYS[i]}</div><div className="day-num">{d.getDate()}</div></div>; })}</div><div className="week-body"><div className="week-time-col">{HOURS.map(h => <div key={h} className="week-time-slot">{h % 12 || 12}{h < 12 ? 'am' : 'pm'}</div>)}</div>{wds.map((d,i) => { const ds = d.toISOString().split('T')[0]; const de = events.filter(e => e.date === ds); const dt = tasks.filter(t => t.dueDate === ds && t.status !== 'done'); return <div key={i} className="week-day-col">{HOURS.map(h => { const eh = de.filter(e => e.time && +e.time.split(':')[0] === h); const th = h === 9 ? dt : []; return <div key={h} className="week-slot">{eh.map(e => <div key={e.id} className="week-event" onClick={() => onOpenEvent(e)}>{e.title}</div>)}{th.map(t => <div key={t.id} className="week-task" onClick={() => onOpenTask(t)}>{t.title}</div>)}</div>; })}</div>; })}</div></div>}
+        {sel && selItems && <div className="card" style={{marginTop:14,padding:14}}><div className="section-header"><div className="section-title">📅 {fmtDate(sel,{weekday:'long',month:'long',day:'numeric'})}</div><div style={{display:'flex',gap:7}}><button className="btn btn-secondary btn-sm" onClick={() => onNewEvent(sel)}>+ Event</button><button className="btn btn-primary btn-sm" onClick={() => onNewTask(sel)}>+ Task</button></div></div>{selItems.evs.length === 0 && selItems.tsks.length === 0 && <div style={{color:'var(--text3)',fontSize:12}}>Nothing scheduled</div>}{selItems.evs.map(e => <div key={e.id} className="event-card" style={{marginBottom:7}} onClick={() => onOpenEvent(e)}><div className="event-title">{e.title}</div><div className="event-meta">{e.time && <span>🕐 {e.time}</span>}{e.location && <span>📍 {e.location}</span>}</div></div>)}{selItems.tsks.map(t => <TaskCard key={t.id} task={t} users={users} onClick={onOpenTask} />)}</div>}
+      </div>;
+    }
+
+    function UsersView({ users, tasks, setUsers }) {
+      const [showAdd, setShowAdd] = useState(false);
+      return <div><div className="section-header"><div><div className="section-title">Team Members</div><div className="section-sub">{users.length}/5 users</div></div>{users.length < 5 && <button className="btn btn-primary" onClick={() => setShowAdd(true)}>+ Add User</button>}</div>{users.length === 0 ? <div className="empty"><div className="eicon">👥</div><h3>No users yet</h3><p>Add users to assign tasks</p></div> : <div className="users-grid">{users.map(u => { const ut = tasks.filter(t => t.assignedUsers?.includes(u.id) && t.status !== 'done').length; const uc = tasks.filter(t => t.assignedUsers?.includes(u.id) && t.status === 'done').length; return <div key={u.id} className="user-card"><div style={{display:'flex',justifyContent:'center',marginBottom:10}}><Av user={u} size="lg" /></div><h3 style={{fontSize:14,fontWeight:700}}>{u.name}</h3><p style={{fontSize:12,color:'var(--text3)',marginTop:2}}>{u.email || 'No email'}</p><div style={{marginTop:11,background:'var(--surface2)',borderRadius:'var(--radius-sm)',padding:'9px 11px',textAlign:'left'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}><span style={{fontSize:11,color:'var(--text3)'}}>Active tasks</span><span style={{fontSize:12,fontWeight:700}}>{ut}</span></div><div style={{display:'flex',justifyContent:'space-between'}}><span style={{fontSize:11,color:'var(--text3)'}}>Completed</span><span style={{fontSize:12,fontWeight:700,color:'var(--green)'}}>{uc}</span></div></div><div style={{display:'flex',gap:6,justifyContent:'center',marginTop:11}}><button className="btn btn-secondary btn-sm" style={{color:'var(--red)'}} onClick={() => { if (window.confirm(`Remove ${u.name}?`)) setUsers(p => p.filter(x => x.id !== u.id)); }}>Remove</button></div></div>; })}</div>}{showAdd && <UserModal onSave={u => { setUsers(p => [...p, u]); setShowAdd(false); }} onClose={() => setShowAdd(false)} usedColors={users.map(u => u.color)} />}</div>;
+    }
+
+    function App() {
+      const initial = loadData();
+      const [tasks, setTasks] = useState(initial.tasks || []);
+      const [events, setEvents] = useState(initial.events || []);
+      const [users, setUsers] = useState(initial.users || []);
+      const [view, setView] = useState('dashboard');
+      const [filter, setFilter] = useState('all');
+      const [search, setSearch] = useState('');
+      const [activeTask, setActiveTask] = useState(null);
+      const [activeEvent, setActiveEvent] = useState(null);
+      const [newTaskDate, setNewTaskDate] = useState('');
+      const [newEventDate, setNewEventDate] = useState('');
+      const [quickOpen, setQuickOpen] = useState(false);
+
+      useEffect(() => { saveData({ tasks, events, users }); }, [tasks, events, users]);
+
+      const todo = tasks.filter(t => t.status === 'todo').length;
+      const urgent = tasks.filter(t => t.status !== 'done' && (isDueSoon(t.dueDate) || isOverdue(t.dueDate))).length;
+
+      const openNewTask = (date = '') => { setNewTaskDate(date || ''); setActiveTask({}); };
+      const openNewEvent = (date = '') => { setNewEventDate(date || ''); setActiveEvent({}); };
+      const saveTask = t => { setTasks(prev => prev.some(x => x.id === t.id) ? prev.map(x => x.id === t.id ? t : x) : [t, ...prev]); setActiveTask(null); setNewTaskDate(''); };
+      const deleteTask = id => { setTasks(prev => prev.filter(t => t.id !== id)); setActiveTask(null); };
+      const saveEvent = e => { setEvents(prev => prev.some(x => x.id === e.id) ? prev.map(x => x.id === e.id ? e : x) : [e, ...prev]); setActiveEvent(null); setNewEventDate(''); };
+      const deleteEvent = id => { setEvents(prev => prev.filter(e => e.id !== id)); setActiveEvent(null); };
+      const exportData = () => {
+        const data = JSON.stringify({ tasks, events, users }, null, 2);
+        const blob = new Blob([data], { type: 'application/json' });
+        const url = URL.createObjectURL(blob);
+        const a = document.createElement('a');
+        a.href = url; a.download = `taskflow-${todayStr()}.json`; a.click();
+        URL.revokeObjectURL(url);
+      };
+      const resetDemo = () => {
+        if (!window.confirm('Reset board to demo data?')) return;
+        setTasks(SAMPLE_TASKS); setEvents(SAMPLE_EVENTS); setUsers(DEFAULT_USERS);
+      };
+      const onDropTask = (taskId, status) => setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status } : t));
+
+      const titleMap = { dashboard:'Dashboard', board:'Board', calendar:'Calendar', users:'Users' };
+
+      return <div className="app">
+        <aside className="sidebar">
+          <div className="sidebar-logo"><h1>Task<span>Flow</span></h1><p>Scrum + Kanban dashboard</p></div>
+          <div className="sidebar-nav">
+            <div className="nav-section"><div className="nav-label">Workspace</div>
+              <button className={`nav-item${view === 'dashboard' ? ' active' : ''}`} onClick={() => setView('dashboard')}>🏠 Dashboard</button>
+              <button className={`nav-item${view === 'board' ? ' active' : ''}`} onClick={() => setView('board')}>🗂 Board <span className="nav-badge">{todo}</span></button>
+              <button className={`nav-item${view === 'calendar' ? ' active' : ''}`} onClick={() => setView('calendar')}>📅 Calendar</button>
+              <button className={`nav-item${view === 'users' ? ' active' : ''}`} onClick={() => setView('users')}>👥 Team</button>
+            </div>
+            <div className="nav-section"><div className="nav-label">Focus</div>
+              <button className="nav-item" onClick={() => { setView('board'); setFilter('due-soon'); }}>⚡ Due Soon</button>
+              <button className="nav-item" onClick={() => { setView('board'); setFilter('overdue'); }}>🚨 Overdue <span className="nav-badge">{urgent}</span></button>
+            </div>
+          </div>
+          <div className="sidebar-bottom"><button className="nav-item" onClick={exportData}>📤 Export JSON</button><button className="nav-item" onClick={resetDemo}>♻️ Reset Demo</button></div>
+        </aside>
+        <main className="main">
+          <div className="topbar"><div className="topbar-title">{titleMap[view]} <span>{new Date().toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric' })}</span></div><button className="btn btn-secondary btn-sm" onClick={exportData}>Export</button><button className="btn btn-primary btn-sm" onClick={() => openNewTask()}>+ Task</button></div>
+          <div className="content">
+            {view === 'dashboard' && <Dashboard tasks={tasks} events={events} users={users} onOpenTask={setActiveTask} onOpenEvent={setActiveEvent} onNewTask={() => openNewTask()} onNewEvent={() => openNewEvent()} />}
+            {view === 'board' && <BoardView tasks={tasks} users={users} onOpenTask={setActiveTask} onNewTask={() => openNewTask()} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} onDropTask={onDropTask} />}
+            {view === 'calendar' && <CalendarView tasks={tasks} events={events} users={users} onOpenTask={setActiveTask} onOpenEvent={setActiveEvent} onNewEvent={openNewEvent} onNewTask={openNewTask} />}
+            {view === 'users' && <UsersView users={users} tasks={tasks} setUsers={setUsers} />}
+          </div>
+        </main>
+        <button className="fab" onClick={() => setQuickOpen(q => !q)}>+</button>
+        {quickOpen && <div className="quick-menu"><button className="quick-menu-item" onClick={() => { setQuickOpen(false); openNewTask(); }}>📋 New Task</button><button className="quick-menu-item" onClick={() => { setQuickOpen(false); openNewEvent(); }}>📅 New Event</button><button className="quick-menu-item" onClick={() => { setQuickOpen(false); setView('users'); }}>👥 Manage Team</button></div>}
+        {activeTask !== null && <TaskModal task={activeTask} users={users} onSave={saveTask} onDelete={deleteTask} onClose={() => { setActiveTask(null); setNewTaskDate(''); }} defaultDate={newTaskDate} />}
+        {activeEvent !== null && <EventModal event={activeEvent} users={users} onSave={saveEvent} onDelete={deleteEvent} onClose={() => { setActiveEvent(null); setNewEventDate(''); }} defaultDate={newEventDate} />}
+      </div>;
+    }
+
+    ReactDOM.createRoot(document.getElementById('root')).render(<App />);
+  </script>
 </body>
 </html>
