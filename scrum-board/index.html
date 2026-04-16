@@ -406,8 +406,10 @@
       const todo = tasks.filter(t => t.status === 'todo').length;
       const urgent = tasks.filter(t => t.status !== 'done' && (isDueSoon(t.dueDate) || isOverdue(t.dueDate))).length;
 
-      const openNewTask = (date = '') => { setNewTaskDate(date || ''); setActiveTask({}); };
-      const openNewEvent = (date = '') => { setNewEventDate(date || ''); setActiveEvent({}); };
+      const openTask = t => setActiveTask(t);
+      const openEvent = e => setActiveEvent(e);
+      const openNewTask = (date = '') => { setNewTaskDate(date || ''); setQuickOpen(false); setActiveTask({}); };
+      const openNewEvent = (date = '') => { setNewEventDate(date || ''); setQuickOpen(false); setActiveEvent({}); };
       const saveTask = t => { setTasks(prev => prev.some(x => x.id === t.id) ? prev.map(x => x.id === t.id ? t : x) : [t, ...prev]); setActiveTask(null); setNewTaskDate(''); };
       const deleteTask = id => { setTasks(prev => prev.filter(t => t.id !== id)); setActiveTask(null); };
       const saveEvent = e => { setEvents(prev => prev.some(x => x.id === e.id) ? prev.map(x => x.id === e.id ? e : x) : [e, ...prev]); setActiveEvent(null); setNewEventDate(''); };
@@ -426,36 +428,46 @@
       };
       const onDropTask = (taskId, status) => setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status } : t));
 
-      const titleMap = { dashboard:'Dashboard', board:'Board', calendar:'Calendar', users:'Users' };
+      const titleMap = { dashboard:'Dashboard', board:'Task Board', calendar:'Calendar', users:'Users' };
+      const subtitleMap = {
+        dashboard: `${tasks.length} tasks · ${events.length} events`,
+        board: `${tasks.length} tasks`,
+        calendar: new Date().toLocaleDateString('en-US', { month:'long', year:'numeric' }),
+        users: `${users.length} members`
+      };
 
       return <div className="app">
         <aside className="sidebar">
-          <div className="sidebar-logo"><h1>Task<span>Flow</span></h1><p>Scrum + Kanban dashboard</p></div>
+          <div className="sidebar-logo"><h1>Jeffer<span>son</span></h1><p>Personal Organizer</p></div>
           <div className="sidebar-nav">
             <div className="nav-section"><div className="nav-label">Workspace</div>
-              <button className={`nav-item${view === 'dashboard' ? ' active' : ''}`} onClick={() => setView('dashboard')}>🏠 Dashboard</button>
-              <button className={`nav-item${view === 'board' ? ' active' : ''}`} onClick={() => setView('board')}>🗂 Board <span className="nav-badge">{todo}</span></button>
-              <button className={`nav-item${view === 'calendar' ? ' active' : ''}`} onClick={() => setView('calendar')}>📅 Calendar</button>
-              <button className={`nav-item${view === 'users' ? ' active' : ''}`} onClick={() => setView('users')}>👥 Team</button>
+              <button className={`nav-item${view === 'dashboard' ? ' active' : ''}`} onClick={() => setView('dashboard')}><span style={{fontSize:15}}>🏠</span><span>Dashboard</span></button>
+              <button className={`nav-item${view === 'board' ? ' active' : ''}`} onClick={() => setView('board')}><span style={{fontSize:15}}>📋</span><span>Task Board</span>{urgent > 0 && <span className="nav-badge">{urgent}</span>}</button>
+              <button className={`nav-item${view === 'calendar' ? ' active' : ''}`} onClick={() => setView('calendar')}><span style={{fontSize:15}}>📅</span><span>Calendar</span></button>
+              <button className={`nav-item${view === 'users' ? ' active' : ''}`} onClick={() => setView('users')}><span style={{fontSize:15}}>👥</span><span>Users</span></button>
             </div>
             <div className="nav-section"><div className="nav-label">Focus</div>
-              <button className="nav-item" onClick={() => { setView('board'); setFilter('due-soon'); }}>⚡ Due Soon</button>
-              <button className="nav-item" onClick={() => { setView('board'); setFilter('overdue'); }}>🚨 Overdue <span className="nav-badge">{urgent}</span></button>
+              <button className="nav-item" onClick={() => { setView('board'); setFilter('due-soon'); }}><span style={{fontSize:15}}>⚡</span><span>Due Soon</span></button>
+              <button className="nav-item" onClick={() => { setView('board'); setFilter('overdue'); }}><span style={{fontSize:15}}>🚨</span><span>Overdue</span>{urgent > 0 && <span className="nav-badge">{urgent}</span>}</button>
             </div>
           </div>
-          <div className="sidebar-bottom"><button className="nav-item" onClick={exportData}>📤 Export JSON</button><button className="nav-item" onClick={resetDemo}>♻️ Reset Demo</button></div>
+          <div className="sidebar-bottom">
+            <button className="nav-item" style={{width:'100%'}} onClick={() => setQuickOpen(q => !q)}><span style={{fontSize:15}}>⚡</span><span>Quick Add</span></button>
+            <button className="nav-item" onClick={exportData}>📤 Export JSON</button>
+            <button className="nav-item" onClick={resetDemo}>♻️ Reset Demo</button>
+          </div>
         </aside>
         <main className="main">
-          <div className="topbar"><div className="topbar-title">{titleMap[view]} <span>{new Date().toLocaleDateString('en-US', { weekday:'long', month:'short', day:'numeric' })}</span></div><button className="btn btn-secondary btn-sm" onClick={exportData}>Export</button><button className="btn btn-primary btn-sm" onClick={() => openNewTask()}>+ Task</button></div>
+          <div className="topbar"><div className="topbar-title">{titleMap[view]} <span>{subtitleMap[view]}</span></div><button className="btn btn-primary" onClick={() => view === 'calendar' ? openNewEvent() : openNewTask()}>+ {view === 'calendar' ? 'New Event' : 'New Task'}</button></div>
           <div className="content">
-            {view === 'dashboard' && <Dashboard tasks={tasks} events={events} users={users} onOpenTask={setActiveTask} onOpenEvent={setActiveEvent} onNewTask={() => openNewTask()} onNewEvent={() => openNewEvent()} />}
-            {view === 'board' && <BoardView tasks={tasks} users={users} onOpenTask={setActiveTask} onNewTask={() => openNewTask()} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} onDropTask={onDropTask} />}
-            {view === 'calendar' && <CalendarView tasks={tasks} events={events} users={users} onOpenTask={setActiveTask} onOpenEvent={setActiveEvent} onNewEvent={openNewEvent} onNewTask={openNewTask} />}
+            {view === 'dashboard' && <Dashboard tasks={tasks} events={events} users={users} onOpenTask={openTask} onOpenEvent={openEvent} onNewTask={openNewTask} onNewEvent={openNewEvent} />}
+            {view === 'board' && <BoardView tasks={tasks} users={users} onOpenTask={openTask} onNewTask={openNewTask} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} onDropTask={onDropTask} />}
+            {view === 'calendar' && <CalendarView tasks={tasks} events={events} users={users} onOpenTask={openTask} onOpenEvent={openEvent} onNewEvent={openNewEvent} onNewTask={openNewTask} />}
             {view === 'users' && <UsersView users={users} tasks={tasks} setUsers={setUsers} />}
           </div>
         </main>
         <button className="fab" onClick={() => setQuickOpen(q => !q)}>+</button>
-        {quickOpen && <div className="quick-menu"><button className="quick-menu-item" onClick={() => { setQuickOpen(false); openNewTask(); }}>📋 New Task</button><button className="quick-menu-item" onClick={() => { setQuickOpen(false); openNewEvent(); }}>📅 New Event</button><button className="quick-menu-item" onClick={() => { setQuickOpen(false); setView('users'); }}>👥 Manage Team</button></div>}
+        {quickOpen && <div className="quick-menu"><button className="quick-menu-item" onClick={() => openNewTask()}>📋 New Task</button><button className="quick-menu-item" onClick={() => openNewEvent()}>📅 New Event</button><button className="quick-menu-item" onClick={() => { setView('users'); setQuickOpen(false); }}>👤 Manage Users</button></div>}
         {activeTask !== null && <TaskModal task={activeTask} users={users} onSave={saveTask} onDelete={deleteTask} onClose={() => { setActiveTask(null); setNewTaskDate(''); }} defaultDate={newTaskDate} />}
         {activeEvent !== null && <EventModal event={activeEvent} users={users} onSave={saveEvent} onDelete={deleteEvent} onClose={() => { setActiveEvent(null); setNewEventDate(''); }} defaultDate={newEventDate} />}
       </div>;
