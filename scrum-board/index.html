@@ -114,7 +114,7 @@
 <body>
   <div id="root"></div>
   <script type="text/babel">
-    const { useState, useEffect } = React;
+    const { useState, useEffect, useMemo } = React;
 
     const uid = () => Math.random().toString(36).slice(2, 10);
     const todayStr = () => new Date().toISOString().split('T')[0];
@@ -137,8 +137,13 @@
     const isOverdue = s => { const d = daysDiff(s); return d !== null && d < 0; };
     const initials = n => (n || '').split(' ').map(p => p[0]).join('').toUpperCase().slice(0, 2);
     const COLORS = ['#C2410C','#1D4ED8','#15803D','#7C3AED','#B45309','#0F766E','#BE185D','#4338CA'];
+    const CATEGORY_PRESETS = [
+      { id:'professional', name:'Professional', icon:'💼', color:'#1D4ED8', bg:'#DBEAFE' },
+      { id:'personal', name:'Personal', icon:'👤', color:'#7C3AED', bg:'#EDE9FE' },
+      { id:'family', name:'Family', icon:'👨‍👩‍👧‍👦', color:'#15803D', bg:'#DCFCE7' },
+    ];
 
-    const STORAGE_KEY = 'taskflow-v2';
+    const STORAGE_KEY = 'taskflow-v3';
     const DEFAULT_USERS = [
       {id:'u1',name:'Alex Morgan',email:'alex@example.com',color:COLORS[0]},
       {id:'u2',name:'Sam Rivera',email:'sam@example.com',color:COLORS[1]},
@@ -153,10 +158,33 @@
       {id:'e1',title:'Team Standup',description:'Daily team standup meeting.',date:TODAY,time:'09:00',location:'Zoom',assignedUsers:['u1','u2','u3'],createdAt:new Date().toISOString()},
     ];
 
+    const normalizeTag = tag => tag.trim().replace(/\s+/g, ' ');
+    const uniqueTags = tags => [...new Set((tags || []).map(normalizeTag).filter(Boolean))];
+    const slugify = value => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid();
+    const getCategoryById = (categories, id) => categories.find(c => c.id === id) || categories[0] || CATEGORY_PRESETS[0];
+    const categoryStyle = category => ({ background: category?.bg || 'var(--surface2)', color: category?.color || 'var(--text2)' });
+
+    function normalizeData(data = {}) {
+      const categories = (data.categories && data.categories.length ? data.categories : CATEGORY_PRESETS).map(c => ({ ...c, id: c.id || slugify(c.name || 'category') }));
+      const tasks = (data.tasks || SAMPLE_TASKS).map(t => ({
+        ...t,
+        category: t.category || categories[0]?.id || 'professional',
+        assignedUsers: Array.isArray(t.assignedUsers) ? t.assignedUsers : [],
+        subtasks: Array.isArray(t.subtasks) ? t.subtasks : [],
+        notes: Array.isArray(t.notes) ? t.notes : [],
+        tags: uniqueTags(t.tags || []),
+      }));
+      const events = (data.events || SAMPLE_EVENTS).map(e => ({ ...e, assignedUsers: Array.isArray(e.assignedUsers) ? e.assignedUsers : [] }));
+      const users = data.users && data.users.length ? data.users : DEFAULT_USERS;
+      return { tasks, events, users, categories };
+    }
+
     function loadData() {
       const raw = localStorage.getItem(STORAGE_KEY);
-      if (raw) return JSON.parse(raw);
-      return { tasks: SAMPLE_TASKS, events: SAMPLE_EVENTS, users: DEFAULT_USERS };
+      if (raw) {
+        try { return normalizeData(JSON.parse(raw)); } catch (e) {}
+      }
+      return normalizeData({ tasks: SAMPLE_TASKS, events: SAMPLE_EVENTS, users: DEFAULT_USERS, categories: CATEGORY_PRESETS });
     }
 
     function saveData(data) {
@@ -170,13 +198,13 @@
     }
 
     function AvStack({ userIds, users, max = 3 }) {
-      const shown = userIds.slice(0, max).map(id => users.find(u => u.id === id)).filter(Boolean);
-      const extra = userIds.length - max;
+      const shown = (userIds || []).slice(0, max).map(id => users.find(u => u.id === id)).filter(Boolean);
+      const extra = (userIds || []).length - max;
       return <div className="avatar-stack" style={{ justifyContent: 'flex-end' }}>{extra > 0 && <div className="avatar" style={{ background:'#ccc', color:'#666', fontSize:9, marginLeft:-7 }}>+{extra}</div>}{[...shown].reverse().map(u => <Av key={u.id} user={u} />)}</div>;
     }
 
     const PTag = ({ p }) => <span className={`tag priority-${p}`}>{({high:'🔴 High',medium:'🟡 Med',low:'🟢 Low'})[p] || p}</span>;
-    const CTag = ({ c }) => <span className={`tag cat-${c}`}>{({professional:'💼 Pro',personal:'👤 Personal',family:'👨‍👩‍👧‍👦 Family'})[c] || c}</span>;
+    const CTag = ({ category }) => <span className="tag" style={categoryStyle(category)}>{category?.icon || '🗂'} {category?.name || 'Category'}</span>;
 
     function UserPicker({ users, selected, onChange, max = 5 }) {
       return <div>
@@ -194,15 +222,16 @@
       </div>;
     }
 
-    function TaskCard({ task, users, onClick }) {
+    function TaskCard({ task, users, categories, onClick }) {
       const soon = isDueSoon(task.dueDate), over = isOverdue(task.dueDate), done = task.status === 'done';
       const doneCount = (task.subtasks || []).filter(s => s.done).length;
+      const category = getCategoryById(categories, task.category);
       return <div className={`task-card${soon && !done ? ' due-soon' : ''}${over && !done ? ' overdue' : ''}`} onClick={() => onClick(task)} style={{opacity: done ? .72 : 1}}>
         <div className="task-card-header"><div className="task-card-title">{task.title}</div><PTag p={task.priority} /></div>
         {task.description && <div className="task-card-body">{task.description}</div>}
         {!!task.subtasks?.length && <div style={{marginBottom:8}}><span style={{fontSize:10,color:'var(--text3)'}}>Subtasks {doneCount}/{task.subtasks.length}</span><div className="progress" style={{marginTop:3}}><div className="progress-bar" style={{width:`${task.subtasks.length ? (doneCount / task.subtasks.length) * 100 : 0}%`}} /></div></div>}
         <div className="task-card-footer">
-          <CTag c={task.category} />
+          <CTag category={category} />
           {task.dueDate && <span className="task-card-meta" style={{color: over && !done ? 'var(--red)' : soon && !done ? 'var(--amber)' : 'var(--text3)'}}>📅 {over && !done ? 'Overdue · ' : soon && !done ? 'Due soon · ' : ''}{fmtDate(task.dueDate)}</span>}
           {!!task.tags?.length && <span className="task-card-meta">🏷 {task.tags.slice(0,2).join(', ')}</span>}
           {!!task.assignedUsers?.length && <div style={{marginLeft:'auto'}}><AvStack userIds={task.assignedUsers} users={users} /></div>}
@@ -210,16 +239,35 @@
       </div>;
     }
 
-    function TaskModal({ task, users, onSave, onDelete, onClose, defaultDate = '' }) {
+    function TaskModal({ task, users, categories, existingTags, onSave, onDelete, onClose, onCreateCategory, defaultDate = '' }) {
       const isNew = !task?.id;
-      const [form, setForm] = useState(isNew ? {title:'',description:'',dueDate:defaultDate || '',priority:'medium',status:'todo',category:'professional',assignedUsers:[],subtasks:[],notes:[],tags:''} : {...task, tags:(task.tags || []).join(', ')});
+      const [form, setForm] = useState(isNew ? {title:'',description:'',dueDate:defaultDate || '',priority:'medium',status:'todo',category:categories[0]?.id || 'professional',assignedUsers:[],subtasks:[],notes:[],tags:[]} : {...task, tags: uniqueTags(task.tags || [])});
       const [tab, setTab] = useState('details');
       const [newSub, setNewSub] = useState('');
       const [newNote, setNewNote] = useState('');
+      const [tagDraft, setTagDraft] = useState('');
+      const [showCategoryMaker, setShowCategoryMaker] = useState(false);
+      const [categoryDraft, setCategoryDraft] = useState({ name:'', icon:'🗂', color:COLORS[0], bg:'#FDE68A' });
       const set = (k,v) => setForm(f => ({...f,[k]:v}));
       const addSub = () => { if (!newSub.trim()) return; set('subtasks', [...form.subtasks, {id:uid(), text:newSub.trim(), done:false}]); setNewSub(''); };
       const addNote = () => { if (!newNote.trim()) return; set('notes', [...form.notes, {id:uid(), text:newNote.trim(), createdAt:new Date().toISOString()}]); setNewNote(''); };
-      const save = () => { if (!form.title.trim()) return; onSave({...form, id: form.id || uid(), tags: form.tags.split(',').map(t => t.trim()).filter(Boolean), createdAt: form.createdAt || new Date().toISOString()}); };
+      const addTag = raw => {
+        const tag = normalizeTag(raw || tagDraft);
+        if (!tag || form.tags.includes(tag)) return;
+        set('tags', [...form.tags, tag]);
+        setTagDraft('');
+      };
+      const saveCategory = () => {
+        if (!categoryDraft.name.trim()) return;
+        const created = onCreateCategory(categoryDraft);
+        if (created?.id) set('category', created.id);
+        setCategoryDraft({ name:'', icon:'🗂', color:COLORS[0], bg:'#FDE68A' });
+        setShowCategoryMaker(false);
+      };
+      const save = () => {
+        if (!form.title.trim()) return;
+        onSave({...form, id: form.id || uid(), tags: uniqueTags(form.tags), createdAt: form.createdAt || new Date().toISOString()});
+      };
       const tabs = {details:'📋 Details',people:'👥 People',subtasks:'☑️ Subtasks',notes:'📝 Notes'};
       return <div className="overlay" onClick={e => e.target === e.currentTarget && onClose()}>
         <div className="modal modal-wide">
@@ -227,6 +275,9 @@
           <div className="modal-body">
             <div className="detail-tabs">{Object.entries(tabs).map(([k,v]) => <div key={k} className={`detail-tab${tab === k ? ' active' : ''}`} onClick={() => setTab(k)}>{v}</div>)}</div>
             {tab === 'details' && <>
+              <div style={{background:'var(--primary-bg)',border:'1px solid var(--primary-light)',borderRadius:'var(--radius-sm)',padding:'10px 12px',marginBottom:14,fontSize:12,color:'var(--text2)'}}>
+                <strong style={{color:'var(--primary)'}}>Required when creating a task:</strong> title, status, and category. Tags and assignees can be reused later for faster planning.
+              </div>
               <div className="form-group"><label className="form-label">Task Title *</label><input className="form-input" value={form.title} onChange={e => set('title', e.target.value)} placeholder="What needs to be done?" /></div>
               <div className="form-group"><label className="form-label">Description</label><textarea className="form-textarea" value={form.description} onChange={e => set('description', e.target.value)} placeholder="Add more context..." /></div>
               <div className="form-row">
@@ -234,10 +285,34 @@
                 <div className="form-group"><label className="form-label">Priority</label><select className="form-select" value={form.priority} onChange={e => set('priority', e.target.value)}><option value="high">🔴 High</option><option value="medium">🟡 Medium</option><option value="low">🟢 Low</option></select></div>
               </div>
               <div className="form-row">
-                <div className="form-group"><label className="form-label">Status</label><select className="form-select" value={form.status} onChange={e => set('status', e.target.value)}><option value="todo">📥 To Do</option><option value="in-progress">🔄 In Progress</option><option value="done">✅ Done</option></select></div>
-                <div className="form-group"><label className="form-label">Category</label><select className="form-select" value={form.category} onChange={e => set('category', e.target.value)}><option value="professional">💼 Professional</option><option value="personal">👤 Personal</option><option value="family">👨‍👩‍👧‍👦 Family</option></select></div>
+                <div className="form-group"><label className="form-label">Status *</label><select className="form-select" value={form.status} onChange={e => set('status', e.target.value)}><option value="todo">📥 To Do</option><option value="in-progress">🔄 In Progress</option><option value="done">✅ Done</option></select></div>
+                <div className="form-group"><label className="form-label">Category *</label><select className="form-select" value={form.category} onChange={e => set('category', e.target.value)}>{categories.map(c => <option key={c.id} value={c.id}>{c.icon} {c.name}</option>)}</select></div>
               </div>
-              <div className="form-group"><label className="form-label">Tags</label><input className="form-input" value={form.tags} onChange={e => set('tags', e.target.value)} placeholder="tag1, tag2, tag3" /></div>
+              <div style={{display:'flex',justifyContent:'flex-end',marginTop:-6,marginBottom:12}}><button className="btn btn-secondary btn-sm" onClick={() => setShowCategoryMaker(v => !v)}>+ Create Category</button></div>
+              {showCategoryMaker && <div style={{border:'1px solid var(--border)',borderRadius:'var(--radius-sm)',padding:12,background:'var(--surface2)',marginBottom:14}}>
+                <div className="form-row">
+                  <div className="form-group"><label className="form-label">Category Name</label><input className="form-input" value={categoryDraft.name} onChange={e => setCategoryDraft(d => ({...d, name:e.target.value}))} placeholder="Operations" /></div>
+                  <div className="form-group"><label className="form-label">Icon</label><input className="form-input" value={categoryDraft.icon} onChange={e => setCategoryDraft(d => ({...d, icon:e.target.value || '🗂'}))} placeholder="🗂" /></div>
+                </div>
+                <div className="form-row">
+                  <div className="form-group"><label className="form-label">Color</label><div style={{display:'flex',gap:7,flexWrap:'wrap'}}>{COLORS.map(c => <div key={c} onClick={() => setCategoryDraft(d => ({...d, color:c}))} style={{width:24,height:24,borderRadius:'50%',background:c,cursor:'pointer',border: categoryDraft.color === c ? '3px solid var(--text)' : '3px solid transparent'}} />)}</div></div>
+                  <div className="form-group"><label className="form-label">Background</label><input className="form-input" value={categoryDraft.bg} onChange={e => setCategoryDraft(d => ({...d, bg:e.target.value}))} placeholder="#FDE68A" /></div>
+                </div>
+                <div style={{display:'flex',justifyContent:'flex-end',gap:8}}><button className="btn btn-ghost btn-sm" onClick={() => setShowCategoryMaker(false)}>Cancel</button><button className="btn btn-primary btn-sm" onClick={saveCategory}>Save Category</button></div>
+              </div>}
+              <div className="form-group">
+                <label className="form-label">Tags</label>
+                <div style={{display:'flex',gap:7,marginBottom:8}}>
+                  <input className="form-input" value={tagDraft} onChange={e => setTagDraft(e.target.value)} onKeyDown={e => e.key === 'Enter' && (e.preventDefault(), addTag())} placeholder="Add a tag and press Enter" />
+                  <button className="btn btn-secondary btn-sm" onClick={() => addTag()}>+ Add Tag</button>
+                </div>
+                <div style={{display:'flex',flexWrap:'wrap',gap:7,marginBottom:8}}>
+                  {form.tags.map(tag => <span key={tag} className="tag status-in-progress" style={{gap:6}}>🏷 {tag}<button style={{marginLeft:4,color:'inherit'}} onClick={() => set('tags', form.tags.filter(t => t !== tag))}>✕</button></span>)}
+                  {form.tags.length === 0 && <span style={{fontSize:12,color:'var(--text3)'}}>No tags yet</span>}
+                </div>
+                {!!existingTags.length && <div style={{display:'flex',flexWrap:'wrap',gap:7}}>{existingTags.map(tag => <button key={tag} className="filter-btn" style={{padding:'4px 10px'}} onClick={() => addTag(tag)}>{form.tags.includes(tag) ? '✓ ' : ''}{tag}</button>)}</div>}
+                <div style={{fontSize:11,color:'var(--text3)',marginTop:6}}>Reusable tags stay available across tasks and can be filtered on the board.</div>
+              </div>
             </>}
             {tab === 'people' && <div className="form-group"><label className="form-label">Assigned Users</label><UserPicker users={users} selected={form.assignedUsers} onChange={v => set('assignedUsers', v)} max={5} /></div>}
             {tab === 'subtasks' && <>
@@ -300,7 +375,7 @@
       return <div className="reminder-banner"><div style={{fontSize:20,flexShrink:0}}>🔔</div><div><div style={{fontSize:13,color:'var(--amber)',fontWeight:700}}>{items.length} item{items.length > 1 ? 's' : ''} need attention</div><div style={{display:'flex',flexDirection:'column',gap:2,marginTop:4}}>{items.slice(0,3).map(it => <div key={it.id} style={{fontSize:12,color:'var(--text2)'}}>{it._t === 'overdue' ? '⚠️ Overdue' : it._t === 'event' ? '📅 Event' : '📋 Task'}: <strong>{it.title}</strong> · {fmtDate(it.dueDate || it.date)}</div>)}{items.length > 3 && <div style={{fontSize:11,color:'var(--text3)'}}>+{items.length - 3} more</div>}</div></div></div>;
     }
 
-    function Dashboard({ tasks, events, users, onOpenTask, onOpenEvent, onNewTask, onNewEvent }) {
+    function Dashboard({ tasks, events, users, categories, onOpenTask, onOpenEvent, onNewTask, onNewEvent }) {
       const todo = tasks.filter(t => t.status === 'todo').length;
       const inp = tasks.filter(t => t.status === 'in-progress').length;
       const soon = tasks.filter(t => t.status !== 'done' && isDueSoon(t.dueDate)).length;
@@ -321,7 +396,7 @@
         <div className="dash-grid">
           <div>
             <div className="section-header"><div><div className="section-title">Recent Tasks</div><div className="section-sub">{tasks.length} total</div></div><button className="btn btn-primary btn-sm" onClick={onNewTask}>+ New Task</button></div>
-            <div style={{display:'flex',flexDirection:'column',gap:9}}>{recent.length === 0 ? <div className="empty"><div className="eicon">📋</div><h3>No tasks yet</h3><p>Create your first task</p></div> : recent.map(t => <TaskCard key={t.id} task={t} users={users} onClick={onOpenTask} />)}</div>
+            <div style={{display:'flex',flexDirection:'column',gap:9}}>{recent.length === 0 ? <div className="empty"><div className="eicon">📋</div><h3>No tasks yet</h3><p>Create your first task</p></div> : recent.map(t => <TaskCard key={t.id} task={t} users={users} categories={categories} onClick={onOpenTask} />)}</div>
           </div>
           <div>
             <div className="section-header"><div><div className="section-title">Upcoming</div><div className="section-sub">Tasks & events</div></div><button className="btn btn-secondary btn-sm" onClick={onNewEvent}>+ Event</button></div>
@@ -332,28 +407,40 @@
       </div>;
     }
 
-    function BoardView({ tasks, users, onOpenTask, onNewTask, filter, setFilter, search, setSearch, onDropTask }) {
+    function BoardView({ tasks, users, categories, tags, onOpenTask, onNewTask, filter, setFilter, userFilter, setUserFilter, tagFilter, setTagFilter, search, setSearch, onDropTask }) {
       const filtered = tasks.filter(t => {
-        if (filter === 'professional') return t.category === 'professional';
-        if (filter === 'personal') return t.category === 'personal';
-        if (filter === 'family') return t.category === 'family';
         if (filter === 'due-soon') return isDueSoon(t.dueDate) && t.status !== 'done';
         if (filter === 'overdue') return isOverdue(t.dueDate) && t.status !== 'done';
+        if (filter !== 'all') return t.category === filter;
         return true;
-      }).filter(t => !search || t.title.toLowerCase().includes(search.toLowerCase()) || (t.description || '').toLowerCase().includes(search.toLowerCase()));
+      }).filter(t => !userFilter || t.assignedUsers?.includes(userFilter))
+        .filter(t => !tagFilter || (t.tags || []).includes(tagFilter))
+        .filter(t => !search || t.title.toLowerCase().includes(search.toLowerCase()) || (t.description || '').toLowerCase().includes(search.toLowerCase()) || (t.tags || []).some(tag => tag.toLowerCase().includes(search.toLowerCase())));
       const cols = [{id:'todo',l:'📥 To Do'},{id:'in-progress',l:'🔄 In Progress'},{id:'done',l:'✅ Done'}];
       const [dragged, setDragged] = useState(null);
+      const filterOptions = [{ id:'all', label:'All' }, ...categories.map(c => ({ id:c.id, label:`${c.icon} ${c.name}` })), { id:'due-soon', label:'⚡ Due Soon' }, { id:'overdue', label:'⚠️ Overdue' }];
       return <div>
-        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:18,flexWrap:'wrap'}}>
-          <div className="filter-bar" style={{marginBottom:0,flex:1}}>{[{v:'all',l:'All'},{v:'professional',l:'💼 Pro'},{v:'personal',l:'👤 Personal'},{v:'family',l:'👨‍👩‍👧‍👦 Family'},{v:'due-soon',l:'⚡ Due Soon'},{v:'overdue',l:'⚠️ Overdue'}].map(f => <button key={f.v} className={`filter-btn${filter === f.v ? ' active' : ''}`} onClick={() => setFilter(f.v)}>{f.l}</button>)}</div>
-          <div className="search-wrap"><span className="search-icon">🔍</span><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search..." /></div>
+        <div style={{display:'flex',alignItems:'center',gap:10,marginBottom:12,flexWrap:'wrap'}}>
+          <div className="filter-bar" style={{marginBottom:0,flex:1}}>{filterOptions.map(f => <button key={f.id} className={`filter-btn${filter === f.id ? ' active' : ''}`} onClick={() => setFilter(f.id)}>{f.label}</button>)}</div>
+          <div className="search-wrap"><span className="search-icon">🔍</span><input value={search} onChange={e => setSearch(e.target.value)} placeholder="Search tasks or tags..." /></div>
           <button className="btn btn-primary btn-sm" onClick={onNewTask}>+ New Task</button>
         </div>
-        <div className="board">{cols.map(col => { const ct = filtered.filter(t => t.status === col.id); return <div key={col.id} className="board-col" onDragOver={e => e.preventDefault()} onDrop={() => { if (dragged) onDropTask(dragged, col.id); setDragged(null); }}><div className="board-col-header"><div className="board-col-title">{col.l}</div><span className="board-col-count">{ct.length}</span></div><div className="board-tasks">{ct.length === 0 ? <div style={{textAlign:'center',padding:'20px 0',color:'var(--text3)',fontSize:11}}>No tasks</div> : ct.map(t => <div key={t.id} draggable onDragStart={() => setDragged(t.id)}><TaskCard task={t} users={users} onClick={onOpenTask} /></div>)}</div></div>; })}</div>
+        <div style={{display:'flex',gap:10,marginBottom:18,flexWrap:'wrap'}}>
+          <select className="form-select" style={{maxWidth:220}} value={userFilter} onChange={e => setUserFilter(e.target.value)}>
+            <option value="">All users</option>
+            {users.map(u => <option key={u.id} value={u.id}>{u.name}</option>)}
+          </select>
+          <select className="form-select" style={{maxWidth:220}} value={tagFilter} onChange={e => setTagFilter(e.target.value)}>
+            <option value="">All tags</option>
+            {tags.map(tag => <option key={tag} value={tag}>{tag}</option>)}
+          </select>
+          {(userFilter || tagFilter) && <button className="btn btn-secondary btn-sm" onClick={() => { setUserFilter(''); setTagFilter(''); }}>Clear filters</button>}
+        </div>
+        <div className="board">{cols.map(col => { const ct = filtered.filter(t => t.status === col.id); return <div key={col.id} className="board-col" onDragOver={e => e.preventDefault()} onDrop={() => { if (dragged) onDropTask(dragged, col.id); setDragged(null); }}><div className="board-col-header"><div className="board-col-title">{col.l}</div><span className="board-col-count">{ct.length}</span></div><div className="board-tasks">{ct.length === 0 ? <div style={{textAlign:'center',padding:'20px 0',color:'var(--text3)',fontSize:11}}>No tasks</div> : ct.map(t => <div key={t.id} draggable onDragStart={() => setDragged(t.id)}><TaskCard task={t} users={users} categories={categories} onClick={onOpenTask} /></div>)}</div></div>; })}</div>
       </div>;
     }
 
-    function CalendarView({ tasks, events, users, onOpenTask, onOpenEvent, onNewEvent, onNewTask }) {
+    function CalendarView({ tasks, events, users, categories, onOpenTask, onOpenEvent, onNewEvent, onNewTask }) {
       const [mode, setMode] = useState('month');
       const [cur, setCur] = useState(new Date());
       const [sel, setSel] = useState(null);
@@ -378,13 +465,13 @@
         <div className="cal-header"><div className="cal-nav"><button className="btn btn-secondary btn-icon" onClick={() => mode === 'month' ? nav(-1) : navW(-1)}>‹</button><button className="btn btn-ghost btn-sm" onClick={() => setCur(new Date())}>Today</button><button className="btn btn-secondary btn-icon" onClick={() => mode === 'month' ? nav(1) : navW(1)}>›</button></div><div className="cal-title">{mode === 'month' ? `${MONTHS[mo]} ${yr}` : `Week of ${ws.toLocaleDateString('en-US',{month:'short',day:'numeric'})}`}</div><div style={{marginLeft:'auto',display:'flex',gap:8,alignItems:'center'}}><button className="btn btn-secondary btn-sm" onClick={() => onNewEvent()}>+ Event</button><button className="btn btn-primary btn-sm" onClick={() => onNewTask()}>+ Task</button><div className="cal-mode-toggle"><div className={`cal-mode-btn${mode === 'month' ? ' active' : ''}`} onClick={() => setMode('month')}>Month</div><div className={`cal-mode-btn${mode === 'week' ? ' active' : ''}`} onClick={() => setMode('week')}>Week</div></div></div></div>
         {mode === 'month' && <div className="cal-grid"><div className="cal-weekdays">{DAYS.map(d => <div key={d} className="cal-weekday">{d}</div>)}</div><div className="cal-days">{cells.map((cell,i) => { const evs = events.filter(e => e.date === cell.date), tsks = tasks.filter(t => t.dueDate === cell.date && t.status !== 'done'); const all = [...evs,...tsks]; return <div key={i} className={`cal-day${cell.o ? ' other-month' : ''}${cell.date === TODAY ? ' today' : ''}`} onClick={() => setSel(sel === cell.date ? null : cell.date)}><div className="cal-day-num">{+cell.date.split('-')[2]}</div>{evs.slice(0,1).map(e => <div key={e.id} className="cal-event event-type">{e.title}</div>)}{tsks.slice(0, evs.length ? 1 : 2).map(t => <div key={t.id} className={`cal-event ${isOverdue(t.dueDate) ? 'overdue-type' : 'task-type'}`}>{t.title}</div>)}{all.length > 2 && <div className="cal-more">+{all.length - 2} more</div>}</div>; })}</div></div>}
         {mode === 'week' && <div className="week-grid"><div className="week-header"><div style={{borderRight:'1px solid var(--border)',padding:'10px 6px'}} />{wds.map((d,i) => { const ds = d.toISOString().split('T')[0]; return <div key={i} className={`week-day-header${ds === TODAY ? ' today' : ''}`}><div className="day-name">{DAYS[i]}</div><div className="day-num">{d.getDate()}</div></div>; })}</div><div className="week-body"><div className="week-time-col">{HOURS.map(h => <div key={h} className="week-time-slot">{h % 12 || 12}{h < 12 ? 'am' : 'pm'}</div>)}</div>{wds.map((d,i) => { const ds = d.toISOString().split('T')[0]; const de = events.filter(e => e.date === ds); const dt = tasks.filter(t => t.dueDate === ds && t.status !== 'done'); return <div key={i} className="week-day-col">{HOURS.map(h => { const eh = de.filter(e => e.time && +e.time.split(':')[0] === h); const th = h === 9 ? dt : []; return <div key={h} className="week-slot">{eh.map(e => <div key={e.id} className="week-event" onClick={() => onOpenEvent(e)}>{e.title}</div>)}{th.map(t => <div key={t.id} className="week-task" onClick={() => onOpenTask(t)}>{t.title}</div>)}</div>; })}</div>; })}</div></div>}
-        {sel && selItems && <div className="card" style={{marginTop:14,padding:14}}><div className="section-header"><div className="section-title">📅 {fmtDate(sel,{weekday:'long',month:'long',day:'numeric'})}</div><div style={{display:'flex',gap:7}}><button className="btn btn-secondary btn-sm" onClick={() => onNewEvent(sel)}>+ Event</button><button className="btn btn-primary btn-sm" onClick={() => onNewTask(sel)}>+ Task</button></div></div>{selItems.evs.length === 0 && selItems.tsks.length === 0 && <div style={{color:'var(--text3)',fontSize:12}}>Nothing scheduled</div>}{selItems.evs.map(e => <div key={e.id} className="event-card" style={{marginBottom:7}} onClick={() => onOpenEvent(e)}><div className="event-title">{e.title}</div><div className="event-meta">{e.time && <span>🕐 {e.time}</span>}{e.location && <span>📍 {e.location}</span>}</div></div>)}{selItems.tsks.map(t => <TaskCard key={t.id} task={t} users={users} onClick={onOpenTask} />)}</div>}
+        {sel && selItems && <div className="card" style={{marginTop:14,padding:14}}><div className="section-header"><div className="section-title">📅 {fmtDate(sel,{weekday:'long',month:'long',day:'numeric'})}</div><div style={{display:'flex',gap:7}}><button className="btn btn-secondary btn-sm" onClick={() => onNewEvent(sel)}>+ Event</button><button className="btn btn-primary btn-sm" onClick={() => onNewTask(sel)}>+ Task</button></div></div>{selItems.evs.length === 0 && selItems.tsks.length === 0 && <div style={{color:'var(--text3)',fontSize:12}}>Nothing scheduled</div>}{selItems.evs.map(e => <div key={e.id} className="event-card" style={{marginBottom:7}} onClick={() => onOpenEvent(e)}><div className="event-title">{e.title}</div><div className="event-meta">{e.time && <span>🕐 {e.time}</span>}{e.location && <span>📍 {e.location}</span>}</div></div>)}{selItems.tsks.map(t => <TaskCard key={t.id} task={t} users={users} categories={categories} onClick={onOpenTask} />)}</div>}
       </div>;
     }
 
-    function UsersView({ users, tasks, setUsers }) {
+    function UsersView({ users, tasks, onAddUser, onRemoveUser }) {
       const [showAdd, setShowAdd] = useState(false);
-      return <div><div className="section-header"><div><div className="section-title">Team Members</div><div className="section-sub">{users.length}/5 users</div></div>{users.length < 5 && <button className="btn btn-primary" onClick={() => setShowAdd(true)}>+ Add User</button>}</div>{users.length === 0 ? <div className="empty"><div className="eicon">👥</div><h3>No users yet</h3><p>Add users to assign tasks</p></div> : <div className="users-grid">{users.map(u => { const ut = tasks.filter(t => t.assignedUsers?.includes(u.id) && t.status !== 'done').length; const uc = tasks.filter(t => t.assignedUsers?.includes(u.id) && t.status === 'done').length; return <div key={u.id} className="user-card"><div style={{display:'flex',justifyContent:'center',marginBottom:10}}><Av user={u} size="lg" /></div><h3 style={{fontSize:14,fontWeight:700}}>{u.name}</h3><p style={{fontSize:12,color:'var(--text3)',marginTop:2}}>{u.email || 'No email'}</p><div style={{marginTop:11,background:'var(--surface2)',borderRadius:'var(--radius-sm)',padding:'9px 11px',textAlign:'left'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}><span style={{fontSize:11,color:'var(--text3)'}}>Active tasks</span><span style={{fontSize:12,fontWeight:700}}>{ut}</span></div><div style={{display:'flex',justifyContent:'space-between'}}><span style={{fontSize:11,color:'var(--text3)'}}>Completed</span><span style={{fontSize:12,fontWeight:700,color:'var(--green)'}}>{uc}</span></div></div><div style={{display:'flex',gap:6,justifyContent:'center',marginTop:11}}><button className="btn btn-secondary btn-sm" style={{color:'var(--red)'}} onClick={() => { if (window.confirm(`Remove ${u.name}?`)) setUsers(p => p.filter(x => x.id !== u.id)); }}>Remove</button></div></div>; })}</div>}{showAdd && <UserModal onSave={u => { setUsers(p => [...p, u]); setShowAdd(false); }} onClose={() => setShowAdd(false)} usedColors={users.map(u => u.color)} />}</div>;
+      return <div><div className="section-header"><div><div className="section-title">Team Members</div><div className="section-sub">{users.length}/5 users</div></div>{users.length < 5 && <button className="btn btn-primary" onClick={() => setShowAdd(true)}>+ Add User</button>}</div>{users.length === 0 ? <div className="empty"><div className="eicon">👥</div><h3>No users yet</h3><p>Add users to assign tasks</p></div> : <div className="users-grid">{users.map(u => { const ut = tasks.filter(t => t.assignedUsers?.includes(u.id) && t.status !== 'done').length; const uc = tasks.filter(t => t.assignedUsers?.includes(u.id) && t.status === 'done').length; return <div key={u.id} className="user-card"><div style={{display:'flex',justifyContent:'center',marginBottom:10}}><Av user={u} size="lg" /></div><h3 style={{fontSize:14,fontWeight:700}}>{u.name}</h3><p style={{fontSize:12,color:'var(--text3)',marginTop:2}}>{u.email || 'No email'}</p><div style={{marginTop:11,background:'var(--surface2)',borderRadius:'var(--radius-sm)',padding:'9px 11px',textAlign:'left'}}><div style={{display:'flex',justifyContent:'space-between',marginBottom:3}}><span style={{fontSize:11,color:'var(--text3)'}}>Active tasks</span><span style={{fontSize:12,fontWeight:700}}>{ut}</span></div><div style={{display:'flex',justifyContent:'space-between'}}><span style={{fontSize:11,color:'var(--text3)'}}>Completed</span><span style={{fontSize:12,fontWeight:700,color:'var(--green)'}}>{uc}</span></div></div><div style={{fontSize:11,color:'var(--text3)',marginTop:8}}>Removing a user also clears them from assigned tasks and event attendees.</div><div style={{display:'flex',gap:6,justifyContent:'center',marginTop:11}}><button className="btn btn-secondary btn-sm" style={{color:'var(--red)'}} onClick={() => onRemoveUser(u)}>Remove</button></div></div>; })}</div>}{showAdd && <UserModal onSave={u => { onAddUser(u); setShowAdd(false); }} onClose={() => setShowAdd(false)} usedColors={users.map(u => u.color)} />}</div>;
     }
 
     function App() {
@@ -392,8 +479,11 @@
       const [tasks, setTasks] = useState(initial.tasks || []);
       const [events, setEvents] = useState(initial.events || []);
       const [users, setUsers] = useState(initial.users || []);
+      const [categories, setCategories] = useState(initial.categories || CATEGORY_PRESETS);
       const [view, setView] = useState('dashboard');
       const [filter, setFilter] = useState('all');
+      const [userFilter, setUserFilter] = useState('');
+      const [tagFilter, setTagFilter] = useState('');
       const [search, setSearch] = useState('');
       const [activeTask, setActiveTask] = useState(null);
       const [activeEvent, setActiveEvent] = useState(null);
@@ -401,10 +491,11 @@
       const [newEventDate, setNewEventDate] = useState('');
       const [quickOpen, setQuickOpen] = useState(false);
 
-      useEffect(() => { saveData({ tasks, events, users }); }, [tasks, events, users]);
+      useEffect(() => { saveData({ tasks, events, users, categories }); }, [tasks, events, users, categories]);
 
       const todo = tasks.filter(t => t.status === 'todo').length;
       const urgent = tasks.filter(t => t.status !== 'done' && (isDueSoon(t.dueDate) || isOverdue(t.dueDate))).length;
+      const reusableTags = useMemo(() => uniqueTags(tasks.flatMap(t => t.tags || [])), [tasks]);
 
       const openTask = t => setActiveTask(t);
       const openEvent = e => setActiveEvent(e);
@@ -414,8 +505,23 @@
       const deleteTask = id => { setTasks(prev => prev.filter(t => t.id !== id)); setActiveTask(null); };
       const saveEvent = e => { setEvents(prev => prev.some(x => x.id === e.id) ? prev.map(x => x.id === e.id ? e : x) : [e, ...prev]); setActiveEvent(null); setNewEventDate(''); };
       const deleteEvent = id => { setEvents(prev => prev.filter(e => e.id !== id)); setActiveEvent(null); };
+      const createCategory = draft => {
+        const id = slugify(draft.name);
+        const existing = categories.find(c => c.id === id || c.name.toLowerCase() === draft.name.trim().toLowerCase());
+        if (existing) return existing;
+        const created = { id, name:draft.name.trim(), icon:draft.icon || '🗂', color:draft.color || COLORS[0], bg:draft.bg || '#FDE68A' };
+        setCategories(prev => [...prev, created]);
+        return created;
+      };
+      const removeUser = user => {
+        if (!window.confirm(`Remove ${user.name}? This will also unassign them from tasks and events.`)) return;
+        setUsers(prev => prev.filter(x => x.id !== user.id));
+        setTasks(prev => prev.map(t => ({ ...t, assignedUsers: (t.assignedUsers || []).filter(id => id !== user.id) })));
+        setEvents(prev => prev.map(e => ({ ...e, assignedUsers: (e.assignedUsers || []).filter(id => id !== user.id) })));
+        if (userFilter === user.id) setUserFilter('');
+      };
       const exportData = () => {
-        const data = JSON.stringify({ tasks, events, users }, null, 2);
+        const data = JSON.stringify({ tasks, events, users, categories }, null, 2);
         const blob = new Blob([data], { type: 'application/json' });
         const url = URL.createObjectURL(blob);
         const a = document.createElement('a');
@@ -424,14 +530,15 @@
       };
       const resetDemo = () => {
         if (!window.confirm('Reset board to demo data?')) return;
-        setTasks(SAMPLE_TASKS); setEvents(SAMPLE_EVENTS); setUsers(DEFAULT_USERS);
+        const demo = normalizeData({ tasks: SAMPLE_TASKS, events: SAMPLE_EVENTS, users: DEFAULT_USERS, categories: CATEGORY_PRESETS });
+        setTasks(demo.tasks); setEvents(demo.events); setUsers(demo.users); setCategories(demo.categories); setFilter('all'); setUserFilter(''); setTagFilter(''); setSearch('');
       };
       const onDropTask = (taskId, status) => setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status } : t));
 
       const titleMap = { dashboard:'Dashboard', board:'Task Board', calendar:'Calendar', users:'Users' };
       const subtitleMap = {
         dashboard: `${tasks.length} tasks · ${events.length} events`,
-        board: `${tasks.length} tasks`,
+        board: `${tasks.length} tasks · ${reusableTags.length} tags · ${categories.length} categories`,
         calendar: new Date().toLocaleDateString('en-US', { month:'long', year:'numeric' }),
         users: `${users.length} members`
       };
@@ -460,15 +567,15 @@
         <main className="main">
           <div className="topbar"><div className="topbar-title">{titleMap[view]} <span>{subtitleMap[view]}</span></div><button className="btn btn-primary" onClick={() => view === 'calendar' ? openNewEvent() : openNewTask()}>+ {view === 'calendar' ? 'New Event' : 'New Task'}</button></div>
           <div className="content">
-            {view === 'dashboard' && <Dashboard tasks={tasks} events={events} users={users} onOpenTask={openTask} onOpenEvent={openEvent} onNewTask={openNewTask} onNewEvent={openNewEvent} />}
-            {view === 'board' && <BoardView tasks={tasks} users={users} onOpenTask={openTask} onNewTask={openNewTask} filter={filter} setFilter={setFilter} search={search} setSearch={setSearch} onDropTask={onDropTask} />}
-            {view === 'calendar' && <CalendarView tasks={tasks} events={events} users={users} onOpenTask={openTask} onOpenEvent={openEvent} onNewEvent={openNewEvent} onNewTask={openNewTask} />}
-            {view === 'users' && <UsersView users={users} tasks={tasks} setUsers={setUsers} />}
+            {view === 'dashboard' && <Dashboard tasks={tasks} events={events} users={users} categories={categories} onOpenTask={openTask} onOpenEvent={openEvent} onNewTask={openNewTask} onNewEvent={openNewEvent} />}
+            {view === 'board' && <BoardView tasks={tasks} users={users} categories={categories} tags={reusableTags} onOpenTask={openTask} onNewTask={openNewTask} filter={filter} setFilter={setFilter} userFilter={userFilter} setUserFilter={setUserFilter} tagFilter={tagFilter} setTagFilter={setTagFilter} search={search} setSearch={setSearch} onDropTask={onDropTask} />}
+            {view === 'calendar' && <CalendarView tasks={tasks} events={events} users={users} categories={categories} onOpenTask={openTask} onOpenEvent={openEvent} onNewEvent={openNewEvent} onNewTask={openNewTask} />}
+            {view === 'users' && <UsersView users={users} tasks={tasks} onAddUser={u => setUsers(p => [...p, u])} onRemoveUser={removeUser} />}
           </div>
         </main>
         <button className="fab" onClick={() => setQuickOpen(q => !q)}>+</button>
         {quickOpen && <div className="quick-menu"><button className="quick-menu-item" onClick={() => openNewTask()}>📋 New Task</button><button className="quick-menu-item" onClick={() => openNewEvent()}>📅 New Event</button><button className="quick-menu-item" onClick={() => { setView('users'); setQuickOpen(false); }}>👤 Manage Users</button></div>}
-        {activeTask !== null && <TaskModal task={activeTask} users={users} onSave={saveTask} onDelete={deleteTask} onClose={() => { setActiveTask(null); setNewTaskDate(''); }} defaultDate={newTaskDate} />}
+        {activeTask !== null && <TaskModal task={activeTask} users={users} categories={categories} existingTags={reusableTags} onSave={saveTask} onDelete={deleteTask} onClose={() => { setActiveTask(null); setNewTaskDate(''); }} onCreateCategory={createCategory} defaultDate={newTaskDate} />}
         {activeEvent !== null && <EventModal event={activeEvent} users={users} onSave={saveEvent} onDelete={deleteEvent} onClose={() => { setActiveEvent(null); setNewEventDate(''); }} defaultDate={newEventDate} />}
       </div>;
     }
