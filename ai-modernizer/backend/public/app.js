@@ -173,6 +173,7 @@ async function submitContact() {
   const email = document.getElementById('contactEmail').value.trim();
   const message = document.getElementById('contactMessage')?.value.trim() || '';
   const msg = document.getElementById('contactSuccess');
+  const submitBtn = document.getElementById('contactSubmitBtn');
 
   if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
     showToast('Please enter a valid work email.', 'error');
@@ -181,6 +182,11 @@ async function submitContact() {
 
   const fullMessage = name ? `Name: ${name}\n\n${message}` : message;
 
+  if (submitBtn) {
+    submitBtn.disabled = true;
+    submitBtn.textContent = 'Sending...';
+  }
+
   try {
     const res = await fetch(`${API_BASE}/contact`, {
       method: 'POST',
@@ -188,16 +194,22 @@ async function submitContact() {
       body: JSON.stringify({ name, email, message: fullMessage })
     });
     if (!res.ok) throw new Error('Contact request failed');
-    msg.textContent = 'Thanks, your assessment request has been received.';
+    msg.textContent = 'Thanks, your assessment request has been received. We will reply with the fastest path to a focused pilot.';
     msg.style.display = 'block';
     document.getElementById('contactEmail').value = '';
     const nameField = document.getElementById('contactName');
     const messageField = document.getElementById('contactMessage');
     if (nameField) nameField.value = '';
     if (messageField) messageField.value = '';
+    loadStats();
     showToast('Assessment request sent.', 'success');
   } catch (err) {
     window.location.href = `mailto:hello@agii.ai?subject=${encodeURIComponent('AI Modernization Inquiry')}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
+  } finally {
+    if (submitBtn) {
+      submitBtn.disabled = false;
+      submitBtn.textContent = 'Request Assessment';
+    }
   }
 }
 

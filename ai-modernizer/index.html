@@ -34,8 +34,12 @@
 
 <section class="hero">
 <h1>Modernize Legacy Systems<br>10× Faster with AI</h1>
-<p>Agii Intelligence agents handle discovery, planning, execution, and validation — your team stays in control while AI co-authors every module.</p>
-<a href="#demo" class="cta-btn" onclick="smoothNav('demo')">Try Live Demo →</a>
+<p>Agii Intelligence agents handle discovery, planning, execution, and validation, your team stays in control while AI co-authors every module.</p>
+<div class="hero-actions">
+  <a href="#demo" class="cta-btn" onclick="smoothNav('demo')">Try Live Demo →</a>
+  <a href="#contact" class="cta-btn cta-btn-secondary" onclick="smoothNav('contact')">Request Pilot Assessment</a>
+</div>
+<div class="hero-proof">Best first step: run a focused pilot on one codebase, one workflow, or one high-risk legacy module.</div>
 </section>
 
 <section class="stats-bar">
@@ -193,6 +197,16 @@
     <p>Exportable findings that engineering leadership, transformation sponsors, or pilot buyers can review immediately.</p>
   </div>
 </div>
+<div class="pilot-cta">
+  <div>
+    <h3>Good fit for a Phase 1 pilot</h3>
+    <p>Use this when you need a fast answer on modernization risk, technical debt, refactor priority, or migration readiness before committing a larger budget.</p>
+  </div>
+  <div class="pilot-cta-actions">
+    <a href="#contact" class="cta-btn" onclick="smoothNav('contact')">Request a Pilot</a>
+    <a href="#demo" class="ghost-btn pilot-ghost" onclick="smoothNav('demo')">Try the Demo First</a>
+  </div>
+</div>
 </div>
 </section>
 
@@ -259,7 +273,7 @@
   <input type="text" placeholder="Your name" id="contactName">
   <input type="email" placeholder="Work email" id="contactEmail">
   <textarea placeholder="Describe your legacy system — language, age, scale (optional)" id="contactMessage" rows="3"></textarea>
-  <button onclick="submitContact()">Request Assessment</button>
+  <button id="contactSubmitBtn" onclick="submitContact()">Request Assessment</button>
   <p class="success-msg" id="contactSuccess"></p>
 </div>
 </div>
