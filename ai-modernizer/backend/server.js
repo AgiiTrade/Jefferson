@@ -19,7 +19,7 @@ const JWT_SECRET = process.env.JWT_SECRET || 'agii-modernizer-secret-change-me';
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cors());
 app.use(compression());
-app.use(express.json({ limit: '1mb' }));
+app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Database Setup ─────────────────────────────────────────
@@ -43,16 +43,28 @@ db.serialize(() => {
     functions INTEGER,
     suggestions TEXT,
     raw_code TEXT,
+    filename TEXT,
+    modernization_score INTEGER,
+    issues_count INTEGER,
+    request_id TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
     FOREIGN KEY (user_id) REFERENCES users(id)
   )`);
 
   db.run(`CREATE TABLE IF NOT EXISTS contacts (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT,
     email TEXT NOT NULL,
     message TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  const safeAlter = (sql) => db.run(sql, () => {});
+  safeAlter('ALTER TABLE analyses ADD COLUMN filename TEXT');
+  safeAlter('ALTER TABLE analyses ADD COLUMN modernization_score INTEGER');
+  safeAlter('ALTER TABLE analyses ADD COLUMN issues_count INTEGER');
+  safeAlter('ALTER TABLE analyses ADD COLUMN request_id TEXT');
+  safeAlter('ALTER TABLE contacts ADD COLUMN name TEXT');
 });
 
 // ── Auth Middleware ─────────────────────────────────────────
@@ -174,11 +186,13 @@ function analyzeJavaScript(code) {
 }
 
 function analyzePython(code) {
+  const lines = code.split('\n');
   const results = {
     language: 'python',
-    lines: code.split('\n').length,
+    lines: lines.length,
     characters: code.length,
     functions: [],
+    classes: [],
     complexity: 'low',
     issues: [],
     suggestions: [],
@@ -187,31 +201,136 @@ function analyzePython(code) {
     testCoverage: { estimated: 0, suggestions: [] }
   };
 
-  const funcRegex = /^(\s*)def\s+(\w+)\s*\(([^)]*)\):/gm;
+  // Parse functions with body size estimation
+  const funcRegex = /^(\s*)def\s+(\w+)\s*\(([^)]*)\).*:/gm;
   let match;
+  const funcPositions = [];
   while ((match = funcRegex.exec(code)) !== null) {
+    const indent = match[1].length;
     const name = match[2];
-    const params = match[3].split(',').filter(p => p.trim()).length;
-    results.functions.push({ name, params, complexity: 'low', startLine: code.substring(0, match.index).split('\n').length });
+    const params = match[3].split(',').filter(p => p.trim() && p.trim() !== 'self' && p.trim() !== 'cls').length;
+    const startLine = code.substring(0, match.index).split('\n').length;
+    funcPositions.push({ name, params, indent, startLine, index: match.index });
   }
 
+  // Estimate function body sizes by finding where indentation returns to function level
+  funcPositions.forEach((func, idx) => {
+    const startIdx = func.startLine; // 1-based
+    let bodyLines = 0;
+    for (let i = startIdx; i < lines.length; i++) {
+      const line = lines[i];
+      if (line.trim() === '' || line.trim().startsWith('#')) { bodyLines++; continue; }
+      const lineIndent = line.length - line.trimStart().length;
+      if (i > startIdx && lineIndent <= func.indent && line.trim() !== '') break;
+      bodyLines++;
+    }
+    const complexity = bodyLines > 40 ? 'high' : bodyLines > 15 ? 'medium' : 'low';
+    results.functions.push({
+      name: func.name,
+      params: func.params,
+      lines: bodyLines,
+      complexity,
+      startLine: func.startLine
+    });
+  });
+
+  // Parse classes
+  const classRegex = /^(\s*)class\s+(\w+)/gm;
+  while ((match = classRegex.exec(code)) !== null) {
+    results.classes.push({
+      name: match[2],
+      startLine: code.substring(0, match.index).split('\n').length
+    });
+  }
+
+  // Issue detection
+  if (code.includes('eval(')) {
+    results.issues.push({ type: 'security', message: 'Use of eval() detected — potential code injection risk', line: findLineNum(code, 'eval(') });
+  }
+  if (code.includes('exec(')) {
+    results.issues.push({ type: 'security', message: 'Use of exec() detected — dynamic code execution risk', line: findLineNum(code, 'exec(') });
+  }
+  if (/import\s+\*/.test(code)) {
+    results.issues.push({ type: 'maintainability', message: 'Wildcard import (import *) makes dependencies unclear', line: findLineNum(code, 'import *') });
+  }
+  if (/except\s*:/m.test(code)) {
+    results.issues.push({ type: 'error-handling', message: 'Bare except clause catches all exceptions including SystemExit and KeyboardInterrupt', line: findLineNum(code, 'except:') });
+  }
+  if (/except\s+Exception\s*:/m.test(code)) {
+    const exceptLines = code.split('\n');
+    for (let i = 0; i < exceptLines.length; i++) {
+      if (/except\s+Exception\s*:/.test(exceptLines[i])) {
+        const nextLine = exceptLines[i + 1]?.trim();
+        if (nextLine === 'pass' || nextLine === '') {
+          results.issues.push({ type: 'error-handling', message: 'Exception caught but silently ignored', line: i + 1 });
+        }
+      }
+    }
+  }
+  if (/\bglobal\s+\w/.test(code)) {
+    results.issues.push({ type: 'maintainability', message: 'Global variable mutation detected — harder to test and reason about', line: findLineNum(code, 'global ') });
+  }
+
+  // Complexity assessment
+  const funcCount = results.functions.length;
+  if (results.lines > 500 || funcCount > 20) results.complexity = 'high';
+  else if (results.lines > 100 || funcCount > 8) results.complexity = 'medium';
+
+  // Tech debt estimate
+  if (results.complexity === 'high') results.techDebt = '2-4 weeks';
+  else if (results.complexity === 'medium') results.techDebt = '0.5-1 week';
+
+  // Suggestions
   if (code.includes('print(') && !code.includes('logging')) {
-    results.suggestions.push('Replace print statements with proper logging (Python logging module)');
+    results.suggestions.push('Replace print statements with the logging module for production readiness');
+    results.refactoringSteps.push('1. Replace print() calls with logging.info/debug/error');
   }
   if (!code.includes('try:') && results.functions.length > 0) {
     results.suggestions.push('Add try/except blocks for error handling');
+    results.refactoringSteps.push('2. Wrap I/O and external calls in try/except');
+  }
+  if (!code.includes('typing') && !code.includes(': str') && !code.includes(': int') && !code.includes('-> ')) {
+    results.suggestions.push('Add type hints for better IDE support and maintainability');
+    results.refactoringSteps.push('3. Add type annotations to function signatures');
+  }
+  if (results.functions.some(f => f.complexity === 'high')) {
+    results.suggestions.push('Break down large functions into smaller, testable units');
+    results.refactoringSteps.push('4. Extract complex logic into focused helper functions');
+  }
+  if (results.functions.some(f => f.params > 4)) {
+    results.suggestions.push('Functions with 4+ parameters — consider a dataclass or TypedDict');
+    results.refactoringSteps.push('5. Group related parameters into dataclass objects');
+  }
+  if (!code.includes('"""') && !code.includes("'''") && results.functions.length > 2) {
+    results.suggestions.push('Add docstrings to public functions for documentation');
+  }
+  if (/import\s+\*/.test(code)) {
+    results.suggestions.push('Replace wildcard imports with explicit imports');
   }
 
-  results.testCoverage.suggestions = results.functions.map(f => 
-    `def test_${f.name}(): assert ${f.name}(/* valid input */) is not None`
+  // Test stubs
+  results.testCoverage.suggestions = results.functions.map(f =>
+    `def test_${f.name}():\n    result = ${f.name}(...)\n    assert result is not None`
   );
+  results.testCoverage.estimated = Math.min(80, Math.round((results.functions.length * 15) / Math.max(1, results.lines) * 100));
 
+  // Modernization score
   let score = 85;
-  if (!code.includes('typing') && !code.includes(': str') && !code.includes(': int')) score -= 10;
-  if (code.includes('print(')) score -= 5;
-  results.modernizationScore = Math.max(0, score);
+  if (!code.includes('typing') && !code.includes(': str') && !code.includes(': int') && !code.includes('-> ')) score -= 10;
+  if (code.includes('print(') && !code.includes('logging')) score -= 5;
+  if (results.issues.length) score -= results.issues.length * 8;
+  if (results.complexity === 'high') score -= 10;
+  if (results.functions.some(f => f.complexity === 'high')) score -= 10;
+  if (/import\s+\*/.test(code)) score -= 5;
+  results.modernizationScore = Math.max(0, Math.min(100, score));
 
   return results;
+}
+
+function findLineNum(code, needle) {
+  const idx = code.indexOf(needle);
+  if (idx === -1) return null;
+  return code.substring(0, idx).split('\n').length;
 }
 
 function analyzeGeneric(code) {
@@ -240,20 +359,21 @@ app.get('/api/health', (req, res) => {
 app.post('/api/analyze', (req, res) => {
   const schema = Joi.object({
     code: Joi.string().min(1).max(100000).required(),
-    language: Joi.string().valid('javascript', 'python', 'auto').default('auto')
+    language: Joi.string().valid('javascript', 'python', 'auto').default('auto'),
+    filename: Joi.string().max(255).allow('').default('')
   });
 
   const { error, value } = schema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
-  const { code, language } = value;
+  const { code, language, filename } = value;
 
   // Detect language
   let detectedLang = language;
   if (language === 'auto') {
     if (code.includes('function ') || code.includes('=>') || code.includes('const ') || code.includes('let ') || code.includes('var ')) {
       detectedLang = 'javascript';
-    } else if (code.includes('def ') || code.includes('import ') && code.includes(':')) {
+    } else if (code.includes('def ') || (code.includes('import ') && code.includes(':'))) {
       detectedLang = 'python';
     }
   }
@@ -269,8 +389,19 @@ app.post('/api/analyze', (req, res) => {
   results.requestId = Date.now().toString(36);
 
   // Save to DB (anon)
-  db.run('INSERT INTO analyses (language, lines, complexity, functions, suggestions, raw_code) VALUES (?, ?, ?, ?, ?, ?)',
-    [results.language, results.lines, results.complexity, results.functions.length, JSON.stringify(results.suggestions), code.substring(0, 5000)]
+  db.run('INSERT INTO analyses (language, lines, complexity, functions, suggestions, raw_code, filename, modernization_score, issues_count, request_id) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)',
+    [
+      results.language,
+      results.lines,
+      results.complexity,
+      results.functions.length,
+      JSON.stringify(results.suggestions),
+      code.substring(0, 5000),
+      filename || '',
+      results.modernizationScore || null,
+      Array.isArray(results.issues) ? results.issues.length : 0,
+      results.requestId
+    ]
   );
 
   res.json(results);
@@ -279,6 +410,7 @@ app.post('/api/analyze', (req, res) => {
 // Contact form submission
 app.post('/api/contact', (req, res) => {
   const schema = Joi.object({
+    name: Joi.string().max(200).allow('').default(''),
     email: Joi.string().email().required(),
     message: Joi.string().max(5000).allow('')
   });
@@ -286,7 +418,7 @@ app.post('/api/contact', (req, res) => {
   const { error, value } = schema.validate(req.body);
   if (error) return res.status(400).json({ error: error.details[0].message });
 
-  db.run('INSERT INTO contacts (email, message) VALUES (?, ?)', [value.email, value.message || ''], function (err) {
+  db.run('INSERT INTO contacts (name, email, message) VALUES (?, ?, ?)', [value.name || '', value.email, value.message || ''], function (err) {
     if (err) return res.status(500).json({ error: 'Database error' });
     res.json({ success: true, id: this.lastID });
   });
@@ -353,15 +485,26 @@ app.get('/api/history', authMiddleware, (req, res) => {
 
 // Stats (public)
 app.get('/api/stats', (req, res) => {
-  db.get('SELECT COUNT(*) as totalAnalyses FROM analyses', (err, row) => {
+  db.get('SELECT COUNT(*) as totalAnalyses, AVG(modernization_score) as avgScore FROM analyses', (err, row) => {
     db.get('SELECT COUNT(*) as totalUsers FROM users', (err2, row2) => {
-      res.json({
-        totalAnalyses: row?.totalAnalyses || 0,
-        totalUsers: row2?.totalUsers || 0,
-        languagesSupported: ['JavaScript', 'Python'],
-        uptime: Math.round(process.uptime())
+      db.get('SELECT COUNT(*) as totalContacts FROM contacts', (err3, row3) => {
+        res.json({
+          totalAnalyses: row?.totalAnalyses || 0,
+          totalUsers: row2?.totalUsers || 0,
+          totalContacts: row3?.totalContacts || 0,
+          avgModernizationScore: row?.avgScore ? Math.round(row.avgScore) : null,
+          languagesSupported: ['JavaScript', 'Python'],
+          uptime: Math.round(process.uptime())
+        });
       });
     });
+  });
+});
+
+app.get('/api/recent-analyses', (req, res) => {
+  db.all('SELECT id, language, filename, lines, complexity, modernization_score, issues_count, created_at FROM analyses ORDER BY created_at DESC LIMIT 8', (err, rows) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    res.json({ analyses: rows || [] });
   });
 });
 

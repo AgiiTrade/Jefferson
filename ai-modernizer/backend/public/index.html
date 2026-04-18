@@ -4,6 +4,14 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>Agii Intelligence | AI-Powered Legacy Modernization</title>
+<meta name="description" content="Modernize legacy systems 10x faster with AI. Agii Intelligence provides automated code analysis, refactoring roadmaps, and migration planning for enterprise engineering teams.">
+<meta name="keywords" content="legacy modernization, AI code analysis, enterprise software, refactoring, migration planning, technical debt">
+<meta property="og:title" content="Agii Intelligence — AI-Powered Legacy Modernization">
+<meta property="og:description" content="Automated code analysis, refactoring roadmaps, and migration planning. Try the live demo.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agii Intelligence — Modernize Legacy Systems 10x Faster">
+<meta name="twitter:description" content="AI agents handle discovery, planning, execution, and validation for legacy modernization.">
 <link rel="stylesheet" href="/styles.css">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
@@ -16,8 +24,9 @@
   <div class="logo">⬡ Agii Intelligence</div>
   <nav class="nav">
     <a href="#platform">Platform</a>
-    <a href="#services">Services</a>
+    <a href="#buyers">Buyers</a>
     <a href="#demo">Demo</a>
+    <a href="#pilot">Pilot</a>
     <a href="#contact">Contact</a>
   </nav>
 </div>
@@ -25,16 +34,16 @@
 
 <section class="hero">
 <h1>Modernize Legacy Systems<br>10× Faster with AI</h1>
-<p>Automated discovery, planning, execution, and validation — Agii Intelligence agents co-author every module while your team stays in control.</p>
-<a href="#demo" class="cta-btn" onclick="scrollTo('demo')">Try Live Demo →</a>
+<p>Agii Intelligence agents handle discovery, planning, execution, and validation — your team stays in control while AI co-authors every module.</p>
+<a href="#demo" class="cta-btn" onclick="smoothNav('demo')">Try Live Demo →</a>
 </section>
 
 <section class="stats-bar">
 <div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
-  <div class="stat-box"><div class="stat-num">20+</div><div class="stat-label">Years Experience</div></div>
-  <div class="stat-box"><div class="stat-num">150+</div><div class="stat-label">Clients Worldwide</div></div>
-  <div class="stat-box"><div class="stat-num">30+</div><div class="stat-label">Industries Served</div></div>
-  <div class="stat-box"><div class="stat-num" id="stat-analyses">0</div><div class="stat-label">Code Analyses Run</div></div>
+  <div class="stat-box"><div class="stat-num" id="stat-analyses" data-target="0">0</div><div class="stat-label">Code Analyses Run</div></div>
+  <div class="stat-box"><div class="stat-num" id="stat-avg-score" data-target="0">0</div><div class="stat-label">Average Modernization Score</div></div>
+  <div class="stat-box"><div class="stat-num" id="stat-contacts" data-target="0">0</div><div class="stat-label">Assessment Requests</div></div>
+  <div class="stat-box"><div class="stat-num" data-target="2">0</div><div class="stat-label">Languages Supported</div></div>
 </div>
 </section>
 
@@ -65,7 +74,7 @@
 
 <section class="section" id="services">
 <div class="wrap">
-<h2>Enterprise AI — Why Now?</h2>
+<h2>Enterprise AI, Why Now?</h2>
 <p class="sub">Industry research. Proven delivery models. Real outcomes.</p>
 <div class="card-grid">
   <div class="info-card">
@@ -74,11 +83,11 @@
   </div>
   <div class="info-card">
     <h3>⏱️ Weeks Not Months</h3>
-    <p>Average legacy integration takes 6–18 months. Agii's automated discovery maps your stack and generates specs in days.</p>
+    <p>Average legacy integration takes 6 to 18 months. Agii's automated discovery maps your stack and generates specs in days.</p>
   </div>
   <div class="info-card">
     <h3>👥 Skills Gap Solved</h3>
-    <p>60% of AI roles are unfilled. Agii agents handle the heavy lifting — your team focuses on strategy and validation.</p>
+    <p>60% of AI roles are unfilled. Agii agents handle the heavy lifting, your team focuses on strategy and validation.</p>
   </div>
   <div class="info-card">
     <h3>🔒 Compliance Ready</h3>
@@ -88,11 +97,118 @@
 </div>
 </section>
 
+
+<section class="section" id="buyers">
+<div class="wrap">
+<h2>Built for Teams Modernizing Critical Systems</h2>
+<p class="sub">Agii fits best where technical debt, compliance pressure, and migration risk make modernization expensive to delay.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Enterprise Engineering</h3>
+    <p>Use Agii to assess legacy services, identify modernization candidates, and produce a credible roadmap before a costly rewrite starts.</p>
+  </div>
+  <div class="info-card">
+    <h3>Banking and Regulated Systems</h3>
+    <p>De-risk authentication, integration, and audit-sensitive workloads with clearer discovery, logic review, and parity-focused validation.</p>
+  </div>
+  <div class="info-card">
+    <h3>Transformation Leaders</h3>
+    <p>Give CIO, CTO, and architecture teams a faster way to turn old codebases into scoped modernization programs with executive-ready reporting.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="section" id="use-cases">
+<div class="wrap">
+<h2>What Agii Helps You Do</h2>
+<p class="sub">Start with one codebase, one platform, or one high-risk workflow. Then expand once the roadmap is trusted.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Legacy Assessment</h3>
+    <p>Analyze maintainability, risk, and test gaps before committing engineering budget.</p>
+  </div>
+  <div class="info-card">
+    <h3>Migration Planning</h3>
+    <p>Map dependencies, modernization stages, and refactoring steps into a phased delivery plan.</p>
+  </div>
+  <div class="info-card">
+    <h3>Refactor Readiness</h3>
+    <p>Spot fragile functions, unsafe patterns, and missing test coverage before code changes hit production.</p>
+  </div>
+  <div class="info-card">
+    <h3>Executive Reporting</h3>
+    <p>Export a clear analysis report for engineering leadership, transformation sponsors, or pilot proposals.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="section" id="pilot">
+<div class="wrap">
+<h2>Pilot Engagement Structure</h2>
+<p class="sub">The fastest commercial path is a focused assessment pilot that proves value before broader rollout.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Step 1, Discovery</h3>
+    <p>Review one codebase or platform area, align on risk areas, and confirm modernization goals.</p>
+  </div>
+  <div class="info-card">
+    <h3>Step 2, Analysis Sprint</h3>
+    <p>Generate code analysis, issue clusters, refactoring roadmap, and testing recommendations.</p>
+  </div>
+  <div class="info-card">
+    <h3>Step 3, Modernization Plan</h3>
+    <p>Deliver a prioritized roadmap, candidate work packages, and recommended next-phase implementation path.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="section" id="activity">
+<div class="wrap">
+<h2>Recent Analyses</h2>
+<p class="sub">Live activity from the Agii analysis engine.</p>
+<div class="activity-ticker" id="activityTicker">
+  <p class="placeholder-state" style="min-height:60px;color:#555">Loading recent activity...</p>
+</div>
+</div>
+</section>
+
+<section class="section" id="deliverables">
+<div class="wrap">
+<h2>What You Get In a Pilot</h2>
+<p class="sub">The goal is not just a code score. The goal is a decision-ready modernization package your leadership team can act on.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Architecture and Risk Snapshot</h3>
+    <p>Quick visibility into code complexity, fragile functions, unsafe patterns, and likely modernization blockers.</p>
+  </div>
+  <div class="info-card">
+    <h3>Refactoring Roadmap</h3>
+    <p>A prioritized plan for what to extract, test, stabilize, and migrate first, instead of a vague rewrite recommendation.</p>
+  </div>
+  <div class="info-card">
+    <h3>Executive-Ready Report</h3>
+    <p>Exportable findings that engineering leadership, transformation sponsors, or pilot buyers can review immediately.</p>
+  </div>
+</div>
+</div>
+</section>
+
 <section id="demo">
 <div class="wrap">
 <div class="demo-section">
-  <h2>🔬 Live Code Analysis</h2>
-  <p class="sub">Paste any JavaScript or Python code — get real analysis with modernization score, issues, refactoring roadmap, and test suggestions.</p>
+  <h2>Live Code Analysis</h2>
+  <p class="sub">Paste or upload JavaScript/Python code. Get a modernization score, issue report, refactoring roadmap, and test suggestions in seconds.</p>
+  <div class="demo-meta">
+    <span class="status-pill" id="apiStatus">Checking API...</span>
+    <div class="sample-row">
+      <button class="sample-btn" type="button" onclick="loadSample('javascript')">JS Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('python')">Python Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('messy')">Legacy Sample</button>
+    </div>
+  </div>
 
   <div class="demo-grid">
     <div class="demo-input">
@@ -103,32 +219,31 @@
           <option value="javascript">JavaScript</option>
           <option value="python">Python</option>
         </select>
-        <button class="btn-run" id="runBtn" onclick="runDemo()">⚡ Analyze Code</button>
+        <label class="file-upload-btn ghost-btn">
+          Upload File
+          <input type="file" id="fileUpload" accept=".js,.jsx,.ts,.tsx,.py,.mjs,.cjs" hidden onchange="handleFileUpload(event)">
+        </label>
+        <button class="btn-run" id="runBtn" onclick="runDemo()">Analyze Code</button>
       </div>
-      <textarea id="demoCode" placeholder="// Paste your code here...
-function calculateTotal(items) {
-    var total = 0;
-    for (var i = 0; i < items.length; i++) {
-        total += items[i].price * items[i].quantity;
-    }
-    if (total > 1000) {
-        total = total * 0.9;
-    }
-    return total;
-}
-
-function processOrder(order, customer, discount, tax, shipping, insurance) {
-    var subtotal = calculateTotal(order.items);
-    var result = subtotal - discount;
-    result = result + (result * tax);
-    result = result + shipping + insurance;
-    return result;
-}" style="margin-top:12px"></textarea>
+      <div class="drop-zone" id="dropZone">
+        <textarea id="demoCode" style="margin-top:0" placeholder="Paste code here, drop a file, or use the samples above..."></textarea>
+        <div class="drop-overlay" id="dropOverlay">Drop file to analyze</div>
+      </div>
     </div>
     <div class="demo-output">
-      <h3>Analysis Results</h3>
+      <div class="output-header">
+        <h3>Analysis Results</h3>
+        <div class="output-actions">
+          <button class="ghost-btn" type="button" onclick="copyResults()">Copy</button>
+          <button class="ghost-btn" type="button" onclick="downloadResults('json')">JSON</button>
+          <button class="ghost-btn" type="button" onclick="downloadResults('html')">Report</button>
+        </div>
+      </div>
       <div class="demo-output-box" id="demoOutput">
-        <p class="placeholder">Paste code on the left and click "Analyze Code" to see real results from the Agii analysis engine.</p>
+        <div class="placeholder-state">
+          <div class="placeholder-icon">&#9672;</div>
+          <p>Paste code and press <strong>Analyze</strong> or <kbd>Ctrl+Enter</kbd></p>
+        </div>
       </div>
     </div>
   </div>
@@ -139,13 +254,13 @@ function processOrder(order, customer, discount, tax, shipping, insurance) {
 <section class="contact-section" id="contact">
 <div class="wrap">
 <h2>Get Started</h2>
-<p class="sub" style="margin:0 auto">Schedule a demo or request a modernization assessment for your legacy systems.</p>
-<p style="margin-top:16px;color:var(--text2)">📞 647-838-3442 | 647-830-4286</p>
+<p class="sub" style="margin:0 auto">Request a modernization assessment, pilot proposal, or legacy code review for your team. We will respond with the fastest path to a focused pilot.</p>
 <div class="contact-form">
-  <input type="email" placeholder="Enter your work email" id="contactEmail">
-  <textarea placeholder="Tell us about your legacy system (optional)" id="contactMessage" rows="3"></textarea>
-  <button onclick="submitContact()">Request Access</button>
-  <p class="success-msg" id="contactSuccess">✓ Thanks! We'll be in touch shortly.</p>
+  <input type="text" placeholder="Your name" id="contactName">
+  <input type="email" placeholder="Work email" id="contactEmail">
+  <textarea placeholder="Describe your legacy system — language, age, scale (optional)" id="contactMessage" rows="3"></textarea>
+  <button onclick="submitContact()">Request Assessment</button>
+  <p class="success-msg" id="contactSuccess"></p>
 </div>
 </div>
 </section>

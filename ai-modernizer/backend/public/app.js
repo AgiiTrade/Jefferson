@@ -2,96 +2,162 @@ const API_BASE = window.location.hostname === 'localhost' || window.location.hos
   ? `http://${window.location.hostname}:3100/api`
   : '/api';
 
-// ── Code Analysis ──────────────────────────────────────────
+const SAMPLE_SNIPPETS = {
+  javascript: `function calculateTotal(items) {
+  var total = 0;
+  for (var i = 0; i < items.length; i++) {
+    total += items[i].price * items[i].quantity;
+  }
+  if (total > 1000) total = total * 0.9;
+  return total;
+}
+
+function processOrder(order, customer, discount, tax, shipping, insurance) {
+  var subtotal = calculateTotal(order.items);
+  var result = subtotal - discount;
+  result = result + (result * tax);
+  result = result + shipping + insurance;
+  return result;
+}`,
+  python: `def calculate_total(items):
+    total = 0
+    for item in items:
+        total += item['price'] * item['quantity']
+    return total
+
+def process_order(order, discount, tax_rate):
+    subtotal = calculate_total(order)
+    final_total = subtotal - discount
+    final_total = final_total + (final_total * tax_rate)
+    print(final_total)
+    return final_total`,
+  messy: `var users = [];
+
+function saveUser(a,b,c,d,e,f){
+  if(a){
+    eval('users.push({name:a,email:b,role:c,active:d,team:e,meta:f})');
+  }
+  try {
+  } catch(err) {}
+  return users;
+}`
+};
+
+let lastAnalysis = null;
+let progressTimer = null;
+let lastUploadedFilename = '';
+
 async function runDemo() {
   const code = document.getElementById('demoCode').value.trim();
   const lang = document.getElementById('langSelect').value;
   const output = document.getElementById('demoOutput');
   const btn = document.getElementById('runBtn');
 
-  if (!code) { alert('Please paste some code first'); return; }
+  if (!code) {
+    showToast('Paste code or upload a file first.', 'error');
+    return;
+  }
 
   btn.disabled = true;
-  btn.textContent = '⚡ Analyzing...';
-  output.innerHTML = '<p class="placeholder">Running AI analysis pipeline...</p>';
+  btn.classList.add('loading');
+  output.innerHTML = `<div class="progress-bar"><div class="fill" id="analysisProgress"></div></div><p class="placeholder">Running AI analysis pipeline...</p>`;
+  startProgressAnimation();
 
   try {
     const res = await fetch(`${API_BASE}/analyze`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ code, language: lang })
+      body: JSON.stringify({ code, language: lang, filename: lastUploadedFilename })
     });
 
     if (!res.ok) throw new Error(`API error: ${res.status}`);
     const data = await res.json();
+    lastAnalysis = data;
     renderResults(data, output);
+    showToast('Analysis complete.', 'success');
+    loadStats();
+    loadActivityTicker();
   } catch (err) {
-    output.innerHTML = `<p style="color:#e94560">Error: ${err.message}</p>
-      <p style="color:#9aa0a6;margin-top:8px">Make sure the backend is running on port 3100.</p>`;
+    const fallback = fallbackAnalyze(code, lang);
+    fallback.fallbackMode = true;
+    fallback.error = err.message;
+    lastAnalysis = fallback;
+    renderResults(fallback, output);
+    showToast('Backend unavailable, used built-in demo analyzer.', 'error');
+    loadActivityTicker();
   } finally {
+    stopProgressAnimation();
     btn.disabled = false;
-    btn.textContent = '⚡ Analyze Code';
+    btn.classList.remove('loading');
   }
 }
 
 function renderResults(data, container) {
-  let html = '';
-
-  // Modernization score
   const score = data.modernizationScore || 50;
-  const scoreClass = score >= 70 ? 'score-high' : score >= 40 ? 'score-medium' : 'score-low';
-  html += `<div class="result-section">
+  const stroke = 2 * Math.PI * 22;
+  const dash = stroke - (stroke * score / 100);
+  const scoreColor = score >= 70 ? '#22c55e' : score >= 40 ? '#f59e0b' : '#e94560';
+
+  let html = `<div class="result-section">
     <h4>Modernization Score</h4>
-    <span class="score-badge ${scoreClass}">${score}/100</span>
+    <div class="score-ring">
+      <svg viewBox="0 0 56 56" aria-hidden="true">
+        <circle class="track" cx="28" cy="28" r="22"></circle>
+        <circle class="value" cx="28" cy="28" r="22" stroke="${scoreColor}" stroke-dasharray="${stroke}" stroke-dashoffset="${dash}"></circle>
+      </svg>
+      <div class="label">${score}/100</div>
+    </div>
   </div>`;
 
-  // Overview
   html += `<div class="result-section">
     <h4>Overview</h4>
     <p style="color:var(--text2)">
-      <strong>${data.lines}</strong> lines • 
-      <strong>${data.language}</strong> • 
+      <strong>${data.lines}</strong> lines •
+      <strong>${data.language}</strong> •
       <strong>${data.functions?.length || 0}</strong> functions •
       Complexity: <span class="complexity-badge complexity-${data.complexity}">${data.complexity}</span>
     </p>
     <p style="color:var(--text2);margin-top:4px">Estimated tech debt: <strong>${data.techDebt}</strong></p>
+    <p style="color:var(--text2);margin-top:4px">Request ID: <strong>${escapeHtml(data.requestId || 'n/a')}</strong></p>
   </div>`;
 
-  // Functions
+  if (data.fallbackMode) {
+    html += `<div class="result-section">
+      <h4>Demo Mode</h4>
+      <p style="color:var(--warning)">Backend API was unavailable, so this result used the built-in browser analyzer. It is useful for demos, but backend mode gives richer persistence and reporting.</p>
+    </div>`;
+  }
+
   if (data.functions?.length) {
     html += `<div class="result-section"><h4>Functions Detected</h4><ul>`;
     data.functions.forEach(f => {
-      html += `<li><code>${f.name}</code> (${f.params} params) — complexity: ${f.complexity}</li>`;
+      html += `<li><code>${escapeHtml(f.name)}</code> (${f.params} params)${f.startLine ? `, line ${f.startLine}` : ''} — complexity: ${escapeHtml(f.complexity)}</li>`;
     });
     html += `</ul></div>`;
   }
 
-  // Issues
   if (data.issues?.length) {
-    html += `<div class="result-section"><h4>⚠️ Issues Found</h4><ul>`;
+    html += `<div class="result-section"><h4>Issues Found</h4><ul>`;
     data.issues.forEach(i => {
-      html += `<li style="color:#e94560">${i.message}${i.line ? ` (line ${i.line})` : ''}</li>`;
+      html += `<li style="color:#e94560">${escapeHtml(i.message)}${i.line ? ` (line ${i.line})` : ''}</li>`;
     });
     html += `</ul></div>`;
   }
 
-  // Suggestions
   if (data.suggestions?.length) {
-    html += `<div class="result-section"><h4>💡 Recommendations</h4><ul>`;
-    data.suggestions.forEach(s => { html += `<li>${s}</li>`; });
+    html += `<div class="result-section"><h4>Recommendations</h4><ul>`;
+    data.suggestions.forEach(s => { html += `<li>${escapeHtml(s)}</li>`; });
     html += `</ul></div>`;
   }
 
-  // Refactoring steps
   if (data.refactoringSteps?.length) {
-    html += `<div class="result-section"><h4>🔄 Refactoring Roadmap</h4><ul>`;
-    data.refactoringSteps.forEach(s => { html += `<li>${s}</li>`; });
+    html += `<div class="result-section"><h4>Refactoring Roadmap</h4><ul>`;
+    data.refactoringSteps.forEach(s => { html += `<li>${escapeHtml(s)}</li>`; });
     html += `</ul></div>`;
   }
 
-  // Test suggestions
   if (data.testCoverage?.suggestions?.length) {
-    html += `<div class="result-section"><h4>🧪 Test Coverage Suggestions</h4>
+    html += `<div class="result-section"><h4>Test Coverage Suggestions</h4>
       <p style="color:var(--text2);font-size:0.85rem;margin-bottom:6px">Estimated coverage potential: ${data.testCoverage.estimated}%</p><ul>`;
     data.testCoverage.suggestions.slice(0, 5).forEach(s => {
       html += `<li style="font-family:monospace;font-size:0.8rem">${escapeHtml(s)}</li>`;
@@ -102,48 +168,400 @@ function renderResults(data, container) {
   container.innerHTML = html;
 }
 
-// ── Contact Form ───────────────────────────────────────────
 async function submitContact() {
+  const name = document.getElementById('contactName')?.value.trim() || '';
   const email = document.getElementById('contactEmail').value.trim();
   const message = document.getElementById('contactMessage')?.value.trim() || '';
   const msg = document.getElementById('contactSuccess');
 
-  if (!email) { alert('Please enter your email'); return; }
+  if (!email || !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    showToast('Please enter a valid work email.', 'error');
+    return;
+  }
+
+  const fullMessage = name ? `Name: ${name}\n\n${message}` : message;
 
   try {
     const res = await fetch(`${API_BASE}/contact`, {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ email, message })
+      body: JSON.stringify({ name, email, message: fullMessage })
     });
-    if (res.ok) {
-      msg.style.display = 'block';
-      document.getElementById('contactEmail').value = '';
-    }
+    if (!res.ok) throw new Error('Contact request failed');
+    msg.textContent = 'Thanks, your assessment request has been received.';
+    msg.style.display = 'block';
+    document.getElementById('contactEmail').value = '';
+    const nameField = document.getElementById('contactName');
+    const messageField = document.getElementById('contactMessage');
+    if (nameField) nameField.value = '';
+    if (messageField) messageField.value = '';
+    showToast('Assessment request sent.', 'success');
   } catch (err) {
-    alert('Could not send. Please try again.');
+    window.location.href = `mailto:hello@agii.ai?subject=${encodeURIComponent('AI Modernization Inquiry')}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
   }
 }
 
-// ── Stats ──────────────────────────────────────────────────
 async function loadStats() {
   try {
     const res = await fetch(`${API_BASE}/stats`);
     const data = await res.json();
-    document.getElementById('stat-analyses').textContent = data.totalAnalyses || 0;
-  } catch { /* silent */ }
+    setStat('stat-analyses', data.totalAnalyses || 0);
+    setStat('stat-avg-score', data.avgModernizationScore || 0);
+    setStat('stat-contacts', data.totalContacts || 0);
+  } catch {
+    setStat('stat-analyses', 0);
+    setStat('stat-avg-score', 0);
+    setStat('stat-contacts', 0);
+  }
 }
 
-// ── Helpers ────────────────────────────────────────────────
+async function checkApiHealth() {
+  const el = document.getElementById('apiStatus');
+  if (!el) return;
+  el.classList.remove('ok', 'warn');
+  try {
+    const res = await fetch(`${API_BASE}/health`);
+    if (!res.ok) throw new Error('health check failed');
+    el.textContent = 'API live';
+    el.classList.add('ok');
+  } catch {
+    el.textContent = 'Static demo mode';
+    el.classList.add('warn');
+  }
+}
+
+function loadSample(kind) {
+  const code = document.getElementById('demoCode');
+  const lang = document.getElementById('langSelect');
+  if (!code || !lang) return;
+  lastUploadedFilename = `${kind}-sample.${kind === 'python' ? 'py' : 'js'}`;
+  code.value = SAMPLE_SNIPPETS[kind] || SAMPLE_SNIPPETS.javascript;
+  if (kind === 'python') lang.value = 'python';
+  else if (kind === 'javascript' || kind === 'messy') lang.value = 'javascript';
+  else lang.value = 'auto';
+}
+
+function copyResults() {
+  if (!lastAnalysis) return showToast('Run an analysis first.', 'error');
+  navigator.clipboard.writeText(JSON.stringify(lastAnalysis, null, 2))
+    .then(() => showToast('Analysis copied.', 'success'))
+    .catch(() => showToast('Could not copy analysis.', 'error'));
+}
+
+function downloadResults(format = 'json') {
+  if (!lastAnalysis) return showToast('Run an analysis first.', 'error');
+
+  if (format === 'html') {
+    const d = lastAnalysis;
+    const score = d.modernizationScore || 50;
+    const scoreColor = score >= 70 ? '#22c55e' : score >= 40 ? '#f59e0b' : '#e94560';
+    const scoreLabel = score >= 70 ? 'Good' : score >= 40 ? 'Needs Work' : 'Critical';
+    const issueRows = (d.issues || []).map(i => `<tr><td style="color:#e94560;font-weight:600">${escapeHtml(i.type || 'issue')}</td><td>${escapeHtml(i.message)}</td><td>${i.line || '—'}</td></tr>`).join('');
+    const funcRows = (d.functions || []).map(f => `<tr><td><code>${escapeHtml(f.name)}</code></td><td>${f.params}</td><td>${f.lines || '—'}</td><td><span class="badge badge-${f.complexity}">${f.complexity}</span></td></tr>`).join('');
+    const sugList = (d.suggestions || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+    const roadmapList = (d.refactoringSteps || []).map(s => `<li>${escapeHtml(s)}</li>`).join('');
+    const testList = (d.testCoverage?.suggestions || []).slice(0, 6).map(s => `<li><code>${escapeHtml(s)}</code></li>`).join('');
+    const html = `<!DOCTYPE html><html lang="en"><head><meta charset="UTF-8"><title>Agii Modernization Report</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;color:#1a1a2e;line-height:1.6;padding:0}
+.cover{background:linear-gradient(135deg,#0f3460,#533483,#e94560);color:#fff;padding:60px 48px 48px;position:relative}
+.cover h1{font-size:2rem;margin-bottom:8px}
+.cover p{opacity:0.85;font-size:0.95rem}
+.cover .logo{font-size:1.1rem;font-weight:800;margin-bottom:24px;letter-spacing:0.5px}
+.main{max-width:800px;margin:0 auto;padding:40px 48px 60px}
+h2{font-size:1.15rem;color:#533483;margin:32px 0 12px;text-transform:uppercase;letter-spacing:0.5px;border-bottom:2px solid #f0f0f0;padding-bottom:8px}
+.summary-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin:20px 0}
+.summary-box{background:#f8f9fa;border-radius:12px;padding:16px;text-align:center}
+.summary-box .num{font-size:1.6rem;font-weight:800;color:#0f3460}
+.summary-box .lbl{font-size:0.75rem;color:#666;margin-top:4px}
+.score-ring-wrap{text-align:center;margin:24px 0}
+.score-num{font-size:3rem;font-weight:800;color:${scoreColor}}
+.score-label{font-size:0.9rem;color:#666}
+table{width:100%;border-collapse:collapse;margin:12px 0;font-size:0.88rem}
+th{background:#f8f9fa;text-align:left;padding:10px 12px;font-size:0.78rem;text-transform:uppercase;letter-spacing:0.3px;color:#666}
+td{padding:10px 12px;border-bottom:1px solid #f0f0f0}
+code{background:#f0f0f5;padding:2px 6px;border-radius:4px;font-size:0.82rem}
+ul{margin:8px 0 8px 20px}
+li{margin:6px 0;font-size:0.9rem}
+.badge{display:inline-block;padding:2px 10px;border-radius:12px;font-size:0.75rem;font-weight:600}
+.badge-low{background:#d1fae5;color:#065f46}
+.badge-medium{background:#fef3c7;color:#92400e}
+.badge-high{background:#fee2e2;color:#991b1b}
+.footer{text-align:center;margin-top:48px;padding-top:24px;border-top:1px solid #e5e5e5;color:#999;font-size:0.78rem}
+@media print{.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
+</style></head><body>
+<div class="cover">
+<div class="logo">&#x2B21; Agii Intelligence</div>
+<h1>Legacy Code Modernization Report</h1>
+<p>Generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} &bull; ${escapeHtml(d.language)} &bull; ${d.lines} lines analyzed</p>
+</div>
+<div class="main">
+<div class="score-ring-wrap">
+<div class="score-num">${score}<span style="font-size:1.2rem;color:#999">/100</span></div>
+<div class="score-label">Modernization Score &mdash; ${scoreLabel}</div>
+</div>
+<div class="summary-grid">
+<div class="summary-box"><div class="num">${d.lines}</div><div class="lbl">Lines</div></div>
+<div class="summary-box"><div class="num">${(d.functions||[]).length}</div><div class="lbl">Functions</div></div>
+<div class="summary-box"><div class="num">${(d.issues||[]).length}</div><div class="lbl">Issues</div></div>
+<div class="summary-box"><div class="num">${escapeHtml(d.techDebt||'—')}</div><div class="lbl">Est. Tech Debt</div></div>
+</div>
+${(d.issues||[]).length ? `<h2>Issues Found</h2><table><thead><tr><th>Type</th><th>Description</th><th>Line</th></tr></thead><tbody>${issueRows}</tbody></table>` : ''}
+${(d.functions||[]).length ? `<h2>Functions Analyzed</h2><table><thead><tr><th>Name</th><th>Params</th><th>Lines</th><th>Complexity</th></tr></thead><tbody>${funcRows}</tbody></table>` : ''}
+${(d.suggestions||[]).length ? `<h2>Recommendations</h2><ul>${sugList}</ul>` : ''}
+${(d.refactoringSteps||[]).length ? `<h2>Refactoring Roadmap</h2><ol>${roadmapList}</ol>` : ''}
+${(d.testCoverage?.suggestions||[]).length ? `<h2>Test Coverage Suggestions</h2><p style="color:#666;font-size:0.85rem;margin-bottom:8px">Estimated coverage potential: ${d.testCoverage.estimated}%</p><ul>${testList}</ul>` : ''}
+<div class="footer">
+<p><strong>Agii Intelligence</strong> &mdash; AI-Powered Legacy Modernization</p>
+<p style="margin-top:4px">This report was generated by the Agii analysis engine. Request ID: ${escapeHtml(d.requestId || 'n/a')}</p>
+</div>
+</div></body></html>`;
+    const blob = new Blob([html], { type: 'text/html' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `agii-modernization-report-${safeTimestamp()}.html`;
+    a.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
+
+  const blob = new Blob([JSON.stringify(lastAnalysis, null, 2)], { type: 'application/json' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = `agii-analysis-${safeTimestamp()}.json`;
+  a.click();
+  URL.revokeObjectURL(url);
+}
+
+function fallbackAnalyze(code, forcedLanguage) {
+  const lines = code.split('\n').length;
+  const language = forcedLanguage && forcedLanguage !== 'auto'
+    ? forcedLanguage
+    : (code.includes('def ') ? 'python' : 'javascript');
+  const functions = language === 'python'
+    ? [...code.matchAll(/^(\s*)def\s+(\w+)\s*\(([^)]*)\):/gm)].map(m => ({ name: m[2], params: m[3].split(',').filter(Boolean).length, complexity: 'medium' }))
+    : [...code.matchAll(/function\s+(\w+)\s*\(([^)]*)\)|const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>/g)].map(m => ({ name: m[1] || m[3] || '(anonymous)', params: (m[2] || m[4] || '').split(',').filter(Boolean).length, complexity: 'medium' }));
+  const issues = [];
+  const suggestions = [];
+  if (code.includes('var ')) {
+    issues.push({ message: 'Legacy var declarations detected' });
+    suggestions.push('Replace var with const/let.');
+  }
+  if (code.includes('eval(')) {
+    issues.push({ message: 'eval() detected, which is a security and maintainability risk' });
+    suggestions.push('Remove eval and replace it with direct logic.');
+  }
+  if (!/try\s*\{|try:/.test(code) && lines > 8) suggestions.push('Add clearer error handling around business-critical flows.');
+  if (functions.some(f => f.params >= 5)) suggestions.push('Collapse long parameter lists into an options object or typed payload.');
+  if (!suggestions.length) suggestions.push('Split business logic into smaller services and add unit tests.');
+  const score = Math.max(25, 82 - (issues.length * 14) - (lines > 120 ? 10 : 0));
+  return {
+    language,
+    lines,
+    functions,
+    complexity: lines > 120 ? 'high' : lines > 40 ? 'medium' : 'low',
+    modernizationScore: score,
+    techDebt: lines > 120 ? '1-2 weeks' : lines > 40 ? '2-4 days' : '1-2 days',
+    issues,
+    suggestions,
+    refactoringSteps: [
+      'Extract reusable business logic into a service layer',
+      'Add tests for the main code paths',
+      'Introduce stricter typing and safer error handling'
+    ],
+    testCoverage: {
+      estimated: Math.min(75, functions.length * 18 || 20),
+      suggestions: functions.length
+        ? functions.map(f => `Test ${f.name} for valid input, edge cases, and failure handling`)
+        : ['Add baseline tests for key inputs and expected outputs']
+    },
+    timestamp: new Date().toISOString(),
+    requestId: `fallback-${Date.now().toString(36)}`
+  };
+}
+
+function handleFileUpload(event) {
+  const file = event.target.files?.[0];
+  if (!file) return;
+  readCodeFile(file);
+}
+
+function readCodeFile(file) {
+  const reader = new FileReader();
+  reader.onload = () => {
+    const code = document.getElementById('demoCode');
+    const lang = document.getElementById('langSelect');
+    code.value = String(reader.result || '');
+    lastUploadedFilename = file.name;
+    const lower = file.name.toLowerCase();
+    if (lower.endsWith('.py')) lang.value = 'python';
+    else if (['.js','.jsx','.ts','.tsx','.mjs','.cjs'].some(ext => lower.endsWith(ext))) lang.value = 'javascript';
+    else lang.value = 'auto';
+    showToast(`Loaded ${file.name}`, 'success');
+  };
+  reader.onerror = () => showToast('Could not read file.', 'error');
+  reader.readAsText(file);
+}
+
+function wireDropZone() {
+  const zone = document.getElementById('dropZone');
+  if (!zone) return;
+  ['dragenter', 'dragover'].forEach(evt => zone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    zone.classList.add('dragover');
+  }));
+  ['dragleave', 'dragend', 'drop'].forEach(evt => zone.addEventListener(evt, (e) => {
+    e.preventDefault();
+    zone.classList.remove('dragover');
+  }));
+  zone.addEventListener('drop', (e) => {
+    const file = e.dataTransfer?.files?.[0];
+    if (file) readCodeFile(file);
+  });
+}
+
+function startProgressAnimation() {
+  stopProgressAnimation();
+  const fill = () => document.getElementById('analysisProgress');
+  let progress = 8;
+  progressTimer = setInterval(() => {
+    const el = fill();
+    if (!el) return;
+    progress = Math.min(progress + Math.random() * 18, 92);
+    el.style.width = `${progress}%`;
+  }, 350);
+}
+
+function stopProgressAnimation() {
+  if (progressTimer) clearInterval(progressTimer);
+  progressTimer = null;
+  const el = document.getElementById('analysisProgress');
+  if (el) el.style.width = '100%';
+}
+
+function showToast(message, type = 'success') {
+  const old = document.querySelector('.toast');
+  if (old) old.remove();
+  const toast = document.createElement('div');
+  toast.className = `toast toast-${type}`;
+  toast.textContent = message;
+  document.body.appendChild(toast);
+  requestAnimationFrame(() => toast.classList.add('visible'));
+  setTimeout(() => {
+    toast.classList.remove('visible');
+    setTimeout(() => toast.remove(), 280);
+  }, 2400);
+}
+
+function safeTimestamp() {
+  return new Date().toISOString().slice(0,19).replace(/[T:]/g,'-');
+}
+
 function escapeHtml(str) {
-  return str.replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
+  return String(str).replace(/[<>&"']/g, c => ({'<':'&lt;','>':'&gt;','&':'&amp;','"':'&quot;',"'":'&#39;'}[c]));
 }
 
-function scrollTo(id) {
+function smoothNav(id) {
   document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
 }
 
-// ── Init ───────────────────────────────────────────────────
+function setStat(id, value) {
+  const el = document.getElementById(id);
+  if (!el) return;
+  const num = Number(value) || 0;
+  el.dataset.target = String(num);
+  el.dataset.animated = '';
+  el.textContent = '0';
+  animateCounters();
+}
+
+async function loadActivityTicker() {
+  const container = document.getElementById('activityTicker');
+  if (!container) return;
+  try {
+    const res = await fetch(`${API_BASE}/recent-analyses`);
+    const data = await res.json();
+    const rows = data.analyses || [];
+    if (!rows.length) {
+      container.innerHTML = '<p style="color:#555;text-align:center;padding:16px">No analyses yet. Be the first — try the demo below.</p>';
+      return;
+    }
+    container.innerHTML = rows.map(r => {
+      const scoreColor = (r.modernization_score || 50) >= 70 ? 'var(--success)' : (r.modernization_score || 50) >= 40 ? 'var(--warning)' : 'var(--highlight)';
+      const ago = timeAgo(r.created_at);
+      const name = r.filename || `${r.language || 'code'} snippet`;
+      return `<div class="activity-row">
+        <span class="activity-lang">${escapeHtml(r.language || '?')}</span>
+        <span class="activity-name">${escapeHtml(name)}</span>
+        <span class="activity-meta">${r.lines} lines &bull; ${escapeHtml(r.complexity || '—')}</span>
+        <span class="activity-score" style="color:${scoreColor}">${r.modernization_score ?? '—'}/100</span>
+        <span class="activity-time">${ago}</span>
+      </div>`;
+    }).join('');
+  } catch {
+    container.innerHTML = '<p style="color:#555;text-align:center;padding:16px">Activity feed unavailable in static mode.</p>';
+  }
+}
+
+function timeAgo(dateStr) {
+  if (!dateStr) return '';
+  const diff = Date.now() - new Date(dateStr).getTime();
+  const mins = Math.floor(diff / 60000);
+  if (mins < 1) return 'just now';
+  if (mins < 60) return `${mins}m ago`;
+  const hrs = Math.floor(mins / 60);
+  if (hrs < 24) return `${hrs}h ago`;
+  const days = Math.floor(hrs / 24);
+  return `${days}d ago`;
+}
+
+function animateCounters() {
+  const counters = document.querySelectorAll('.stat-num[data-target]');
+  counters.forEach(el => {
+    const target = parseInt(el.dataset.target, 10);
+    if (isNaN(target) || target === 0 || el.dataset.animated) return;
+    el.dataset.animated = '1';
+    const suffix = el.dataset.suffix || '';
+    const duration = 1200;
+    const start = performance.now();
+    function tick(now) {
+      const elapsed = now - start;
+      const progress = Math.min(elapsed / duration, 1);
+      const eased = 1 - Math.pow(1 - progress, 3);
+      el.textContent = Math.round(target * eased).toLocaleString() + suffix;
+      if (progress < 1) requestAnimationFrame(tick);
+    }
+    requestAnimationFrame(tick);
+  });
+}
+
+function setupCounterObserver() {
+  const bar = document.querySelector('.stats-bar');
+  if (!bar) return;
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        animateCounters();
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.3 });
+  observer.observe(bar);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  loadSample('javascript');
+  checkApiHealth();
   loadStats();
+  loadActivityTicker();
+  wireDropZone();
+  setupCounterObserver();
+
+  document.getElementById('demoCode')?.addEventListener('input', () => { if (!document.getElementById('demoCode').value.trim()) lastUploadedFilename = ''; });
+  document.getElementById('demoCode')?.addEventListener('keydown', (e) => {
+    if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runDemo();
+  });
 });

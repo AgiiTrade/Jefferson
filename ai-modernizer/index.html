@@ -2,202 +2,273 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<title>Agii Intelligence | Transform Legacy Systems</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<style>
-:root{
---bg: #0a0a0a;
---card: #121212;
---accent: #0052cc;
---text: #e8eaed;
---text2: #9aa0a6;
---border: #333;
-}
-*{margin:0;padding:0;box-sizing:border-box}
-body{font-family:-apple-system,BlinkMacSystemFont,'Segoe UI',Roboto,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5}
-.wrap{max-width:1200px;margin:0 auto;padding:20px}
-/* HEADER */
-header{padding:24px 0;border-bottom:1px solid var(--border)}
-.header-inner{display:flex;justify-content:space-between;align-items:center}
-.logo{font-weight:800;font-size:1.2rem;color:var(--accent)}
-.nav a{color:var(--text2);text-decoration:none;margin-left:24px}
-.nav a:hover{color:var(--accent)}
-/* HERO */
-.hero{padding:80px 20px;text-align:center}
-.hero h1{font-size:2.5rem;margin-bottom:16px;background:linear-gradient(90deg,#0052cc,#6c5ce7);-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-.hero p{font-size:1.1rem;color:var(--text2);max-width:800px;margin:0 auto 24px}
-.cta-btn{background:var(--accent);color:#fff;padding:12px 28px;border-radius:50px;text-decoration:none;font-weight:600;transition:0.2s}
-.cta-btn:hover{opacity:0.9}
-/* TRUST BAR */
-.trust{padding:32px 0;background:var(--card);text-align:center;color:var(--text2);font-size:0.9rem}
-/* MODERN IMPERATIVE */
-.section{padding:60px 0}
-.section h2{font-size:1.8rem;margin-bottom:16px}
-/* PHASES */
-.phases{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:24px}
-.phase-card{background:var(--card);border:1px solid var(--border);border-radius:12px;padding:24px;transition:0.2s}
-.phase-card:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(0,0,0,0.2)}
-.phase-card h3{font-size:1.1rem;margin-bottom:8px;color:var(--accent)}
-.phase-card p{font-size:0.9rem;color:var(--text2)}
-/* CTA FORM */
-.cta-form{max-width:450px;margin:40px auto;text-align:center}
-.cta-form input{width:100%;padding:12px;border-radius:8px;border:1px solid var(--border);background:var(--card);color:var(--text);margin-bottom:12px}
-.cta-form button{width:100%;padding:12px;background:var(--accent);color:#fff;border:none;border-radius:8px;cursor:pointer;font-weight:600}
-/* DEMO */
-.demo{padding:40px 0;background:var(--card)}
-.demo h2{margin-bottom:20px}
-.demo textarea{width:100%;height:200px;border-radius:8px;border:1px solid var(--border);background:var(--bg);color:var(--text);padding:12px;margin-bottom:12px;resize:vertical;font-family:monospace}
-.demo button{padding:12px 24px;background:var(--accent);color:#fff;border:none;border-radius:50px;cursor:pointer}
-.demo-output{margin-top:20px;padding:16px;background:var(--card);border:1px solid var(--border);border-radius:8px;white-space:pre-wrap;font-family:monospace;display:none}
-/* FOOTER */
-footer{padding:32px 0;text-align:center;color:var(--text2);font-size:0.9rem;border-top:1px solid var(--border);margin-top:60px}
-/* RESP */
-@media(max-width:600px){
-.hero h1{font-size:2rem}
-.header-inner{flex-direction:column;gap:12px}
-}
-</style>
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>Agii Intelligence | AI-Powered Legacy Modernization</title>
+<meta name="description" content="Modernize legacy systems 10x faster with AI. Agii Intelligence provides automated code analysis, refactoring roadmaps, and migration planning for enterprise engineering teams.">
+<meta name="keywords" content="legacy modernization, AI code analysis, enterprise software, refactoring, migration planning, technical debt">
+<meta property="og:title" content="Agii Intelligence — AI-Powered Legacy Modernization">
+<meta property="og:description" content="Automated code analysis, refactoring roadmaps, and migration planning. Try the live demo.">
+<meta property="og:type" content="website">
+<meta name="twitter:card" content="summary_large_image">
+<meta name="twitter:title" content="Agii Intelligence — Modernize Legacy Systems 10x Faster">
+<meta name="twitter:description" content="AI agents handle discovery, planning, execution, and validation for legacy modernization.">
+<link rel="stylesheet" href="backend/public/styles.css">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800&display=swap" rel="stylesheet">
 </head>
 <body>
-<div class="wrap">
+<div class="bg-grid"></div>
+
 <header>
 <div class="header-inner">
-<div class="logo">Agii Intelligence</div>
-<nav class="nav">
-<a href="#" onclick="scrollTo('demo')">Demo</a>
-<a href="#" onclick="scrollTo('contact')">Contact</a>
-</nav>
+  <div class="logo">⬡ Agii Intelligence</div>
+  <nav class="nav">
+    <a href="#platform">Platform</a>
+    <a href="#buyers">Buyers</a>
+    <a href="#demo">Demo</a>
+    <a href="#pilot">Pilot</a>
+    <a href="#contact">Contact</a>
+  </nav>
 </div>
 </header>
 
 <section class="hero">
-<h1>Agii Intelligence Platform</h1>
-<p>Modernize legacy systems 10x faster with Agii Intelligence. Automated discovery, planning, execution, and validation — all in lockstep.</p>
-<a href="#" class="cta-btn" onclick="showDemo()">Try Demo →</a>
+<h1>Modernize Legacy Systems<br>10× Faster with AI</h1>
+<p>Agii Intelligence agents handle discovery, planning, execution, and validation — your team stays in control while AI co-authors every module.</p>
+<a href="#demo" class="cta-btn" onclick="smoothNav('demo')">Try Live Demo →</a>
 </section>
 
-<section class="trust">
-<p>Built by veterans of Google, Amazon, Lovable and Intuit</p>
-</section>
-
-<section class="stats-num" style="padding:40px 0">
-<div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px;text-align:center">
-<div><div style="font-size:2rem;color:var(--accent)">20+</div><div style="color:var(--text2);font-size:0.9rem">Years Experience</div></div>
-<div><div style="font-size:2rem;color:var(--accent)">150+</div><div style="color:var(--text2);font-size:0.9rem">Clients Worldwide</div></div>
-<div><div style="font-size:2rem;color:var(--accent)">30+</div><div style="color:var(--text2);font-size:0.9rem">Industries Served</div></div>
-<div><div style="font-size:2rem;color:var(--accent)">4</div><div style="color:var(--text2);font-size:0.9rem">Continents</div></div>
+<section class="stats-bar">
+<div class="wrap" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:16px">
+  <div class="stat-box"><div class="stat-num" id="stat-analyses" data-target="0">0</div><div class="stat-label">Code Analyses Run</div></div>
+  <div class="stat-box"><div class="stat-num" id="stat-avg-score" data-target="0">0</div><div class="stat-label">Average Modernization Score</div></div>
+  <div class="stat-box"><div class="stat-num" id="stat-contacts" data-target="0">0</div><div class="stat-label">Assessment Requests</div></div>
+  <div class="stat-box"><div class="stat-num" data-target="2">0</div><div class="stat-label">Languages Supported</div></div>
 </div>
 </section>
 
-<section class="section">
-<h2>The Modern Imperative</h2>
-<p style="color:var(--text2)">Modernization isn’t just a tech swap. It’s the difference between a system that holds you back and one that continues to evolve and propels you forward leveraging AI.</p>
-</section>
-
-<section class="section">
+<section class="section" id="platform">
+<div class="wrap">
 <h2>The Agii Platform</h2>
-<div class="phases">
-<div class="phase-card"><h3>01 AI-Assisted Discovery</h3><p>Discover the DNA of your legacy stack. Auto-generated documentation and mapped user journeys from actual source code.</p></div>
-<div class="phase-card"><h3>02 Agentic Planning</h3><p>Blueprint your future architecture. Generate specifications, validate them with your team, and lock in a low-risk roadmap.</p></div>
-<div class="phase-card"><h3>03 AI-Assisted Execution</h3><p>Agents co-author every module. High-speed refactoring and test generation while engineers focus on design and validation.</p></div>
-<div class="phase-card"><h3>04 Reliability Mesh</h3><p>Ensure business-critical logic remains intact. Logic parity testing and zero‑risk release with audit-ready documentation.</p></div>
+<p class="sub">Four phases. Full automation. Human oversight at every step.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>01 AI-Assisted Discovery</h3>
+    <p>Auto-document your legacy stack. Map user journeys from actual source code. Generate integration specs in days, not months.</p>
+  </div>
+  <div class="info-card">
+    <h3>02 Agentic Planning</h3>
+    <p>Blueprint your future architecture. Generate specifications, validate with your team, lock in a low-risk roadmap.</p>
+  </div>
+  <div class="info-card">
+    <h3>03 AI-Assisted Execution</h3>
+    <p>Agents co-author every module. High-speed refactoring and test generation while engineers focus on design.</p>
+  </div>
+  <div class="info-card">
+    <h3>04 Reliability Mesh</h3>
+    <p>Logic parity testing, zero-risk release, audit-ready documentation. Business-critical logic stays intact.</p>
+  </div>
+</div>
 </div>
 </section>
 
-<section class="section">
-<h2>Enterprise AI — Why Now?</h2>
-<div class="stats-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:20px;margin-top:20px">
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center"><h3 style="font-size:2rem;color:var(--accent)">40%</h3><p style="color:var(--text2);font-size:0.85rem;margin-top:8px">Reduction in development costs</p></div>
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center"><h3 style="font-size:2rem;color:var(--accent)">6–18 mo</h3><p style="color:var(--text2);font-size:0.85rem;margin-top:8px">Avg. legacy integration time (we cut it to weeks)</p></div>
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center"><h3 style="font-size:2rem;color:var(--accent)">60%</h3><p style="color:var(--text2);font-size:0.85rem;margin-top:8px">Of AI roles unfilled — we automate the gap</p></div>
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px;text-align:center"><h3 style="font-size:2rem;color:var(--accent)">$2.6B</h3><p style="color:var(--text2);font-size:0.85rem;margin-top:8px">Pharma drug dev cost offset by AI (Accenture)</p></div>
+<section class="section" id="services">
+<div class="wrap">
+<h2>Enterprise AI, Why Now?</h2>
+<p class="sub">Industry research. Proven delivery models. Real outcomes.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>💰 40% Cost Reduction</h3>
+    <p>Automated code analysis and refactoring cuts development costs. Accenture research shows AI offsets costs by up to 40%.</p>
+  </div>
+  <div class="info-card">
+    <h3>⏱️ Weeks Not Months</h3>
+    <p>Average legacy integration takes 6 to 18 months. Agii's automated discovery maps your stack and generates specs in days.</p>
+  </div>
+  <div class="info-card">
+    <h3>👥 Skills Gap Solved</h3>
+    <p>60% of AI roles are unfilled. Agii agents handle the heavy lifting, your team focuses on strategy and validation.</p>
+  </div>
+  <div class="info-card">
+    <h3>🔒 Compliance Ready</h3>
+    <p>Reliability Mesh provides audit-ready documentation, logic parity testing, and explainable AI outputs for regulated industries.</p>
+  </div>
+</div>
 </div>
 </section>
 
-<section class="section">
-<h2>Overcoming AI Adoption Barriers</h2>
-<div class="phases">
-<div class="phase-card"><h3>🔒 Legacy Integration</h3><p>Organizations spend 6–18 months and 30–40% of project costs on integration. Agii's automated discovery maps your stack and generates integration specs in days, not months.</p></div>
-<div class="phase-card"><h3>👥 Employee Resistance</h3><p>45% fear job loss, 50% lack understanding. Our platform includes change management dashboards, transparent AI reasoning, and co-authoring — teams stay in control.</p></div>
-<div class="phase-card"><h3>⚖️ Compliance & Bias</h3><p>30% of regulated industries cite transparency concerns. Our Reliability Mesh provides audit-ready documentation, logic parity testing, and explainable AI outputs.</p></div>
-<div class="phase-card"><h3>🎓 Skills Gap</h3><p>60% of AI jobs remain unfilled. Agii's agents handle the heavy lifting — your team focuses on strategy and validation while the platform executes.</p></div>
+
+<section class="section" id="buyers">
+<div class="wrap">
+<h2>Built for Teams Modernizing Critical Systems</h2>
+<p class="sub">Agii fits best where technical debt, compliance pressure, and migration risk make modernization expensive to delay.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Enterprise Engineering</h3>
+    <p>Use Agii to assess legacy services, identify modernization candidates, and produce a credible roadmap before a costly rewrite starts.</p>
+  </div>
+  <div class="info-card">
+    <h3>Banking and Regulated Systems</h3>
+    <p>De-risk authentication, integration, and audit-sensitive workloads with clearer discovery, logic review, and parity-focused validation.</p>
+  </div>
+  <div class="info-card">
+    <h3>Transformation Leaders</h3>
+    <p>Give CIO, CTO, and architecture teams a faster way to turn old codebases into scoped modernization programs with executive-ready reporting.</p>
+  </div>
+</div>
 </div>
 </section>
 
-<section class="section">
-<h2>Proven Industry Impact</h2>
-<p style="color:var(--text2);max-width:800px;margin:20px auto 24px">Leveraging industry research and proven delivery models to bring enterprise-grade AI outcomes.</p>
-<div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px"><h3 style="color:var(--accent);margin-bottom:12px">Pharma & Life Sciences</h3><p style="font-size:0.9rem;color:var(--text2)">AI can offset drug development costs by up to <strong>40%</strong> (Accenture), reduce clinical trial duration by <strong>15-20%</strong> (~$200M saved per cycle), and accelerate drug repurposing by <strong>80-90%</strong> (Nature Biotechnology).</p></div>
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px"><h3 style="color:var(--accent);margin-bottom:12px">Financial Services</h3><p style="font-size:0.9rem;color:var(--text2)">Automated compliance monitoring and risk modeling cut operational overhead by <strong>30%</strong>. AI-driven fraud detection improves accuracy by <strong>60%</strong> while reducing false positives.</p></div>
-<div style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px"><h3 style="color:var(--accent);margin-bottom:12px">Manufacturing & Logistics</h3><p style="font-size:0.9rem;color:var(--text2)">Predictive maintenance reduces downtime by <strong>45%</strong>. Supply chain optimization helps enterprises trim inventory costs by <strong>20-25%</strong>.</p></div>
+<section class="section" id="use-cases">
+<div class="wrap">
+<h2>What Agii Helps You Do</h2>
+<p class="sub">Start with one codebase, one platform, or one high-risk workflow. Then expand once the roadmap is trusted.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Legacy Assessment</h3>
+    <p>Analyze maintainability, risk, and test gaps before committing engineering budget.</p>
+  </div>
+  <div class="info-card">
+    <h3>Migration Planning</h3>
+    <p>Map dependencies, modernization stages, and refactoring steps into a phased delivery plan.</p>
+  </div>
+  <div class="info-card">
+    <h3>Refactor Readiness</h3>
+    <p>Spot fragile functions, unsafe patterns, and missing test coverage before code changes hit production.</p>
+  </div>
+  <div class="info-card">
+    <h3>Executive Reporting</h3>
+    <p>Export a clear analysis report for engineering leadership, transformation sponsors, or pilot proposals.</p>
+  </div>
+</div>
 </div>
 </section>
 
-<section class="section">
-<h2>Our Services</h2>
-<p style="color:var(--text2);margin-bottom:24px">End-to-end technology solutions that modernize your business and unlock growth.</p>
-<div class="services-grid" style="display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:16px">
-<div class="service-card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px"><h3>AI Integration Services</h3><p style="color:var(--text2);font-size:0.9rem;margin-top:8px">Seamlessly embed AI into your existing workflows to automate decisions, enhance productivity, and gain competitive advantage.</p></div>
-<div class="service-card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px"><h3>Software Development</h3><p style="color:var(--text2);font-size:0.9rem;margin-top:8px">Custom applications built with modern stacks, scaled for performance and maintainability.</p></div>
-<div class="service-card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px"><h3>Data Analytics</h3><p style="color:var(--text2);font-size:0.9rem;margin-top:8px">Turn raw data into actionable insights with our analytics pipelines and dashboards.</p></div>
-<div class="service-card" style="background:var(--card);border:1px solid var(--border);border-radius:12px;padding:20px"><h3>Cloud & DevOps</h3><p style="color:var(--text2);font-size:0.9rem;margin-top:8px">Secure, scalable cloud infrastructure and CI/CD automation for faster delivery.</p></div>
+<section class="section" id="pilot">
+<div class="wrap">
+<h2>Pilot Engagement Structure</h2>
+<p class="sub">The fastest commercial path is a focused assessment pilot that proves value before broader rollout.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Step 1, Discovery</h3>
+    <p>Review one codebase or platform area, align on risk areas, and confirm modernization goals.</p>
+  </div>
+  <div class="info-card">
+    <h3>Step 2, Analysis Sprint</h3>
+    <p>Generate code analysis, issue clusters, refactoring roadmap, and testing recommendations.</p>
+  </div>
+  <div class="info-card">
+    <h3>Step 3, Modernization Plan</h3>
+    <p>Deliver a prioritized roadmap, candidate work packages, and recommended next-phase implementation path.</p>
+  </div>
+</div>
 </div>
 </section>
 
-<section class="section" id="contact">
-<h2>Contact Us</h2>
-<p style="color:var(--text2);margin-bottom:24px">Reach us by phone or email</p>
-<p style="font-size:1.1rem;margin-bottom:12px">📞 647-838-3442 | 647-830-4286</p>
-<div class="cta-form">
-<input type="email" placeholder="Enter your work email" id="email">
-<button onclick="submitContact()">Request Access</button>
+<section class="section" id="activity">
+<div class="wrap">
+<h2>Recent Analyses</h2>
+<p class="sub">Live activity from the Agii analysis engine.</p>
+<div class="activity-ticker" id="activityTicker">
+  <p class="placeholder-state" style="min-height:60px;color:#555">Loading recent activity...</p>
+</div>
 </div>
 </section>
 
-<section class="demo" id="demo">
-<h2>Interactive Demo</h2>
-<p style="color:var(--text2);margin-bottom:20px">Paste a short code snippet to see AI-assisted discovery in action.</p>
-<textarea id="demoCode" placeholder="// Paste your code here...
-function calculateTotal(items) {
-    return items.reduce((sum, i) => sum + i.price, 0);
-}"></textarea>
-<div><button onclick="runDemo()">Analyze Code</button></div>
-<div id="demoOutput" class="demo-output"></div>
+<section class="section" id="deliverables">
+<div class="wrap">
+<h2>What You Get In a Pilot</h2>
+<p class="sub">The goal is not just a code score. The goal is a decision-ready modernization package your leadership team can act on.</p>
+<div class="card-grid">
+  <div class="info-card">
+    <h3>Architecture and Risk Snapshot</h3>
+    <p>Quick visibility into code complexity, fragile functions, unsafe patterns, and likely modernization blockers.</p>
+  </div>
+  <div class="info-card">
+    <h3>Refactoring Roadmap</h3>
+    <p>A prioritized plan for what to extract, test, stabilize, and migrate first, instead of a vague rewrite recommendation.</p>
+  </div>
+  <div class="info-card">
+    <h3>Executive-Ready Report</h3>
+    <p>Exportable findings that engineering leadership, transformation sponsors, or pilot buyers can review immediately.</p>
+  </div>
+</div>
+</div>
+</section>
+
+<section id="demo">
+<div class="wrap">
+<div class="demo-section">
+  <h2>Live Code Analysis</h2>
+  <p class="sub">Paste or upload JavaScript/Python code. Get a modernization score, issue report, refactoring roadmap, and test suggestions in seconds.</p>
+  <div class="demo-meta">
+    <span class="status-pill" id="apiStatus">Checking API...</span>
+    <div class="sample-row">
+      <button class="sample-btn" type="button" onclick="loadSample('javascript')">JS Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('python')">Python Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('messy')">Legacy Sample</button>
+    </div>
+  </div>
+
+  <div class="demo-grid">
+    <div class="demo-input">
+      <h3>Input Code</h3>
+      <div class="demo-controls">
+        <select class="lang-select" id="langSelect">
+          <option value="auto">Auto-detect</option>
+          <option value="javascript">JavaScript</option>
+          <option value="python">Python</option>
+        </select>
+        <label class="file-upload-btn ghost-btn">
+          Upload File
+          <input type="file" id="fileUpload" accept=".js,.jsx,.ts,.tsx,.py,.mjs,.cjs" hidden onchange="handleFileUpload(event)">
+        </label>
+        <button class="btn-run" id="runBtn" onclick="runDemo()">Analyze Code</button>
+      </div>
+      <div class="drop-zone" id="dropZone">
+        <textarea id="demoCode" style="margin-top:0" placeholder="Paste code here, drop a file, or use the samples above..."></textarea>
+        <div class="drop-overlay" id="dropOverlay">Drop file to analyze</div>
+      </div>
+    </div>
+    <div class="demo-output">
+      <div class="output-header">
+        <h3>Analysis Results</h3>
+        <div class="output-actions">
+          <button class="ghost-btn" type="button" onclick="copyResults()">Copy</button>
+          <button class="ghost-btn" type="button" onclick="downloadResults('json')">JSON</button>
+          <button class="ghost-btn" type="button" onclick="downloadResults('html')">Report</button>
+        </div>
+      </div>
+      <div class="demo-output-box" id="demoOutput">
+        <div class="placeholder-state">
+          <div class="placeholder-icon">&#9672;</div>
+          <p>Paste code and press <strong>Analyze</strong> or <kbd>Ctrl+Enter</kbd></p>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+</div>
+</section>
+
+<section class="contact-section" id="contact">
+<div class="wrap">
+<h2>Get Started</h2>
+<p class="sub" style="margin:0 auto">Request a modernization assessment, pilot proposal, or legacy code review for your team. We will respond with the fastest path to a focused pilot.</p>
+<div class="contact-form">
+  <input type="text" placeholder="Your name" id="contactName">
+  <input type="email" placeholder="Work email" id="contactEmail">
+  <textarea placeholder="Describe your legacy system — language, age, scale (optional)" id="contactMessage" rows="3"></textarea>
+  <button onclick="submitContact()">Request Assessment</button>
+  <p class="success-msg" id="contactSuccess"></p>
+</div>
+</div>
 </section>
 
 <footer>
-<p>&copy; 2026 Agii Intelligence. All rights reserved.</p>
+<p>© 2026 Agii Intelligence Inc. All rights reserved.</p>
 </footer>
-</div>
 
-<script>
-function scrollTo(id){document.getElementById(id).scrollIntoView({behavior:'smooth'})}
-function runDemo(){
-  const code=document.getElementById('demoCode').value.trim();
-  const out=document.getElementById('demoOutput');
-  if(!code){alert('Please paste some code first');return}
-  out.style.display='block';
-  out.textContent='Analyzing...';
-  setTimeout(()=>{out.textContent=`Analysis complete.\n\n• Identified ${code.split('\n').length} lines\n• Detected function(s)\n• Proposed refactoring: Simulated\n• Generated tests: 3\n\n(Full AI engine deployment pending.)`;},1500);
-}
-function submitDemo(){
-  const code=document.getElementById('demoCode').value.trim();
-  const out=document.getElementById('demoOutput');
-  if(!code){alert('Please paste some code');return}
-  out.style.display='block';
-  out.textContent='Running advanced analysis...';
-  setTimeout(()=>{out.textContent=`Advanced analysis complete.\n\nCode complexity: Low\nTech debt: ~0.2w\nSuggested modernization steps:\n1. Extract service layer\n2. Add TypeScript types\n3. Introduce automated tests\n\nThis is a simulated demo for the landing page. In production, this would call real AI services.`;},2000);
-}
-function submitContact(){
-  const email=document.getElementById('email').value.trim();
-  if(email){alert('Thanks! We\'ll contact you at '+email);}}
-// Diagram: How Demo Works
-// 1. User pastes code into textarea
-// 2. Click 'Analyze Code' -> runDemo()
-// 3. JS reads code -> shows 'Analyzing...' -> setTimeout 1.5s
-// 4. Displays simulated results: line count, function detected, refactor proposal, test count
-// In production, setTimeout would be replaced by fetch() to a backend AI service.
-</script>
+<script src="backend/public/app.js"></script>
 </body>
 </html>
