@@ -1,3 +1,4 @@
+// Agii.ca™ © 2022. All rights reserved.
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
