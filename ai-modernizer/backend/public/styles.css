@@ -49,7 +49,9 @@ header {
   max-width: 1200px; margin: 0 auto; padding: 0 20px;
   display: flex; justify-content: space-between; align-items: center;
 }
-.logo { font-weight: 800; font-size: 1.3rem; background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo { display:flex; align-items:center; gap:10px; font-weight: 800; font-size: 1.3rem; color: #fff; }
+.logo span { background: var(--gradient); -webkit-background-clip: text; -webkit-text-fill-color: transparent; }
+.logo-image { height: 34px; width: auto; object-fit: contain; border-radius: 6px; }
 .nav a { color: var(--text2); text-decoration: none; margin-left: 24px; font-size: 0.9rem; transition: 0.2s; }
 .nav a:hover { color: var(--highlight); }
 
