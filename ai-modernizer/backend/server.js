@@ -334,14 +334,80 @@ function findLineNum(code, needle) {
   return code.substring(0, idx).split('\n').length;
 }
 
+function analyzeCobol(code) {
+  const lines = code.split('\n');
+  const upper = code.toUpperCase();
+  const paragraphMatches = [...upper.matchAll(/^\s*(\d{4}-[A-Z0-9-]+|[A-Z0-9-]+)\.\s*$/gm)];
+  const paragraphs = paragraphMatches.map(m => ({
+    name: m[1],
+    params: 0,
+    lines: 0,
+    complexity: 'medium',
+    startLine: upper.substring(0, m.index).split('\n').length
+  }));
+
+  const issues = [];
+  const suggestions = [];
+  const refactoringSteps = [];
+
+  if (upper.includes('GO TO ')) {
+    issues.push({ type: 'control-flow', message: 'GO TO detected, which makes flow harder to modernize and test', line: findLineNum(upper, 'GO TO ') });
+    suggestions.push('Replace GO TO driven branching with structured PERFORM blocks or extracted procedures.');
+    refactoringSteps.push('Identify GO TO paths and convert them into structured control flow.');
+  }
+  if (upper.includes('ALTER ')) {
+    issues.push({ type: 'control-flow', message: 'ALTER detected, which is risky in legacy COBOL systems', line: findLineNum(upper, 'ALTER ') });
+    suggestions.push('Remove ALTER statements and make control flow explicit.');
+  }
+  if (upper.includes('FILE SECTION') && upper.includes('WRITE ') && !upper.includes('INVALID KEY')) {
+    suggestions.push('Add stronger file I/O validation and explicit error handling around READ/WRITE operations.');
+  }
+  if (upper.includes('EVALUATE ') === false && upper.includes('IF ')) {
+    suggestions.push('Consider consolidating repeated IF chains with EVALUATE blocks where business rules allow.');
+  }
+  if (upper.includes('WORKING-STORAGE SECTION') && upper.includes('PIC X(')) {
+    suggestions.push('Document copybook-style record layouts and map fields into typed service/domain models during modernization.');
+  }
+  if (upper.includes('PROCEDURE DIVISION')) {
+    refactoringSteps.push('Separate file handling, validation, payroll calculation, and reporting into discrete services or modules.');
+    refactoringSteps.push('Create characterization tests around payroll rules before refactoring legacy logic.');
+    refactoringSteps.push('Map PIC-based records into typed DTOs or schemas for the target platform.');
+  }
+
+  const complexity = lines.length > 220 || paragraphs.length > 12 ? 'high' : lines.length > 90 || paragraphs.length > 5 ? 'medium' : 'low';
+  const scorePenalty = (upper.includes('GO TO ') ? 15 : 0) + (issues.length * 8) + (complexity === 'high' ? 10 : complexity === 'medium' ? 4 : 0);
+
+  return {
+    language: 'cobol',
+    lines: lines.length,
+    characters: code.length,
+    functions: paragraphs,
+    complexity,
+    issues,
+    suggestions: suggestions.length ? suggestions : ['Start by preserving business rules with characterization tests before translating COBOL logic.'],
+    techDebt: complexity === 'high' ? '3-6 weeks' : complexity === 'medium' ? '1-3 weeks' : '3-5 days',
+    refactoringSteps,
+    testCoverage: {
+      estimated: Math.min(70, Math.max(20, paragraphs.length * 8)),
+      suggestions: [
+        'Build regression tests for payroll calculations, overtime rules, bonuses, and tax-code handling.',
+        'Create golden-file tests for input records, output records, and error-file generation.',
+        'Verify leave-status, max-hours, and invalid master-data scenarios before refactoring.'
+      ]
+    },
+    modernizationScore: Math.max(25, 78 - scorePenalty)
+  };
+}
+
 function analyzeGeneric(code) {
   return {
     language: 'unknown',
     lines: code.split('\n').length,
     characters: code.length,
+    functions: [],
     complexity: code.split('\n').length > 200 ? 'high' : 'medium',
     issues: [],
-    suggestions: ['Language-specific analysis available for JavaScript and Python'],
+    suggestions: ['Language-specific analysis available for JavaScript, Python, and COBOL'],
     techDebt: 'Unknown — manual review recommended',
     refactoringSteps: ['1. Identify language and framework', '2. Run linter for style issues', '3. Extract business logic into services'],
     testCoverage: { estimated: 0, suggestions: ['Add language-appropriate test framework'] },
@@ -360,7 +426,7 @@ app.get('/api/health', (req, res) => {
 app.post('/api/analyze', (req, res) => {
   const schema = Joi.object({
     code: Joi.string().min(1).max(100000).required(),
-    language: Joi.string().valid('javascript', 'python', 'auto').default('auto'),
+    language: Joi.string().valid('javascript', 'python', 'cobol', 'auto').default('auto'),
     filename: Joi.string().max(255).allow('').default('')
   });
 
@@ -372,7 +438,10 @@ app.post('/api/analyze', (req, res) => {
   // Detect language
   let detectedLang = language;
   if (language === 'auto') {
-    if (code.includes('function ') || code.includes('=>') || code.includes('const ') || code.includes('let ') || code.includes('var ')) {
+    const upper = code.toUpperCase();
+    if (upper.includes('IDENTIFICATION DIVISION') || upper.includes('PROCEDURE DIVISION') || upper.includes('WORKING-STORAGE SECTION') || upper.includes('ENVIRONMENT DIVISION')) {
+      detectedLang = 'cobol';
+    } else if (code.includes('function ') || code.includes('=>') || code.includes('const ') || code.includes('let ') || code.includes('var ')) {
       detectedLang = 'javascript';
     } else if (code.includes('def ') || (code.includes('import ') && code.includes(':'))) {
       detectedLang = 'python';
@@ -383,6 +452,7 @@ app.post('/api/analyze', (req, res) => {
   switch (detectedLang) {
     case 'javascript': results = analyzeJavaScript(code); break;
     case 'python': results = analyzePython(code); break;
+    case 'cobol': results = analyzeCobol(code); break;
     default: results = analyzeGeneric(code);
   }
 
@@ -494,7 +564,7 @@ app.get('/api/stats', (req, res) => {
           totalUsers: row2?.totalUsers || 0,
           totalContacts: row3?.totalContacts || 0,
           avgModernizationScore: row?.avgScore ? Math.round(row.avgScore) : null,
-          languagesSupported: ['JavaScript', 'Python'],
+          languagesSupported: ['JavaScript', 'Python', 'COBOL'],
           uptime: Math.round(process.uptime())
         });
       });

@@ -351,44 +351,68 @@ ${(d.testCoverage?.suggestions||[]).length ? `<h2>Test Coverage Suggestions</h2>
 
 function fallbackAnalyze(code, forcedLanguage) {
   const lines = code.split('\n').length;
+  const upper = code.toUpperCase();
   const language = forcedLanguage && forcedLanguage !== 'auto'
     ? forcedLanguage
-    : (code.includes('def ') ? 'python' : 'javascript');
+    : (upper.includes('IDENTIFICATION DIVISION') || upper.includes('PROCEDURE DIVISION')
+        ? 'cobol'
+        : code.includes('def ')
+          ? 'python'
+          : 'javascript');
   const functions = language === 'python'
     ? [...code.matchAll(/^(\s*)def\s+(\w+)\s*\(([^)]*)\):/gm)].map(m => ({ name: m[2], params: m[3].split(',').filter(Boolean).length, complexity: 'medium' }))
-    : [...code.matchAll(/function\s+(\w+)\s*\(([^)]*)\)|const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>/g)].map(m => ({ name: m[1] || m[3] || '(anonymous)', params: (m[2] || m[4] || '').split(',').filter(Boolean).length, complexity: 'medium' }));
+    : language === 'cobol'
+      ? [...upper.matchAll(/^\s*(\d{4}-[A-Z0-9-]+|[A-Z0-9-]+)\.\s*$/gm)].map(m => ({ name: m[1], params: 0, complexity: 'medium' }))
+      : [...code.matchAll(/function\s+(\w+)\s*\(([^)]*)\)|const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>/g)].map(m => ({ name: m[1] || m[3] || '(anonymous)', params: (m[2] || m[4] || '').split(',').filter(Boolean).length, complexity: 'medium' }));
   const issues = [];
   const suggestions = [];
-  if (code.includes('var ')) {
-    issues.push({ message: 'Legacy var declarations detected' });
-    suggestions.push('Replace var with const/let.');
+  if (language === 'cobol') {
+    if (upper.includes('GO TO ')) {
+      issues.push({ message: 'GO TO detected, which makes legacy control flow harder to modernize safely' });
+      suggestions.push('Replace GO TO branching with structured PERFORM blocks before deeper translation.');
+    }
+    if (upper.includes('FILE SECTION')) suggestions.push('Isolate file I/O rules from payroll logic before rewriting into services.');
+    suggestions.push('Create characterization tests for payroll, tax, bonus, and leave-status rules before refactoring.');
+  } else {
+    if (code.includes('var ')) {
+      issues.push({ message: 'Legacy var declarations detected' });
+      suggestions.push('Replace var with const/let.');
+    }
+    if (code.includes('eval(')) {
+      issues.push({ message: 'eval() detected, which is a security and maintainability risk' });
+      suggestions.push('Remove eval and replace it with direct logic.');
+    }
+    if (!/try\s*\{|try:/.test(code) && lines > 8) suggestions.push('Add clearer error handling around business-critical flows.');
+    if (functions.some(f => f.params >= 5)) suggestions.push('Collapse long parameter lists into an options object or typed payload.');
   }
-  if (code.includes('eval(')) {
-    issues.push({ message: 'eval() detected, which is a security and maintainability risk' });
-    suggestions.push('Remove eval and replace it with direct logic.');
-  }
-  if (!/try\s*\{|try:/.test(code) && lines > 8) suggestions.push('Add clearer error handling around business-critical flows.');
-  if (functions.some(f => f.params >= 5)) suggestions.push('Collapse long parameter lists into an options object or typed payload.');
   if (!suggestions.length) suggestions.push('Split business logic into smaller services and add unit tests.');
-  const score = Math.max(25, 82 - (issues.length * 14) - (lines > 120 ? 10 : 0));
+  const score = Math.max(25, 82 - (issues.length * 14) - (lines > 120 ? 10 : 0) - (language === 'cobol' ? 6 : 0));
   return {
     language,
     lines,
     functions,
     complexity: lines > 120 ? 'high' : lines > 40 ? 'medium' : 'low',
     modernizationScore: score,
-    techDebt: lines > 120 ? '1-2 weeks' : lines > 40 ? '2-4 days' : '1-2 days',
+    techDebt: language === 'cobol' ? (lines > 120 ? '2-4 weeks' : '1-2 weeks') : (lines > 120 ? '1-2 weeks' : lines > 40 ? '2-4 days' : '1-2 days'),
     issues,
     suggestions,
-    refactoringSteps: [
-      'Extract reusable business logic into a service layer',
-      'Add tests for the main code paths',
-      'Introduce stricter typing and safer error handling'
-    ],
+    refactoringSteps: language === 'cobol'
+      ? [
+          'Preserve payroll business rules with regression tests first',
+          'Separate record parsing, validation, and pay calculation into services',
+          'Map PIC-based records into typed schemas for the target platform'
+        ]
+      : [
+          'Extract reusable business logic into a service layer',
+          'Add tests for the main code paths',
+          'Introduce stricter typing and safer error handling'
+        ],
     testCoverage: {
       estimated: Math.min(75, functions.length * 18 || 20),
       suggestions: functions.length
-        ? functions.map(f => `Test ${f.name} for valid input, edge cases, and failure handling`)
+        ? functions.map(f => language === 'cobol'
+            ? `Test paragraph ${f.name} for expected business-rule behavior and output records`
+            : `Test ${f.name} for valid input, edge cases, and failure handling`)
         : ['Add baseline tests for key inputs and expected outputs']
     },
     timestamp: new Date().toISOString(),
@@ -412,6 +436,7 @@ function readCodeFile(file) {
     const lower = file.name.toLowerCase();
     if (lower.endsWith('.py')) lang.value = 'python';
     else if (['.js','.jsx','.ts','.tsx','.mjs','.cjs'].some(ext => lower.endsWith(ext))) lang.value = 'javascript';
+    else if (['.cob', '.cbl', '.cpy'].some(ext => lower.endsWith(ext))) lang.value = 'cobol';
     else lang.value = 'auto';
     showToast(`Loaded ${file.name}`, 'success');
   };
