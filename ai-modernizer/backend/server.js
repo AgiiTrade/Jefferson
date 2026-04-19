@@ -664,6 +664,35 @@ app.get('/api/stats', (req, res) => {
   });
 });
 
+app.get('/api/analytics', (req, res) => {
+  db.all('SELECT language, COUNT(*) as count FROM analyses GROUP BY language ORDER BY count DESC', (err, languages) => {
+    if (err) return res.status(500).json({ error: 'Database error' });
+    db.all('SELECT complexity, COUNT(*) as count FROM analyses GROUP BY complexity ORDER BY count DESC', (err2, complexities) => {
+      if (err2) return res.status(500).json({ error: 'Database error' });
+      db.all(`SELECT substr(created_at, 1, 10) as day, COUNT(*) as count
+              FROM analyses
+              WHERE created_at >= datetime('now', '-6 days')
+              GROUP BY substr(created_at, 1, 10)
+              ORDER BY day ASC`, (err3, trend) => {
+        if (err3) return res.status(500).json({ error: 'Database error' });
+        db.get(`SELECT language, filename, modernization_score, created_at
+                FROM analyses
+                WHERE modernization_score IS NOT NULL
+                ORDER BY modernization_score DESC, created_at DESC
+                LIMIT 1`, (err4, topRun) => {
+          if (err4) return res.status(500).json({ error: 'Database error' });
+          res.json({
+            languages: languages || [],
+            complexities: complexities || [],
+            trend: trend || [],
+            topRun: topRun || null
+          });
+        });
+      });
+    });
+  });
+});
+
 app.get('/api/recent-analyses', (req, res) => {
   db.all('SELECT id, language, filename, lines, complexity, modernization_score, issues_count, created_at FROM analyses ORDER BY created_at DESC LIMIT 8', (err, rows) => {
     if (err) return res.status(500).json({ error: 'Database error' });

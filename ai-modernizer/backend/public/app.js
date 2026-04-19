@@ -78,6 +78,7 @@ async function runDemo() {
     showToast('Analysis complete.', 'success');
     loadStats();
     loadActivityTicker();
+    loadAnalytics();
   } catch (err) {
     const fallback = fallbackAnalyze(code, lang);
     fallback.fallbackMode = true;
@@ -204,6 +205,7 @@ async function submitContact() {
     if (messageField) messageField.value = '';
     loadStats();
     showToast('Assessment request sent.', 'success');
+    loadAnalytics();
   } catch (err) {
     window.location.href = `mailto:hello@agii.ai?subject=${encodeURIComponent('AI Modernization Inquiry')}&body=${encodeURIComponent(`Name: ${name}\nEmail: ${email}\n\n${message}`)}`;
   } finally {
@@ -565,7 +567,7 @@ async function loadActivityTicker() {
     const data = await res.json();
     const rows = data.analyses || [];
     if (!rows.length) {
-      container.innerHTML = '<p style="color:#555;text-align:center;padding:16px">No analyses yet. Be the first — try the demo below.</p>';
+      container.innerHTML = '<p style="color:#555;text-align:center;padding:16px">No analyses yet. Be the first, try the demo below.</p>';
       return;
     }
     container.innerHTML = rows.map(r => {
@@ -583,6 +585,89 @@ async function loadActivityTicker() {
   } catch {
     container.innerHTML = '<p style="color:#555;text-align:center;padding:16px">Activity feed unavailable in static mode.</p>';
   }
+}
+
+async function loadAnalytics() {
+  const langEl = document.getElementById('analyticsLanguages');
+  const complexityEl = document.getElementById('analyticsComplexity');
+  const trendEl = document.getElementById('analyticsTrend');
+  const topRunEl = document.getElementById('analyticsTopRun');
+  if (!langEl || !complexityEl || !trendEl || !topRunEl) return;
+
+  try {
+    const res = await fetch(`${API_BASE}/analytics`);
+    if (!res.ok) throw new Error('analytics unavailable');
+    const data = await res.json();
+
+    renderAnalyticsBars(langEl, data.languages || []);
+    renderAnalyticsBars(complexityEl, data.complexities || []);
+    renderTrendChart(trendEl, data.trend || []);
+    renderTopRun(topRunEl, data.topRun || null);
+  } catch {
+    const fallback = '<p class="analytics-empty">Analytics unavailable in static mode.</p>';
+    langEl.innerHTML = fallback;
+    complexityEl.innerHTML = fallback;
+    trendEl.innerHTML = fallback;
+    topRunEl.innerHTML = fallback;
+  }
+}
+
+function renderAnalyticsBars(container, rows) {
+  if (!rows.length) {
+    container.innerHTML = '<p class="analytics-empty">No analytics yet.</p>';
+    return;
+  }
+  const max = Math.max(...rows.map(r => Number(r.count) || 0), 1);
+  container.innerHTML = rows.map(row => {
+    const pct = Math.max(8, Math.round(((Number(row.count) || 0) / max) * 100));
+    const label = escapeHtml(row.language || row.complexity || 'unknown');
+    return `<div class="analytics-row">
+      <span class="analytics-label">${label}</span>
+      <div class="analytics-bar"><span style="width:${pct}%"></span></div>
+      <span class="analytics-value">${Number(row.count) || 0}</span>
+    </div>`;
+  }).join('');
+}
+
+function renderTrendChart(container, rows) {
+  if (!rows.length) {
+    container.innerHTML = '<p class="analytics-empty">No recent trend data yet.</p>';
+    return;
+  }
+  const max = Math.max(...rows.map(r => Number(r.count) || 0), 1);
+  container.innerHTML = rows.map(row => {
+    const count = Number(row.count) || 0;
+    const pct = Math.max(8, Math.round((count / max) * 100));
+    const label = formatDayLabel(row.day);
+    return `<div class="trend-day">
+      <div class="trend-count">${count}</div>
+      <div class="trend-bar-wrap"><div class="trend-bar" style="height:${pct}%"></div></div>
+      <div class="trend-label">${label}</div>
+    </div>`;
+  }).join('');
+}
+
+function renderTopRun(container, topRun) {
+  if (!topRun) {
+    container.innerHTML = '<p class="analytics-empty">No scored analyses yet.</p>';
+    return;
+  }
+  const score = Number(topRun.modernization_score) || 0;
+  const scoreColor = score >= 70 ? 'var(--success)' : score >= 40 ? 'var(--warning)' : 'var(--highlight)';
+  const name = topRun.filename || `${topRun.language || 'legacy'} snippet`;
+  container.innerHTML = `<div class="top-run-score" style="color:${scoreColor}">${score}</div>
+    <div class="top-run-meta">
+      <h4>${escapeHtml(name)}</h4>
+      <p><strong>Language:</strong> ${escapeHtml(topRun.language || 'unknown')}</p>
+      <p><strong>Captured:</strong> ${escapeHtml(timeAgo(topRun.created_at))}</p>
+      <p>Use this section as a live signal of what teams are analyzing and how modernization quality is trending.</p>
+    </div>`;
+}
+
+function formatDayLabel(day) {
+  if (!day) return '—';
+  const date = new Date(`${day}T12:00:00`);
+  return date.toLocaleDateString('en-US', { month: 'short', day: 'numeric' });
 }
 
 function timeAgo(dateStr) {
@@ -636,6 +721,7 @@ document.addEventListener('DOMContentLoaded', () => {
   checkApiHealth();
   loadStats();
   loadActivityTicker();
+  loadAnalytics();
   wireDropZone();
   setupCounterObserver();
 
