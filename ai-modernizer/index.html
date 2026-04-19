@@ -215,7 +215,7 @@
 <div class="wrap">
 <div class="demo-section">
   <h2>Live Code Analysis</h2>
-  <p class="sub">Paste or upload JavaScript, Python, or COBOL code. Get a modernization score, issue report, refactoring roadmap, and test suggestions in seconds.</p>
+  <p class="sub">Paste or upload JavaScript, Python, COBOL, Java, C#, VB, SQL, PL/SQL, or RPG code. Get a modernization score, issue report, refactoring roadmap, and test suggestions in seconds.</p>
   <div class="demo-meta">
     <span class="status-pill" id="apiStatus">Checking API...</span>
     <div class="sample-row">
@@ -234,10 +234,16 @@
           <option value="javascript">JavaScript</option>
           <option value="python">Python</option>
           <option value="cobol">COBOL</option>
+          <option value="java">Java</option>
+          <option value="csharp">C#</option>
+          <option value="vb">VB / VB.NET</option>
+          <option value="sql">SQL</option>
+          <option value="plsql">PL/SQL</option>
+          <option value="rpg">RPG</option>
         </select>
         <label class="file-upload-btn ghost-btn">
           Upload File
-          <input type="file" id="fileUpload" accept=".js,.jsx,.ts,.tsx,.py,.mjs,.cjs,.cob,.cbl,.cpy" hidden onchange="handleFileUpload(event)">
+          <input type="file" id="fileUpload" accept=".js,.jsx,.ts,.tsx,.py,.mjs,.cjs,.cob,.cbl,.cpy,.java,.cs,.vb,.bas,.cls,.sql,.pkb,.pks,.rpgle,.rpg" hidden onchange="handleFileUpload(event)">
         </label>
         <button class="btn-run" id="runBtn" onclick="runDemo()">Analyze Code</button>
       </div>

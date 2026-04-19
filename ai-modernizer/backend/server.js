@@ -399,6 +399,79 @@ function analyzeCobol(code) {
   };
 }
 
+function analyzeEnterpriseLegacy(code, language) {
+  const lines = code.split('\n');
+  const upper = code.toUpperCase();
+  const extractors = {
+    java: /(?:public|private|protected)?\s*(?:static\s+)?[A-Za-z0-9_<>,\[\]]+\s+(\w+)\s*\(([^)]*)\)\s*\{/g,
+    csharp: /(?:public|private|protected|internal)?\s*(?:static\s+)?[A-Za-z0-9_<>,\[\]?]+\s+(\w+)\s*\(([^)]*)\)\s*\{/g,
+    vb: /(?:Public|Private|Protected|Friend)?\s*(?:Shared\s+)?(?:Function|Sub)\s+(\w+)\s*\(([^)]*)\)/gi,
+    sql: /\b(PROCEDURE|FUNCTION|TRIGGER|PACKAGE)\s+([A-Z0-9_]+)/gi,
+    plsql: /\b(PROCEDURE|FUNCTION|TRIGGER|PACKAGE)\s+([A-Z0-9_]+)/gi,
+    rpg: /^\s*([A-Z0-9_]+)\s+BEGSR\b/gim,
+  };
+  const regex = extractors[language] || extractors.java;
+  const functions = [...code.matchAll(regex)].map(m => ({
+    name: m[1] && ['PROCEDURE', 'FUNCTION', 'TRIGGER', 'PACKAGE'].includes(String(m[1]).toUpperCase()) ? m[2] : (m[1] || m[2] || '(anonymous)'),
+    params: m[2] && !['PROCEDURE', 'FUNCTION', 'TRIGGER', 'PACKAGE'].includes(String(m[1]).toUpperCase()) ? m[2].split(',').filter(Boolean).length : 0,
+    lines: 0,
+    complexity: 'medium',
+    startLine: code.substring(0, m.index).split('\n').length
+  }));
+
+  const issues = [];
+  const suggestions = [];
+  const refactoringSteps = [];
+
+  if (language === 'java' && upper.includes('SYSTEM.OUT.PRINT')) suggestions.push('Replace System.out printing with structured logging and observability.');
+  if (language === 'java' && upper.includes('VECTOR<')) suggestions.push('Replace legacy collection types with modern typed collections where safe.');
+  if (language === 'csharp' && upper.includes('DATASET')) suggestions.push('Untangle DataSet-heavy flows into typed domain models and repository/services.');
+  if (language === 'csharp' && upper.includes('CATCH (EXCEPTION')) issues.push({ type: 'error-handling', message: 'Broad exception handling detected, review swallowed or over-generalized failures', line: findLineNum(upper, 'CATCH (EXCEPTION') });
+  if (language === 'vb' && upper.includes('ON ERROR RESUME NEXT')) {
+    issues.push({ type: 'error-handling', message: 'On Error Resume Next detected, which hides failures in legacy VB code', line: findLineNum(upper, 'ON ERROR RESUME NEXT') });
+    suggestions.push('Replace On Error Resume Next with explicit Try/Catch and typed error paths.');
+  }
+  if ((language === 'sql' || language === 'plsql') && upper.includes('CURSOR ')) suggestions.push('Review cursor-heavy flows for set-based rewrites or service extraction opportunities.');
+  if ((language === 'sql' || language === 'plsql') && upper.includes('EXCEPTION') === false) suggestions.push('Add explicit exception handling and logging around critical stored logic.');
+  if (language === 'rpg' && upper.includes('GOTO')) {
+    issues.push({ type: 'control-flow', message: 'GOTO detected in RPG logic, which increases modernization risk', line: findLineNum(upper, 'GOTO') });
+    suggestions.push('Replace GOTO-driven flows with structured subroutines or procedures before deeper translation.');
+  }
+
+  if (upper.includes('SELECT *')) suggestions.push('Replace SELECT * with explicit field projections before moving logic into services.');
+  if (upper.includes('TODO') || upper.includes('FIXME')) issues.push({ type: 'maintainability', message: 'Outstanding TODO/FIXME markers found in legacy code', line: findLineNum(upper, 'TODO') || findLineNum(upper, 'FIXME') });
+  if (!issues.length && !suggestions.length) suggestions.push('Preserve behavior first with characterization tests, then decompose legacy modules into smaller services.');
+
+  refactoringSteps.push('Identify and isolate business rules from infrastructure concerns.');
+  refactoringSteps.push('Create regression tests around current behavior before refactoring.');
+  refactoringSteps.push('Map high-risk modules into phased modernization work packages.');
+
+  const complexity = lines.length > 250 || functions.length > 15 ? 'high' : lines.length > 90 || functions.length > 5 ? 'medium' : 'low';
+  const baseScores = { java: 76, csharp: 78, vb: 70, sql: 72, plsql: 72, rpg: 68 };
+  const modernizationScore = Math.max(25, (baseScores[language] || 72) - (issues.length * 10) - (complexity === 'high' ? 10 : complexity === 'medium' ? 4 : 0));
+
+  return {
+    language,
+    lines: lines.length,
+    characters: code.length,
+    functions,
+    complexity,
+    issues,
+    suggestions,
+    techDebt: complexity === 'high' ? '2-5 weeks' : complexity === 'medium' ? '4-10 days' : '2-5 days',
+    refactoringSteps,
+    testCoverage: {
+      estimated: Math.min(75, Math.max(20, functions.length * 10)),
+      suggestions: [
+        `Create characterization tests around ${language.toUpperCase()} business rules before migration.`,
+        'Cover edge cases, failure paths, and external I/O dependencies.',
+        'Add golden-data tests for reports, file outputs, or SQL result sets where relevant.'
+      ]
+    },
+    modernizationScore
+  };
+}
+
 function analyzeGeneric(code) {
   return {
     language: 'unknown',
@@ -426,7 +499,7 @@ app.get('/api/health', (req, res) => {
 app.post('/api/analyze', (req, res) => {
   const schema = Joi.object({
     code: Joi.string().min(1).max(100000).required(),
-    language: Joi.string().valid('javascript', 'python', 'cobol', 'auto').default('auto'),
+    language: Joi.string().valid('javascript', 'python', 'cobol', 'java', 'csharp', 'vb', 'sql', 'plsql', 'rpg', 'auto').default('auto'),
     filename: Joi.string().max(255).allow('').default('')
   });
 
@@ -441,6 +514,18 @@ app.post('/api/analyze', (req, res) => {
     const upper = code.toUpperCase();
     if (upper.includes('IDENTIFICATION DIVISION') || upper.includes('PROCEDURE DIVISION') || upper.includes('WORKING-STORAGE SECTION') || upper.includes('ENVIRONMENT DIVISION')) {
       detectedLang = 'cobol';
+    } else if (upper.includes('EXEC SQL') || upper.includes('CREATE OR REPLACE PROCEDURE') || upper.includes('CREATE OR REPLACE FUNCTION')) {
+      detectedLang = 'plsql';
+    } else if (upper.includes('SELECT ') || upper.includes('INSERT INTO ') || upper.includes('UPDATE ') || upper.includes('DELETE FROM ')) {
+      detectedLang = 'sql';
+    } else if (/\bSUB\b|\bFUNCTION\b|ON ERROR RESUME NEXT/i.test(code) || upper.includes('END SUB') || upper.includes('END FUNCTION')) {
+      detectedLang = 'vb';
+    } else if (upper.includes('USING SYSTEM;') || upper.includes('NAMESPACE ') || upper.includes('CONSOLE.WRITELINE')) {
+      detectedLang = 'csharp';
+    } else if (upper.includes('PUBLIC CLASS') || upper.includes('PRIVATE STATIC') || upper.includes('SYSTEM.OUT.PRINT')) {
+      detectedLang = 'java';
+    } else if (/^\s*[A-Z0-9_]+\s+BEGSR\b/gim.test(code) || upper.includes('DCL-S ')) {
+      detectedLang = 'rpg';
     } else if (code.includes('function ') || code.includes('=>') || code.includes('const ') || code.includes('let ') || code.includes('var ')) {
       detectedLang = 'javascript';
     } else if (code.includes('def ') || (code.includes('import ') && code.includes(':'))) {
@@ -453,6 +538,13 @@ app.post('/api/analyze', (req, res) => {
     case 'javascript': results = analyzeJavaScript(code); break;
     case 'python': results = analyzePython(code); break;
     case 'cobol': results = analyzeCobol(code); break;
+    case 'java':
+    case 'csharp':
+    case 'vb':
+    case 'sql':
+    case 'plsql':
+    case 'rpg':
+      results = analyzeEnterpriseLegacy(code, detectedLang); break;
     default: results = analyzeGeneric(code);
   }
 
@@ -564,7 +656,7 @@ app.get('/api/stats', (req, res) => {
           totalUsers: row2?.totalUsers || 0,
           totalContacts: row3?.totalContacts || 0,
           avgModernizationScore: row?.avgScore ? Math.round(row.avgScore) : null,
-          languagesSupported: ['JavaScript', 'Python', 'COBOL'],
+          languagesSupported: ['JavaScript', 'Python', 'COBOL', 'Java', 'C#', 'VB', 'SQL', 'PL/SQL', 'RPG'],
           uptime: Math.round(process.uptime())
         });
       });

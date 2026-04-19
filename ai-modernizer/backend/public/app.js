@@ -356,14 +356,34 @@ function fallbackAnalyze(code, forcedLanguage) {
     ? forcedLanguage
     : (upper.includes('IDENTIFICATION DIVISION') || upper.includes('PROCEDURE DIVISION')
         ? 'cobol'
-        : code.includes('def ')
-          ? 'python'
-          : 'javascript');
+        : upper.includes('CREATE OR REPLACE PROCEDURE') || upper.includes('EXEC SQL')
+          ? 'plsql'
+          : upper.includes('SELECT ') || upper.includes('INSERT INTO ') || upper.includes('UPDATE ')
+            ? 'sql'
+            : /\bSUB\b|\bFUNCTION\b|ON ERROR RESUME NEXT/i.test(code)
+              ? 'vb'
+              : upper.includes('USING SYSTEM;') || upper.includes('CONSOLE.WRITELINE')
+                ? 'csharp'
+                : upper.includes('PUBLIC CLASS') || upper.includes('SYSTEM.OUT.PRINT')
+                  ? 'java'
+                  : /^\s*[A-Z0-9_]+\s+BEGSR\b/gim.test(code)
+                    ? 'rpg'
+                    : code.includes('def ')
+                      ? 'python'
+                      : 'javascript');
   const functions = language === 'python'
     ? [...code.matchAll(/^(\s*)def\s+(\w+)\s*\(([^)]*)\):/gm)].map(m => ({ name: m[2], params: m[3].split(',').filter(Boolean).length, complexity: 'medium' }))
     : language === 'cobol'
       ? [...upper.matchAll(/^\s*(\d{4}-[A-Z0-9-]+|[A-Z0-9-]+)\.\s*$/gm)].map(m => ({ name: m[1], params: 0, complexity: 'medium' }))
-      : [...code.matchAll(/function\s+(\w+)\s*\(([^)]*)\)|const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>/g)].map(m => ({ name: m[1] || m[3] || '(anonymous)', params: (m[2] || m[4] || '').split(',').filter(Boolean).length, complexity: 'medium' }));
+      : ['java','csharp'].includes(language)
+        ? [...code.matchAll(/(?:public|private|protected|internal)?\s*(?:static\s+)?[A-Za-z0-9_<>,\[\]?]+\s+(\w+)\s*\(([^)]*)\)\s*\{/g)].map(m => ({ name: m[1], params: (m[2] || '').split(',').filter(Boolean).length, complexity: 'medium' }))
+        : language === 'vb'
+          ? [...code.matchAll(/(?:Public|Private|Protected|Friend)?\s*(?:Shared\s+)?(?:Function|Sub)\s+(\w+)\s*\(([^)]*)\)/gi)].map(m => ({ name: m[1], params: (m[2] || '').split(',').filter(Boolean).length, complexity: 'medium' }))
+          : ['sql','plsql'].includes(language)
+            ? [...upper.matchAll(/\b(PROCEDURE|FUNCTION|TRIGGER|PACKAGE)\s+([A-Z0-9_]+)/gi)].map(m => ({ name: m[2], params: 0, complexity: 'medium' }))
+            : language === 'rpg'
+              ? [...code.matchAll(/^\s*([A-Z0-9_]+)\s+BEGSR\b/gim)].map(m => ({ name: m[1], params: 0, complexity: 'medium' }))
+              : [...code.matchAll(/function\s+(\w+)\s*\(([^)]*)\)|const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>/g)].map(m => ({ name: m[1] || m[3] || '(anonymous)', params: (m[2] || m[4] || '').split(',').filter(Boolean).length, complexity: 'medium' }));
   const issues = [];
   const suggestions = [];
   if (language === 'cobol') {
@@ -373,6 +393,15 @@ function fallbackAnalyze(code, forcedLanguage) {
     }
     if (upper.includes('FILE SECTION')) suggestions.push('Isolate file I/O rules from payroll logic before rewriting into services.');
     suggestions.push('Create characterization tests for payroll, tax, bonus, and leave-status rules before refactoring.');
+  } else if (['java','csharp','vb','sql','plsql','rpg'].includes(language)) {
+    if (language === 'vb' && upper.includes('ON ERROR RESUME NEXT')) {
+      issues.push({ message: 'On Error Resume Next detected, which can hide failures in legacy VB code' });
+      suggestions.push('Replace On Error Resume Next with explicit Try/Catch flow.');
+    }
+    if (['sql','plsql'].includes(language) && upper.includes('SELECT *')) suggestions.push('Replace SELECT * with explicit fields before migration into services or APIs.');
+    if (language === 'rpg' && upper.includes('GOTO')) suggestions.push('Replace GOTO-driven RPG flows with structured subroutines before deeper modernization.');
+    suggestions.push('Create characterization tests around business rules before migration.');
+    suggestions.push('Separate business rules from infrastructure and I/O first.');
   } else {
     if (code.includes('var ')) {
       issues.push({ message: 'Legacy var declarations detected' });
@@ -386,14 +415,14 @@ function fallbackAnalyze(code, forcedLanguage) {
     if (functions.some(f => f.params >= 5)) suggestions.push('Collapse long parameter lists into an options object or typed payload.');
   }
   if (!suggestions.length) suggestions.push('Split business logic into smaller services and add unit tests.');
-  const score = Math.max(25, 82 - (issues.length * 14) - (lines > 120 ? 10 : 0) - (language === 'cobol' ? 6 : 0));
+  const score = Math.max(25, 82 - (issues.length * 14) - (lines > 120 ? 10 : 0) - (['cobol','vb','rpg','sql','plsql','java','csharp'].includes(language) ? 6 : 0));
   return {
     language,
     lines,
     functions,
     complexity: lines > 120 ? 'high' : lines > 40 ? 'medium' : 'low',
     modernizationScore: score,
-    techDebt: language === 'cobol' ? (lines > 120 ? '2-4 weeks' : '1-2 weeks') : (lines > 120 ? '1-2 weeks' : lines > 40 ? '2-4 days' : '1-2 days'),
+    techDebt: ['cobol','vb','rpg','sql','plsql','java','csharp'].includes(language) ? (lines > 120 ? '2-4 weeks' : '1-2 weeks') : (lines > 120 ? '1-2 weeks' : lines > 40 ? '2-4 days' : '1-2 days'),
     issues,
     suggestions,
     refactoringSteps: language === 'cobol'
@@ -402,11 +431,17 @@ function fallbackAnalyze(code, forcedLanguage) {
           'Separate record parsing, validation, and pay calculation into services',
           'Map PIC-based records into typed schemas for the target platform'
         ]
-      : [
-          'Extract reusable business logic into a service layer',
-          'Add tests for the main code paths',
-          'Introduce stricter typing and safer error handling'
-        ],
+      : ['java','csharp','vb','sql','plsql','rpg'].includes(language)
+        ? [
+            'Preserve legacy business behavior with regression tests first',
+            'Isolate business rules from framework, database, or file I/O concerns',
+            'Move high-risk modules into phased modernization work packages'
+          ]
+        : [
+            'Extract reusable business logic into a service layer',
+            'Add tests for the main code paths',
+            'Introduce stricter typing and safer error handling'
+          ],
     testCoverage: {
       estimated: Math.min(75, functions.length * 18 || 20),
       suggestions: functions.length
@@ -437,6 +472,12 @@ function readCodeFile(file) {
     if (lower.endsWith('.py')) lang.value = 'python';
     else if (['.js','.jsx','.ts','.tsx','.mjs','.cjs'].some(ext => lower.endsWith(ext))) lang.value = 'javascript';
     else if (['.cob', '.cbl', '.cpy'].some(ext => lower.endsWith(ext))) lang.value = 'cobol';
+    else if (lower.endsWith('.java')) lang.value = 'java';
+    else if (lower.endsWith('.cs')) lang.value = 'csharp';
+    else if (['.vb','.bas','.cls'].some(ext => lower.endsWith(ext))) lang.value = 'vb';
+    else if (['.pkb','.pks'].some(ext => lower.endsWith(ext))) lang.value = 'plsql';
+    else if (['.rpgle','.rpg'].some(ext => lower.endsWith(ext))) lang.value = 'rpg';
+    else if (lower.endsWith('.sql')) lang.value = 'sql';
     else lang.value = 'auto';
     showToast(`Loaded ${file.name}`, 'success');
   };
