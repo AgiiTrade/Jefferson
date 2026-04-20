@@ -13,12 +13,75 @@ const fs = require('fs');
 const path = require('path');
 
 const app = express();
-const PORT = process.env.PORT || 3100;
-const JWT_SECRET = process.env.JWT_SECRET || 'agii-modernizer-secret-change-me';
+const PORT = Number(process.env.PORT || 3100);
+const NODE_ENV = process.env.NODE_ENV || 'development';
+const IS_PROD = NODE_ENV === 'production';
+const DEFAULT_JWT_SECRET = 'agii-modernizer-secret-change-me';
+const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
+const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(v => v.trim())
+  .filter(Boolean);
+const ANALYZE_RATE_LIMIT_MAX = Number(process.env.ANALYZE_RATE_LIMIT_MAX || 25);
+const CONTACT_RATE_LIMIT_MAX = Number(process.env.CONTACT_RATE_LIMIT_MAX || 10);
+const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 12);
+const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
+const rateLimitBuckets = new Map();
+
+if (IS_PROD && JWT_SECRET === DEFAULT_JWT_SECRET) {
+  console.error('Refusing to start in production with the default JWT secret. Set JWT_SECRET.');
+  process.exit(1);
+}
+
+app.set('trust proxy', 1);
+
+function getClientKey(req) {
+  return (req.headers['cf-connecting-ip'] || req.headers['x-forwarded-for'] || req.ip || 'unknown')
+    .toString()
+    .split(',')[0]
+    .trim();
+}
+
+function makeRateLimiter(bucketName, maxRequests) {
+  return (req, res, next) => {
+    const now = Date.now();
+    const key = `${bucketName}:${getClientKey(req)}`;
+    const bucket = rateLimitBuckets.get(key);
+    if (!bucket || bucket.resetAt <= now) {
+      rateLimitBuckets.set(key, { count: 1, resetAt: now + RATE_LIMIT_WINDOW_MS });
+      return next();
+    }
+    if (bucket.count >= maxRequests) {
+      const retryAfterSeconds = Math.max(1, Math.ceil((bucket.resetAt - now) / 1000));
+      res.set('Retry-After', String(retryAfterSeconds));
+      return res.status(429).json({ error: 'Rate limit exceeded. Please retry later.' });
+    }
+    bucket.count += 1;
+    return next();
+  };
+}
+
+function cleanupRateLimitBuckets() {
+  const now = Date.now();
+  for (const [key, bucket] of rateLimitBuckets.entries()) {
+    if (bucket.resetAt <= now) rateLimitBuckets.delete(key);
+  }
+}
+setInterval(cleanupRateLimitBuckets, 5 * 60 * 1000).unref();
 
 // ── Middleware ──────────────────────────────────────────────
-app.use(helmet({ contentSecurityPolicy: false }));
-app.use(cors());
+app.use((req, res, next) => {
+  req.requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  res.set('X-Request-Id', req.requestId);
+  next();
+});
+app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false }));
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin || !ALLOWED_ORIGINS.length || ALLOWED_ORIGINS.includes(origin)) return callback(null, true);
+    return callback(new Error('Origin not allowed by CORS'));
+  }
+}));
 app.use(compression());
 app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
@@ -409,6 +472,14 @@ function analyzeEnterpriseLegacy(code, language) {
     sql: /\b(PROCEDURE|FUNCTION|TRIGGER|PACKAGE)\s+([A-Z0-9_]+)/gi,
     plsql: /\b(PROCEDURE|FUNCTION|TRIGGER|PACKAGE)\s+([A-Z0-9_]+)/gi,
     rpg: /^\s*([A-Z0-9_]+)\s+BEGSR\b/gim,
+    natural: /^\s*DEFINE\s+SUBROUTINE\s+([A-Z0-9-]+)/gim,
+    adabas: /^\s*DEFINE\s+DATA\s+/gim,
+    powerbuilder: /(?:public|private|protected)?\s*(?:function|subroutine)\s+(\w+)\s*\(([^)]*)\)/gi,
+    delphi: /(?:procedure|function)\s+(\w+)\s*\(([^)]*)\)/gi,
+    classicasp: /(?:sub|function)\s+(\w+)\s*\(([^)]*)\)/gi,
+    perl: /^\s*sub\s+(\w+)/gm,
+    jcl: /^\s*\/\/([A-Z0-9#$@]+)\s+(JOB|EXEC|DD)\b/gim,
+    copybook: /^\s*\d{2}\s+([A-Z0-9-]+)\s+PIC\s+/gim,
   };
   const regex = extractors[language] || extractors.java;
   const functions = [...code.matchAll(regex)].map(m => ({
@@ -437,6 +508,17 @@ function analyzeEnterpriseLegacy(code, language) {
     issues.push({ type: 'control-flow', message: 'GOTO detected in RPG logic, which increases modernization risk', line: findLineNum(upper, 'GOTO') });
     suggestions.push('Replace GOTO-driven flows with structured subroutines or procedures before deeper translation.');
   }
+  if (language === 'natural') {
+    suggestions.push('Map Natural programs and subroutines into service boundaries before rewriting logic.');
+    if (upper.includes('ESCAPE ROUTINE') || upper.includes('ESCAPE TOP')) issues.push({ type: 'control-flow', message: 'Natural ESCAPE flow detected, review branch-heavy logic carefully', line: findLineNum(upper, 'ESCAPE ') });
+  }
+  if (language === 'adabas') suggestions.push('Document Adabas file access patterns and data relationships before migration.');
+  if (language === 'powerbuilder') suggestions.push('Separate PowerBuilder UI/event logic from business rules before service extraction.');
+  if (language === 'delphi') suggestions.push('Identify form-bound logic and extract domain rules from Delphi units first.');
+  if (language === 'classicasp') suggestions.push('Untangle Classic ASP page logic into services and isolate database access.');
+  if (language === 'perl') suggestions.push('Add explicit tests around Perl scripts and isolate shell/file side effects before modernization.');
+  if (language === 'jcl') suggestions.push('Map job dependencies, datasets, and scheduler assumptions before replacing JCL flows.');
+  if (language === 'copybook') suggestions.push('Turn copybook fields into explicit schemas or DTO contracts before migrating business logic.');
 
   if (upper.includes('SELECT *')) suggestions.push('Replace SELECT * with explicit field projections before moving logic into services.');
   if (upper.includes('TODO') || upper.includes('FIXME')) issues.push({ type: 'maintainability', message: 'Outstanding TODO/FIXME markers found in legacy code', line: findLineNum(upper, 'TODO') || findLineNum(upper, 'FIXME') });
@@ -447,7 +529,7 @@ function analyzeEnterpriseLegacy(code, language) {
   refactoringSteps.push('Map high-risk modules into phased modernization work packages.');
 
   const complexity = lines.length > 250 || functions.length > 15 ? 'high' : lines.length > 90 || functions.length > 5 ? 'medium' : 'low';
-  const baseScores = { java: 76, csharp: 78, vb: 70, sql: 72, plsql: 72, rpg: 68 };
+  const baseScores = { java: 76, csharp: 78, vb: 70, sql: 72, plsql: 72, rpg: 68, natural: 66, adabas: 64, powerbuilder: 70, delphi: 71, classicasp: 67, perl: 69, jcl: 62, copybook: 63 };
   const modernizationScore = Math.max(25, (baseScores[language] || 72) - (issues.length * 10) - (complexity === 'high' ? 10 : complexity === 'medium' ? 4 : 0));
 
   return {
@@ -492,14 +574,20 @@ function analyzeGeneric(code) {
 
 // Health check
 app.get('/api/health', (req, res) => {
-  res.json({ status: 'ok', uptime: process.uptime(), timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    uptime: process.uptime(),
+    timestamp: new Date().toISOString(),
+    environment: NODE_ENV,
+    requestId: req.requestId
+  });
 });
 
 // Analyze code (public — no auth needed for demo)
-app.post('/api/analyze', (req, res) => {
+app.post('/api/analyze', makeRateLimiter('analyze', ANALYZE_RATE_LIMIT_MAX), (req, res) => {
   const schema = Joi.object({
     code: Joi.string().min(1).max(100000).required(),
-    language: Joi.string().valid('javascript', 'python', 'cobol', 'java', 'csharp', 'vb', 'sql', 'plsql', 'rpg', 'auto').default('auto'),
+    language: Joi.string().valid('javascript', 'python', 'cobol', 'java', 'csharp', 'vb', 'sql', 'plsql', 'rpg', 'natural', 'adabas', 'powerbuilder', 'delphi', 'classicasp', 'perl', 'jcl', 'copybook', 'auto').default('auto'),
     filename: Joi.string().max(255).allow('').default('')
   });
 
@@ -526,6 +614,22 @@ app.post('/api/analyze', (req, res) => {
       detectedLang = 'java';
     } else if (/^\s*[A-Z0-9_]+\s+BEGSR\b/gim.test(code) || upper.includes('DCL-S ')) {
       detectedLang = 'rpg';
+    } else if (upper.includes('DEFINE SUBROUTINE') || upper.includes('END-SUBROUTINE')) {
+      detectedLang = 'natural';
+    } else if (upper.includes('FIND ') && upper.includes('IN VIEW OF') || upper.includes('READ LOGICAL')) {
+      detectedLang = 'adabas';
+    } else if (upper.includes('FORWARD') && upper.includes('TYPE ') || upper.includes('EVENT ') && upper.includes('TRIGGER')) {
+      detectedLang = 'powerbuilder';
+    } else if (upper.includes('UNIT ') && upper.includes('INTERFACE') && upper.includes('IMPLEMENTATION')) {
+      detectedLang = 'delphi';
+    } else if (upper.includes('<%') || upper.includes('RESPONSE.WRITE') || upper.includes('SERVER.CREATEOBJECT')) {
+      detectedLang = 'classicasp';
+    } else if (/^\s*SUB\s+\w+/gim.test(code) || upper.includes('USE STRICT;') || upper.includes('MY $')) {
+      detectedLang = 'perl';
+    } else if (/^\s*\/\/[^\n]+\s+(JOB|EXEC|DD)\b/gim.test(code)) {
+      detectedLang = 'jcl';
+    } else if (/^\s*\d{2}\s+[A-Z0-9-]+\s+PIC\s+/gim.test(code)) {
+      detectedLang = 'copybook';
     } else if (code.includes('function ') || code.includes('=>') || code.includes('const ') || code.includes('let ') || code.includes('var ')) {
       detectedLang = 'javascript';
     } else if (code.includes('def ') || (code.includes('import ') && code.includes(':'))) {
@@ -544,6 +648,14 @@ app.post('/api/analyze', (req, res) => {
     case 'sql':
     case 'plsql':
     case 'rpg':
+    case 'natural':
+    case 'adabas':
+    case 'powerbuilder':
+    case 'delphi':
+    case 'classicasp':
+    case 'perl':
+    case 'jcl':
+    case 'copybook':
       results = analyzeEnterpriseLegacy(code, detectedLang); break;
     default: results = analyzeGeneric(code);
   }
@@ -571,7 +683,7 @@ app.post('/api/analyze', (req, res) => {
 });
 
 // Contact form submission
-app.post('/api/contact', (req, res) => {
+app.post('/api/contact', makeRateLimiter('contact', CONTACT_RATE_LIMIT_MAX), (req, res) => {
   const schema = Joi.object({
     name: Joi.string().max(200).allow('').default(''),
     email: Joi.string().email().required(),
@@ -588,7 +700,7 @@ app.post('/api/contact', (req, res) => {
 });
 
 // Register
-app.post('/api/register', async (req, res) => {
+app.post('/api/register', makeRateLimiter('auth', AUTH_RATE_LIMIT_MAX), async (req, res) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().min(8).required(),
@@ -617,7 +729,7 @@ app.post('/api/register', async (req, res) => {
 });
 
 // Login
-app.post('/api/login', (req, res) => {
+app.post('/api/login', makeRateLimiter('auth', AUTH_RATE_LIMIT_MAX), (req, res) => {
   const schema = Joi.object({
     email: Joi.string().email().required(),
     password: Joi.string().required()
@@ -656,7 +768,7 @@ app.get('/api/stats', (req, res) => {
           totalUsers: row2?.totalUsers || 0,
           totalContacts: row3?.totalContacts || 0,
           avgModernizationScore: row?.avgScore ? Math.round(row.avgScore) : null,
-          languagesSupported: ['JavaScript', 'Python', 'COBOL', 'Java', 'C#', 'VB', 'SQL', 'PL/SQL', 'RPG'],
+          languagesSupported: ['JavaScript', 'Python', 'COBOL', 'Java', 'C#', 'VB', 'SQL', 'PL/SQL', 'RPG', 'Natural', 'Adabas', 'PowerBuilder', 'Delphi', 'Classic ASP', 'Perl', 'JCL', 'Copybook'],
           uptime: Math.round(process.uptime())
         });
       });
@@ -700,9 +812,18 @@ app.get('/api/recent-analyses', (req, res) => {
   });
 });
 
+app.use((err, req, res, next) => {
+  if (err?.message === 'Origin not allowed by CORS') {
+    return res.status(403).json({ error: 'Origin not allowed', requestId: req.requestId });
+  }
+  console.error(`[${req.requestId || 'no-request-id'}]`, err);
+  return res.status(500).json({ error: 'Internal server error', requestId: req.requestId });
+});
+
 // ── Start Server ───────────────────────────────────────────
 app.listen(PORT, () => {
   console.log(`\n🚀 Agii Intelligence Backend running on http://localhost:${PORT}`);
+  console.log(`🌍 Environment: ${NODE_ENV}`);
   console.log(`📊 API endpoints:`);
   console.log(`   POST /api/analyze   — Analyze code`);
   console.log(`   POST /api/contact   — Submit contact form`);
