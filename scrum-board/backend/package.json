@@ -5,7 +5,10 @@
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
-    "dev": "node server.js"
+    "dev": "node server.js",
+    "pm2:start": "pm2 start ecosystem.config.cjs",
+    "pm2:restart": "pm2 restart scrum-board-backend",
+    "pm2:stop": "pm2 stop scrum-board-backend"
   },
   "dependencies": {
     "compression": "^1.7.4",
