@@ -186,6 +186,93 @@ let lastAnalysis = null;
 let progressTimer = null;
 let lastUploadedFilename = '';
 
+function getModernizationGuidance(language) {
+  const map = {
+    cobol: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot', fit: 'Best for enterprise service decomposition and long-term backend modernization.' },
+        { name: '.NET', fit: 'Strong fit when the target organization is standardized on Microsoft and Azure.' },
+        { name: 'Service-first API layer', fit: 'Useful when preserving core rules while gradually replacing mainframe-adjacent workflows.' }
+      ],
+      modernizationBlueprint: [
+        'Extract business rules and record layouts first.',
+        'Create characterization tests around payroll, eligibility, tax, or batch logic.',
+        'Move file, batch, and reporting flows into modular services and typed schemas.'
+      ]
+    },
+    siebel: {
+      targetPlatforms: [
+        { name: 'Salesforce', fit: 'Best when the target state is CRM, case management, and workflow automation.' },
+        { name: 'Java Spring Boot', fit: 'Best when Siebel scripts and integrations need to become APIs and backend services.' },
+        { name: '.NET', fit: 'Strong option for enterprise internal-service modernization in Microsoft-heavy shops.' }
+      ],
+      modernizationBlueprint: [
+        'Inventory Siebel business components, applets, workflows, and integration objects.',
+        'Separate CRM process rules from UI event scripts and transport logic.',
+        'Map each module into Salesforce, service APIs, or .NET services based on workflow fit.'
+      ]
+    },
+    curam: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot', fit: 'Best when rebuilding case-management logic into a modern enterprise service platform.' },
+        { name: 'Salesforce', fit: 'Strong option for case workflows, worker experience, and service-centered operations.' },
+        { name: '.NET', fit: 'Good fit when the target enterprise stack is Microsoft-first and case portals are being rebuilt.' }
+      ],
+      modernizationBlueprint: [
+        'Inventory IBM Cúram case flows, evidence models, CER rules, and eligibility decisions.',
+        'Separate rules, case orchestration, and channel UX before migration starts.',
+        'Rebuild by module with regression tests around eligibility and case outcomes.'
+      ]
+    },
+    powerbuilder: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot + React', fit: 'Best for replacing thick-client UI with modern web services and frontend.' },
+        { name: '.NET + React', fit: 'Strong fit in Microsoft enterprises modernizing rich-client internal apps.' }
+      ],
+      modernizationBlueprint: [
+        'Separate UI events from business rules and database access.',
+        'Extract data flows into service APIs.',
+        'Rebuild screens incrementally on a modern web frontend.'
+      ]
+    },
+    natural: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot', fit: 'Best for enterprise business-rule modernization with strong service boundaries.' },
+        { name: '.NET', fit: 'Good fit for Microsoft-based modernization programs with strong internal tooling.' }
+      ],
+      modernizationBlueprint: [
+        'Map Natural subroutines and data access flows first.',
+        'Document Adabas or related data relationships.',
+        'Replace batch and procedural flows with tested services.'
+      ]
+    },
+    adabas: {
+      targetPlatforms: [
+        { name: 'Postgres-backed service platform', fit: 'Best for migrating legacy data access into relational services.' },
+        { name: 'Java Spring Boot', fit: 'Best when complex domain logic and integration services need a durable landing zone.' }
+      ],
+      modernizationBlueprint: [
+        'Model files and access patterns before schema migration.',
+        'Preserve query behavior with regression tests.',
+        'Move data access behind typed repositories and APIs.'
+      ]
+    }
+  };
+
+  return map[language] || {
+    targetPlatforms: [
+      { name: 'Java Spring Boot', fit: 'Strong default for enterprise backend modernization.' },
+      { name: '.NET', fit: 'Strong option for Microsoft-centered enterprise environments.' },
+      { name: 'Modern web app + API', fit: 'Good fit when flexibility and phased rebuild matter more than platform lock-in.' }
+    ],
+    modernizationBlueprint: [
+      'Preserve current behavior with regression tests first.',
+      'Separate business rules from UI, database, and transport concerns.',
+      'Rebuild in phased work packages with service boundaries and clear ownership.'
+    ]
+  };
+}
+
 async function runDemo() {
   const code = document.getElementById('demoCode').value.trim();
   const lang = document.getElementById('langSelect').value;
@@ -234,6 +321,10 @@ async function runDemo() {
 
 function renderResults(data, container) {
   const score = data.modernizationScore || 50;
+  const guidance = {
+    targetPlatforms: data.targetPlatforms || getModernizationGuidance(data.language).targetPlatforms,
+    modernizationBlueprint: data.modernizationBlueprint || getModernizationGuidance(data.language).modernizationBlueprint
+  };
   const stroke = 2 * Math.PI * 22;
   const dash = stroke - (stroke * score / 100);
   const scoreColor = score >= 70 ? '#22c55e' : score >= 40 ? '#f59e0b' : '#e94560';
@@ -294,6 +385,22 @@ function renderResults(data, container) {
     html += `<div class="result-section"><h4>Refactoring Roadmap</h4><ul>`;
     data.refactoringSteps.forEach(s => { html += `<li>${escapeHtml(s)}</li>`; });
     html += `</ul></div>`;
+  }
+
+  if (guidance.targetPlatforms?.length) {
+    html += `<div class="result-section"><h4>Recommended Target Platforms</h4><div style="display:grid;gap:10px">`;
+    guidance.targetPlatforms.forEach(t => {
+      html += `<div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02)"><div style="font-weight:700;margin-bottom:4px">${escapeHtml(t.name)}</div><div style="color:var(--text2);font-size:0.9rem">${escapeHtml(t.fit)}</div></div>`;
+    });
+    html += `</div></div>`;
+  }
+
+  if (guidance.modernizationBlueprint?.length) {
+    html += `<div class="result-section"><h4>Modernization Blueprint</h4><ol>`;
+    guidance.modernizationBlueprint.forEach(step => {
+      html += `<li>${escapeHtml(step)}</li>`;
+    });
+    html += `</ol></div>`;
   }
 
   if (data.testCoverage?.suggestions?.length) {
@@ -387,10 +494,10 @@ function loadSample(kind) {
   const code = document.getElementById('demoCode');
   const lang = document.getElementById('langSelect');
   if (!code || !lang) return;
-  const extMap = { python: 'py', cobol: 'cob', java: 'java', sql: 'sql', javascript: 'js', messy: 'js' };
+  const extMap = { python: 'py', cobol: 'cob', java: 'java', sql: 'sql', javascript: 'js', messy: 'js', siebel: 'ejs', curam: 'java' };
   lastUploadedFilename = `${kind}-sample.${extMap[kind] || 'txt'}`;
   code.value = SAMPLE_SNIPPETS[kind] || SAMPLE_SNIPPETS.javascript;
-  const langMap = { python: 'python', cobol: 'cobol', java: 'java', sql: 'plsql', javascript: 'javascript', messy: 'javascript' };
+  const langMap = { python: 'python', cobol: 'cobol', java: 'java', sql: 'plsql', javascript: 'javascript', messy: 'javascript', siebel: 'siebel', curam: 'curam' };
   lang.value = langMap[kind] || 'auto';
 }
 
@@ -552,9 +659,13 @@ function fallbackAnalyze(code, forcedLanguage) {
                   ? 'java'
                   : /^\s*[A-Z0-9_]+\s+BEGSR\b/gim.test(code)
                     ? 'rpg'
-                    : code.includes('def ')
-                      ? 'python'
-                      : 'javascript');
+                    : upper.includes('BUSCOMP_') || upper.includes('THESERVICE') || upper.includes('THEAPPLICATION().GETBUSOBJECT')
+                      ? 'siebel'
+                      : upper.includes('CURAM.') || upper.includes('CER_') || (upper.includes('EVIDENCE') && upper.includes('ELIGIBILITY'))
+                        ? 'curam'
+                        : code.includes('def ')
+                          ? 'python'
+                          : 'javascript');
   const functions = language === 'python'
     ? [...code.matchAll(/^(\s*)def\s+(\w+)\s*\(([^)]*)\):/gm)].map(m => ({ name: m[2], params: m[3].split(',').filter(Boolean).length, complexity: 'medium' }))
     : language === 'cobol'
@@ -567,7 +678,11 @@ function fallbackAnalyze(code, forcedLanguage) {
             ? [...upper.matchAll(/\b(PROCEDURE|FUNCTION|TRIGGER|PACKAGE)\s+([A-Z0-9_]+)/gi)].map(m => ({ name: m[2], params: 0, complexity: 'medium' }))
             : language === 'rpg'
               ? [...code.matchAll(/^\s*([A-Z0-9_]+)\s+BEGSR\b/gim)].map(m => ({ name: m[1], params: 0, complexity: 'medium' }))
-              : [...code.matchAll(/function\s+(\w+)\s*\(([^)]*)\)|const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>/g)].map(m => ({ name: m[1] || m[3] || '(anonymous)', params: (m[2] || m[4] || '').split(',').filter(Boolean).length, complexity: 'medium' }));
+              : language === 'siebel'
+                ? [...code.matchAll(/function\s+([A-Za-z0-9_]+)\s*\(([^)]*)\)|\b(BusComp_[A-Za-z0-9_]+)\b|\b(Applet_[A-Za-z0-9_]+)\b/gi)].map(m => ({ name: m[1] || m[3] || m[4] || '(anonymous)', params: (m[2] || '').split(',').filter(Boolean).length, complexity: 'medium' }))
+                : language === 'curam'
+                  ? [...code.matchAll(/(?:class|interface)\s+([A-Za-z0-9_]+)/g)].map(m => ({ name: m[1], params: 0, complexity: 'medium' }))
+                  : [...code.matchAll(/function\s+(\w+)\s*\(([^)]*)\)|const\s+(\w+)\s*=\s*\(([^)]*)\)\s*=>/g)].map(m => ({ name: m[1] || m[3] || '(anonymous)', params: (m[2] || m[4] || '').split(',').filter(Boolean).length, complexity: 'medium' }));
   const issues = [];
   const suggestions = [];
   if (language === 'cobol') {
@@ -577,13 +692,15 @@ function fallbackAnalyze(code, forcedLanguage) {
     }
     if (upper.includes('FILE SECTION')) suggestions.push('Isolate file I/O rules from payroll logic before rewriting into services.');
     suggestions.push('Create characterization tests for payroll, tax, bonus, and leave-status rules before refactoring.');
-  } else if (['java','csharp','vb','sql','plsql','rpg'].includes(language)) {
+  } else if (['java','csharp','vb','sql','plsql','rpg','siebel','curam'].includes(language)) {
     if (language === 'vb' && upper.includes('ON ERROR RESUME NEXT')) {
       issues.push({ message: 'On Error Resume Next detected, which can hide failures in legacy VB code' });
       suggestions.push('Replace On Error Resume Next with explicit Try/Catch flow.');
     }
     if (['sql','plsql'].includes(language) && upper.includes('SELECT *')) suggestions.push('Replace SELECT * with explicit fields before migration into services or APIs.');
     if (language === 'rpg' && upper.includes('GOTO')) suggestions.push('Replace GOTO-driven RPG flows with structured subroutines before deeper modernization.');
+    if (language === 'siebel') suggestions.push('Map Siebel business components and workflow rules into Salesforce, service APIs, or .NET modules before translation.');
+    if (language === 'curam') suggestions.push('Inventory IBM Cúram case flows, CER rules, and eligibility logic before choosing the target stack.');
     suggestions.push('Create characterization tests around business rules before migration.');
     suggestions.push('Separate business rules from infrastructure and I/O first.');
   } else {
@@ -600,13 +717,14 @@ function fallbackAnalyze(code, forcedLanguage) {
   }
   if (!suggestions.length) suggestions.push('Split business logic into smaller services and add unit tests.');
   const score = Math.max(25, 82 - (issues.length * 14) - (lines > 120 ? 10 : 0) - (['cobol','vb','rpg','sql','plsql','java','csharp'].includes(language) ? 6 : 0));
+  const guidance = getModernizationGuidance(language);
   return {
     language,
     lines,
     functions,
     complexity: lines > 120 ? 'high' : lines > 40 ? 'medium' : 'low',
     modernizationScore: score,
-    techDebt: ['cobol','vb','rpg','sql','plsql','java','csharp'].includes(language) ? (lines > 120 ? '2-4 weeks' : '1-2 weeks') : (lines > 120 ? '1-2 weeks' : lines > 40 ? '2-4 days' : '1-2 days'),
+    techDebt: ['cobol','vb','rpg','sql','plsql','java','csharp','siebel','curam'].includes(language) ? (lines > 120 ? '2-4 weeks' : '1-2 weeks') : (lines > 120 ? '1-2 weeks' : lines > 40 ? '2-4 days' : '1-2 days'),
     issues,
     suggestions,
     refactoringSteps: language === 'cobol'
@@ -634,6 +752,8 @@ function fallbackAnalyze(code, forcedLanguage) {
             : `Test ${f.name} for valid input, edge cases, and failure handling`)
         : ['Add baseline tests for key inputs and expected outputs']
     },
+    targetPlatforms: guidance.targetPlatforms,
+    modernizationBlueprint: guidance.modernizationBlueprint,
     timestamp: new Date().toISOString(),
     requestId: `fallback-${Date.now().toString(36)}`
   };
@@ -662,6 +782,8 @@ function readCodeFile(file) {
     else if (['.pkb','.pks'].some(ext => lower.endsWith(ext))) lang.value = 'plsql';
     else if (['.rpgle','.rpg'].some(ext => lower.endsWith(ext))) lang.value = 'rpg';
     else if (lower.endsWith('.sql')) lang.value = 'sql';
+    else if (['.sif','.srf','.ejs','.ss'].some(ext => lower.endsWith(ext))) lang.value = 'siebel';
+    else if (lower.endsWith('.curam')) lang.value = 'curam';
     else lang.value = 'auto';
     showToast(`Loaded ${file.name}`, 'success');
   };

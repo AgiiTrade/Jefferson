@@ -442,6 +442,8 @@ function analyzeCobol(code) {
   const complexity = lines.length > 220 || paragraphs.length > 12 ? 'high' : lines.length > 90 || paragraphs.length > 5 ? 'medium' : 'low';
   const scorePenalty = (upper.includes('GO TO ') ? 15 : 0) + (issues.length * 8) + (complexity === 'high' ? 10 : complexity === 'medium' ? 4 : 0);
 
+  const guidance = buildModernizationGuidance('cobol');
+
   return {
     language: 'cobol',
     lines: lines.length,
@@ -460,7 +462,96 @@ function analyzeCobol(code) {
         'Verify leave-status, max-hours, and invalid master-data scenarios before refactoring.'
       ]
     },
+    targetPlatforms: guidance.targetPlatforms,
+    modernizationBlueprint: guidance.modernizationBlueprint,
     modernizationScore: Math.max(25, 78 - scorePenalty)
+  };
+}
+
+function buildModernizationGuidance(language) {
+  const map = {
+    cobol: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot', fit: 'Best for enterprise service decomposition and long-term backend modernization.' },
+        { name: '.NET', fit: 'Strong fit when the target organization is standardized on Microsoft and Azure.' },
+        { name: 'Service-first API layer', fit: 'Useful when preserving core rules while gradually replacing mainframe-adjacent workflows.' }
+      ],
+      modernizationBlueprint: [
+        'Extract business rules and record layouts first, especially PIC and copybook structures.',
+        'Create characterization tests around payroll, eligibility, tax, or batch-calculation logic.',
+        'Move file, batch, and reporting flows into modular services and typed schemas.'
+      ]
+    },
+    siebel: {
+      targetPlatforms: [
+        { name: 'Salesforce', fit: 'Best when the target state is CRM, case management, workflow automation, and service operations.' },
+        { name: 'Java Spring Boot', fit: 'Best when Siebel scripts and integrations need to become APIs and backend services.' },
+        { name: '.NET', fit: 'Strong option for enterprise internal-service modernization in Microsoft-heavy shops.' }
+      ],
+      modernizationBlueprint: [
+        'Inventory Siebel business components, applets, workflows, and integration objects.',
+        'Separate CRM process rules from UI event scripts and transport logic.',
+        'Map each module into Salesforce, service APIs, or .NET services based on ownership and workflow fit.'
+      ]
+    },
+    curam: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot', fit: 'Best when rebuilding case-management logic into a modern enterprise service platform.' },
+        { name: 'Salesforce', fit: 'Strong option for case workflows, worker experience, and service-centered operations.' },
+        { name: '.NET', fit: 'Good fit when the target enterprise stack is Microsoft-first and case portals are being rebuilt.' }
+      ],
+      modernizationBlueprint: [
+        'Inventory IBM Cúram case flows, evidence models, CER rules, and eligibility decisions.',
+        'Separate rules, case orchestration, and channel UX before migration starts.',
+        'Rebuild by module with regression tests around eligibility and case outcomes.'
+      ]
+    },
+    powerbuilder: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot + React', fit: 'Best for replacing thick-client UI with modern web services and frontend.' },
+        { name: '.NET + React', fit: 'Strong fit in Microsoft enterprises modernizing rich-client internal apps.' }
+      ],
+      modernizationBlueprint: [
+        'Separate UI events from business rules and database access.',
+        'Extract data flows into service APIs.',
+        'Rebuild screens incrementally on a modern web frontend.'
+      ]
+    },
+    natural: {
+      targetPlatforms: [
+        { name: 'Java Spring Boot', fit: 'Best for enterprise business-rule modernization with strong service boundaries.' },
+        { name: '.NET', fit: 'Good fit for Microsoft-based modernization programs with strong internal tooling.' }
+      ],
+      modernizationBlueprint: [
+        'Map Natural subroutines and data access flows first.',
+        'Document Adabas or related data relationships.',
+        'Replace batch and procedural flows with tested services.'
+      ]
+    },
+    adabas: {
+      targetPlatforms: [
+        { name: 'Postgres-backed service platform', fit: 'Best for migrating legacy data access into relational services.' },
+        { name: 'Java Spring Boot', fit: 'Best when complex domain logic and integration services need a durable landing zone.' }
+      ],
+      modernizationBlueprint: [
+        'Model files and access patterns before schema migration.',
+        'Preserve query behavior with regression tests.',
+        'Move data access behind typed repositories and APIs.'
+      ]
+    }
+  };
+
+  return map[language] || {
+    targetPlatforms: [
+      { name: 'Java Spring Boot', fit: 'Strong default for enterprise backend modernization.' },
+      { name: '.NET', fit: 'Strong option for Microsoft-centered enterprise environments.' },
+      { name: 'Modern web app + API', fit: 'Good fit when flexibility and phased rebuild matter more than platform lock-in.' }
+    ],
+    modernizationBlueprint: [
+      'Preserve current behavior with regression tests first.',
+      'Separate business rules from UI, database, and transport concerns.',
+      'Rebuild in phased work packages with service boundaries and clear ownership.'
+    ]
   };
 }
 
@@ -546,6 +637,8 @@ function analyzeEnterpriseLegacy(code, language) {
   const baseScores = { java: 76, csharp: 78, vb: 70, sql: 72, plsql: 72, rpg: 68, natural: 66, adabas: 64, powerbuilder: 70, siebel: 65, curam: 64, delphi: 71, classicasp: 67, perl: 69, jcl: 62, copybook: 63 };
   const modernizationScore = Math.max(25, (baseScores[language] || 72) - (issues.length * 10) - (complexity === 'high' ? 10 : complexity === 'medium' ? 4 : 0));
 
+  const guidance = buildModernizationGuidance(language);
+
   return {
     language,
     lines: lines.length,
@@ -564,6 +657,8 @@ function analyzeEnterpriseLegacy(code, language) {
         'Add golden-data tests for reports, file outputs, or SQL result sets where relevant.'
       ]
     },
+    targetPlatforms: guidance.targetPlatforms,
+    modernizationBlueprint: guidance.modernizationBlueprint,
     modernizationScore
   };
 }
