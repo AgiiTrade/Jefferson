@@ -48,7 +48,7 @@
   <div class="stat-box"><div class="stat-num" id="stat-analyses" data-target="0">0</div><div class="stat-label">Code Analyses Run</div></div>
   <div class="stat-box"><div class="stat-num" id="stat-avg-score" data-target="0">0</div><div class="stat-label">Average Modernization Score</div></div>
   <div class="stat-box"><div class="stat-num" id="stat-contacts" data-target="0">0</div><div class="stat-label">Assessment Requests</div></div>
-  <div class="stat-box"><div class="stat-num" data-target="2">0</div><div class="stat-label">Languages Supported</div></div>
+  <div class="stat-box"><div class="stat-num" data-target="19">0</div><div class="stat-label">Languages Supported</div></div>
 </div>
 </section>
 
@@ -120,6 +120,10 @@
     <h3>Transformation Leaders</h3>
     <p>Give CIO, CTO, and architecture teams a faster way to turn old codebases into scoped modernization programs with executive-ready reporting.</p>
   </div>
+  <div class="info-card">
+    <h3>CRM and Case Platform Upgrades</h3>
+    <p>Assess Siebel and IBM Cúram estates, extract business rules, and map them into Salesforce, Java/Spring, .NET, or service-first modernization paths.</p>
+  </div>
 </div>
 </div>
 </section>
@@ -136,6 +140,10 @@
   <div class="info-card">
     <h3>Migration Planning</h3>
     <p>Map dependencies, modernization stages, and refactoring steps into a phased delivery plan.</p>
+  </div>
+  <div class="info-card">
+    <h3>Platform Targeting</h3>
+    <p>Turn legacy stacks like Siebel and IBM Cúram into concrete target options such as Salesforce, Java Spring Boot, .NET, or modern web services.</p>
   </div>
   <div class="info-card">
     <h3>Refactor Readiness</h3>
@@ -240,12 +248,17 @@
 <div class="wrap">
 <div class="demo-section">
   <h2>Live Code Analysis</h2>
-  <p class="sub">Paste or upload JavaScript, Python, COBOL, Java, C#, VB, SQL, PL/SQL, or RPG code. Get a modernization score, issue report, refactoring roadmap, and test suggestions in seconds.</p>
+  <p class="sub">Paste or upload JavaScript, Python, COBOL, Java, C#, VB, SQL, PL/SQL, RPG, Siebel, or IBM Cúram code. Get a modernization score, issue report, refactoring roadmap, and target-platform suggestions in seconds.</p>
   <div class="demo-meta">
     <span class="status-pill" id="apiStatus">Checking API...</span>
     <div class="sample-row">
       <button class="sample-btn" type="button" onclick="loadSample('javascript')">JS Sample</button>
       <button class="sample-btn" type="button" onclick="loadSample('python')">Python Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('cobol')">COBOL Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('java')">Java Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('sql')">SQL Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('siebel')">Siebel Sample</button>
+      <button class="sample-btn" type="button" onclick="loadSample('curam')">Cúram Sample</button>
       <button class="sample-btn" type="button" onclick="loadSample('messy')">Legacy Sample</button>
     </div>
   </div>
@@ -265,10 +278,20 @@
           <option value="sql">SQL</option>
           <option value="plsql">PL/SQL</option>
           <option value="rpg">RPG</option>
+          <option value="natural">Natural</option>
+          <option value="adabas">Adabas</option>
+          <option value="powerbuilder">PowerBuilder</option>
+          <option value="siebel">Siebel</option>
+          <option value="curam">IBM Cúram</option>
+          <option value="delphi">Delphi</option>
+          <option value="classicasp">Classic ASP</option>
+          <option value="perl">Perl</option>
+          <option value="jcl">JCL</option>
+          <option value="copybook">Copybook</option>
         </select>
         <label class="file-upload-btn ghost-btn">
           Upload File
-          <input type="file" id="fileUpload" accept=".js,.jsx,.ts,.tsx,.py,.mjs,.cjs,.cob,.cbl,.cpy,.java,.cs,.vb,.bas,.cls,.sql,.pkb,.pks,.rpgle,.rpg" hidden onchange="handleFileUpload(event)">
+          <input type="file" id="fileUpload" accept=".js,.jsx,.ts,.tsx,.py,.mjs,.cjs,.cob,.cbl,.cpy,.java,.cs,.vb,.bas,.cls,.sql,.pkb,.pks,.rpgle,.rpg,.sif,.srf,.ejs,.ss,.curam,.xml,.properties" hidden onchange="handleFileUpload(event)">
         </label>
         <button class="btn-run" id="runBtn" onclick="runDemo()">Analyze Code</button>
       </div>
@@ -283,7 +306,9 @@
         <div class="output-actions">
           <button class="ghost-btn" type="button" onclick="copyResults()">Copy</button>
           <button class="ghost-btn" type="button" onclick="downloadResults('json')">JSON</button>
+          <button class="ghost-btn" type="button" onclick="downloadResults('csv')">CSV</button>
           <button class="ghost-btn" type="button" onclick="downloadResults('html')">Report</button>
+          <button class="ghost-btn" type="button" onclick="downloadResults('pdf')">PDF</button>
         </div>
       </div>
       <div class="demo-output-box" id="demoOutput">

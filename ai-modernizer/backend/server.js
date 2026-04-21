@@ -477,6 +477,8 @@ function analyzeEnterpriseLegacy(code, language) {
     natural: /^\s*DEFINE\s+SUBROUTINE\s+([A-Z0-9-]+)/gim,
     adabas: /^\s*DEFINE\s+DATA\s+/gim,
     powerbuilder: /(?:public|private|protected)?\s*(?:function|subroutine)\s+(\w+)\s*\(([^)]*)\)/gi,
+    siebel: /function\s+([A-Za-z0-9_]+)\s*\(([^)]*)\)|\bBusComp_([A-Za-z0-9_]+)\b|\bApplet_([A-Za-z0-9_]+)\b/gi,
+    curam: /(?:class|interface)\s+([A-Za-z0-9_]+)|\bCER_[A-Za-z0-9_]+\b|\bcuram\.[A-Za-z0-9_.]+/gi,
     delphi: /(?:procedure|function)\s+(\w+)\s*\(([^)]*)\)/gi,
     classicasp: /(?:sub|function)\s+(\w+)\s*\(([^)]*)\)/gi,
     perl: /^\s*sub\s+(\w+)/gm,
@@ -516,6 +518,16 @@ function analyzeEnterpriseLegacy(code, language) {
   }
   if (language === 'adabas') suggestions.push('Document Adabas file access patterns and data relationships before migration.');
   if (language === 'powerbuilder') suggestions.push('Separate PowerBuilder UI/event logic from business rules before service extraction.');
+  if (language === 'siebel') {
+    suggestions.push('Map Siebel business components, applets, and workflows into target CRM or service boundaries before rewriting.');
+    suggestions.push('Evaluate whether the best target is Salesforce, Java/Spring, or .NET instead of doing a literal line-by-line translation.');
+    refactoringSteps.push('Extract Siebel script rules, workflow logic, and integration objects into an explicit target architecture.');
+  }
+  if (language === 'curam') {
+    suggestions.push('Separate IBM Cúram rules, evidence flows, and case-management logic before choosing a target platform.');
+    suggestions.push('Assess whether Java/Spring, Salesforce, or .NET is the right landing zone based on case management and integration needs.');
+    refactoringSteps.push('Inventory CER rules, case workflows, and eligibility logic before modular migration starts.');
+  }
   if (language === 'delphi') suggestions.push('Identify form-bound logic and extract domain rules from Delphi units first.');
   if (language === 'classicasp') suggestions.push('Untangle Classic ASP page logic into services and isolate database access.');
   if (language === 'perl') suggestions.push('Add explicit tests around Perl scripts and isolate shell/file side effects before modernization.');
@@ -531,7 +543,7 @@ function analyzeEnterpriseLegacy(code, language) {
   refactoringSteps.push('Map high-risk modules into phased modernization work packages.');
 
   const complexity = lines.length > 250 || functions.length > 15 ? 'high' : lines.length > 90 || functions.length > 5 ? 'medium' : 'low';
-  const baseScores = { java: 76, csharp: 78, vb: 70, sql: 72, plsql: 72, rpg: 68, natural: 66, adabas: 64, powerbuilder: 70, delphi: 71, classicasp: 67, perl: 69, jcl: 62, copybook: 63 };
+  const baseScores = { java: 76, csharp: 78, vb: 70, sql: 72, plsql: 72, rpg: 68, natural: 66, adabas: 64, powerbuilder: 70, siebel: 65, curam: 64, delphi: 71, classicasp: 67, perl: 69, jcl: 62, copybook: 63 };
   const modernizationScore = Math.max(25, (baseScores[language] || 72) - (issues.length * 10) - (complexity === 'high' ? 10 : complexity === 'medium' ? 4 : 0));
 
   return {
@@ -564,7 +576,7 @@ function analyzeGeneric(code) {
     functions: [],
     complexity: code.split('\n').length > 200 ? 'high' : 'medium',
     issues: [],
-    suggestions: ['Language-specific analysis available for JavaScript, Python, and COBOL'],
+    suggestions: ['Language-specific analysis available for JavaScript, Python, COBOL, Java, C#, VB, SQL, PL/SQL, RPG, Siebel, IBM Cúram, and more, select the language above or upload a file with the correct extension.'],
     techDebt: 'Unknown — manual review recommended',
     refactoringSteps: ['1. Identify language and framework', '2. Run linter for style issues', '3. Extract business logic into services'],
     testCoverage: { estimated: 0, suggestions: ['Add language-appropriate test framework'] },
@@ -589,7 +601,7 @@ app.get('/api/health', (req, res) => {
 app.post('/api/analyze', makeRateLimiter('analyze', ANALYZE_RATE_LIMIT_MAX), (req, res) => {
   const schema = Joi.object({
     code: Joi.string().min(1).max(100000).required(),
-    language: Joi.string().valid('javascript', 'python', 'cobol', 'java', 'csharp', 'vb', 'sql', 'plsql', 'rpg', 'natural', 'adabas', 'powerbuilder', 'delphi', 'classicasp', 'perl', 'jcl', 'copybook', 'auto').default('auto'),
+    language: Joi.string().valid('javascript', 'python', 'cobol', 'java', 'csharp', 'vb', 'sql', 'plsql', 'rpg', 'natural', 'adabas', 'powerbuilder', 'siebel', 'curam', 'delphi', 'classicasp', 'perl', 'jcl', 'copybook', 'auto').default('auto'),
     filename: Joi.string().max(255).allow('').default('')
   });
 
@@ -622,6 +634,10 @@ app.post('/api/analyze', makeRateLimiter('analyze', ANALYZE_RATE_LIMIT_MAX), (re
       detectedLang = 'adabas';
     } else if (upper.includes('FORWARD') && upper.includes('TYPE ') || upper.includes('EVENT ') && upper.includes('TRIGGER')) {
       detectedLang = 'powerbuilder';
+    } else if (upper.includes('BUSCOMP_') || upper.includes('BUSCOMPPRE') || upper.includes('APPLET_') || upper.includes('THEAPPLICATION().GETBUSOBJECT') || upper.includes('THESERVICE')) {
+      detectedLang = 'siebel';
+    } else if (upper.includes('CURAM.') || upper.includes('CER_') || upper.includes('BDM') && upper.includes('CASE') || upper.includes('EVIDENCE') && upper.includes('ELIGIBILITY')) {
+      detectedLang = 'curam';
     } else if (upper.includes('UNIT ') && upper.includes('INTERFACE') && upper.includes('IMPLEMENTATION')) {
       detectedLang = 'delphi';
     } else if (upper.includes('<%') || upper.includes('RESPONSE.WRITE') || upper.includes('SERVER.CREATEOBJECT')) {
@@ -653,6 +669,8 @@ app.post('/api/analyze', makeRateLimiter('analyze', ANALYZE_RATE_LIMIT_MAX), (re
     case 'natural':
     case 'adabas':
     case 'powerbuilder':
+    case 'siebel':
+    case 'curam':
     case 'delphi':
     case 'classicasp':
     case 'perl':

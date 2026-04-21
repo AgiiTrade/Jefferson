@@ -41,6 +41,144 @@ function saveUser(a,b,c,d,e,f){
   try {
   } catch(err) {}
   return users;
+}`,
+  cobol: `       IDENTIFICATION DIVISION.
+       PROGRAM-ID. PAYROLL-CALC.
+       ENVIRONMENT DIVISION.
+       DATA DIVISION.
+       WORKING-STORAGE SECTION.
+       01 WS-EMP-RECORD.
+          05 WS-EMP-ID        PIC X(10).
+          05 WS-EMP-NAME      PIC X(30).
+          05 WS-HOURS-WORKED  PIC 9(3)V99.
+          05 WS-HOURLY-RATE   PIC 9(5)V99.
+          05 WS-GROSS-PAY     PIC 9(7)V99.
+          05 WS-TAX-AMOUNT    PIC 9(7)V99.
+          05 WS-NET-PAY       PIC 9(7)V99.
+       01 WS-TAX-RATE         PIC 9V99 VALUE 0.22.
+       01 WS-OVERTIME-MULT    PIC 9V9  VALUE 1.5.
+       PROCEDURE DIVISION.
+       0000-MAIN-PARA.
+           PERFORM 1000-READ-EMPLOYEE
+           PERFORM 2000-CALC-PAY
+           PERFORM 3000-CALC-TAX
+           PERFORM 4000-WRITE-PAYSLIP
+           STOP RUN.
+       1000-READ-EMPLOYEE.
+           ACCEPT WS-EMP-ID
+           ACCEPT WS-HOURS-WORKED
+           ACCEPT WS-HOURLY-RATE.
+       2000-CALC-PAY.
+           IF WS-HOURS-WORKED > 40
+               COMPUTE WS-GROSS-PAY =
+                   (40 * WS-HOURLY-RATE) +
+                   ((WS-HOURS-WORKED - 40) *
+                    WS-HOURLY-RATE * WS-OVERTIME-MULT)
+           ELSE
+               COMPUTE WS-GROSS-PAY =
+                   WS-HOURS-WORKED * WS-HOURLY-RATE
+           END-IF.
+       3000-CALC-TAX.
+           COMPUTE WS-TAX-AMOUNT =
+               WS-GROSS-PAY * WS-TAX-RATE.
+           COMPUTE WS-NET-PAY =
+               WS-GROSS-PAY - WS-TAX-AMOUNT.
+       4000-WRITE-PAYSLIP.
+           DISPLAY "Employee: " WS-EMP-ID
+           DISPLAY "Gross:    " WS-GROSS-PAY
+           DISPLAY "Tax:      " WS-TAX-AMOUNT
+           DISPLAY "Net:      " WS-NET-PAY.`,
+  java: `import java.util.*;
+
+public class OrderProcessor {
+    private List<Map<String, Object>> orders = new ArrayList<>();
+    private static double TAX_RATE = 0.08;
+
+    public double calculateTotal(List<Map<String, Object>> items) {
+        double total = 0;
+        for (Map<String, Object> item : items) {
+            double price = (Double) item.get("price");
+            int qty = (Integer) item.get("quantity");
+            total += price * qty;
+        }
+        return total;
+    }
+
+    public Map<String, Object> processOrder(Map<String, Object> order,
+            String customerId, double discount, boolean expedited) {
+        double subtotal = calculateTotal(
+            (List<Map<String, Object>>) order.get("items"));
+        double taxed = subtotal + (subtotal * TAX_RATE);
+        double finalTotal = taxed - discount;
+        if (expedited) finalTotal += 15.00;
+
+        Map<String, Object> result = new HashMap<>();
+        result.put("customerId", customerId);
+        result.put("total", finalTotal);
+        result.put("status", "processed");
+        System.out.println("Order processed: " + finalTotal);
+        return result;
+    }
+}`,
+  sql: `CREATE OR REPLACE PROCEDURE sp_monthly_payroll_report (
+    p_department_id IN NUMBER,
+    p_month        IN DATE
+) AS
+    v_total_gross  NUMBER(12,2) := 0;
+    v_total_tax    NUMBER(12,2) := 0;
+    v_emp_count    NUMBER := 0;
+    CURSOR c_employees IS
+        SELECT e.employee_id, e.first_name, e.last_name,
+               e.salary, e.hire_date, d.department_name
+        FROM employees e
+        JOIN departments d ON e.department_id = d.department_id
+        WHERE e.department_id = p_department_id
+          AND e.status = 'ACTIVE'
+        ORDER BY e.last_name;
+BEGIN
+    FOR emp IN c_employees LOOP
+        v_emp_count := v_emp_count + 1;
+        v_total_gross := v_total_gross + emp.salary;
+        v_total_tax := v_total_tax + (emp.salary * 0.22);
+
+        INSERT INTO payroll_ledger (employee_id, pay_period, gross_amount,
+                                     tax_amount, net_amount, created_at)
+        SELECT emp.employee_id, p_month, emp.salary,
+               emp.salary * 0.22, emp.salary * 0.78, SYSDATE
+        FROM dual;
+    END LOOP;
+
+    UPDATE department_summaries
+    SET total_payroll = v_total_gross,
+        total_tax = v_total_tax,
+        headcount = v_emp_count,
+        report_month = p_month
+    WHERE department_id = p_department_id;
+
+    COMMIT;
+END sp_monthly_payroll_report;`,
+  siebel: `function BusComp_PreSetFieldValue (FieldName, FieldValue) {
+  if (FieldName == "Status" && FieldValue == "Approved") {
+    var service = TheApplication().GetService("Workflow Process Manager");
+    var inputs = TheApplication().NewPropertySet();
+    inputs.SetProperty("ProcessName", "Submit Approved Case");
+    inputs.SetProperty("RowId", this.GetFieldValue("Id"));
+    service.InvokeMethod("RunProcess", inputs, TheApplication().NewPropertySet());
+  }
+  return (ContinueOperation);
+}`,
+  curam: `package curam.casework.impl;
+
+public class EligibilityFacade {
+  public boolean assessEligibility(CaseDetails details, Evidence evidence) {
+    if (details == null || evidence == null) {
+      return false;
+    }
+    if (evidence.getIncome() < 20000 && details.isActive()) {
+      return true;
+    }
+    return false;
+  }
 }`
 };
 
@@ -249,11 +387,11 @@ function loadSample(kind) {
   const code = document.getElementById('demoCode');
   const lang = document.getElementById('langSelect');
   if (!code || !lang) return;
-  lastUploadedFilename = `${kind}-sample.${kind === 'python' ? 'py' : 'js'}`;
+  const extMap = { python: 'py', cobol: 'cob', java: 'java', sql: 'sql', javascript: 'js', messy: 'js' };
+  lastUploadedFilename = `${kind}-sample.${extMap[kind] || 'txt'}`;
   code.value = SAMPLE_SNIPPETS[kind] || SAMPLE_SNIPPETS.javascript;
-  if (kind === 'python') lang.value = 'python';
-  else if (kind === 'javascript' || kind === 'messy') lang.value = 'javascript';
-  else lang.value = 'auto';
+  const langMap = { python: 'python', cobol: 'cobol', java: 'java', sql: 'plsql', javascript: 'javascript', messy: 'javascript' };
+  lang.value = langMap[kind] || 'auto';
 }
 
 function copyResults() {
@@ -307,7 +445,7 @@ li{margin:6px 0;font-size:0.9rem}
 @media print{.cover{-webkit-print-color-adjust:exact;print-color-adjust:exact}}
 </style></head><body>
 <div class="cover">
-<div class="logo">&#x2B21; Agii Intelligence</div>
+<div class="logo">&#x2B21; Agii.ca</div>
 <h1>Legacy Code Modernization Report</h1>
 <p>Generated ${new Date().toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' })} &bull; ${escapeHtml(d.language)} &bull; ${d.lines} lines analyzed</p>
 </div>
@@ -328,8 +466,8 @@ ${(d.suggestions||[]).length ? `<h2>Recommendations</h2><ul>${sugList}</ul>` : '
 ${(d.refactoringSteps||[]).length ? `<h2>Refactoring Roadmap</h2><ol>${roadmapList}</ol>` : ''}
 ${(d.testCoverage?.suggestions||[]).length ? `<h2>Test Coverage Suggestions</h2><p style="color:#666;font-size:0.85rem;margin-bottom:8px">Estimated coverage potential: ${d.testCoverage.estimated}%</p><ul>${testList}</ul>` : ''}
 <div class="footer">
-<p><strong>Agii Intelligence</strong> &mdash; AI-Powered Legacy Modernization</p>
-<p style="margin-top:4px">This report was generated by the Agii analysis engine. Request ID: ${escapeHtml(d.requestId || 'n/a')}</p>
+<p><strong>Agii.ca</strong> &mdash; AI-Powered Legacy Modernization</p>
+<p style="margin-top:4px">This report was generated by the Agii.ca analysis engine. Request ID: ${escapeHtml(d.requestId || 'n/a')}</p>
 </div>
 </div></body></html>`;
     const blob = new Blob([html], { type: 'text/html' });
@@ -339,6 +477,50 @@ ${(d.testCoverage?.suggestions||[]).length ? `<h2>Test Coverage Suggestions</h2>
     a.download = `agii-modernization-report-${safeTimestamp()}.html`;
     a.click();
     URL.revokeObjectURL(url);
+    return;
+  }
+
+  if (format === 'csv') {
+    const d = lastAnalysis;
+    const rows = [['Field', 'Value']];
+    rows.push(['Language', d.language]);
+    rows.push(['Lines', d.lines]);
+    rows.push(['Functions', (d.functions || []).length]);
+    rows.push(['Complexity', d.complexity]);
+    rows.push(['Modernization Score', d.modernizationScore]);
+    rows.push(['Tech Debt Estimate', d.techDebt]);
+    rows.push(['Issues Count', (d.issues || []).length]);
+    rows.push(['Request ID', d.requestId || '']);
+    rows.push(['Timestamp', d.timestamp || '']);
+    rows.push([]);
+    if ((d.issues || []).length) {
+      rows.push(['Issue Type', 'Message', 'Line']);
+      (d.issues || []).forEach(i => rows.push([i.type || '', i.message, i.line || '']));
+      rows.push([]);
+    }
+    if ((d.functions || []).length) {
+      rows.push(['Function', 'Params', 'Lines', 'Complexity']);
+      (d.functions || []).forEach(f => rows.push([f.name, f.params, f.lines || '', f.complexity]));
+      rows.push([]);
+    }
+    if ((d.suggestions || []).length) {
+      rows.push(['Recommendations']);
+      (d.suggestions || []).forEach(s => rows.push([s]));
+    }
+    const csvContent = rows.map(r => r.map(cell => `"${String(cell).replace(/"/g, '""')}"`).join(',')).join('\n');
+    const blob = new Blob([csvContent], { type: 'text/csv' });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement('a');
+    a.href = url;
+    a.download = `agii-analysis-${safeTimestamp()}.csv`;
+    a.click();
+    URL.revokeObjectURL(url);
+    return;
+  }
+
+  if (format === 'pdf') {
+    downloadResults('html');
+    showToast('Report downloaded. Open it in your browser and use Print > Save as PDF for a polished PDF.', 'success');
     return;
   }
 
