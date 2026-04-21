@@ -24,15 +24,25 @@ NODE_ENV=production node server.js
 - `POST /api/analyze`
 - `POST /api/contact`
 
-## 5. Production deploy expectations
+## 5. Run under a managed process
+Example with PM2:
+```bash
+npm install -g pm2
+pm2 start ecosystem.config.cjs
+pm2 save
+```
+
+## 6. Production deploy expectations
 - run with process supervision
 - ensure reverse proxy forwards real IP headers
 - keep database file in a backed-up location if staying on SQLite
 - set monitoring on health endpoint
+- rotate logs or connect them to your host logging stack
 
-## 6. Minimum production checks
+## 7. Minimum production checks
 - backend refuses default JWT secret in production
 - CORS allowlist is restricted
 - rate limiting is active
 - logs are visible
 - restart policy is enabled
+- `npm test` passes before deployment

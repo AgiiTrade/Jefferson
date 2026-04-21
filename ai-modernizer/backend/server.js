@@ -18,6 +18,7 @@ const NODE_ENV = process.env.NODE_ENV || 'development';
 const IS_PROD = NODE_ENV === 'production';
 const DEFAULT_JWT_SECRET = 'agii-modernizer-secret-change-me';
 const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
+const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data.db');
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
   .map(v => v.trim())
@@ -27,6 +28,7 @@ const CONTACT_RATE_LIMIT_MAX = Number(process.env.CONTACT_RATE_LIMIT_MAX || 10);
 const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 12);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
 const rateLimitBuckets = new Map();
+let server;
 
 if (IS_PROD && JWT_SECRET === DEFAULT_JWT_SECRET) {
   console.error('Refusing to start in production with the default JWT secret. Set JWT_SECRET.');
@@ -87,7 +89,7 @@ app.use(express.json({ limit: '2mb' }));
 app.use(express.static(path.join(__dirname, 'public')));
 
 // ── Database Setup ─────────────────────────────────────────
-const db = new sqlite3.Database(path.join(__dirname, 'data.db'));
+const db = new sqlite3.Database(DB_PATH);
 
 db.serialize(() => {
   db.run(`CREATE TABLE IF NOT EXISTS users (
@@ -821,15 +823,25 @@ app.use((err, req, res, next) => {
 });
 
 // ── Start Server ───────────────────────────────────────────
-app.listen(PORT, () => {
-  console.log(`\n🚀 Agii Intelligence Backend running on http://localhost:${PORT}`);
-  console.log(`🌍 Environment: ${NODE_ENV}`);
-  console.log(`📊 API endpoints:`);
-  console.log(`   POST /api/analyze   — Analyze code`);
-  console.log(`   POST /api/contact   — Submit contact form`);
-  console.log(`   POST /api/register  — Create account`);
-  console.log(`   POST /api/login     — Authenticate`);
-  console.log(`   GET  /api/history   — Analysis history (auth)`);
-  console.log(`   GET  /api/stats     — Platform statistics`);
-  console.log(`   GET  /api/health    — Health check\n`);
-});
+function startServer(port = PORT) {
+  server = app.listen(port, () => {
+    console.log(`\n🚀 Agii Intelligence Backend running on http://localhost:${port}`);
+    console.log(`🌍 Environment: ${NODE_ENV}`);
+    console.log(`🗄️ Database: ${DB_PATH}`);
+    console.log(`📊 API endpoints:`);
+    console.log(`   POST /api/analyze   — Analyze code`);
+    console.log(`   POST /api/contact   — Submit contact form`);
+    console.log(`   POST /api/register  — Create account`);
+    console.log(`   POST /api/login     — Authenticate`);
+    console.log(`   GET  /api/history   — Analysis history (auth)`);
+    console.log(`   GET  /api/stats     — Platform statistics`);
+    console.log(`   GET  /api/health    — Health check\n`);
+  });
+  return server;
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = { app, db, startServer, DB_PATH };
