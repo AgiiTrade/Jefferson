@@ -161,8 +161,24 @@
     const normalizeTag = tag => tag.trim().replace(/\s+/g, ' ');
     const uniqueTags = tags => [...new Set((tags || []).map(normalizeTag).filter(Boolean))];
     const slugify = value => value.toLowerCase().trim().replace(/[^a-z0-9]+/g, '-').replace(/^-|-$/g, '') || uid();
-    const getCategoryById = (categories, id) => categories.find(c => c.id === id) || categories[0] || CATEGORY_PRESETS[0];
+    const getCategoryById = (categories, id) => categories.find(c => String(c.id) === String(id)) || categories[0] || CATEGORY_PRESETS[0];
     const categoryStyle = category => ({ background: category?.bg || 'var(--surface2)', color: category?.color || 'var(--text2)' });
+    const STORAGE_KEY = 'jefferson-scrum-board-v1';
+    const API_BASE = window.location.hostname.includes('github.io')
+      ? 'http://127.0.0.1:3210/api'
+      : './backend-missing';
+
+    async function apiFetch(path, options = {}) {
+      const res = await fetch(`${API_BASE}${path}`, {
+        headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
+        ...options
+      });
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(text || `Request failed: ${res.status}`);
+      }
+      return res.json();
+    }
 
     function normalizeData(data = {}) {
       const categories = (data.categories && data.categories.length ? data.categories : CATEGORY_PRESETS).map(c => ({ ...c, id: c.id || slugify(c.name || 'category') }));
@@ -179,7 +195,7 @@
       return { tasks, events, users, categories };
     }
 
-    function loadData() {
+    function loadLocalData() {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
         try { return normalizeData(JSON.parse(raw)); } catch (e) {}
@@ -187,8 +203,23 @@
       return normalizeData({ tasks: SAMPLE_TASKS, events: SAMPLE_EVENTS, users: DEFAULT_USERS, categories: CATEGORY_PRESETS });
     }
 
-    function saveData(data) {
+    function saveLocalData(data) {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
+    }
+
+    async function loadRemoteData() {
+      const [tasksRes, eventsRes, usersRes, categoriesRes] = await Promise.all([
+        apiFetch('/tasks'),
+        apiFetch('/events'),
+        apiFetch('/users'),
+        apiFetch('/categories')
+      ]);
+      return normalizeData({
+        tasks: tasksRes.tasks || [],
+        events: eventsRes.events || [],
+        users: usersRes.users || [],
+        categories: categoriesRes.categories || CATEGORY_PRESETS
+      });
     }
 
     function Av({ user, size = '', style = {} }) {
@@ -475,12 +506,14 @@
     }
 
     function App() {
-      const initial = loadData();
+      const initial = loadLocalData();
       const [tasks, setTasks] = useState(initial.tasks || []);
       const [events, setEvents] = useState(initial.events || []);
       const [users, setUsers] = useState(initial.users || []);
       const [categories, setCategories] = useState(initial.categories || CATEGORY_PRESETS);
       const [view, setView] = useState('dashboard');
+      const [syncMode, setSyncMode] = useState('loading');
+      const [syncMsg, setSyncMsg] = useState('Connecting backend...');
       const [filter, setFilter] = useState('all');
       const [userFilter, setUserFilter] = useState('');
       const [tagFilter, setTagFilter] = useState('');
@@ -491,7 +524,23 @@
       const [newEventDate, setNewEventDate] = useState('');
       const [quickOpen, setQuickOpen] = useState(false);
 
-      useEffect(() => { saveData({ tasks, events, users, categories }); }, [tasks, events, users, categories]);
+      useEffect(() => { saveLocalData({ tasks, events, users, categories }); }, [tasks, events, users, categories]);
+
+      useEffect(() => {
+        loadRemoteData()
+          .then(data => {
+            setTasks(data.tasks);
+            setEvents(data.events);
+            setUsers(data.users);
+            setCategories(data.categories);
+            setSyncMode('backend');
+            setSyncMsg('Saving to backend');
+          })
+          .catch(() => {
+            setSyncMode('local');
+            setSyncMsg('Backend unavailable, using local save');
+          });
+      }, []);
 
       const todo = tasks.filter(t => t.status === 'todo').length;
       const urgent = tasks.filter(t => t.status !== 'done' && (isDueSoon(t.dueDate) || isOverdue(t.dueDate))).length;
@@ -501,24 +550,89 @@
       const openEvent = e => setActiveEvent(e);
       const openNewTask = (date = '') => { setNewTaskDate(date || ''); setQuickOpen(false); setActiveTask({}); };
       const openNewEvent = (date = '') => { setNewEventDate(date || ''); setQuickOpen(false); setActiveEvent({}); };
-      const saveTask = t => { setTasks(prev => prev.some(x => x.id === t.id) ? prev.map(x => x.id === t.id ? t : x) : [t, ...prev]); setActiveTask(null); setNewTaskDate(''); };
-      const deleteTask = id => { setTasks(prev => prev.filter(t => t.id !== id)); setActiveTask(null); };
-      const saveEvent = e => { setEvents(prev => prev.some(x => x.id === e.id) ? prev.map(x => x.id === e.id ? e : x) : [e, ...prev]); setActiveEvent(null); setNewEventDate(''); };
-      const deleteEvent = id => { setEvents(prev => prev.filter(e => e.id !== id)); setActiveEvent(null); };
-      const createCategory = draft => {
-        const id = slugify(draft.name);
-        const existing = categories.find(c => c.id === id || c.name.toLowerCase() === draft.name.trim().toLowerCase());
-        if (existing) return existing;
-        const created = { id, name:draft.name.trim(), icon:draft.icon || '🗂', color:draft.color || COLORS[0], bg:draft.bg || '#FDE68A' };
-        setCategories(prev => [...prev, created]);
-        return created;
+      const saveTask = async t => {
+        const payload = { ...t, category: String(t.category || categories[0]?.id || '') };
+        try {
+          if (syncMode === 'backend') {
+            const res = t.id && /^\d+$/.test(String(t.id))
+              ? await apiFetch(`/tasks/${t.id}`, { method: 'PUT', body: JSON.stringify(payload) })
+              : await apiFetch('/tasks', { method: 'POST', body: JSON.stringify(payload) });
+            const saved = res.task;
+            setTasks(prev => prev.some(x => String(x.id) === String(saved.id)) ? prev.map(x => String(x.id) === String(saved.id) ? saved : x) : [saved, ...prev]);
+          } else {
+            setTasks(prev => prev.some(x => x.id === t.id) ? prev.map(x => x.id === t.id ? t : x) : [t, ...prev]);
+          }
+          setActiveTask(null); setNewTaskDate('');
+        } catch (err) {
+          alert('Could not save task to backend.');
+        }
       };
-      const removeUser = user => {
+      const deleteTask = async id => {
+        try {
+          if (syncMode === 'backend' && /^\d+$/.test(String(id))) await apiFetch(`/tasks/${id}`, { method: 'DELETE' });
+          setTasks(prev => prev.filter(t => String(t.id) !== String(id)));
+          setActiveTask(null);
+        } catch {
+          alert('Could not delete task.');
+        }
+      };
+      const saveEvent = async e => {
+        try {
+          if (syncMode === 'backend') {
+            const res = e.id && /^\d+$/.test(String(e.id))
+              ? await apiFetch(`/events/${e.id}`, { method: 'PUT', body: JSON.stringify(e) })
+              : await apiFetch('/events', { method: 'POST', body: JSON.stringify(e) });
+            const saved = res.event;
+            setEvents(prev => prev.some(x => String(x.id) === String(saved.id)) ? prev.map(x => String(x.id) === String(saved.id) ? saved : x) : [saved, ...prev]);
+          } else {
+            setEvents(prev => prev.some(x => x.id === e.id) ? prev.map(x => x.id === e.id ? e : x) : [e, ...prev]);
+          }
+          setActiveEvent(null); setNewEventDate('');
+        } catch {
+          alert('Could not save event.');
+        }
+      };
+      const deleteEvent = async id => {
+        try {
+          if (syncMode === 'backend' && /^\d+$/.test(String(id))) await apiFetch(`/events/${id}`, { method: 'DELETE' });
+          setEvents(prev => prev.filter(e => String(e.id) !== String(id)));
+          setActiveEvent(null);
+        } catch {
+          alert('Could not delete event.');
+        }
+      };
+      const createCategory = draft => {
+        const existing = categories.find(c => c.name.toLowerCase() === draft.name.trim().toLowerCase());
+        if (existing) return existing;
+        const optimistic = { id: slugify(draft.name), name:draft.name.trim(), icon:draft.icon || '🗂', color:draft.color || COLORS[0], bg:draft.bg || '#FDE68A' };
+        setCategories(prev => [...prev, optimistic]);
+        if (syncMode === 'backend') {
+          apiFetch('/categories', { method: 'POST', body: JSON.stringify(optimistic) })
+            .then(res => setCategories(prev => prev.map(c => String(c.id) === String(optimistic.id) ? res.category : c)))
+            .catch(() => alert('Could not save category.'));
+        }
+        return optimistic;
+      };
+      const addUser = async u => {
+        if (syncMode !== 'backend') return setUsers(p => [...p, u]);
+        try {
+          const res = await apiFetch('/users', { method: 'POST', body: JSON.stringify(u) });
+          setUsers(p => [...p, res.user]);
+        } catch {
+          alert('Could not save user.');
+        }
+      };
+      const removeUser = async user => {
         if (!window.confirm(`Remove ${user.name}? This will also unassign them from tasks and events.`)) return;
-        setUsers(prev => prev.filter(x => x.id !== user.id));
-        setTasks(prev => prev.map(t => ({ ...t, assignedUsers: (t.assignedUsers || []).filter(id => id !== user.id) })));
-        setEvents(prev => prev.map(e => ({ ...e, assignedUsers: (e.assignedUsers || []).filter(id => id !== user.id) })));
-        if (userFilter === user.id) setUserFilter('');
+        try {
+          if (syncMode === 'backend' && /^\d+$/.test(String(user.id))) await apiFetch(`/users/${user.id}`, { method: 'DELETE' });
+          setUsers(prev => prev.filter(x => String(x.id) !== String(user.id)));
+          setTasks(prev => prev.map(t => ({ ...t, assignedUsers: (t.assignedUsers || []).filter(id => String(id) !== String(user.id)) })));
+          setEvents(prev => prev.map(e => ({ ...e, assignedUsers: (e.assignedUsers || []).filter(id => String(id) !== String(user.id)) })));
+          if (userFilter === user.id) setUserFilter('');
+        } catch {
+          alert('Could not remove user.');
+        }
       };
       const exportData = () => {
         const data = JSON.stringify({ tasks, events, users, categories }, null, 2);
@@ -533,7 +647,11 @@
         const demo = normalizeData({ tasks: SAMPLE_TASKS, events: SAMPLE_EVENTS, users: DEFAULT_USERS, categories: CATEGORY_PRESETS });
         setTasks(demo.tasks); setEvents(demo.events); setUsers(demo.users); setCategories(demo.categories); setFilter('all'); setUserFilter(''); setTagFilter(''); setSearch('');
       };
-      const onDropTask = (taskId, status) => setTasks(prev => prev.map(t => t.id === taskId ? { ...t, status } : t));
+      const onDropTask = async (taskId, status) => {
+        const target = tasks.find(t => String(t.id) === String(taskId));
+        if (!target) return;
+        await saveTask({ ...target, status });
+      };
 
       const titleMap = { dashboard:'Dashboard', board:'Task Board', calendar:'Calendar', users:'Users' };
       const subtitleMap = {
@@ -565,12 +683,12 @@
           </div>
         </aside>
         <main className="main">
-          <div className="topbar"><div className="topbar-title">{titleMap[view]} <span>{subtitleMap[view]}</span></div><button className="btn btn-primary" onClick={() => view === 'calendar' ? openNewEvent() : openNewTask()}>+ {view === 'calendar' ? 'New Event' : 'New Task'}</button></div>
+          <div className="topbar"><div className="topbar-title">{titleMap[view]} <span>{subtitleMap[view]} · {syncMsg}</span></div><button className="btn btn-primary" onClick={() => view === 'calendar' ? openNewEvent() : openNewTask()}>+ {view === 'calendar' ? 'New Event' : 'New Task'}</button></div>
           <div className="content">
             {view === 'dashboard' && <Dashboard tasks={tasks} events={events} users={users} categories={categories} onOpenTask={openTask} onOpenEvent={openEvent} onNewTask={openNewTask} onNewEvent={openNewEvent} />}
             {view === 'board' && <BoardView tasks={tasks} users={users} categories={categories} tags={reusableTags} onOpenTask={openTask} onNewTask={openNewTask} filter={filter} setFilter={setFilter} userFilter={userFilter} setUserFilter={setUserFilter} tagFilter={tagFilter} setTagFilter={setTagFilter} search={search} setSearch={setSearch} onDropTask={onDropTask} />}
             {view === 'calendar' && <CalendarView tasks={tasks} events={events} users={users} categories={categories} onOpenTask={openTask} onOpenEvent={openEvent} onNewEvent={openNewEvent} onNewTask={openNewTask} />}
-            {view === 'users' && <UsersView users={users} tasks={tasks} onAddUser={u => setUsers(p => [...p, u])} onRemoveUser={removeUser} />}
+            {view === 'users' && <UsersView users={users} tasks={tasks} onAddUser={addUser} onRemoveUser={removeUser} />}
           </div>
         </main>
         <button className="fab" onClick={() => setQuickOpen(q => !q)}>+</button>
