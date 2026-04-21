@@ -163,13 +163,29 @@
     const getCategoryById = (categories, id) => categories.find(c => String(c.id) === String(id)) || categories[0] || CATEGORY_PRESETS[0];
     const categoryStyle = category => ({ background: category?.bg || 'var(--surface2)', color: category?.color || 'var(--text2)' });
     const STORAGE_KEY = 'jefferson-scrum-board-v1';
+    const API_STORAGE_KEY = 'jefferson-scrum-board-api-base';
     const API_BASE = (() => {
       const host = window.location.hostname;
+      const params = new URLSearchParams(window.location.search);
+      const paramBase = params.get('api');
+      const storedBase = localStorage.getItem(API_STORAGE_KEY);
+      const globalBase = window.SCRUM_API_BASE;
+      const normalizeBase = value => {
+        if (!value || !String(value).trim()) return null;
+        return String(value).trim().replace(/\/+$/, '');
+      };
+      const chosen = normalizeBase(paramBase) || normalizeBase(globalBase) || normalizeBase(storedBase);
+      if (chosen) {
+        try { localStorage.setItem(API_STORAGE_KEY, chosen); } catch (e) {}
+        return chosen;
+      }
       if (host === 'localhost' || host === '127.0.0.1') return 'http://127.0.0.1:3210/api';
-      return './backend-missing';
+      if (window.location.origin && !host.includes('github.io')) return `${window.location.origin}/api`;
+      return null;
     })();
 
     async function apiFetch(path, options = {}) {
+      if (!API_BASE) throw new Error('No backend API configured');
       const res = await fetch(`${API_BASE}${path}`, {
         headers: { 'Content-Type': 'application/json', ...(options.headers || {}) },
         ...options
@@ -528,6 +544,11 @@
       useEffect(() => { saveLocalData({ tasks, events, users, categories }); }, [tasks, events, users, categories]);
 
       useEffect(() => {
+        if (!API_BASE) {
+          setSyncMode('local');
+          setSyncMsg('Local save only, backend API not configured');
+          return;
+        }
         loadRemoteData()
           .then(data => {
             setTasks(data.tasks);
@@ -535,7 +556,7 @@
             setUsers(data.users);
             setCategories(data.categories);
             setSyncMode('backend');
-            setSyncMsg('Saving to backend');
+            setSyncMsg(`Saving to backend (${API_BASE})`);
           })
           .catch(() => {
             setSyncMode('local');

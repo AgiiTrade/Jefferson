@@ -36,9 +36,15 @@ pm2 save
 ## 5. Production hosting requirement
 To make the scrum board save reliably from phone/public links, deploy the backend on a stable host and point the frontend to that real API URL.
 
+The frontend now supports a configurable backend API base by either:
+- setting `window.SCRUM_API_BASE`
+- opening the page with `?api=https://your-api.example.com/api`
+- or letting it use same-origin `/api` when hosted together
+
 ## 6. Minimum production checks
 - backend restarts automatically
 - logs are retained
 - health endpoint is reachable
 - allowed origins are restricted
+- frontend is pointed at the real API URL
 - database file is backed up if SQLite stays in use

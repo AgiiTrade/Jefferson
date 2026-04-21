@@ -24,6 +24,11 @@ Copy `.env.example` to `.env` if you want explicit runtime config.
 ## Public saving note
 The frontend is now backend-capable, but phone/public saving only works when this backend is deployed on a stable host. A GitHub Pages frontend cannot persist to a backend that only exists on localhost.
 
+The frontend can target a deployed API using:
+- `?api=https://your-api.example.com/api`
+- `window.SCRUM_API_BASE`
+- same-origin `/api` when frontend and backend are hosted together
+
 ## Main endpoints
 - `GET /api/health`
 - `GET /api/summary`

@@ -8,10 +8,22 @@ const path = require('path');
 
 const app = express();
 const PORT = Number(process.env.PORT || 3210);
-const db = new sqlite3.Database(path.join(__dirname, 'scrum-board.db'));
+const DB_PATH = path.join(__dirname, 'scrum-board.db');
+const db = new sqlite3.Database(DB_PATH);
+const allowedOrigins = (process.env.ALLOWED_ORIGINS || '')
+  .split(',')
+  .map(v => v.trim())
+  .filter(Boolean);
 
+app.set('trust proxy', 1);
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(cors());
+app.use(cors({
+  origin(origin, callback) {
+    if (!origin) return callback(null, true);
+    if (!allowedOrigins.length || allowedOrigins.includes(origin)) return callback(null, true);
+    return callback(new Error('CORS blocked'));
+  }
+}));
 app.use(compression());
 app.use(express.json({ limit: '1mb' }));
 
@@ -166,7 +178,13 @@ db.serialize(() => {
 
 app.get('/api/health', async (req, res) => {
   const row = await get('SELECT COUNT(*) as taskCount FROM tasks');
-  res.json({ status: 'ok', taskCount: row?.taskCount || 0, timestamp: new Date().toISOString() });
+  res.json({
+    status: 'ok',
+    taskCount: row?.taskCount || 0,
+    timestamp: new Date().toISOString(),
+    env: process.env.NODE_ENV || 'development',
+    dbPath: DB_PATH
+  });
 });
 
 app.get('/api/summary', async (req, res, next) => {
@@ -372,10 +390,21 @@ app.use((err, req, res, next) => {
   if (err?.isJoi) {
     return res.status(400).json({ error: 'Validation failed', details: err.details.map(d => d.message) });
   }
+  if (err?.message === 'CORS blocked') {
+    return res.status(403).json({ error: 'Origin not allowed' });
+  }
   console.error(err);
   res.status(500).json({ error: 'Internal server error' });
 });
 
-app.listen(PORT, () => {
-  console.log(`Scrum Board backend running on http://localhost:${PORT}`);
-});
+function startServer(port = PORT) {
+  return app.listen(port, () => {
+    console.log(`Scrum Board backend running on http://localhost:${port}`);
+  });
+}
+
+if (require.main === module) {
+  startServer();
+}
+
+module.exports = { app, db, startServer, DB_PATH };
