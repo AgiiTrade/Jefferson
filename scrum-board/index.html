@@ -143,7 +143,6 @@
       { id:'family', name:'Family', icon:'👨‍👩‍👧‍👦', color:'#15803D', bg:'#DCFCE7' },
     ];
 
-    const STORAGE_KEY = 'taskflow-v3';
     const DEFAULT_USERS = [
       {id:'u1',name:'Alex Morgan',email:'alex@example.com',color:COLORS[0]},
       {id:'u2',name:'Sam Rivera',email:'sam@example.com',color:COLORS[1]},
@@ -164,9 +163,11 @@
     const getCategoryById = (categories, id) => categories.find(c => String(c.id) === String(id)) || categories[0] || CATEGORY_PRESETS[0];
     const categoryStyle = category => ({ background: category?.bg || 'var(--surface2)', color: category?.color || 'var(--text2)' });
     const STORAGE_KEY = 'jefferson-scrum-board-v1';
-    const API_BASE = window.location.hostname.includes('github.io')
-      ? 'http://127.0.0.1:3210/api'
-      : './backend-missing';
+    const API_BASE = (() => {
+      const host = window.location.hostname;
+      if (host === 'localhost' || host === '127.0.0.1') return 'http://127.0.0.1:3210/api';
+      return './backend-missing';
+    })();
 
     async function apiFetch(path, options = {}) {
       const res = await fetch(`${API_BASE}${path}`, {
