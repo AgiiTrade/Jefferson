@@ -1,0 +1,583 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Agii Mortgage Decisioning Copilot</title>
+  <style>
+    :root {
+      --bg: #0b1020;
+      --panel: rgba(17, 24, 39, 0.88);
+      --panel-2: rgba(15, 23, 42, 0.92);
+      --line: rgba(255,255,255,0.08);
+      --text: #ecf2ff;
+      --muted: #9fb0d1;
+      --accent: #ff8a3d;
+      --accent-2: #ffb36c;
+      --green: #32d296;
+      --yellow: #ffcb57;
+      --red: #ff6b6b;
+      --blue: #63a4ff;
+      --shadow: 0 20px 60px rgba(0,0,0,.35);
+      --radius: 20px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      background:
+        radial-gradient(circle at top right, rgba(255,138,61,.18), transparent 28%),
+        radial-gradient(circle at bottom left, rgba(99,164,255,.14), transparent 22%),
+        linear-gradient(180deg, #09101c 0%, #0b1020 100%);
+      color: var(--text);
+      min-height: 100vh;
+    }
+    .shell {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      min-height: 100vh;
+    }
+    .sidebar {
+      border-right: 1px solid var(--line);
+      background: rgba(6, 11, 22, 0.76);
+      padding: 28px 20px;
+      position: sticky;
+      top: 0;
+      height: 100vh;
+      backdrop-filter: blur(20px);
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 26px;
+    }
+    .brand-mark {
+      width: 44px;
+      height: 44px;
+      border-radius: 14px;
+      display: grid;
+      place-items: center;
+      background: linear-gradient(135deg, var(--accent), #ff5e62);
+      font-weight: 800;
+      box-shadow: 0 10px 24px rgba(255,138,61,.25);
+    }
+    .brand h1 {
+      font-size: 1rem;
+      margin: 0;
+    }
+    .brand p {
+      margin: 2px 0 0;
+      font-size: .8rem;
+      color: var(--muted);
+    }
+    .nav-group { margin: 24px 0; }
+    .nav-title {
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      font-size: .72rem;
+      margin-bottom: 10px;
+    }
+    .nav-item {
+      width: 100%;
+      text-align: left;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      padding: 12px 14px;
+      background: transparent;
+      color: var(--text);
+      cursor: pointer;
+      transition: .18s ease;
+      margin-bottom: 8px;
+      font-size: .95rem;
+    }
+    .nav-item:hover, .nav-item.active {
+      background: rgba(255,255,255,.05);
+      border-color: rgba(255,138,61,.25);
+      transform: translateX(2px);
+    }
+    .side-card {
+      margin-top: 24px;
+      padding: 16px;
+      border-radius: 18px;
+      background: linear-gradient(180deg, rgba(255,255,255,.04), rgba(255,255,255,.02));
+      border: 1px solid var(--line);
+    }
+    .side-card h3 { margin: 0 0 8px; font-size: .95rem; }
+    .side-card p { color: var(--muted); font-size: .85rem; line-height: 1.45; margin: 0 0 12px; }
+    .pill-row { display: flex; flex-wrap: wrap; gap: 8px; }
+    .pill {
+      font-size: .74rem;
+      padding: 7px 10px;
+      border-radius: 999px;
+      background: rgba(99,164,255,.12);
+      color: #cfe2ff;
+      border: 1px solid rgba(99,164,255,.18);
+    }
+    .main {
+      padding: 28px;
+    }
+    .hero {
+      background: linear-gradient(135deg, rgba(255,138,61,.12), rgba(99,164,255,.08));
+      border: 1px solid var(--line);
+      border-radius: 28px;
+      padding: 28px;
+      box-shadow: var(--shadow);
+      margin-bottom: 22px;
+    }
+    .hero-top {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      flex-wrap: wrap;
+      align-items: start;
+    }
+    .eyebrow {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      color: var(--accent-2);
+      font-size: .82rem;
+      text-transform: uppercase;
+      letter-spacing: .12em;
+      margin-bottom: 10px;
+    }
+    .hero h2 {
+      margin: 0;
+      font-size: clamp(1.8rem, 3vw, 3rem);
+      line-height: 1.06;
+      max-width: 820px;
+    }
+    .hero p {
+      color: var(--muted);
+      font-size: 1rem;
+      line-height: 1.6;
+      max-width: 760px;
+      margin: 14px 0 0;
+    }
+    .hero-actions {
+      display: flex;
+      gap: 12px;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+    .btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 16px;
+      font-weight: 700;
+      cursor: pointer;
+      transition: .18s ease;
+    }
+    .btn-primary {
+      background: linear-gradient(135deg, var(--accent), #ff5e62);
+      color: white;
+      box-shadow: 0 14px 30px rgba(255,138,61,.22);
+    }
+    .btn-secondary {
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      border: 1px solid var(--line);
+    }
+    .btn:hover { transform: translateY(-1px); }
+    .hero-score {
+      min-width: 250px;
+      background: rgba(7, 13, 25, 0.66);
+      border: 1px solid var(--line);
+      border-radius: 24px;
+      padding: 18px;
+    }
+    .hero-score h3 { margin: 0 0 10px; font-size: .95rem; color: var(--muted); }
+    .decision-pill {
+      display: inline-flex;
+      gap: 8px;
+      align-items: center;
+      padding: 9px 12px;
+      border-radius: 999px;
+      background: rgba(255,107,107,.12);
+      color: #ffd1d1;
+      border: 1px solid rgba(255,107,107,.22);
+      font-weight: 700;
+      font-size: .82rem;
+    }
+    .score {
+      font-size: 3rem;
+      font-weight: 800;
+      margin: 14px 0 4px;
+    }
+    .score-sub {
+      color: var(--muted);
+      font-size: .9rem;
+    }
+    .grid {
+      display: grid;
+      gap: 18px;
+      grid-template-columns: repeat(12, minmax(0, 1fr));
+    }
+    .card {
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: var(--radius);
+      padding: 20px;
+      box-shadow: var(--shadow);
+      backdrop-filter: blur(18px);
+    }
+    .card h3, .card h4 {
+      margin: 0 0 12px;
+      font-size: 1rem;
+    }
+    .card p { color: var(--muted); line-height: 1.55; }
+    .span-3 { grid-column: span 3; }
+    .span-4 { grid-column: span 4; }
+    .span-5 { grid-column: span 5; }
+    .span-6 { grid-column: span 6; }
+    .span-7 { grid-column: span 7; }
+    .span-8 { grid-column: span 8; }
+    .span-12 { grid-column: span 12; }
+    .metric {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      min-height: 138px;
+    }
+    .metric-label { color: var(--muted); font-size: .86rem; }
+    .metric-value { font-size: 1.9rem; font-weight: 800; }
+    .metric-foot { font-size: .86rem; color: var(--muted); }
+    .status-up { color: var(--green); }
+    .status-warn { color: var(--yellow); }
+    .status-bad { color: var(--red); }
+    .list { display: grid; gap: 12px; }
+    .list-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: 14px;
+      align-items: start;
+    }
+    .tag {
+      padding: 6px 10px;
+      border-radius: 999px;
+      font-size: .76rem;
+      font-weight: 700;
+      white-space: nowrap;
+    }
+    .tag.error { background: rgba(255,107,107,.12); color: #ffd6d6; }
+    .tag.warning { background: rgba(255,203,87,.12); color: #ffe8ae; }
+    .tag.success { background: rgba(50,210,150,.12); color: #d4fff0; }
+    .tag.info { background: rgba(99,164,255,.12); color: #d7e8ff; }
+    .subtle { color: var(--muted); font-size: .85rem; }
+    .tabs {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 16px;
+    }
+    .tab {
+      background: rgba(255,255,255,.04);
+      color: var(--text);
+      border: 1px solid var(--line);
+      padding: 10px 14px;
+      border-radius: 999px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .tab.active {
+      background: rgba(255,138,61,.14);
+      border-color: rgba(255,138,61,.24);
+      color: #ffd9c0;
+    }
+    .tab-panel { display: none; }
+    .tab-panel.active { display: block; }
+    .bar {
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.07);
+      overflow: hidden;
+      margin-top: 10px;
+    }
+    .bar > span {
+      display: block;
+      height: 100%;
+      border-radius: inherit;
+      background: linear-gradient(90deg, var(--accent), var(--accent-2));
+    }
+    .kpi-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+    }
+    .kpi {
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+      border-radius: 16px;
+      padding: 14px;
+    }
+    .kpi strong { display: block; font-size: 1.35rem; margin-bottom: 6px; }
+    .evidence {
+      display: grid;
+      gap: 10px;
+    }
+    .evidence-item {
+      padding: 12px 14px;
+      border-radius: 14px;
+      background: rgba(255,255,255,.03);
+      border: 1px solid rgba(255,255,255,.05);
+    }
+    .evidence-item strong { display: block; margin-bottom: 4px; }
+    .footer-note {
+      margin-top: 22px;
+      color: var(--muted);
+      font-size: .86rem;
+      text-align: center;
+    }
+    @media (max-width: 1100px) {
+      .shell { grid-template-columns: 1fr; }
+      .sidebar { position: static; height: auto; border-right: 0; border-bottom: 1px solid var(--line); }
+      .span-3, .span-4, .span-5, .span-6, .span-7, .span-8 { grid-column: span 12; }
+      .kpi-grid { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <div class="shell">
+    <aside class="sidebar">
+      <div class="brand">
+        <div class="brand-mark">A</div>
+        <div>
+          <h1>Agii Mortgage Decisioning</h1>
+          <p>Document intelligence + underwriting copilot</p>
+        </div>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-title">Workspace</div>
+        <button class="nav-item active">Overview</button>
+        <button class="nav-item">Intakes</button>
+        <button class="nav-item">Documents</button>
+        <button class="nav-item">Underwriting</button>
+        <button class="nav-item">Risk & Rules</button>
+        <button class="nav-item">Audit Trail</button>
+      </div>
+
+      <div class="nav-group">
+        <div class="nav-title">Design pillars</div>
+        <div class="pill-row">
+          <span class="pill">Explainable</span>
+          <span class="pill">On-prem</span>
+          <span class="pill">PII-safe</span>
+          <span class="pill">Reviewer-first</span>
+        </div>
+      </div>
+
+      <div class="side-card">
+        <h3>Product direction</h3>
+        <p>Built from prior Document AI discussion plus the new mortgage decision-engine screenshots. This first build focuses on case summary, document quality, rules, risk, and underwriter explainability.</p>
+        <div class="pill-row">
+          <span class="pill">Mortgage lending</span>
+          <span class="pill">Decision support</span>
+          <span class="pill">Structured data</span>
+        </div>
+      </div>
+    </aside>
+
+    <main class="main">
+      <section class="hero">
+        <div class="hero-top">
+          <div>
+            <div class="eyebrow">Separate project • Document AI decisioning</div>
+            <h2>Turn mortgage documents into structured underwriting intelligence, explainable risk signals, and decision-ready case summaries.</h2>
+            <p>This prototype is shaped around your earlier Document AI conversations and the screenshots you just shared. It is intentionally built as a distinct product from AI Modernizer, focused on secure mortgage document intake, financial calculation, regulatory rule checks, and underwriter enablement.</p>
+            <div class="hero-actions">
+              <button class="btn btn-primary" onclick="document.getElementById('workspace').scrollIntoView({behavior:'smooth'})">Open workspace</button>
+              <button class="btn btn-secondary" onclick="document.getElementById('security').scrollIntoView({behavior:'smooth'})">Review on-prem model</button>
+            </div>
+          </div>
+          <div class="hero-score">
+            <h3>Live sample case</h3>
+            <div class="decision-pill">Rejected • explainable outcome</div>
+            <div class="score">61</div>
+            <div class="score-sub">Risk score with full factor trace and evidence links</div>
+            <div class="bar"><span style="width:61%"></span></div>
+          </div>
+        </div>
+      </section>
+
+      <section class="grid">
+        <div class="card metric span-3">
+          <span class="metric-label">Case status</span>
+          <span class="metric-value status-bad">Rejected</span>
+          <span class="metric-foot">Driven by GDS/TDS breach, missing docs, and income stability warnings</span>
+        </div>
+        <div class="card metric span-3">
+          <span class="metric-label">Document package</span>
+          <span class="metric-value">82%</span>
+          <span class="metric-foot">9 of 11 required documents present, 2 mandatory gaps remain</span>
+        </div>
+        <div class="card metric span-3">
+          <span class="metric-label">Financial engine</span>
+          <span class="metric-value status-warn">GDS 69%</span>
+          <span class="metric-foot">TDS 79.4%, LTV 56.2%, stress test failed</span>
+        </div>
+        <div class="card metric span-3">
+          <span class="metric-label">Deployment posture</span>
+          <span class="metric-value status-up">On-prem</span>
+          <span class="metric-foot">Private model orchestration, audit logs, and no training on customer files</span>
+        </div>
+      </section>
+
+      <section class="card" id="workspace" style="margin-top:18px;">
+        <div class="tabs">
+          <button class="tab active" data-tab="summary">Decision Summary</button>
+          <button class="tab" data-tab="documents">Documents</button>
+          <button class="tab" data-tab="risk">Risk Flags</button>
+          <button class="tab" data-tab="rules">Rules & Explainability</button>
+          <button class="tab" data-tab="security">Security</button>
+        </div>
+
+        <div class="tab-panel active" id="summary">
+          <div class="grid">
+            <div class="card span-8" style="background:var(--panel-2)">
+              <h3>Decision summary</h3>
+              <p>AI assembled the borrower record from uploaded documents, calculated financial ratios, applied underwriting and regulatory rules, and produced a recommendation with full evidence trace for underwriter review.</p>
+              <div class="kpi-grid">
+                <div class="kpi"><strong>$780,000</strong><span class="subtle">Purchase price</span></div>
+                <div class="kpi"><strong>$438,000</strong><span class="subtle">Requested loan amount</span></div>
+                <div class="kpi"><strong>$342,000</strong><span class="subtle">Down payment</span></div>
+                <div class="kpi"><strong>$84,000</strong><span class="subtle">Verified annual income</span></div>
+                <div class="kpi"><strong>$389,000</strong><span class="subtle">Max eligible loan</span></div>
+                <div class="kpi"><strong>GDS</strong><span class="subtle">Binding constraint on case outcome</span></div>
+              </div>
+            </div>
+            <div class="card span-4" style="background:var(--panel-2)">
+              <h3>Top reasons</h3>
+              <div class="list">
+                <div class="list-row"><div><strong>GDS threshold breached</strong><div class="subtle">69.0% observed vs 39% allowed</div></div><span class="tag error">Hard fail</span></div>
+                <div class="list-row"><div><strong>TDS threshold breached</strong><div class="subtle">79.4% observed vs 44% allowed</div></div><span class="tag error">Hard fail</span></div>
+                <div class="list-row"><div><strong>Income stability review</strong><div class="subtle">Variable income not yet fully supported</div></div><span class="tag warning">Review</span></div>
+                <div class="list-row"><div><strong>Missing mandatory docs</strong><div class="subtle">NOA and bank statement gap</div></div><span class="tag warning">Gap</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="documents">
+          <div class="grid">
+            <div class="card span-7" style="background:var(--panel-2)">
+              <h3>Document completeness and quality</h3>
+              <div class="list">
+                <div class="list-row"><div><strong>Application form</strong><div class="subtle">Borrower profile, property details, requested amount</div></div><span class="tag success">Present • 98%</span></div>
+                <div class="list-row"><div><strong>Pay stubs</strong><div class="subtle">Income source verified, line-item extraction complete</div></div><span class="tag success">Present • 94%</span></div>
+                <div class="list-row"><div><strong>Notice of Assessment</strong><div class="subtle">Required for income validation and consistency checks</div></div><span class="tag error">Missing</span></div>
+                <div class="list-row"><div><strong>Bank statements</strong><div class="subtle">Needed for asset verification and down payment support</div></div><span class="tag warning">Partial</span></div>
+                <div class="list-row"><div><strong>Credit report</strong><div class="subtle">Included and parsed into liabilities</div></div><span class="tag success">Present • 96%</span></div>
+              </div>
+            </div>
+            <div class="card span-5" style="background:var(--panel-2)">
+              <h3>Source traceability</h3>
+              <div class="evidence">
+                <div class="evidence-item"><strong>Income = $84,000</strong><span class="subtle">Derived from pay stubs pages 1-2 and employer letter</span></div>
+                <div class="evidence-item"><strong>Down payment = $342,000</strong><span class="subtle">Derived from bank statement balances and application declaration</span></div>
+                <div class="evidence-item"><strong>Liabilities included in TDS</strong><span class="subtle">Matched from credit report tradelines and declared obligations</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="risk">
+          <div class="grid">
+            <div class="card span-7" style="background:var(--panel-2)">
+              <h3>Weighted risk factors</h3>
+              <div class="list">
+                <div class="list-row"><div><strong>Gross debt service</strong><div class="subtle">Observed 69.0%, threshold 39%</div><div class="bar"><span style="width:92%"></span></div></div><span class="tag error">Weight 28</span></div>
+                <div class="list-row"><div><strong>Total debt service</strong><div class="subtle">Observed 79.4%, threshold 44%</div><div class="bar"><span style="width:89%"></span></div></div><span class="tag error">Weight 26</span></div>
+                <div class="list-row"><div><strong>Income stability</strong><div class="subtle">Variable earnings pattern needs underwriter review</div><div class="bar"><span style="width:58%"></span></div></div><span class="tag warning">Weight 14</span></div>
+                <div class="list-row"><div><strong>Document completeness</strong><div class="subtle">2 mandatory evidence gaps remain</div><div class="bar"><span style="width:51%"></span></div></div><span class="tag warning">Weight 10</span></div>
+                <div class="list-row"><div><strong>LTV coverage</strong><div class="subtle">56.2%, within tolerance</div><div class="bar"><span style="width:23%"></span></div></div><span class="tag success">Weight 6</span></div>
+              </div>
+            </div>
+            <div class="card span-5" style="background:var(--panel-2)">
+              <h3>Open flags</h3>
+              <div class="pill-row" style="margin-bottom:16px;">
+                <span class="pill">GDS breach</span>
+                <span class="pill">TDS breach</span>
+                <span class="pill">Income review</span>
+                <span class="pill">NOA missing</span>
+                <span class="pill">Manual underwriter sign-off</span>
+              </div>
+              <p>Decision support is fully explainable. Every score factor links back to a rule, an observed value, and the document evidence behind it.</p>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="rules">
+          <div class="grid">
+            <div class="card span-6" style="background:var(--panel-2)">
+              <h3>Rule trace</h3>
+              <div class="list">
+                <div class="list-row"><div><strong>R-102 Gross debt service</strong><div class="subtle">If GDS exceeds 39%, case cannot auto-approve</div></div><span class="tag error">Triggered</span></div>
+                <div class="list-row"><div><strong>R-118 Total debt service</strong><div class="subtle">If TDS exceeds 44%, escalate or reject</div></div><span class="tag error">Triggered</span></div>
+                <div class="list-row"><div><strong>D-204 Income validation completeness</strong><div class="subtle">NOA required for variable income confirmation</div></div><span class="tag warning">Open</span></div>
+                <div class="list-row"><div><strong>R-310 Stress test</strong><div class="subtle">Borrower must pass qualifying rate scenario</div></div><span class="tag error">Failed</span></div>
+              </div>
+            </div>
+            <div class="card span-6" style="background:var(--panel-2)">
+              <h3>Underwriter enablement</h3>
+              <p>Instead of a black-box output, the system equips the underwriter with structured borrower data, document-linked evidence, observed vs threshold values, and the exact reasons behind the recommendation.</p>
+              <div class="list">
+                <div class="list-row"><div><strong>Observed value</strong><div class="subtle">GDS = 69.0%</div></div><span class="tag info">Metric trace</span></div>
+                <div class="list-row"><div><strong>Rule threshold</strong><div class="subtle">Policy max = 39%</div></div><span class="tag info">Policy</span></div>
+                <div class="list-row"><div><strong>Evidence link</strong><div class="subtle">Pay stub pages 1-2, liabilities from credit report</div></div><span class="tag info">Source</span></div>
+                <div class="list-row"><div><strong>Recommended next step</strong><div class="subtle">Request missing NOA, correct liabilities if stale, escalate if no compensating factors</div></div><span class="tag warning">Action</span></div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <div class="tab-panel" id="security">
+          <div class="grid">
+            <div class="card span-6" style="background:var(--panel-2)">
+              <h3>On-prem and private deployment</h3>
+              <div class="list">
+                <div class="list-row"><div><strong>On-prem model orchestration</strong><div class="subtle">Run extraction, classification, and decision workflows inside the lender environment</div></div><span class="tag success">Enabled</span></div>
+                <div class="list-row"><div><strong>No training on customer data</strong><div class="subtle">Borrower documents stay isolated from foundation-model tuning</div></div><span class="tag success">Policy</span></div>
+                <div class="list-row"><div><strong>Role-based access</strong><div class="subtle">Separate analyst, underwriter, ops admin, and audit roles</div></div><span class="tag success">RBAC</span></div>
+                <div class="list-row"><div><strong>Full audit trail</strong><div class="subtle">Track uploads, extracted values, rule hits, overrides, and decisions</div></div><span class="tag success">Logged</span></div>
+              </div>
+            </div>
+            <div class="card span-6" style="background:var(--panel-2)" id="security">
+              <h3>Why this matters</h3>
+              <p>Mortgage workflows carry sensitive borrower identity, income, and credit data. The product story is stronger when privacy, regulator comfort, model governance, and deployment control are first-class features, not an afterthought.</p>
+              <div class="pill-row">
+                <span class="pill">Private cloud</span>
+                <span class="pill">Data residency</span>
+                <span class="pill">PII protection</span>
+                <span class="pill">Compliance review</span>
+                <span class="pill">Model governance</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <p class="footer-note">Agii.ca™ © 2022. Separate product concept: Mortgage document intelligence, underwriting copilot, and fully explainable decision support.</p>
+    </main>
+  </div>
+
+  <script>
+    const tabs = document.querySelectorAll('.tab');
+    const panels = document.querySelectorAll('.tab-panel');
+    tabs.forEach(tab => {
+      tab.addEventListener('click', () => {
+        tabs.forEach(t => t.classList.remove('active'));
+        panels.forEach(p => p.classList.remove('active'));
+        tab.classList.add('active');
+        document.getElementById(tab.dataset.tab).classList.add('active');
+      });
+    });
+  </script>
+</body>
+</html>
