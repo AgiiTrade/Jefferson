@@ -198,6 +198,11 @@ function getModernizationGuidance(language) {
         'Extract business rules and record layouts first.',
         'Create characterization tests around payroll, eligibility, tax, or batch logic.',
         'Move file, batch, and reporting flows into modular services and typed schemas.'
+      ],
+      migrationPaths: [
+        { from: 'COBOL', to: 'Java Spring Boot', useWhen: 'You need durable enterprise services, APIs, and long-term maintainability.' },
+        { from: 'COBOL', to: '.NET', useWhen: 'The target organization is Microsoft-centered and Azure is the strategic platform.' },
+        { from: 'COBOL', to: 'Service-first API layer', useWhen: 'You want phased strangler-style modernization without a big-bang rewrite.' }
       ]
     },
     siebel: {
@@ -210,6 +215,11 @@ function getModernizationGuidance(language) {
         'Inventory Siebel business components, applets, workflows, and integration objects.',
         'Separate CRM process rules from UI event scripts and transport logic.',
         'Map each module into Salesforce, service APIs, or .NET services based on workflow fit.'
+      ],
+      migrationPaths: [
+        { from: 'Siebel', to: 'Salesforce', useWhen: 'You are modernizing CRM, case handling, service workflows, and user operations.' },
+        { from: 'Siebel', to: 'Java Spring Boot', useWhen: 'You need API-first backend services and custom workflow/integration control.' },
+        { from: 'Siebel', to: '.NET', useWhen: 'The target enterprise stack is Microsoft-first and CRM logic is moving into internal services.' }
       ]
     },
     curam: {
@@ -222,6 +232,11 @@ function getModernizationGuidance(language) {
         'Inventory IBM Cúram case flows, evidence models, CER rules, and eligibility decisions.',
         'Separate rules, case orchestration, and channel UX before migration starts.',
         'Rebuild by module with regression tests around eligibility and case outcomes.'
+      ],
+      migrationPaths: [
+        { from: 'IBM Cúram', to: 'Java Spring Boot', useWhen: 'You want a strong enterprise case-management backend with modular business services.' },
+        { from: 'IBM Cúram', to: 'Salesforce', useWhen: 'You want worker-facing case workflows and service operations on a modern CRM platform.' },
+        { from: 'IBM Cúram', to: '.NET', useWhen: 'The organization is standardizing on Microsoft and rebuilding portals plus back-office workflows.' }
       ]
     },
     powerbuilder: {
@@ -233,6 +248,10 @@ function getModernizationGuidance(language) {
         'Separate UI events from business rules and database access.',
         'Extract data flows into service APIs.',
         'Rebuild screens incrementally on a modern web frontend.'
+      ],
+      migrationPaths: [
+        { from: 'PowerBuilder', to: 'Java Spring Boot + React', useWhen: 'You want a web-native rebuild with flexible backend services.' },
+        { from: 'PowerBuilder', to: '.NET + React', useWhen: 'Your enterprise is Microsoft-first and replacing thick-client internal apps.' }
       ]
     },
     natural: {
@@ -244,6 +263,10 @@ function getModernizationGuidance(language) {
         'Map Natural subroutines and data access flows first.',
         'Document Adabas or related data relationships.',
         'Replace batch and procedural flows with tested services.'
+      ],
+      migrationPaths: [
+        { from: 'Natural', to: 'Java Spring Boot', useWhen: 'You want service boundaries and durable enterprise modernization.' },
+        { from: 'Natural', to: '.NET', useWhen: 'The target operating model is Microsoft-based with internal enterprise tooling.' }
       ]
     },
     adabas: {
@@ -255,6 +278,10 @@ function getModernizationGuidance(language) {
         'Model files and access patterns before schema migration.',
         'Preserve query behavior with regression tests.',
         'Move data access behind typed repositories and APIs.'
+      ],
+      migrationPaths: [
+        { from: 'Adabas', to: 'Postgres-backed service platform', useWhen: 'You are modernizing data access and moving toward relational service architectures.' },
+        { from: 'Adabas', to: 'Java Spring Boot', useWhen: 'You need durable business services around complex domain logic and integrations.' }
       ]
     }
   };
@@ -269,6 +296,11 @@ function getModernizationGuidance(language) {
       'Preserve current behavior with regression tests first.',
       'Separate business rules from UI, database, and transport concerns.',
       'Rebuild in phased work packages with service boundaries and clear ownership.'
+    ],
+    migrationPaths: [
+      { from: String(language || 'Legacy system').toUpperCase(), to: 'Java Spring Boot', useWhen: 'You need enterprise APIs, modular services, and long-term maintainability.' },
+      { from: String(language || 'Legacy system').toUpperCase(), to: '.NET', useWhen: 'The target organization is Microsoft-centered and wants a familiar enterprise stack.' },
+      { from: String(language || 'Legacy system').toUpperCase(), to: 'Modern web app + API', useWhen: 'You want a phased rebuild with flexible frontend and backend choices.' }
     ]
   };
 }
@@ -323,7 +355,8 @@ function renderResults(data, container) {
   const score = data.modernizationScore || 50;
   const guidance = {
     targetPlatforms: data.targetPlatforms || getModernizationGuidance(data.language).targetPlatforms,
-    modernizationBlueprint: data.modernizationBlueprint || getModernizationGuidance(data.language).modernizationBlueprint
+    modernizationBlueprint: data.modernizationBlueprint || getModernizationGuidance(data.language).modernizationBlueprint,
+    migrationPaths: data.migrationPaths || getModernizationGuidance(data.language).migrationPaths
   };
   const stroke = 2 * Math.PI * 22;
   const dash = stroke - (stroke * score / 100);
@@ -401,6 +434,14 @@ function renderResults(data, container) {
       html += `<li>${escapeHtml(step)}</li>`;
     });
     html += `</ol></div>`;
+  }
+
+  if (guidance.migrationPaths?.length) {
+    html += `<div class="result-section"><h4>Source to Target Migration Paths</h4><div style="display:grid;gap:10px">`;
+    guidance.migrationPaths.forEach(path => {
+      html += `<div style="border:1px solid rgba(255,255,255,.08);border-radius:12px;padding:12px 14px;background:rgba(255,255,255,.02)"><div style="font-weight:700;margin-bottom:4px">${escapeHtml(path.from)} → ${escapeHtml(path.to)}</div><div style="color:var(--text2);font-size:0.9rem">${escapeHtml(path.useWhen)}</div></div>`;
+    });
+    html += `</div></div>`;
   }
 
   if (data.testCoverage?.suggestions?.length) {
@@ -754,6 +795,7 @@ function fallbackAnalyze(code, forcedLanguage) {
     },
     targetPlatforms: guidance.targetPlatforms,
     modernizationBlueprint: guidance.modernizationBlueprint,
+    migrationPaths: guidance.migrationPaths,
     timestamp: new Date().toISOString(),
     requestId: `fallback-${Date.now().toString(36)}`
   };

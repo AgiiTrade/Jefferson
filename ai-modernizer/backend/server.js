@@ -464,6 +464,7 @@ function analyzeCobol(code) {
     },
     targetPlatforms: guidance.targetPlatforms,
     modernizationBlueprint: guidance.modernizationBlueprint,
+    migrationPaths: guidance.migrationPaths,
     modernizationScore: Math.max(25, 78 - scorePenalty)
   };
 }
@@ -480,6 +481,11 @@ function buildModernizationGuidance(language) {
         'Extract business rules and record layouts first, especially PIC and copybook structures.',
         'Create characterization tests around payroll, eligibility, tax, or batch-calculation logic.',
         'Move file, batch, and reporting flows into modular services and typed schemas.'
+      ],
+      migrationPaths: [
+        { from: 'COBOL', to: 'Java Spring Boot', useWhen: 'You need durable enterprise services, APIs, and long-term maintainability.' },
+        { from: 'COBOL', to: '.NET', useWhen: 'The target organization is Microsoft-centered and Azure is the strategic platform.' },
+        { from: 'COBOL', to: 'Service-first API layer', useWhen: 'You want phased strangler-style modernization without a single big-bang rewrite.' }
       ]
     },
     siebel: {
@@ -492,6 +498,11 @@ function buildModernizationGuidance(language) {
         'Inventory Siebel business components, applets, workflows, and integration objects.',
         'Separate CRM process rules from UI event scripts and transport logic.',
         'Map each module into Salesforce, service APIs, or .NET services based on ownership and workflow fit.'
+      ],
+      migrationPaths: [
+        { from: 'Siebel', to: 'Salesforce', useWhen: 'You are modernizing CRM, case handling, service workflows, and user operations.' },
+        { from: 'Siebel', to: 'Java Spring Boot', useWhen: 'You need API-first backend services and custom workflow/integration control.' },
+        { from: 'Siebel', to: '.NET', useWhen: 'The target enterprise stack is Microsoft-first and CRM logic is moving into internal services.' }
       ]
     },
     curam: {
@@ -504,6 +515,11 @@ function buildModernizationGuidance(language) {
         'Inventory IBM Cúram case flows, evidence models, CER rules, and eligibility decisions.',
         'Separate rules, case orchestration, and channel UX before migration starts.',
         'Rebuild by module with regression tests around eligibility and case outcomes.'
+      ],
+      migrationPaths: [
+        { from: 'IBM Cúram', to: 'Java Spring Boot', useWhen: 'You want a strong enterprise case-management backend with modular business services.' },
+        { from: 'IBM Cúram', to: 'Salesforce', useWhen: 'You want worker-facing case workflows and service operations on a modern CRM platform.' },
+        { from: 'IBM Cúram', to: '.NET', useWhen: 'The organization is standardizing on Microsoft and rebuilding portals plus back-office workflows.' }
       ]
     },
     powerbuilder: {
@@ -515,6 +531,10 @@ function buildModernizationGuidance(language) {
         'Separate UI events from business rules and database access.',
         'Extract data flows into service APIs.',
         'Rebuild screens incrementally on a modern web frontend.'
+      ],
+      migrationPaths: [
+        { from: 'PowerBuilder', to: 'Java Spring Boot + React', useWhen: 'You want a web-native rebuild with flexible backend services.' },
+        { from: 'PowerBuilder', to: '.NET + React', useWhen: 'Your enterprise is Microsoft-first and replacing thick-client internal apps.' }
       ]
     },
     natural: {
@@ -526,6 +546,10 @@ function buildModernizationGuidance(language) {
         'Map Natural subroutines and data access flows first.',
         'Document Adabas or related data relationships.',
         'Replace batch and procedural flows with tested services.'
+      ],
+      migrationPaths: [
+        { from: 'Natural', to: 'Java Spring Boot', useWhen: 'You want service boundaries and durable enterprise modernization.' },
+        { from: 'Natural', to: '.NET', useWhen: 'The target operating model is Microsoft-based with internal enterprise tooling.' }
       ]
     },
     adabas: {
@@ -537,6 +561,10 @@ function buildModernizationGuidance(language) {
         'Model files and access patterns before schema migration.',
         'Preserve query behavior with regression tests.',
         'Move data access behind typed repositories and APIs.'
+      ],
+      migrationPaths: [
+        { from: 'Adabas', to: 'Postgres-backed service platform', useWhen: 'You are modernizing data access and moving toward relational service architectures.' },
+        { from: 'Adabas', to: 'Java Spring Boot', useWhen: 'You need durable business services around complex domain logic and integrations.' }
       ]
     }
   };
@@ -551,6 +579,11 @@ function buildModernizationGuidance(language) {
       'Preserve current behavior with regression tests first.',
       'Separate business rules from UI, database, and transport concerns.',
       'Rebuild in phased work packages with service boundaries and clear ownership.'
+    ],
+    migrationPaths: [
+      { from: String(language || 'Legacy system').toUpperCase(), to: 'Java Spring Boot', useWhen: 'You need enterprise APIs, modular services, and long-term maintainability.' },
+      { from: String(language || 'Legacy system').toUpperCase(), to: '.NET', useWhen: 'The target organization is Microsoft-centered and wants a familiar enterprise stack.' },
+      { from: String(language || 'Legacy system').toUpperCase(), to: 'Modern web app + API', useWhen: 'You want a phased rebuild with flexible frontend and backend choices.' }
     ]
   };
 }
@@ -659,6 +692,7 @@ function analyzeEnterpriseLegacy(code, language) {
     },
     targetPlatforms: guidance.targetPlatforms,
     modernizationBlueprint: guidance.modernizationBlueprint,
+    migrationPaths: guidance.migrationPaths,
     modernizationScore
   };
 }
