@@ -5,6 +5,7 @@ process.env.ALLOWED_ORIGINS = 'http://localhost:3000';
 process.env.ANALYZE_RATE_LIMIT_MAX = '100';
 process.env.CONTACT_RATE_LIMIT_MAX = '100';
 process.env.AUTH_RATE_LIMIT_MAX = '100';
+process.env.HEALTHCHECK_TIMEOUT_MS = '1000';
 
 const fs = require('fs');
 const path = require('path');
@@ -28,7 +29,17 @@ describe('AI Modernizer backend', () => {
     expect(res.statusCode).toBe(200);
     expect(res.body.status).toBe('ok');
     expect(res.body.environment).toBe('test');
+    expect(res.body.database.status).toBe('ok');
+    expect(res.body.database.path).toBeTruthy();
+    expect(res.body.memory.heapUsed).toBeGreaterThan(0);
     expect(res.headers['x-request-id']).toBeTruthy();
+  });
+
+  test('ready endpoint works', async () => {
+    const res = await request(app).get('/api/ready');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ready');
+    expect(res.body.database.status).toBe('ok');
   });
 
   test('analyze endpoint returns JS analysis', async () => {
@@ -75,5 +86,12 @@ describe('AI Modernizer backend', () => {
     const res = await request(app).get('/api/stats');
     expect(res.statusCode).toBe(200);
     expect(Array.isArray(res.body.languagesSupported)).toBe(true);
+  });
+
+  test('analyze endpoint validates payload size and required code', async () => {
+    const res = await request(app)
+      .post('/api/analyze')
+      .send({ code: '', language: 'javascript' });
+    expect(res.statusCode).toBe(400);
   });
 });

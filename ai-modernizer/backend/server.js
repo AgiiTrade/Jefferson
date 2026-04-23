@@ -19,6 +19,7 @@ const IS_PROD = NODE_ENV === 'production';
 const DEFAULT_JWT_SECRET = 'agii-modernizer-secret-change-me';
 const JWT_SECRET = process.env.JWT_SECRET || DEFAULT_JWT_SECRET;
 const DB_PATH = process.env.DB_PATH || path.join(__dirname, 'data.db');
+const DB_DIR = path.dirname(DB_PATH);
 const ALLOWED_ORIGINS = (process.env.ALLOWED_ORIGINS || '')
   .split(',')
   .map(v => v.trim())
@@ -28,11 +29,18 @@ const CONTACT_RATE_LIMIT_MAX = Number(process.env.CONTACT_RATE_LIMIT_MAX || 10);
 const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 12);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
 const rateLimitBuckets = new Map();
+const HEALTHCHECK_TIMEOUT_MS = Number(process.env.HEALTHCHECK_TIMEOUT_MS || 1500);
 let server;
+let isShuttingDown = false;
+let startedAt = new Date().toISOString();
 
 if (IS_PROD && JWT_SECRET === DEFAULT_JWT_SECRET) {
   console.error('Refusing to start in production with the default JWT secret. Set JWT_SECRET.');
   process.exit(1);
+}
+
+if (!fs.existsSync(DB_DIR)) {
+  fs.mkdirSync(DB_DIR, { recursive: true });
 }
 
 app.set('trust proxy', 1);
@@ -91,7 +99,30 @@ app.use(express.static(path.join(__dirname, 'public')));
 // ── Database Setup ─────────────────────────────────────────
 const db = new sqlite3.Database(DB_PATH);
 
+function runDb(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.run(sql, params, function onRun(err) {
+      if (err) return reject(err);
+      return resolve(this);
+    });
+  });
+}
+
+function getDb(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.get(sql, params, (err, row) => {
+      if (err) return reject(err);
+      return resolve(row);
+    });
+  });
+}
+
 db.serialize(() => {
+  db.run('PRAGMA journal_mode = WAL');
+  db.run('PRAGMA synchronous = NORMAL');
+  db.run('PRAGMA foreign_keys = ON');
+  db.run('PRAGMA busy_timeout = 5000');
+  db.run('PRAGMA temp_store = MEMORY');
   db.run(`CREATE TABLE IF NOT EXISTS users (
     id INTEGER PRIMARY KEY AUTOINCREMENT,
     email TEXT UNIQUE NOT NULL,
@@ -715,15 +746,84 @@ function analyzeGeneric(code) {
 
 // ── API Routes ─────────────────────────────────────────────
 
-// Health check
-app.get('/api/health', (req, res) => {
-  res.json({
-    status: 'ok',
-    uptime: process.uptime(),
-    timestamp: new Date().toISOString(),
-    environment: NODE_ENV,
-    requestId: req.requestId
+function withTimeout(promise, timeoutMs) {
+  return new Promise((resolve, reject) => {
+    const timer = setTimeout(() => reject(new Error('Timed out')), timeoutMs);
+    promise
+      .then((result) => {
+        clearTimeout(timer);
+        resolve(result);
+      })
+      .catch((error) => {
+        clearTimeout(timer);
+        reject(error);
+      });
   });
+}
+
+async function getDbHealth() {
+  const fileExists = fs.existsSync(DB_PATH);
+  const stats = fileExists ? fs.statSync(DB_PATH) : null;
+  const ping = await withTimeout(getDb('SELECT 1 as ok'), HEALTHCHECK_TIMEOUT_MS);
+  return {
+    status: ping?.ok === 1 ? 'ok' : 'degraded',
+    path: DB_PATH,
+    fileExists,
+    sizeBytes: stats?.size || 0
+  };
+}
+
+// Health check
+app.get('/api/health', async (req, res) => {
+  try {
+    const dbHealth = await getDbHealth();
+    const status = isShuttingDown ? 'shutting_down' : (dbHealth.status === 'ok' ? 'ok' : 'degraded');
+    const payload = {
+      status,
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      startedAt,
+      environment: NODE_ENV,
+      requestId: req.requestId,
+      version: process.env.npm_package_version || '1.0.0',
+      database: dbHealth,
+      memory: {
+        rss: process.memoryUsage().rss,
+        heapUsed: process.memoryUsage().heapUsed,
+        heapTotal: process.memoryUsage().heapTotal
+      }
+    };
+    return res.status(status === 'ok' ? 200 : 503).json(payload);
+  } catch (error) {
+    return res.status(503).json({
+      status: isShuttingDown ? 'shutting_down' : 'degraded',
+      uptime: process.uptime(),
+      timestamp: new Date().toISOString(),
+      startedAt,
+      environment: NODE_ENV,
+      requestId: req.requestId,
+      database: {
+        status: 'error',
+        path: DB_PATH,
+        message: error.message
+      }
+    });
+  }
+});
+
+app.get('/api/ready', async (req, res) => {
+  if (isShuttingDown) {
+    return res.status(503).json({ status: 'not_ready', reason: 'shutdown_in_progress', requestId: req.requestId });
+  }
+  try {
+    const dbHealth = await getDbHealth();
+    if (dbHealth.status !== 'ok') {
+      return res.status(503).json({ status: 'not_ready', database: dbHealth, requestId: req.requestId });
+    }
+    return res.json({ status: 'ready', requestId: req.requestId, database: dbHealth });
+  } catch (error) {
+    return res.status(503).json({ status: 'not_ready', requestId: req.requestId, error: error.message });
+  }
 });
 
 // Analyze code (public — no auth needed for demo)
@@ -971,6 +1071,8 @@ app.use((err, req, res, next) => {
 
 // ── Start Server ───────────────────────────────────────────
 function startServer(port = PORT) {
+  isShuttingDown = false;
+  startedAt = new Date().toISOString();
   server = app.listen(port, () => {
     console.log(`\n🚀 Agii Intelligence Backend running on http://localhost:${port}`);
     console.log(`🌍 Environment: ${NODE_ENV}`);
@@ -982,13 +1084,52 @@ function startServer(port = PORT) {
     console.log(`   POST /api/login     — Authenticate`);
     console.log(`   GET  /api/history   — Analysis history (auth)`);
     console.log(`   GET  /api/stats     — Platform statistics`);
-    console.log(`   GET  /api/health    — Health check\n`);
+    console.log(`   GET  /api/health    — Health check`);
+    console.log(`   GET  /api/ready     — Readiness check\n`);
   });
   return server;
 }
+
+function shutdown(signal = 'SIGTERM') {
+  if (isShuttingDown) return;
+  isShuttingDown = true;
+  console.log(`Received ${signal}, shutting down AI Modernizer backend...`);
+  const forceTimer = setTimeout(() => {
+    console.error('Forced shutdown after timeout.');
+    process.exit(1);
+  }, 10000);
+  forceTimer.unref();
+
+  const closeDbAndExit = () => {
+    db.close((dbErr) => {
+      clearTimeout(forceTimer);
+      if (dbErr) {
+        console.error('Error while closing database during shutdown:', dbErr);
+        process.exit(1);
+      }
+      process.exit(0);
+    });
+  };
+
+  if (!server) {
+    return closeDbAndExit();
+  }
+
+  server.close((err) => {
+    if (err) {
+      console.error('Error while closing server during shutdown:', err);
+      clearTimeout(forceTimer);
+      return process.exit(1);
+    }
+    return closeDbAndExit();
+  });
+}
+
+process.on('SIGTERM', () => shutdown('SIGTERM'));
+process.on('SIGINT', () => shutdown('SIGINT'));
 
 if (require.main === module) {
   startServer();
 }
 
-module.exports = { app, db, startServer, DB_PATH };
+module.exports = { app, db, startServer, DB_PATH, getDbHealth, shutdown, runDb, getDb };
