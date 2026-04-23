@@ -42,6 +42,14 @@ describe('AI Modernizer backend', () => {
     expect(res.body.database.status).toBe('ok');
   });
 
+  test('ops endpoint works', async () => {
+    const res = await request(app).get('/api/ops');
+    expect(res.statusCode).toBe(200);
+    expect(res.body.status).toBe('ok');
+    expect(res.body.traffic.accessLogEnabled).toBe(true);
+    expect(res.body.totals).toBeTruthy();
+  });
+
   test('analyze endpoint returns JS analysis', async () => {
     const res = await request(app)
       .post('/api/analyze')

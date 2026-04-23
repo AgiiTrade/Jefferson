@@ -14,12 +14,14 @@ AI Modernizer is now beyond demo-only state and has a hardened backend pass, but
 - register and login endpoints
 - legacy-language analysis support
 - request IDs
+- access logging with slow-request highlighting
 - rate limiting
 - production JWT guard
 - configurable CORS allowlist
 - SQLite WAL mode and startup DB-directory creation
 - graceful shutdown handling for managed runtimes
 - database backup command for SQLite deployments
+- ops snapshot endpoint for quick monitoring and support checks
 
 ## Must have before calling it fully functional production
 1. Set real production secrets
@@ -47,8 +49,10 @@ AI Modernizer is now beyond demo-only state and has a hardened backend pass, but
 5. Operational monitoring
    - uptime monitoring
    - error log monitoring
+   - access log collection
    - disk/database health checks
    - readiness monitoring separate from generic liveness
+   - ops snapshot checks for support visibility
 
 ## Should have
 - password reset flow

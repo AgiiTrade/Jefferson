@@ -13,6 +13,8 @@ Copy `.env.example` to `.env` and set:
 - `JWT_SECRET`
 - `DB_PATH`
 - `ALLOWED_ORIGINS`
+- `ACCESS_LOG_ENABLED`
+- `SLOW_REQUEST_MS`
 - `HEALTHCHECK_TIMEOUT_MS`
 
 ## 3. Start locally for validation
@@ -23,6 +25,7 @@ NODE_ENV=production node server.js
 ## 4. Verify endpoints
 - `GET /api/health`
 - `GET /api/ready`
+- `GET /api/ops`
 - `GET /api/stats`
 - `POST /api/analyze`
 - `POST /api/contact`
@@ -40,7 +43,9 @@ pm2 save
 - ensure reverse proxy forwards real IP headers
 - keep database file in a backed-up location if staying on SQLite
 - use a dedicated writable data directory for `DB_PATH`
-- monitor both `/api/health` and `/api/ready`
+- monitor `/api/health`, `/api/ready`, and `/api/ops`
+- keep access logging enabled unless you are piping logs elsewhere
+- tune `SLOW_REQUEST_MS` for your environment
 - rotate logs or connect them to your host logging stack
 - schedule recurring database backups if staying on SQLite
 

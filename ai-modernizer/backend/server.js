@@ -28,6 +28,8 @@ const ANALYZE_RATE_LIMIT_MAX = Number(process.env.ANALYZE_RATE_LIMIT_MAX || 25);
 const CONTACT_RATE_LIMIT_MAX = Number(process.env.CONTACT_RATE_LIMIT_MAX || 10);
 const AUTH_RATE_LIMIT_MAX = Number(process.env.AUTH_RATE_LIMIT_MAX || 12);
 const RATE_LIMIT_WINDOW_MS = Number(process.env.RATE_LIMIT_WINDOW_MS || 15 * 60 * 1000);
+const ACCESS_LOG_ENABLED = process.env.ACCESS_LOG_ENABLED !== 'false';
+const SLOW_REQUEST_MS = Number(process.env.SLOW_REQUEST_MS || 1500);
 const rateLimitBuckets = new Map();
 const HEALTHCHECK_TIMEOUT_MS = Number(process.env.HEALTHCHECK_TIMEOUT_MS || 1500);
 let server;
@@ -82,7 +84,28 @@ setInterval(cleanupRateLimitBuckets, 5 * 60 * 1000).unref();
 // ── Middleware ──────────────────────────────────────────────
 app.use((req, res, next) => {
   req.requestId = `${Date.now().toString(36)}-${Math.random().toString(36).slice(2, 8)}`;
+  req.startedAtMs = Date.now();
   res.set('X-Request-Id', req.requestId);
+  next();
+});
+app.use((req, res, next) => {
+  res.on('finish', () => {
+    if (!ACCESS_LOG_ENABLED) return;
+    const durationMs = Date.now() - (req.startedAtMs || Date.now());
+    const logPayload = {
+      requestId: req.requestId,
+      method: req.method,
+      path: req.originalUrl || req.url,
+      status: res.statusCode,
+      durationMs,
+      ip: getClientKey(req),
+      userAgent: req.headers['user-agent'] || null
+    };
+    const logLine = `[access] ${JSON.stringify(logPayload)}`;
+    if (res.statusCode >= 500) console.error(logLine);
+    else if (durationMs >= SLOW_REQUEST_MS || res.statusCode >= 400) console.warn(logLine);
+    else console.log(logLine);
+  });
   next();
 });
 app.use(helmet({ contentSecurityPolicy: false, crossOriginResourcePolicy: false }));
@@ -826,6 +849,44 @@ app.get('/api/ready', async (req, res) => {
   }
 });
 
+app.get('/api/ops', async (req, res) => {
+  try {
+    const [dbHealth, analysesRow, contactsRow, usersRow] = await Promise.all([
+      getDbHealth(),
+      getDb('SELECT COUNT(*) as count, MAX(created_at) as lastCreatedAt FROM analyses'),
+      getDb('SELECT COUNT(*) as count, MAX(created_at) as lastCreatedAt FROM contacts'),
+      getDb('SELECT COUNT(*) as count, MAX(created_at) as lastCreatedAt FROM users')
+    ]);
+
+    return res.json({
+      status: isShuttingDown ? 'degraded' : 'ok',
+      requestId: req.requestId,
+      timestamp: new Date().toISOString(),
+      uptime: process.uptime(),
+      environment: NODE_ENV,
+      database: dbHealth,
+      traffic: {
+        accessLogEnabled: ACCESS_LOG_ENABLED,
+        slowRequestMs: SLOW_REQUEST_MS,
+        rateLimitWindowMs: RATE_LIMIT_WINDOW_MS,
+        rateLimitBucketsTracked: rateLimitBuckets.size
+      },
+      totals: {
+        analyses: analysesRow?.count || 0,
+        contacts: contactsRow?.count || 0,
+        users: usersRow?.count || 0
+      },
+      latestActivity: {
+        analysesAt: analysesRow?.lastCreatedAt || null,
+        contactsAt: contactsRow?.lastCreatedAt || null,
+        usersAt: usersRow?.lastCreatedAt || null
+      }
+    });
+  } catch (error) {
+    return res.status(500).json({ error: 'Failed to build ops snapshot', requestId: req.requestId });
+  }
+});
+
 // Analyze code (public — no auth needed for demo)
 app.post('/api/analyze', makeRateLimiter('analyze', ANALYZE_RATE_LIMIT_MAX), (req, res) => {
   const schema = Joi.object({
@@ -1085,7 +1146,8 @@ function startServer(port = PORT) {
     console.log(`   GET  /api/history   — Analysis history (auth)`);
     console.log(`   GET  /api/stats     — Platform statistics`);
     console.log(`   GET  /api/health    — Health check`);
-    console.log(`   GET  /api/ready     — Readiness check\n`);
+    console.log(`   GET  /api/ready     — Readiness check`);
+    console.log(`   GET  /api/ops       — Ops snapshot\n`);
   });
   return server;
 }
