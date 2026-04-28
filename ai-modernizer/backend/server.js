@@ -237,6 +237,49 @@ db.serialize(() => {
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
 
+  db.run(`CREATE TABLE IF NOT EXISTS siebel_integrations (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    name TEXT UNIQUE NOT NULL,
+    source TEXT,
+    legacy_protocol TEXT,
+    target_api TEXT,
+    status TEXT,
+    volume_per_day INTEGER,
+    risk TEXT,
+    modernization_notes TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS data_quality_rules (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    domain TEXT,
+    rule_name TEXT UNIQUE,
+    total_records INTEGER,
+    failed_records INTEGER,
+    severity TEXT,
+    remediation TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS parity_tests (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    suite TEXT,
+    test_name TEXT UNIQUE,
+    legacy_result TEXT,
+    modern_result TEXT,
+    status TEXT,
+    coverage INTEGER,
+    evidence TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS migration_workstreams (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    workstream TEXT UNIQUE,
+    owner TEXT,
+    progress INTEGER,
+    blockers INTEGER,
+    next_milestone TEXT,
+    business_value TEXT
+  )`);
+
   db.run(`INSERT OR IGNORE INTO siebel_accounts (legacy_id, name, industry, region, revenue, health_score, owner, legacy_status, modern_status)
     VALUES
     ('SBL-10027','Northstar Financial Group','Banking','Canada East',18500000,82,'Maya Chen','Active - scattered Siebel views','Migrated - customer 360'),
@@ -264,6 +307,38 @@ db.serialize(() => {
   db.run(`INSERT INTO migration_events (phase, status, source_objects, migrated_objects, defects, notes)
     SELECT 'API Modernization','In Progress',42,31,5,'SOAP integrations are being wrapped/replaced with REST APIs and event-driven flows.'
     WHERE (SELECT COUNT(*) FROM migration_events) = 2`);
+
+  db.run(`INSERT OR IGNORE INTO siebel_integrations (name, source, legacy_protocol, target_api, status, volume_per_day, risk, modernization_notes)
+    VALUES
+    ('Oracle ERP Customer Sync','Siebel EAI','SOAP + nightly batch','/api/customers/sync','Migrated',18500,'Medium','Replaced brittle XML mappings with versioned REST contract and replay queue.'),
+    ('Billing Account Status','Siebel Workflow','MQ Series','/api/billing/status','In Progress',42000,'High','High-volume interface needs idempotency, dead-letter handling, and contract tests.'),
+    ('CTI Screen Pop','Siebel CTI Adapter','Desktop plugin','/api/interactions/screen-pop','Designed',9600,'Medium','Modern browser-based event stream removes desktop dependency.'),
+    ('Data Warehouse Feed','Informatica extract','Flat file SFTP','/api/events/customer-change','Migrated',120000,'Low','Event-driven feed replaces overnight report lag.'),
+    ('Identity / SSO','LDAP adapter','LDAP bind','/oauth2/authorize','Validated',3100,'Low','Moved to OAuth/OIDC with role mapping and audit trail.')`);
+
+  db.run(`INSERT OR IGNORE INTO data_quality_rules (domain, rule_name, total_records, failed_records, severity, remediation)
+    VALUES
+    ('Accounts','Duplicate legal entity names',420000,1840,'High','Run fuzzy match merge workflow and steward approval.'),
+    ('Contacts','Missing consent flags',980000,12350,'Critical','Block campaign migration until consent source is reconciled.'),
+    ('Service Requests','Invalid product codes',2600000,6210,'Medium','Map retired product codes to modern catalog.'),
+    ('Opportunities','Orphaned account references',74000,412,'High','Resolve parent account mapping before opportunity load.'),
+    ('Activities','Free-text status values',5100000,88120,'Medium','Normalize to target enum values with AI-assisted classification.')`);
+
+  db.run(`INSERT OR IGNORE INTO parity_tests (suite, test_name, legacy_result, modern_result, status, coverage, evidence)
+    VALUES
+    ('Service SLA','Critical SR due date calculation','4 business hours','4 business hours','Pass',96,'Golden dataset SR-88501 matched legacy SLA output.'),
+    ('Account 360','Household rollup calculation','7 contacts / 3 products','7 contacts / 3 products','Pass',91,'Legacy applet export equals modern aggregate API.'),
+    ('Opportunity','Weighted pipeline forecast','CAD 1.31M','CAD 1.31M','Pass',88,'Forecast parity within rounding tolerance.'),
+    ('Integration','Billing status failure retry','Manual retry required','Auto retry + dead-letter','Improved',82,'Modern flow preserves status and adds observability.'),
+    ('Security','Role-based account visibility','Position hierarchy','Policy claims + hierarchy','Pass',90,'Sample roles validated across account regions.')`);
+
+  db.run(`INSERT OR IGNORE INTO migration_workstreams (workstream, owner, progress, blockers, next_milestone, business_value)
+    VALUES
+    ('CRM Core Replacement','Agii + Client CRM Lead',72,1,'Complete service request workflow parity','Retire high-cost Siebel UI dependency.'),
+    ('Data Migration Factory','Data Lead',84,2,'Resolve consent and duplicate account defects','Clean customer master for analytics and AI.'),
+    ('Integration Modernization','Integration Architect',61,3,'Finish billing status API hardening','Reduce failed handoffs and support tickets.'),
+    ('Testing & Cutover','QA Lead',58,1,'Complete regression pack for top 25 workflows','Lower go-live risk with measurable parity.'),
+    ('Change Management','Business PMO',43,0,'Train pilot users on modern case queue','Increase user adoption and reduce manual routing.')`);
 
   const safeAlter = (sql) => db.run(sql, () => {});
   safeAlter('ALTER TABLE analyses ADD COLUMN filename TEXT');
@@ -883,11 +958,15 @@ async function getDbHealth() {
 }
 
 async function buildSiebelDemoPayload() {
-  const [accounts, cases, opportunities, migration] = await Promise.all([
+  const [accounts, cases, opportunities, migration, integrations, dataQuality, parityTests, workstreams] = await Promise.all([
     allDb('SELECT * FROM siebel_accounts ORDER BY revenue DESC'),
     allDb('SELECT * FROM siebel_cases ORDER BY CASE severity WHEN \'Critical\' THEN 1 WHEN \'High\' THEN 2 WHEN \'Medium\' THEN 3 ELSE 4 END, created_at DESC'),
     allDb('SELECT * FROM siebel_opportunities ORDER BY amount DESC'),
-    allDb('SELECT * FROM migration_events ORDER BY id ASC')
+    allDb('SELECT * FROM migration_events ORDER BY id ASC'),
+    allDb('SELECT * FROM siebel_integrations ORDER BY CASE risk WHEN \'High\' THEN 1 WHEN \'Medium\' THEN 2 ELSE 3 END, volume_per_day DESC'),
+    allDb('SELECT * FROM data_quality_rules ORDER BY CASE severity WHEN \'Critical\' THEN 1 WHEN \'High\' THEN 2 WHEN \'Medium\' THEN 3 ELSE 4 END, failed_records DESC'),
+    allDb('SELECT * FROM parity_tests ORDER BY coverage DESC'),
+    allDb('SELECT * FROM migration_workstreams ORDER BY progress DESC')
   ]);
   const totalRevenue = accounts.reduce((sum, row) => sum + Number(row.revenue || 0), 0);
   const pipeline = opportunities.reduce((sum, row) => sum + Number(row.amount || 0), 0);
@@ -898,11 +977,25 @@ async function buildSiebelDemoPayload() {
     acc.defects += Number(row.defects || 0);
     return acc;
   }, { source: 0, migrated: 0, defects: 0 });
+  const totalIntegrationVolume = integrations.reduce((sum, row) => sum + Number(row.volume_per_day || 0), 0);
+  const totalDataRecords = dataQuality.reduce((sum, row) => sum + Number(row.total_records || 0), 0);
+  const failedDataRecords = dataQuality.reduce((sum, row) => sum + Number(row.failed_records || 0), 0);
+  const avgParityCoverage = Math.round(parityTests.reduce((sum, row) => sum + Number(row.coverage || 0), 0) / Math.max(1, parityTests.length));
+  const avgWorkstreamProgress = Math.round(workstreams.reduce((sum, row) => sum + Number(row.progress || 0), 0) / Math.max(1, workstreams.length));
   return {
     accounts,
     cases,
     opportunities,
     migration,
+    integrations,
+    dataQuality,
+    parityTests,
+    workstreams,
+    architecture: {
+      legacy: ['Siebel UI/Applets', 'Business Components', 'Siebel Workflow', 'EAI SOAP Services', 'Batch ETL', 'Oracle DB'],
+      target: ['React Customer 360', 'Node/Java API Layer', 'Workflow Services', 'Event Bus', 'Data Quality Pipeline', 'Observability + Audit'],
+      patterns: ['Strangler Fig migration', 'API facade over legacy interfaces', 'Golden-data parity tests', 'Phased cutover by workflow']
+    },
     metrics: {
       accounts: accounts.length,
       openCases: cases.length,
@@ -911,7 +1004,14 @@ async function buildSiebelDemoPayload() {
       totalRevenue,
       avgHealthScore: Math.round(accounts.reduce((sum, row) => sum + Number(row.health_score || 0), 0) / Math.max(1, accounts.length)),
       migrationPercent: Math.round((migrationTotals.migrated / Math.max(1, migrationTotals.source)) * 100),
-      migrationDefects: migrationTotals.defects
+      migrationDefects: migrationTotals.defects,
+      integrations: integrations.length,
+      totalIntegrationVolume,
+      dataQualityPassRate: Math.round(((totalDataRecords - failedDataRecords) / Math.max(1, totalDataRecords)) * 100),
+      failedDataRecords,
+      avgParityCoverage,
+      avgWorkstreamProgress,
+      totalBlockers: workstreams.reduce((sum, row) => sum + Number(row.blockers || 0), 0)
     }
   };
 }

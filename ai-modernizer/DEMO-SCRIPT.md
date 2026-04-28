@@ -1,65 +1,101 @@
-# Siebel Migration Client Demo Script — Agii AI Modernization
+# Enterprise Siebel Migration Client Demo Script — Agii AI Modernization
 
 ## Demo URL
+- Public temporary: `https://video-wallpapers-wolf-blake.trycloudflare.com/siebel-demo/`
 - Local/backend route: `http://localhost:3100/siebel-demo/`
 - API payload: `http://localhost:3100/api/siebel-demo`
 - Health check: `http://localhost:3100/api/health`
 
-## 10-minute flow
+## 15-minute enterprise demo flow
 
-### 1. Set the business context — 60 seconds
-“Today I’ll show a realistic Siebel CRM modernization journey: the legacy call-centre experience, the migration cockpit, and the migrated modern CRM backed by live APIs and database data.”
+### 0. Executive overview — 2 minutes
+Open **0. Executive**.
+- Position this as a realistic migration command center, not a UI mockup.
+- Show program progress, migration completion, interface volume, data quality pass rate.
+- Explain target architecture: Siebel UI/workflow/EAI/batch → modern customer 360, APIs, event flows, observability, audit.
 
-### 2. Show legacy Siebel pain — 2 minutes
+Key line:
+“Agii de-risks modernization by treating Siebel as a business-critical operating system: screens, workflows, integrations, data, security, and cutover all move through governed migration workstreams.”
+
+### 1. Legacy Siebel pain — 2 minutes
 Open **1. Legacy Siebel**.
-- Point out old applet/screen navigation.
-- Show accounts and service requests in separate grids.
-- Emphasize manual queue routing, fragmented customer profile, and integration opacity.
+- Show old applet navigation, account grid, service request applet.
+- Emphasize fragmented context, manual routing, hidden integration failures, reporting delay.
 
 Key line:
-“Most migration risk is not just UI replacement. It’s hidden workflow, business rules, service queues, and integrations.”
+“The visible UI is only the surface. The migration risk is in business components, workflow scripts, EAI interfaces, data quality, and role visibility.”
 
-### 3. Show migration cockpit — 2 minutes
-Open **2. Migration Cockpit**.
-- Explain discovery, data migration, API modernization, and validation.
-- Show migrated/source object counts and defects.
-- Position Agii as the controlled AI-assisted factory, not a risky rewrite.
-
-Key line:
-“We use AI to accelerate inventory, mapping, test generation, and migration planning, but keep human approval gates for critical business logic.”
-
-### 4. Show modern CRM — 3 minutes
-Open **3. Modern CRM**.
-- Show Customer 360 cards.
-- Show AI Case Queue summaries and SLA risk.
-- Create a new service case using the form.
-- Advance a workflow.
-- Show sales pipeline and AI next-best actions.
+### 2. Migration factory — 2 minutes
+Open **2. Migration Factory**.
+- Show discovery, data migration, API modernization, defects, migrated/source counts.
+- Explain AI-assisted inventory, mapping, spec generation, test generation, and human approval gates.
 
 Key line:
-“This is the target operating model: clean UX, REST APIs, AI-assisted triage, and measurable process improvement.”
+“AI accelerates the migration factory, but business-critical decisions remain controlled by owners, architects, and QA gates.”
 
-### 5. Prove full stack — 90 seconds
-Open **4. Backend Proof**.
-- Show `/api/health` response.
-- Show `/api/siebel-demo` payload.
-- Explain Node/Express API + SQLite-backed demo data.
+### 3. Data quality/reconciliation — 2 minutes
+Open **3. Data Quality**.
+- Show duplicates, consent flags, invalid product codes, orphan references, free-text statuses.
+- Explain why CRM migrations fail when data is ignored.
 
 Key line:
-“This is not just a PowerPoint mockup. The UI is calling live backend endpoints with persistent demo records.”
+“A clean modern UI on dirty CRM data is still a failed migration. We make data quality visible early.”
+
+### 4. Integration modernization — 2 minutes
+Open **4. Integrations**.
+- Show SOAP, MQ, SFTP, LDAP, CTI moving to REST/events/OAuth.
+- Emphasize idempotency, replay queue, observability, contract tests.
+
+Key line:
+“Siebel migrations succeed when interfaces become observable, testable, and replayable.”
+
+### 5. Modern CRM — 3 minutes
+Open **5. Modern CRM**.
+- Show Customer 360, AI Case Queue, opportunity next-best actions.
+- Create a new service case.
+- Advance workflow.
+
+Key line:
+“This is the target operating model: modern UX, live APIs, AI triage, measurable SLA improvement, and sales/service intelligence.”
+
+### 6. Testing/parity — 1.5 minutes
+Open **6. Testing/Parity**.
+- Show golden-data tests proving legacy and modern outputs match.
+- Explain parity is where executives gain go-live confidence.
+
+Key line:
+“We do not just rebuild screens. We prove the business rules still behave correctly.”
+
+### 7. Backend proof — 30 seconds
+Open **7. Backend Proof**.
+- Show `/api/health` and `/api/siebel-demo` payload.
+- Mention Node/Express backend and SQLite-backed persistent demo records.
+
+Key line:
+“This is a working full-stack demo, not slides.”
 
 ## Discovery questions for client
-1. Which Siebel modules are in scope: Sales, Call Center, Service, Field Service, Marketing?
-2. How many integrations exist: ERP, billing, identity, data warehouse, CTI, email?
-3. What target platform is preferred: Salesforce, Dynamics, custom React/Java/.NET, Oracle CX, or hybrid?
-4. What is the migration priority: UI replacement, integration modernization, data cleanup, AI service automation, or cost reduction?
-5. What compliance/audit constraints must be preserved?
+1. Which Siebel modules are in scope: Sales, Call Center, Service, Field Service, Marketing, Partner Portal?
+2. How many business components, applets, workflows, and scripts are customized?
+3. What are the top 10 critical workflows that must prove parity?
+4. Which integrations exist: Oracle ERP, billing, CTI, data warehouse, identity, email, document management?
+5. What target platform is preferred: Salesforce, Dynamics, Oracle CX, custom React/Java/.NET, or hybrid?
+6. What data issues are already known: duplicates, consent, orphan contacts, retired products, free-text statuses?
+7. What compliance/audit requirements must survive migration?
+8. What is the preferred cutover pattern: big bang, phased by module, phased by region, or strangler/API facade?
 
-## Suggested pilot offer
-**2–4 week Siebel Modernization Assessment**
-- Legacy screen/workflow inventory
+## Suggested paid pilot offer
+**4-week Siebel Modernization Assessment + Prototype**
+- Week 1: Inventory screens/workflows/integrations/data risks
+- Week 2: Target architecture and migration backlog
+- Week 3: Working prototype for one high-value workflow
+- Week 4: Parity test pack, executive roadmap, fixed-scope implementation plan
+
+Deliverables:
+- Siebel modernization assessment
 - Integration map
-- Data migration risk report
-- Modern target architecture
-- Working prototype for one high-value workflow
-- Fixed-scope implementation roadmap
+- Data quality report
+- Target architecture
+- Working prototype
+- Cost/risk roadmap
+- Implementation proposal

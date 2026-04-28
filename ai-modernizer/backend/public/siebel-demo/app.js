@@ -1,88 +1,25 @@
 const $ = (id) => document.getElementById(id);
 let state = null;
-
 const money = (n) => new Intl.NumberFormat('en-CA', { style: 'currency', currency: 'CAD', maximumFractionDigits: 0 }).format(n || 0);
 const pct = (n) => `${Math.max(0, Math.min(100, Math.round(n || 0)))}%`;
-
-async function api(path, options = {}) {
-  const res = await fetch(path, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options });
-  if (!res.ok) throw new Error(await res.text());
-  return res.json();
-}
-
-async function load() {
-  const [health, payload] = await Promise.all([api('/api/health'), api('/api/siebel-demo')]);
-  state = payload;
-  $('apiStatus').textContent = `API online · ${health.database?.status || health.status}`;
-  $('apiStatus').classList.add('ok');
-  $('healthOut').textContent = JSON.stringify({ status: health.status, database: health.database, uptime: Math.round(health.uptime) }, null, 2);
-  $('payloadOut').textContent = JSON.stringify(payload, null, 2).slice(0, 5000);
-  render();
-}
-
-function render() {
-  renderLegacy();
-  renderMigration();
-  renderModern();
-}
-
-function renderLegacy() {
-  $('legacyAccounts').innerHTML = state.accounts.map(a => `<tr><td>${a.legacy_id}</td><td>${a.name}</td><td>${a.industry}</td><td>${a.legacy_status}</td><td>${a.owner}</td></tr>`).join('');
-  $('legacyCases').innerHTML = state.cases.map(c => `<tr><td>${c.legacy_ticket}</td><td>${c.severity}</td><td>${c.legacy_queue}</td><td>${c.title}</td></tr>`).join('');
-}
-
+const num = (n) => new Intl.NumberFormat('en-CA').format(n || 0);
+async function api(path, options = {}) { const res = await fetch(path, { headers: { 'Content-Type': 'application/json', ...(options.headers || {}) }, ...options }); if (!res.ok) throw new Error(await res.text()); return res.json(); }
+async function load() { const [health, payload] = await Promise.all([api('/api/health'), api('/api/siebel-demo')]); state = payload; $('apiStatus').textContent = `API online · DB ${health.database?.status || health.status}`; $('apiStatus').classList.add('ok'); $('healthOut').textContent = JSON.stringify({ status: health.status, database: health.database, uptime: Math.round(health.uptime) }, null, 2); $('payloadOut').textContent = JSON.stringify(payload, null, 2).slice(0, 9000); render(); }
 function metric(label, value, hint = '') { return `<div class="metric"><b>${value}</b><span>${label}${hint ? ` · ${hint}` : ''}</span></div>`; }
-
-function renderMigration() {
-  $('migrationMetrics').innerHTML = [
-    metric('Migration completion', pct(state.metrics.migrationPercent), 'validated objects'),
-    metric('Open defects', state.metrics.migrationDefects, 'demo reconciliation'),
-    metric('Customer records', state.metrics.accounts, 'seeded accounts'),
-    metric('Pipeline migrated', money(state.metrics.pipeline), 'opportunities')
-  ].join('');
-  $('migrationCards').innerHTML = state.migration.map(p => {
-    const done = Math.round((p.migrated_objects / Math.max(1, p.source_objects)) * 100);
-    return `<article class="phase-card"><h3>${p.phase}<span class="badge ${p.status === 'Complete' ? '' : 'warn'}">${p.status}</span></h3><div class="bar"><i style="width:${done}%"></i></div><p>${p.notes}</p><div class="row"><span>${p.migrated_objects.toLocaleString()} / ${p.source_objects.toLocaleString()} objects</span><span>${p.defects} defects</span></div></article>`;
-  }).join('');
+function badge(v) { const c = ['Critical','High'].includes(v) ? 'danger' : ['In Progress','Medium','Designed'].includes(v) ? 'warn' : ''; return `<span class="badge ${c}">${v}</span>`; }
+function render() { renderExecutive(); renderLegacy(); renderFactory(); renderData(); renderIntegrations(); renderModern(); renderTesting(); }
+function renderExecutive() {
+  $('execMetrics').innerHTML = [metric('Program progress', pct(state.metrics.avgWorkstreamProgress), `${state.metrics.totalBlockers} blockers`), metric('Migration completion', pct(state.metrics.migrationPercent), 'object-level'), metric('API/interfaces', state.metrics.integrations, `${num(state.metrics.totalIntegrationVolume)}/day`), metric('Data quality pass', pct(state.metrics.dataQualityPassRate), `${num(state.metrics.failedDataRecords)} defects`)].join('');
+  $('architecture').innerHTML = `<div class="arch"><div><h4>Legacy</h4>${state.architecture.legacy.map(x=>`<p>${x}</p>`).join('')}</div><div class="arrow">→</div><div><h4>Modern Target</h4>${state.architecture.target.map(x=>`<p>${x}</p>`).join('')}</div></div><h4>Migration Patterns</h4>${state.architecture.patterns.map(x=>`<span class="pill">${x}</span>`).join('')}`;
+  $('workstreams').innerHTML = state.workstreams.map(w => `<div class="work"><div class="row"><b>${w.workstream}</b>${badge(w.progress + '%')}</div><div class="bar"><i style="width:${w.progress}%"></i></div><div class="row"><span>${w.owner}</span><span>${w.blockers} blockers</span></div><p>${w.next_milestone}</p><small>${w.business_value}</small></div>`).join('');
 }
-
-function renderModern() {
-  $('modernMetrics').innerHTML = [
-    metric('Avg customer health', state.metrics.avgHealthScore, 'AI scored'),
-    metric('Open service cases', state.metrics.openCases, `${state.metrics.criticalCases} urgent`),
-    metric('Portfolio revenue', money(state.metrics.totalRevenue), 'customer 360'),
-    metric('Sales pipeline', money(state.metrics.pipeline), 'next actions')
-  ].join('');
-  $('caseAccount').innerHTML = state.accounts.map(a => `<option value="${a.legacy_id}">${a.name}</option>`).join('');
-  $('modernAccounts').innerHTML = state.accounts.map(a => `<div class="account"><h4>${a.name}</h4><div class="row"><span>${a.industry} · ${a.region}</span><b>${money(a.revenue)}</b></div><div class="row"><span>${a.modern_status}</span><span>Owner: ${a.owner}</span></div><div class="health"><i style="width:${a.health_score}%"></i></div></div>`).join('');
-  $('modernCases').innerHTML = state.cases.map(c => `<div class="case ${String(c.severity).toLowerCase()}"><h4>${c.legacy_ticket}: ${c.title}</h4><div class="row"><span>${c.severity} · SLA ${c.sla_hours}h</span><b>${c.modern_stage}</b></div><div class="ai">🤖 ${c.ai_summary}</div><button onclick="advanceCase(${c.id})" style="margin-top:10px">Advance workflow</button></div>`).join('');
-  $('opportunities').innerHTML = state.opportunities.map(o => `<div class="oppty"><h4>${o.name}</h4><div class="row"><span>${o.stage} · close ${o.close_date}</span><b>${money(o.amount)}</b></div><div class="ai">Next best action: ${o.ai_next_action}</div></div>`).join('');
-}
-
-async function advanceCase(id) {
-  state = await api(`/api/siebel-demo/cases/${id}`, { method: 'PATCH', body: JSON.stringify({ modernStage: 'Customer update sent · resolution in progress' }) });
-  $('payloadOut').textContent = JSON.stringify(state, null, 2).slice(0, 5000);
-  render();
-}
-
-$('caseForm').addEventListener('submit', async (e) => {
-  e.preventDefault();
-  const title = $('caseTitle').value.trim();
-  if (!title) return;
-  state = await api('/api/siebel-demo/cases', { method: 'POST', body: JSON.stringify({ accountLegacyId: $('caseAccount').value, severity: $('caseSeverity').value, title }) });
-  $('caseTitle').value = '';
-  $('payloadOut').textContent = JSON.stringify(state, null, 2).slice(0, 5000);
-  render();
-});
-
-document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => {
-  document.querySelectorAll('.tab,.view').forEach(el => el.classList.remove('active'));
-  btn.classList.add('active');
-  $(btn.dataset.view).classList.add('active');
-}));
-
-load().catch(err => {
-  $('apiStatus').textContent = 'API error — start backend with npm start';
-  $('healthOut').textContent = err.message;
-  console.error(err);
-});
+function renderLegacy() { $('legacyAccounts').innerHTML = state.accounts.map(a => `<tr><td>${a.legacy_id}</td><td>${a.name}</td><td>${a.industry}</td><td>${a.legacy_status}</td><td>${a.owner}</td></tr>`).join(''); $('legacyCases').innerHTML = state.cases.map(c => `<tr><td>${c.legacy_ticket}</td><td>${c.severity}</td><td>${c.legacy_queue}</td><td>${c.title}</td></tr>`).join(''); }
+function renderFactory() { $('factoryMetrics').innerHTML = [metric('Objects migrated', pct(state.metrics.migrationPercent), 'source to target'), metric('Defects open', state.metrics.migrationDefects, 'migration events'), metric('Workstream avg', pct(state.metrics.avgWorkstreamProgress), 'delivery'), metric('Parity coverage', pct(state.metrics.avgParityCoverage), 'critical rules')].join(''); $('migrationCards').innerHTML = state.migration.map(p => { const done = Math.round((p.migrated_objects / Math.max(1, p.source_objects)) * 100); return `<article class="phase-card"><h3>${p.phase}${badge(p.status)}</h3><div class="bar"><i style="width:${done}%"></i></div><p>${p.notes}</p><div class="row"><span>${num(p.migrated_objects)} / ${num(p.source_objects)} objects</span><span>${p.defects} defects</span></div></article>`; }).join(''); }
+function renderData() { const total = state.dataQuality.reduce((s,r)=>s+Number(r.total_records||0),0); const failed = state.dataQuality.reduce((s,r)=>s+Number(r.failed_records||0),0); $('dataMetrics').innerHTML = [metric('Records scanned', num(total), 'CRM domains'), metric('Failed rules', num(failed), 'need remediation'), metric('Pass rate', pct(state.metrics.dataQualityPassRate), 'migration gate'), metric('Critical rules', state.dataQuality.filter(r=>r.severity==='Critical').length, 'must fix')].join(''); $('dataRules').innerHTML = state.dataQuality.map(r => `<tr><td>${r.domain}</td><td>${r.rule_name}</td><td>${num(r.total_records)}</td><td>${num(r.failed_records)}</td><td>${badge(r.severity)}</td><td>${r.remediation}</td></tr>`).join(''); }
+function renderIntegrations() { $('integrationMetrics').innerHTML = [metric('Interfaces mapped', state.metrics.integrations, 'Siebel boundary'), metric('Daily events', num(state.metrics.totalIntegrationVolume), 'observed volume'), metric('High risk', state.integrations.filter(i=>i.risk==='High').length, 'needs hardening'), metric('Migrated/validated', state.integrations.filter(i=>['Migrated','Validated'].includes(i.status)).length, 'ready')].join(''); $('integrationCards').innerHTML = state.integrations.map(i => `<article class="phase-card"><h3>${i.name}${badge(i.risk)}</h3><p><b>${i.legacy_protocol}</b> → <b>${i.target_api}</b></p><div class="row"><span>${i.source}</span><span>${num(i.volume_per_day)}/day</span></div><p>${i.modernization_notes}</p>${badge(i.status)}</article>`).join(''); }
+function renderModern() { $('modernMetrics').innerHTML = [metric('Avg customer health', state.metrics.avgHealthScore, 'AI scored'), metric('Open service cases', state.metrics.openCases, `${state.metrics.criticalCases} urgent`), metric('Portfolio revenue', money(state.metrics.totalRevenue), 'customer 360'), metric('Sales pipeline', money(state.metrics.pipeline), 'next actions')].join(''); $('caseAccount').innerHTML = state.accounts.map(a => `<option value="${a.legacy_id}">${a.name}</option>`).join(''); $('modernAccounts').innerHTML = state.accounts.map(a => `<div class="account"><h4>${a.name}</h4><div class="row"><span>${a.industry} · ${a.region}</span><b>${money(a.revenue)}</b></div><div class="row"><span>${a.modern_status}</span><span>Owner: ${a.owner}</span></div><div class="health"><i style="width:${a.health_score}%"></i></div></div>`).join(''); $('modernCases').innerHTML = state.cases.map(c => `<div class="case ${String(c.severity).toLowerCase()}"><h4>${c.legacy_ticket}: ${c.title}</h4><div class="row"><span>${c.severity} · SLA ${c.sla_hours}h</span><b>${c.modern_stage}</b></div><div class="ai">🤖 ${c.ai_summary}</div><button onclick="advanceCase(${c.id})" style="margin-top:10px">Advance workflow</button></div>`).join(''); $('opportunities').innerHTML = state.opportunities.map(o => `<div class="oppty"><h4>${o.name}</h4><div class="row"><span>${o.stage} · close ${o.close_date}</span><b>${money(o.amount)}</b></div><div class="ai">Next best action: ${o.ai_next_action}</div></div>`).join(''); }
+function renderTesting() { $('testingMetrics').innerHTML = [metric('Avg parity coverage', pct(state.metrics.avgParityCoverage), 'critical rules'), metric('Passing suites', state.parityTests.filter(t=>t.status==='Pass').length, 'validated'), metric('Improved flows', state.parityTests.filter(t=>t.status==='Improved').length, 'beyond parity'), metric('Evidence items', state.parityTests.length, 'audit trail')].join(''); $('parityRows').innerHTML = state.parityTests.map(t => `<tr><td>${t.suite}</td><td>${t.test_name}</td><td>${t.legacy_result}</td><td>${t.modern_result}</td><td>${badge(t.status)}</td><td>${pct(t.coverage)}</td><td>${t.evidence}</td></tr>`).join(''); }
+async function advanceCase(id) { state = await api(`/api/siebel-demo/cases/${id}`, { method: 'PATCH', body: JSON.stringify({ modernStage: 'Customer update sent · resolution in progress' }) }); $('payloadOut').textContent = JSON.stringify(state, null, 2).slice(0, 9000); render(); }
+$('caseForm').addEventListener('submit', async (e) => { e.preventDefault(); const title = $('caseTitle').value.trim(); if (!title) return; state = await api('/api/siebel-demo/cases', { method: 'POST', body: JSON.stringify({ accountLegacyId: $('caseAccount').value, severity: $('caseSeverity').value, title }) }); $('caseTitle').value = ''; $('payloadOut').textContent = JSON.stringify(state, null, 2).slice(0, 9000); render(); });
+document.querySelectorAll('.tab').forEach(btn => btn.addEventListener('click', () => { document.querySelectorAll('.tab,.view').forEach(el => el.classList.remove('active')); btn.classList.add('active'); $(btn.dataset.view).classList.add('active'); }));
+load().catch(err => { $('apiStatus').textContent = 'API error — start backend with npm start'; $('healthOut').textContent = err.message; console.error(err); });
