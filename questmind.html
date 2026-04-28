@@ -1245,6 +1245,22 @@ hard: [
 // ============ HELPERS ============
 function shuffle(arr){return arr.sort(()=>Math.random()-0.5);}
 
+function questionMatchesSubject(question, subject){
+  const text = ((question && question.q) || '').toLowerCase();
+  const answerText = ((question && question.a) || []).join(' ').toLowerCase();
+  const all = text + ' ' + answerText;
+  const englishSignals = /\b(noun|verb|adjective|adverb|pronoun|plural|singular|past tense|present tense|rhymes?|synonym|antonym|opposite|sentence|comma|article|grammar|clause|metaphor|simile|personification|alliteration|proper noun|punctuation|word)\b/;
+  const scienceSignals = /\b(planet|plants?|gas|oxygen|carbon|body|organ|bones?|mammal|insect|spider|water|sun|moon|gravity|chemical|photosynthesis|animal|dolphin|heart|blood|earth|solar|star)\b/;
+  const geographySignals = /\b(capital|country|continent|city|province|state|river|mountain|map|population|canada|toronto|ottawa|europe|asia|africa|australia)\b/;
+  const mathSignals = /[0-9+×÷=π√%²³]|\b(add|minus|subtract|multiply|divide|fraction|decimal|percent|solve|area|perimeter|angle|degree|triangle|square|rectangle|circle|shape|sides?|polygon|vertex|vertices|radius|diameter|slope|equation|factor|log|sin|cos|tan|derivative|integral|volume|cube|sphere|cylinder|cone|prime|average|gcf|lcm)\b/;
+
+  if(subject === 'math') return mathSignals.test(all) && !englishSignals.test(all) && !scienceSignals.test(all) && !geographySignals.test(all);
+  if(subject === 'english') return englishSignals.test(all) && !mathSignals.test(all) && !scienceSignals.test(all) && !geographySignals.test(all);
+  if(subject === 'science') return scienceSignals.test(all) && !englishSignals.test(all) && !geographySignals.test(all);
+  if(subject === 'geography') return geographySignals.test(all) && !englishSignals.test(all);
+  return true;
+}
+
 function getQuestion(){
   const subject = S.subject || 'math';
   const grade = S.grade || 3;
@@ -1255,7 +1271,8 @@ function getQuestion(){
   else if(grade <= 8) pool = [...(Q[subject].medium||[]).slice(0,5), ...(Q[subject].hard||[]), ...(Q[subject].hard||[]).slice(0,5)];
   else pool = [...(Q[subject].hard||[]), ...(Q[subject].hard||[]), ...(Q[subject].medium||[]).slice(0,5)];
   
-  return shuffle(pool)[0] || {q:"What is 2+2?",a:["4","3","5","6"],c:0};
+  const cleanPool = pool.filter(q => questionMatchesSubject(q, subject));
+  return shuffle(cleanPool.length ? cleanPool : pool)[0] || {q:"What is 2+2?",a:["4","3","5","6"],c:0};
 }
 
 // ============ AUTH ============
