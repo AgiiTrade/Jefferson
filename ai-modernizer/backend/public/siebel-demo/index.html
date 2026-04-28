@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Agii Siebel Migration Demo</title>
+  <link rel="stylesheet" href="./styles.css" />
+</head>
+<body>
+  <header class="topbar">
+    <div>
+      <div class="eyebrow">Agii.ca AI Modernization Demo</div>
+      <h1>Siebel CRM Migration: Legacy to Modern Customer 360</h1>
+      <p>Show the client the old Siebel-style experience, then switch to the migrated full-stack application powered by REST APIs and SQLite-backed demo data.</p>
+    </div>
+    <div class="status-card">
+      <span id="apiStatus" class="pulse">Connecting API…</span>
+      <strong>Demo-ready flow</strong>
+      <small>Legacy UI → Migration cockpit → Modern CRM</small>
+    </div>
+  </header>
+
+  <nav class="tabs" aria-label="Demo sections">
+    <button class="tab active" data-view="legacy">1. Legacy Siebel</button>
+    <button class="tab" data-view="migration">2. Migration Cockpit</button>
+    <button class="tab" data-view="modern">3. Modern CRM</button>
+    <button class="tab" data-view="api">4. Backend Proof</button>
+  </nav>
+
+  <main>
+    <section id="legacy" class="view active">
+      <div class="split">
+        <div class="siebel-window">
+          <div class="siebel-title">Siebel Call Center - Account Summary</div>
+          <div class="siebel-toolbar">File Edit View Navigate Query Tools Help <button>New Query</button><button>Execute Query</button><button>Applet Menu</button></div>
+          <div class="siebel-grid">
+            <aside>
+              <b>Screen Tabs</b>
+              <a>Accounts</a><a>Contacts</a><a>Service Requests</a><a>Opportunities</a><a>Activities</a><a>Administration</a>
+            </aside>
+            <div>
+              <div class="legacy-warning">⚠ Data split across applets · manual queue routing · no AI summary · SOAP integration failures hidden in logs</div>
+              <table class="legacy-table">
+                <thead><tr><th>Account #</th><th>Name</th><th>Industry</th><th>Status</th><th>Owner</th></tr></thead>
+                <tbody id="legacyAccounts"></tbody>
+              </table>
+              <h3>Service Request Applet</h3>
+              <table class="legacy-table compact"><thead><tr><th>SR #</th><th>Severity</th><th>Queue</th><th>Issue</th></tr></thead><tbody id="legacyCases"></tbody></table>
+            </div>
+          </div>
+        </div>
+        <aside class="talktrack">
+          <h2>Legacy pain points to show</h2>
+          <ul>
+            <li>Customer context is scattered across screens and applets.</li>
+            <li>Users manually route service requests and chase SLA risk.</li>
+            <li>Integrations rely on brittle SOAP/batch handoffs.</li>
+            <li>Reporting is delayed because data is locked in legacy views.</li>
+          </ul>
+        </aside>
+      </div>
+    </section>
+
+    <section id="migration" class="view">
+      <div class="dashboard-head">
+        <div><div class="eyebrow">AI-assisted migration factory</div><h2>Migration Cockpit</h2><p>Inventory, data migration, API modernization, validation, and cutover readiness in one executive view.</p></div>
+      </div>
+      <div class="metrics" id="migrationMetrics"></div>
+      <div class="cards" id="migrationCards"></div>
+    </section>
+
+    <section id="modern" class="view">
+      <div class="dashboard-head">
+        <div><div class="eyebrow">Migrated target experience</div><h2>Modern Customer 360 CRM</h2><p>Responsive UI, REST API, AI summaries, service workflow, and sales pipeline.</p></div>
+        <form id="caseForm" class="quick-form">
+          <select id="caseAccount"></select>
+          <select id="caseSeverity"><option>Medium</option><option>High</option><option>Critical</option><option>Low</option></select>
+          <input id="caseTitle" placeholder="Create a new service case…" required />
+          <button>Create + AI triage</button>
+        </form>
+      </div>
+      <div class="metrics" id="modernMetrics"></div>
+      <div class="modern-grid">
+        <section class="panel"><h3>Customer 360</h3><div id="modernAccounts" class="account-list"></div></section>
+        <section class="panel"><h3>AI Case Queue</h3><div id="modernCases" class="case-list"></div></section>
+        <section class="panel wide"><h3>Opportunity Pipeline</h3><div id="opportunities" class="opportunity-list"></div></section>
+      </div>
+    </section>
+
+    <section id="api" class="view">
+      <div class="panel">
+        <h2>Backend proof</h2>
+        <p>This page is not just mockup HTML. It calls live backend endpoints from the AI Modernizer Node/Express server and stores demo records in SQLite.</p>
+        <div class="api-grid">
+          <div><b>Health</b><pre id="healthOut">Loading…</pre></div>
+          <div><b>Siebel Demo Payload</b><pre id="payloadOut">Loading…</pre></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script src="./app.js"></script>
+</body>
+</html>

@@ -140,6 +140,15 @@ function getDb(sql, params = []) {
   });
 }
 
+function allDb(sql, params = []) {
+  return new Promise((resolve, reject) => {
+    db.all(sql, params, (err, rows) => {
+      if (err) return reject(err);
+      return resolve(rows || []);
+    });
+  });
+}
+
 db.serialize(() => {
   db.run('PRAGMA journal_mode = WAL');
   db.run('PRAGMA synchronous = NORMAL');
@@ -178,6 +187,83 @@ db.serialize(() => {
     message TEXT,
     created_at DATETIME DEFAULT CURRENT_TIMESTAMP
   )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS siebel_accounts (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    legacy_id TEXT UNIQUE NOT NULL,
+    name TEXT NOT NULL,
+    industry TEXT,
+    region TEXT,
+    revenue INTEGER,
+    health_score INTEGER,
+    owner TEXT,
+    legacy_status TEXT,
+    modern_status TEXT,
+    updated_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS siebel_cases (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    legacy_ticket TEXT UNIQUE NOT NULL,
+    account_legacy_id TEXT NOT NULL,
+    title TEXT NOT NULL,
+    severity TEXT,
+    legacy_queue TEXT,
+    modern_stage TEXT,
+    ai_summary TEXT,
+    sla_hours INTEGER,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS siebel_opportunities (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    legacy_oppty TEXT UNIQUE NOT NULL,
+    account_legacy_id TEXT NOT NULL,
+    name TEXT NOT NULL,
+    amount INTEGER,
+    stage TEXT,
+    close_date TEXT,
+    ai_next_action TEXT
+  )`);
+
+  db.run(`CREATE TABLE IF NOT EXISTS migration_events (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    phase TEXT NOT NULL,
+    status TEXT NOT NULL,
+    source_objects INTEGER,
+    migrated_objects INTEGER,
+    defects INTEGER,
+    notes TEXT,
+    created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+  )`);
+
+  db.run(`INSERT OR IGNORE INTO siebel_accounts (legacy_id, name, industry, region, revenue, health_score, owner, legacy_status, modern_status)
+    VALUES
+    ('SBL-10027','Northstar Financial Group','Banking','Canada East',18500000,82,'Maya Chen','Active - scattered Siebel views','Migrated - customer 360'),
+    ('SBL-10441','CanAm Energy Services','Energy','Alberta',12600000,68,'Arfeen Ahmad','At Risk - integration delays','Modernized - AI risk watch'),
+    ('SBL-10988','MapleTel Communications','Telecom','Ontario',22200000,91,'Sarah Malik','Active - manual service workflows','Migrated - automated SLA routing')`);
+
+  db.run(`INSERT OR IGNORE INTO siebel_cases (legacy_ticket, account_legacy_id, title, severity, legacy_queue, modern_stage, ai_summary, sla_hours)
+    VALUES
+    ('SR-88412','SBL-10441','Invoice integration failing between Siebel and Oracle ERP','High','FIN-OPS-L2','AI triage complete','Likely mapping mismatch on customer site code; recommend validating OIC lookup and replaying failed payloads.',8),
+    ('SR-88476','SBL-10027','Relationship manager cannot see consolidated household profile','Medium','CRM-ADMIN','Ready for product owner review','Legacy data is split across contacts, accounts, and activities; modern customer 360 merges all interactions.',24),
+    ('SR-88501','SBL-10988','SLA breach risk for enterprise router replacement','Critical','FIELD-DISPATCH','Auto-assigned to field team','AI detected high-value customer, contract penalty risk, and missing dispatch confirmation.',4)`);
+
+  db.run(`INSERT OR IGNORE INTO siebel_opportunities (legacy_oppty, account_legacy_id, name, amount, stage, close_date, ai_next_action)
+    VALUES
+    ('OP-3301','SBL-10027','Digital onboarding modernization',420000,'Proposal','2026-05-22','Send ROI one-pager comparing Siebel workflow cost vs modern case automation.'),
+    ('OP-3315','SBL-10441','ERP + CRM integration recovery',280000,'Discovery','2026-05-10','Book technical workshop with integration owner and show failed-interface dashboard.'),
+    ('OP-3322','SBL-10988','Customer service AI routing',610000,'Negotiation','2026-06-03','Confirm security review package and executive sponsor availability.')`);
+
+  db.run(`INSERT INTO migration_events (phase, status, source_objects, migrated_objects, defects, notes)
+    SELECT 'Discovery','Complete',1280,1280,3,'Siebel screens, business components, integrations, and workflows mapped.'
+    WHERE NOT EXISTS (SELECT 1 FROM migration_events)`);
+  db.run(`INSERT INTO migration_events (phase, status, source_objects, migrated_objects, defects, notes)
+    SELECT 'Data Migration','In Progress',420000,386500,11,'Account/contact/service request data loaded into modern schema with reconciliation checks.'
+    WHERE (SELECT COUNT(*) FROM migration_events) = 1`);
+  db.run(`INSERT INTO migration_events (phase, status, source_objects, migrated_objects, defects, notes)
+    SELECT 'API Modernization','In Progress',42,31,5,'SOAP integrations are being wrapped/replaced with REST APIs and event-driven flows.'
+    WHERE (SELECT COUNT(*) FROM migration_events) = 2`);
 
   const safeAlter = (sql) => db.run(sql, () => {});
   safeAlter('ALTER TABLE analyses ADD COLUMN filename TEXT');
@@ -795,6 +881,79 @@ async function getDbHealth() {
     sizeBytes: stats?.size || 0
   };
 }
+
+async function buildSiebelDemoPayload() {
+  const [accounts, cases, opportunities, migration] = await Promise.all([
+    allDb('SELECT * FROM siebel_accounts ORDER BY revenue DESC'),
+    allDb('SELECT * FROM siebel_cases ORDER BY CASE severity WHEN \'Critical\' THEN 1 WHEN \'High\' THEN 2 WHEN \'Medium\' THEN 3 ELSE 4 END, created_at DESC'),
+    allDb('SELECT * FROM siebel_opportunities ORDER BY amount DESC'),
+    allDb('SELECT * FROM migration_events ORDER BY id ASC')
+  ]);
+  const totalRevenue = accounts.reduce((sum, row) => sum + Number(row.revenue || 0), 0);
+  const pipeline = opportunities.reduce((sum, row) => sum + Number(row.amount || 0), 0);
+  const criticalCases = cases.filter(row => row.severity === 'Critical' || row.severity === 'High').length;
+  const migrationTotals = migration.reduce((acc, row) => {
+    acc.source += Number(row.source_objects || 0);
+    acc.migrated += Number(row.migrated_objects || 0);
+    acc.defects += Number(row.defects || 0);
+    return acc;
+  }, { source: 0, migrated: 0, defects: 0 });
+  return {
+    accounts,
+    cases,
+    opportunities,
+    migration,
+    metrics: {
+      accounts: accounts.length,
+      openCases: cases.length,
+      criticalCases,
+      pipeline,
+      totalRevenue,
+      avgHealthScore: Math.round(accounts.reduce((sum, row) => sum + Number(row.health_score || 0), 0) / Math.max(1, accounts.length)),
+      migrationPercent: Math.round((migrationTotals.migrated / Math.max(1, migrationTotals.source)) * 100),
+      migrationDefects: migrationTotals.defects
+    }
+  };
+}
+
+app.get('/api/siebel-demo', async (req, res, next) => {
+  try {
+    res.json(await buildSiebelDemoPayload());
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.post('/api/siebel-demo/cases', async (req, res, next) => {
+  try {
+    const schema = Joi.object({
+      accountLegacyId: Joi.string().required(),
+      title: Joi.string().min(3).max(240).required(),
+      severity: Joi.string().valid('Low', 'Medium', 'High', 'Critical').default('Medium')
+    });
+    const value = await schema.validateAsync(req.body, { abortEarly: false, stripUnknown: true });
+    const ticket = `SR-${Math.floor(89000 + Math.random() * 900)}`;
+    const aiSummary = value.severity === 'Critical'
+      ? 'AI flagged executive/SLA risk, prioritized routing, and recommended immediate owner assignment.'
+      : 'AI summarized issue, matched similar resolved cases, and proposed the next-best action.';
+    await runDb(`INSERT INTO siebel_cases (legacy_ticket, account_legacy_id, title, severity, legacy_queue, modern_stage, ai_summary, sla_hours)
+      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`, [ticket, value.accountLegacyId, value.title, value.severity, 'LEGACY-MANUAL-QUEUE', 'AI triage complete', aiSummary, value.severity === 'Critical' ? 4 : 24]);
+    res.status(201).json(await buildSiebelDemoPayload());
+  } catch (error) {
+    next(error);
+  }
+});
+
+app.patch('/api/siebel-demo/cases/:id', async (req, res, next) => {
+  try {
+    const schema = Joi.object({ modernStage: Joi.string().min(2).max(120).required() });
+    const value = await schema.validateAsync(req.body, { abortEarly: false, stripUnknown: true });
+    await runDb('UPDATE siebel_cases SET modern_stage = ? WHERE id = ?', [value.modernStage, req.params.id]);
+    res.json(await buildSiebelDemoPayload());
+  } catch (error) {
+    next(error);
+  }
+});
 
 // Health check
 app.get('/api/health', async (req, res) => {
