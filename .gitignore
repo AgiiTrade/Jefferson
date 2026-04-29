@@ -1,0 +1,16 @@
+# Local/runtime artifacts
+.DS_Store
+.env
+*.log
+logs/
+node_modules/
+
+# SQLite runtime sidecars
+data.db-shm
+data.db-wal
+*.sqlite-shm
+*.sqlite-wal
+
+# Local screenshots / temp files
+tmp_*
+*.tmp
