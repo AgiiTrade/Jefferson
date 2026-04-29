@@ -14,3 +14,5 @@ data.db-wal
 # Local screenshots / temp files
 tmp_*
 *.tmp
+*.zip
+coloring-books-professional/*.zip
