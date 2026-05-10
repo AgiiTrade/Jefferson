@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Membership Plans | StudynCanada</title>
+<meta name="description" content="StudynCanada membership: free, Pro ($29/mo) and Premium ($99/mo) plans for international students applying to Canadian universities.">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Playfair+Display:wght@600;700&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="navbar">
+<div class="container">
+<a href="index.html" class="logo">
+<span class="logo-icon">🍁</span>
+<span class="logo-text">Study<span>in</span>Canada</span>
+</a>
+<ul class="nav-links">
+<li><a href="index.html">Home</a></li>
+<li><a href="about.html">About</a></li>
+<li><a href="services.html">Services</a></li>
+<li><a href="universities.html">Universities</a></li>
+<li><a href="pricing.html" class="active">Pricing</a></li>
+<li><a href="blog.html">Blog</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+<a href="pricing.html" class="nav-cta">Start Free</a>
+<button class="mobile-menu-btn">
+<i class="fas fa-bars"></i>
+</button>
+</div>
+</nav>
+
+<!-- Pricing Hero -->
+<section class="pricing-hero">
+<div class="container">
+<h1>Membership Plans</h1>
+<p>Start free. Upgrade when you're ready. All paid plans include a 30-day money-back guarantee.</p>
+<div class="billing-toggle">
+<span class="bt-label active" id="monthlyLabel">Monthly</span>
+<button class="bt-switch" id="billingToggle" type="button" aria-label="Toggle billing period"></button>
+<span class="bt-label" id="annualLabel">Annual</span>
+<span class="bt-save">Save 20%</span>
+</div>
+</div>
+</section>
+
+<!-- Pricing Cards -->
+<section class="pricing-plans">
+<div class="container">
+<div class="plan-grid">
+
+<div class="plan-card">
+<div class="plan-name">Free</div>
+<div class="plan-price"><span class="currency">$</span><span>0</span><span class="period">/mo</span></div>
+<div class="plan-tag">For students just starting out</div>
+<ul class="plan-features">
+<li><i class="fas fa-check"></i> Full university directory access</li>
+<li><i class="fas fa-check"></i> Blog &amp; visa guide library</li>
+<li><i class="fas fa-check"></i> Basic study-permit checklist</li>
+<li><i class="fas fa-check"></i> Community forum access</li>
+<li class="muted"><i class="fas fa-times"></i> Personalized university matching</li>
+<li class="muted"><i class="fas fa-times"></i> 1-on-1 consultations</li>
+<li class="muted"><i class="fas fa-times"></i> Document review</li>
+</ul>
+<a href="contact.html?plan=free" class="btn btn-outline plan-cta">Start Free</a>
+</div>
+
+<div class="plan-card featured">
+<div class="plan-badge">Most Popular</div>
+<div class="plan-name">Pro Student</div>
+<div class="plan-price"><span class="currency">$</span><span id="proPrice">29</span><span class="period" id="proPeriod">/mo</span></div>
+<div class="plan-tag">For serious applicants</div>
+<ul class="plan-features">
+<li><i class="fas fa-check"></i> Everything in Free</li>
+<li><i class="fas fa-check"></i> Personalized university matching</li>
+<li><i class="fas fa-check"></i> Application tracker &amp; deadline alerts</li>
+<li><i class="fas fa-check"></i> SOP &amp; document templates</li>
+<li><i class="fas fa-check"></i> Monthly group Q&amp;A webinar</li>
+<li><i class="fas fa-check"></i> Priority email support</li>
+<li class="muted"><i class="fas fa-times"></i> 1-on-1 consultations</li>
+</ul>
+<a href="contact.html?plan=pro" class="btn btn-primary plan-cta">Upgrade to Pro</a>
+</div>
+
+<div class="plan-card">
+<div class="plan-name">Premium</div>
+<div class="plan-price"><span class="currency">$</span><span id="premPrice">99</span><span class="period" id="premPeriod">/mo</span></div>
+<div class="plan-tag">For full-service applicants</div>
+<ul class="plan-features">
+<li><i class="fas fa-check"></i> Everything in Pro</li>
+<li><i class="fas fa-check"></i> 1 monthly 1-on-1 consultation</li>
+<li><i class="fas fa-check"></i> SOP &amp; transcript document review</li>
+<li><i class="fas fa-check"></i> Visa application guidance</li>
+<li><i class="fas fa-check"></i> WhatsApp priority chat</li>
+<li><i class="fas fa-check"></i> Settlement &amp; arrival prep checklist</li>
+<li><i class="fas fa-check"></i> Toronto airport pickup (when applicable)</li>
+</ul>
+<a href="contact.html?plan=premium" class="btn btn-outline plan-cta">Go Premium</a>
+</div>
+
+</div>
+</div>
+</section>
+
+<!-- One-Time Service Add-Ons -->
+<section class="addons">
+<div class="container">
+<div class="section-header">
+<h2>One-Time Service Packages</h2>
+<p>Need full-service support without a subscription? Choose a package.</p>
+</div>
+<div class="addon-grid">
+<div class="addon-card">
+<h4>Visa Application Package</h4>
+<div class="addon-price">$499</div>
+<p>End-to-end study permit support: document checklist, SOP review, application submission, and follow-ups.</p>
+<a href="contact.html?service=visa" class="btn btn-outline">Book This Package</a>
+</div>
+<div class="addon-card">
+<h4>Full Admission Package</h4>
+<div class="addon-price">$1,499</div>
+<p>University shortlisting, application to up to 5 universities, document drafting, deadline tracking, and follow-up.</p>
+<a href="contact.html?service=admission" class="btn btn-outline">Book This Package</a>
+</div>
+<div class="addon-card">
+<h4>Concierge Package</h4>
+<div class="addon-price">$2,500+</div>
+<p>Everything in Admission + Visa, plus pre-arrival housing, bank/SIN setup, airport pickup, and 90-day settlement support.</p>
+<a href="contact.html?service=concierge" class="btn btn-outline">Talk to Us</a>
+</div>
+</div>
+</div>
+</section>
+
+<!-- Comparison Table -->
+<section class="compare">
+<div class="container">
+<div class="section-header">
+<h2>Detailed Plan Comparison</h2>
+</div>
+<div class="compare-wrap">
+<table class="compare-table">
+<thead>
+<tr>
+<th>Feature</th>
+<th>Free</th>
+<th class="featured-col">Pro</th>
+<th>Premium</th>
+</tr>
+</thead>
+<tbody>
+<tr><td>University directory</td><td>✓</td><td class="featured-col">✓</td><td>✓</td></tr>
+<tr><td>Blog &amp; visa guides</td><td>✓</td><td class="featured-col">✓</td><td>✓</td></tr>
+<tr><td>Personalized university matching</td><td>—</td><td class="featured-col">✓</td><td>✓</td></tr>
+<tr><td>Application tracker</td><td>—</td><td class="featured-col">✓</td><td>✓</td></tr>
+<tr><td>SOP &amp; document templates</td><td>—</td><td class="featured-col">✓</td><td>✓</td></tr>
+<tr><td>Monthly group webinar</td><td>—</td><td class="featured-col">✓</td><td>✓</td></tr>
+<tr><td>1-on-1 consultations</td><td>—</td><td class="featured-col">—</td><td>1 / month</td></tr>
+<tr><td>Document &amp; SOP review</td><td>—</td><td class="featured-col">—</td><td>✓</td></tr>
+<tr><td>Visa application guidance</td><td>—</td><td class="featured-col">—</td><td>✓</td></tr>
+<tr><td>WhatsApp priority chat</td><td>—</td><td class="featured-col">—</td><td>✓</td></tr>
+<tr><td>Toronto airport pickup</td><td>—</td><td class="featured-col">—</td><td>✓</td></tr>
+<tr><td>Support</td><td>Community</td><td class="featured-col">Priority email</td><td>Priority + WhatsApp</td></tr>
+</tbody>
+</table>
+</div>
+</div>
+</section>
+
+<!-- Guarantee -->
+<section class="guarantee">
+<div class="container">
+<div class="guarantee-card">
+<div class="guarantee-icon">🛡️</div>
+<h3>30-Day Money-Back Guarantee</h3>
+<p>Try any paid plan risk-free. If StudynCanada doesn't help you make progress on your Canadian education journey within 30 days, we'll refund you in full.</p>
+</div>
+</div>
+</section>
+
+<!-- FAQ -->
+<section class="faq">
+<div class="container">
+<div class="section-header">
+<h2>Membership FAQ</h2>
+</div>
+<div class="faq-list">
+<details><summary>How does billing work?</summary><p>You're billed monthly via Stripe (annual option available at 20% off). Cancel anytime — you keep access until the end of your billing period.</p></details>
+<details><summary>Can I switch plans?</summary><p>Yes. Upgrades take effect immediately with prorated billing. Downgrades take effect at the end of the current billing period.</p></details>
+<details><summary>What if I just want one-time help with my visa?</summary><p>Use the one-time service packages above. The Visa Application Package ($499) is the most popular standalone option.</p></details>
+<details><summary>Do you accept students from outside India / South Asia?</summary><p>Yes — we work with international students from any country applying to Canadian universities and colleges.</p></details>
+<details><summary>What happens to my data if I cancel?</summary><p>Your application checklist and documents stay in your account on the Free plan. Nothing is deleted.</p></details>
+<details><summary>Is there a student discount?</summary><p>The Free plan is genuinely useful on its own. Annual Pro saves 20% (≈ $23/mo). Reach out via contact form for institutional/group rates.</p></details>
+</div>
+</div>
+</section>
+
+<!-- Footer -->
+<footer class="footer">
+<div class="container">
+<div class="footer-grid">
+<div class="footer-col">
+<a href="index.html" class="logo">
+<span class="logo-icon">🍁</span>
+<span class="logo-text">Study<span>in</span>Canada</span>
+</a>
+<p>Your trusted partner for Canadian education. Membership and full-service support for international students.</p>
+</div>
+<div class="footer-col">
+<h4>Quick Links</h4>
+<ul>
+<li><a href="index.html">Home</a></li>
+<li><a href="about.html">About Us</a></li>
+<li><a href="services.html">Services</a></li>
+<li><a href="universities.html">Universities</a></li>
+<li><a href="pricing.html">Pricing</a></li>
+<li><a href="blog.html">Blog</a></li>
+<li><a href="contact.html">Contact</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>Membership</h4>
+<ul>
+<li><a href="pricing.html">Free Plan</a></li>
+<li><a href="pricing.html">Pro Student — $29/mo</a></li>
+<li><a href="pricing.html">Premium — $99/mo</a></li>
+<li><a href="pricing.html">Service Packages</a></li>
+</ul>
+</div>
+<div class="footer-col">
+<h4>Contact</h4>
+<ul class="contact-list">
+<li><i class="fas fa-envelope"></i> info@studyncanada.com</li>
+<li><i class="fas fa-map-marker-alt"></i> Toronto, Canada</li>
+<li><i class="fas fa-clock"></i> Mon-Sat, 8AM-6PM</li>
+</ul>
+</div>
+</div>
+<div class="footer-bottom">
+<p>&copy; 2026 StudynCanada. All rights reserved.</p>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){
+  var isAnnual = false;
+  var btn = document.getElementById('billingToggle');
+  var ml = document.getElementById('monthlyLabel');
+  var al = document.getElementById('annualLabel');
+  var pp = document.getElementById('proPrice');
+  var ppr = document.getElementById('proPeriod');
+  var pm = document.getElementById('premPrice');
+  var pmr = document.getElementById('premPeriod');
+  btn.addEventListener('click', function(){
+    isAnnual = !isAnnual;
+    btn.classList.toggle('active', isAnnual);
+    ml.classList.toggle('active', !isAnnual);
+    al.classList.toggle('active', isAnnual);
+    if (isAnnual) {
+      pp.textContent = '23'; ppr.textContent = '/mo billed annually';
+      pm.textContent = '79'; pmr.textContent = '/mo billed annually';
+    } else {
+      pp.textContent = '29'; ppr.textContent = '/mo';
+      pm.textContent = '99'; pmr.textContent = '/mo';
+    }
+  });
+})();
+</script>
+<script src="js/main.js"></script>
+</body>
+</html>

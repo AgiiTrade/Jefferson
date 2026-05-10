@@ -1,0 +1,228 @@
+/* Authentication Component Styles */
+
+.auth-overlay {
+  display: none;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.6);
+  z-index: 10000;
+  align-items: center;
+  justify-content: center;
+}
+
+.auth-overlay.active {
+  display: flex;
+}
+
+.auth-modal {
+  background: white;
+  border-radius: 20px;
+  padding: 40px;
+  max-width: 420px;
+  width: 90%;
+  position: relative;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.auth-close {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 28px;
+  cursor: pointer;
+  color: #666;
+  width: 36px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 50%;
+  transition: all 0.3s;
+}
+
+.auth-close:hover {
+  background: #f0f0f0;
+  color: #333;
+}
+
+.auth-header {
+  text-align: center;
+  margin-bottom: 30px;
+}
+
+.auth-header h2 {
+  font-size: 24pt;
+  margin-bottom: 8px;
+}
+
+.auth-header p {
+  color: #666;
+  font-size: 11pt;
+}
+
+.auth-social {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-btn {
+  width: 100%;
+  padding: 14px 20px;
+  border-radius: 10px;
+  border: 1px solid #e0e0e0;
+  font-size: 11pt;
+  font-weight: 600;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  transition: all 0.3s;
+}
+
+.auth-btn.google {
+  background: white;
+  color: #333;
+}
+
+.auth-btn.google:hover {
+  background: #f8f8f8;
+  border-color: #4285F4;
+}
+
+.auth-btn.google svg {
+  width: 20px;
+  height: 20px;
+}
+
+.auth-btn.facebook {
+  background: #1877F2;
+  color: white;
+  border-color: #1877F2;
+}
+
+.auth-btn.facebook:hover {
+  background: #166FE5;
+}
+
+.auth-btn.apple {
+  background: #000;
+  color: white;
+  border-color: #000;
+}
+
+.auth-btn.apple:hover {
+  background: #222;
+}
+
+.auth-btn.guest {
+  background: #f0f0f0;
+  color: #333;
+  border-color: #ddd;
+}
+
+.auth-btn.guest:hover {
+  background: #e0e0e0;
+}
+
+.auth-btn.email {
+  background: #dc2626;
+  color: white;
+  border-color: #dc2626;
+}
+
+.auth-btn.email:hover {
+  background: #b91c1c;
+}
+
+.auth-divider {
+  text-align: center;
+  margin: 20px 0;
+  position: relative;
+}
+
+.auth-divider::before {
+  content: '';
+  position: absolute;
+  top: 50%;
+  left: 0;
+  right: 0;
+  height: 1px;
+  background: #e0e0e0;
+}
+
+.auth-divider span {
+  background: white;
+  padding: 0 15px;
+  color: #999;
+  font-size: 10pt;
+  position: relative;
+}
+
+.auth-email {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.auth-email input {
+  width: 100%;
+  padding: 14px 16px;
+  border: 1px solid #e0e0e0;
+  border-radius: 10px;
+  font-size: 11pt;
+  font-family: inherit;
+  transition: border-color 0.3s;
+}
+
+.auth-email input:focus {
+  outline: none;
+  border-color: #dc2626;
+}
+
+.auth-footer {
+  text-align: center;
+  margin-top: 20px;
+  color: #666;
+  font-size: 10pt;
+}
+
+.auth-footer a {
+  color: #dc2626;
+  text-decoration: none;
+  font-weight: 600;
+}
+
+.auth-status {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  background: #f8f9fa;
+  padding: 8px 16px;
+  border-radius: 8px;
+}
+
+.auth-status span {
+  font-weight: 600;
+  font-size: 10pt;
+}
+
+.auth-status button {
+  background: #dc2626;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  font-size: 9pt;
+  cursor: pointer;
+}
+
+.auth-status button:hover {
+  background: #b91c1c;
+}
