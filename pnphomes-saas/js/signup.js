@@ -1,12 +1,6 @@
 // signup.js — PNP Homes Portal
-document.documentElement.style.visibility = 'hidden';
 
-auth.onAuthStateChanged(function (user) {
-  if (user) { window.location.replace('dashboard.html'); return; }
-  document.documentElement.style.visibility = 'visible';
-});
-
-document.addEventListener('DOMContentLoaded', function () {
+document.addEventListener('DOMContentLoaded', async function () {
   const form      = document.getElementById('signup-form');
   const errEl     = document.getElementById('signup-error');
   const okEl      = document.getElementById('signup-success');
@@ -17,10 +11,10 @@ document.addEventListener('DOMContentLoaded', function () {
     'auth/email-already-in-use': 'An account with this email already exists. Try signing in instead.',
     'auth/invalid-email': 'Please enter a valid email address.',
     'auth/weak-password': 'Password must be at least 6 characters.',
-    'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Authentication.',
-    'auth/unauthorized-domain': 'This domain is not authorized in Firebase Authentication. Add agiitrade.github.io and pnphomes.ca under Firebase Auth → Settings → Authorized domains.',
+    'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Authentication. Enable Email/Password and Google under Authentication → Sign-in method.',
+    'auth/unauthorized-domain': 'This domain is not authorized in Firebase Authentication. Add agiitrade.github.io, pnphomes.ca, and portal.pnphomes.ca under Authentication → Settings → Authorized domains.',
     'auth/popup-closed-by-user': 'Google sign-in was closed before finishing.',
-    'auth/popup-blocked': 'Your browser blocked the Google sign-in popup. Allow popups and try again.',
+    'auth/popup-blocked': 'Your browser blocked the Google sign-in popup. Use the redirect sign-in button again.',
     'permission-denied': 'Account was created, but Firestore blocked profile setup. Publish the Firestore rules from pnphomes-saas/firestore.rules.'
   };
 
@@ -43,6 +37,27 @@ document.addEventListener('DOMContentLoaded', function () {
       createdAt: firebase.firestore.FieldValue.serverTimestamp()
     }, { merge: true });
   }
+
+  function googleProvider() {
+    const provider = new firebase.auth.GoogleAuthProvider();
+    provider.setCustomParameters({ prompt: 'select_account' });
+    return provider;
+  }
+
+  try {
+    const redirectResult = await auth.getRedirectResult();
+    if (redirectResult && redirectResult.user) {
+      await saveUserProfile(redirectResult.user);
+      window.location.replace('dashboard.html');
+      return;
+    }
+  } catch (err) {
+    showError(friendlyError(err));
+  }
+
+  auth.onAuthStateChanged(function (user) {
+    if (user) window.location.replace('dashboard.html');
+  });
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
@@ -86,14 +101,10 @@ document.addEventListener('DOMContentLoaded', function () {
   googleBtn.addEventListener('click', async function () {
     clearMessages();
     googleBtn.disabled = true;
-    googleBtn.textContent = 'Opening Google…';
+    googleBtn.textContent = 'Redirecting to Google…';
 
     try {
-      const provider = new firebase.auth.GoogleAuthProvider();
-      provider.setCustomParameters({ prompt: 'select_account' });
-      const result = await auth.signInWithPopup(provider);
-      await saveUserProfile(result.user);
-      window.location.replace('dashboard.html');
+      await auth.signInWithRedirect(googleProvider());
     } catch (err) {
       showError(friendlyError(err));
       googleBtn.disabled = false;
