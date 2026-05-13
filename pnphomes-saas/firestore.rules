@@ -1,0 +1,84 @@
+// ===== FIRESTORE SECURITY RULES — PNP Homes Portal =====
+// Apply via: Firebase Console → Firestore Database → Rules → Publish
+//
+// Design principles:
+//   1. Every read/write requires Firebase Auth (no anonymous access).
+//   2. Users can only access their own documents (userId == request.auth.uid).
+//   3. No shared-collection bypasses. The "sharedWith" array trick from the
+//      RentBoss prototype has been intentionally removed.
+//   4. Incoming writes must always set userId to the caller's own uid.
+
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ── Helpers ──
+    function isAuthed() {
+      return request.auth != null;
+    }
+
+    function isOwner() {
+      // For reads/updates/deletes: the existing doc must belong to the caller.
+      return resource.data.userId == request.auth.uid;
+    }
+
+    function isWritingOwnUid() {
+      // For creates/updates: the incoming data must stamp the caller's uid.
+      return request.resource.data.userId == request.auth.uid;
+    }
+
+    // ── Properties ──
+    match /properties/{docId} {
+      allow read:   if isAuthed() && isOwner();
+      allow create: if isAuthed() && isWritingOwnUid();
+      allow update: if isAuthed() && isOwner() && isWritingOwnUid();
+      allow delete: if isAuthed() && isOwner();
+    }
+
+    // ── Tenants ──
+    // No email-address backdoor. Only the owning landlord can access.
+    match /tenants/{docId} {
+      allow read:   if isAuthed() && isOwner();
+      allow create: if isAuthed() && isWritingOwnUid();
+      allow update: if isAuthed() && isOwner() && isWritingOwnUid();
+      allow delete: if isAuthed() && isOwner();
+    }
+
+    // ── Leases ──
+    match /leases/{docId} {
+      allow read:   if isAuthed() && isOwner();
+      allow create: if isAuthed() && isWritingOwnUid();
+      allow update: if isAuthed() && isOwner() && isWritingOwnUid();
+      allow delete: if isAuthed() && isOwner();
+    }
+
+    // ── Transactions (payments + expenses) ──
+    match /transactions/{docId} {
+      allow read:   if isAuthed() && isOwner();
+      allow create: if isAuthed() && isWritingOwnUid();
+      allow update: if isAuthed() && isOwner() && isWritingOwnUid();
+      allow delete: if isAuthed() && isOwner();
+    }
+
+    // ── Maintenance requests ──
+    match /maintenance/{docId} {
+      allow read:   if isAuthed() && isOwner();
+      allow create: if isAuthed() && isWritingOwnUid();
+      allow update: if isAuthed() && isOwner() && isWritingOwnUid();
+      allow delete: if isAuthed() && isOwner();
+    }
+
+    // ── User profiles ──
+    // Each user can only read and write their own profile document.
+    match /users/{uid} {
+      allow read:  if isAuthed() && request.auth.uid == uid;
+      allow write: if isAuthed() && request.auth.uid == uid;
+    }
+
+    // ── Deny everything else ──
+    // Explicit catch-all: any collection not listed above is closed.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

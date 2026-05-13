@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; img-src 'self' data:; frame-src 'none'; object-src 'none';">
+  <title>Properties — PNP Homes Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/firestore-store.js"></script>
+</head>
+<body>
+  <div id="loading-overlay"><div class="spinner"></div></div>
+  <button class="mobile-nav-toggle" id="nav-toggle">☰</button>
+
+  <div class="portal-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <a href="dashboard.html" class="brand">PNP <span>Homes</span></a>
+        <span class="tagline">Property Portal</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"          ><span class="icon">⊞</span> Dashboard</a>
+        <a href="properties.html" class="active"><span class="icon">🏠</span> Properties</a>
+        <a href="tenants.html"            ><span class="icon">👥</span> Tenants</a>
+        <a href="finances.html"           ><span class="icon">💰</span> Finances</a>
+        <a href="maintenance.html"        ><span class="icon">🔧</span> Maintenance</a>
+        <a href="reports.html"            ><span class="icon">📊</span> Reports</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="sidebar-user-avatar">U</div>
+          <div>
+            <div class="user-name"  id="sidebar-user-name">Loading…</div>
+            <div class="user-email" id="sidebar-user-email"></div>
+          </div>
+        </div>
+        <button class="btn-logout" id="logout-btn">↩ Sign Out</button>
+        <div class="portal-privacy"><a href="https://pnphomes.ca/privacy" target="_blank" rel="noopener">Privacy Policy</a></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-title">
+          <h1>Properties</h1>
+          <p id="topbar-date"></p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-gold" id="btn-add-property">+ Add Property</button>
+        </div>
+      </div>
+
+      <div class="page-body">
+        <div id="props-list">
+          <div class="empty-state">
+            <div class="empty-icon">🏠</div>
+            <h4>Loading properties…</h4>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Property Modal -->
+  <div class="modal-overlay" id="property-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3 id="prop-modal-title">Add Property</h3>
+        <button class="modal-close" id="prop-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="prop-error" class="alert alert-error"></div>
+        <form id="property-form">
+          <input type="hidden" id="prop-id">
+          <div class="form-row">
+            <div class="form-group">
+              <label class="form-label" for="prop-name">Property Name</label>
+              <input class="form-control" type="text" id="prop-name" placeholder="Maple Heights" required>
+            </div>
+            <div class="form-group">
+              <label class="form-label" for="prop-type">Type</label>
+              <select class="form-control" id="prop-type">
+                <option value="apartment">Apartment</option>
+                <option value="condo">Condo</option>
+                <option value="townhouse">Townhouse</option>
+                <option value="house">House</option>
+                <option value="commercial">Commercial</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="prop-address">Address</label>
+            <input class="form-control" type="text" id="prop-address" placeholder="123 Maple St, Toronto, ON" required>
+          </div>
+          <div class="form-group">
+            <label class="form-label">Units</label>
+            <div id="units-list"></div>
+            <button type="button" class="btn btn-outline btn-sm mt-4" id="btn-add-unit">+ Add Unit</button>
+          </div>
+        </form>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="prop-cancel">Cancel</button>
+        <button class="btn btn-primary" id="prop-save">Save Property</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/page-properties.js"></script>
+</body>
+</html>

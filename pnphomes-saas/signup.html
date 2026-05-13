@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; img-src 'self' data:; frame-src 'none'; object-src 'none';">
+  <title>Create Account — PNP Homes Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+</head>
+<body>
+  <div class="auth-page">
+    <div class="auth-card">
+      <div class="auth-logo">
+        <div class="brand">PNP <span>Homes</span></div>
+        <div class="sub">Property Management Portal</div>
+      </div>
+
+      <h2 class="auth-title">Create your account</h2>
+      <p class="auth-subtitle">Start managing your properties securely</p>
+
+      <div id="signup-error"   class="alert alert-error"></div>
+      <div id="signup-success" class="alert alert-success"></div>
+
+      <form id="signup-form" novalidate>
+        <div class="form-group">
+          <label class="form-label" for="name">Full name</label>
+          <input class="form-control" type="text" id="name" name="name"
+                 placeholder="Arfeen Ahmad" autocomplete="name" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="email">Email address</label>
+          <input class="form-control" type="email" id="email" name="email"
+                 placeholder="you@example.com" autocomplete="email" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password">Password</label>
+          <input class="form-control" type="password" id="password" name="password"
+                 placeholder="At least 6 characters" autocomplete="new-password" required>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="password2">Confirm password</label>
+          <input class="form-control" type="password" id="password2" name="password2"
+                 placeholder="Repeat your password" autocomplete="new-password" required>
+        </div>
+        <p class="form-hint mb-4">By creating an account you agree to our
+          <a href="https://pnphomes.ca/privacy" target="_blank" rel="noopener">Privacy Policy</a>.
+          A verification email will be sent after sign-up.
+        </p>
+        <button class="btn btn-primary btn-full" type="submit" id="signup-btn">Create Account</button>
+      </form>
+
+      <div class="auth-footer">
+        Already have an account? <a href="login.html">Sign in</a>
+      </div>
+    </div>
+  </div>
+  <script src="js/signup.js"></script>
+</body>
+</html>

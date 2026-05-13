@@ -1,0 +1,236 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; img-src 'self' data:; frame-src 'none'; object-src 'none';">
+  <title>Finances — PNP Homes Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/firestore-store.js"></script>
+</head>
+<body>
+  <div id="loading-overlay"><div class="spinner"></div></div>
+  <button class="mobile-nav-toggle" id="nav-toggle">☰</button>
+
+  <div class="portal-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <a href="dashboard.html" class="brand">PNP <span>Homes</span></a>
+        <span class="tagline">Property Portal</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"          ><span class="icon">⊞</span> Dashboard</a>
+        <a href="properties.html"         ><span class="icon">🏠</span> Properties</a>
+        <a href="tenants.html"            ><span class="icon">👥</span> Tenants</a>
+        <a href="finances.html"  class="active"><span class="icon">💰</span> Finances</a>
+        <a href="maintenance.html"        ><span class="icon">🔧</span> Maintenance</a>
+        <a href="reports.html"            ><span class="icon">📊</span> Reports</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="sidebar-user-avatar">U</div>
+          <div>
+            <div class="user-name"  id="sidebar-user-name">Loading…</div>
+            <div class="user-email" id="sidebar-user-email"></div>
+          </div>
+        </div>
+        <button class="btn-logout" id="logout-btn">↩ Sign Out</button>
+        <div class="portal-privacy"><a href="https://pnphomes.ca/privacy" target="_blank" rel="noopener">Privacy Policy</a></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-title">
+          <h1>Finances</h1>
+          <p id="topbar-date"></p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm" id="btn-add-expense">+ Expense</button>
+          <button class="btn btn-gold" id="btn-add-payment">+ Rent Payment</button>
+        </div>
+      </div>
+
+      <div class="page-body">
+        <!-- Monthly stats -->
+        <div class="stats-grid mb-6">
+          <div class="stat-card success">
+            <div class="stat-label">Monthly Revenue</div>
+            <div class="stat-value" id="fin-revenue">—</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-label">Monthly Expenses</div>
+            <div class="stat-value" id="fin-expenses">—</div>
+          </div>
+          <div class="stat-card">
+            <div class="stat-label">Net Profit</div>
+            <div class="stat-value" id="fin-profit">—</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Est. HST (13%)</div>
+            <div class="stat-value" id="fin-hst">—</div>
+          </div>
+        </div>
+
+        <div class="grid-2 mb-6">
+          <!-- Recent Payments -->
+          <div class="card">
+            <div class="card-header"><h3>Rent Payments</h3></div>
+            <div class="card-body" style="padding:0">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Date</th><th>Tenant</th><th>Amount</th><th>Method</th><th></th></tr></thead>
+                  <tbody id="payments-tbody">
+                    <tr><td colspan="5" style="text-align:center;padding:20px" class="text-muted">Loading…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Expenses -->
+          <div class="card">
+            <div class="card-header"><h3>Expenses</h3></div>
+            <div class="card-body" style="padding:0">
+              <div class="table-wrap">
+                <table>
+                  <thead><tr><th>Date</th><th>Category</th><th>Description</th><th>Amount</th><th></th></tr></thead>
+                  <tbody id="expenses-tbody">
+                    <tr><td colspan="5" style="text-align:center;padding:20px" class="text-muted">Loading…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- P&L by Property -->
+        <div class="card">
+          <div class="card-header"><h3>Profit &amp; Loss by Property (This Month)</h3></div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Property</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>Margin</th></tr></thead>
+                <tbody id="pl-tbody">
+                  <tr><td colspan="5" style="text-align:center;padding:20px" class="text-muted">Loading…</td></tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <!-- Add Payment Modal -->
+  <div class="modal-overlay" id="payment-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Record Rent Payment</h3>
+        <button class="modal-close" id="payment-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="payment-error" class="alert alert-error"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pay-tenant">Tenant</label>
+            <select class="form-control" id="pay-tenant"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pay-property">Property</label>
+            <select class="form-control" id="pay-property"></select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="pay-amount">Amount (CAD)</label>
+            <input class="form-control" type="number" id="pay-amount" min="0" step="50">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="pay-date">Date</label>
+            <input class="form-control" type="date" id="pay-date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="pay-method">Method</label>
+          <select class="form-control" id="pay-method">
+            <option value="e-transfer">E-Transfer</option>
+            <option value="cheque">Cheque</option>
+            <option value="cash">Cash</option>
+            <option value="direct-deposit">Direct Deposit</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="pay-note">Note (optional)</label>
+          <input class="form-control" type="text" id="pay-note" placeholder="March rent">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="payment-cancel">Cancel</button>
+        <button class="btn btn-primary" id="payment-save">Record Payment</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Add Expense Modal -->
+  <div class="modal-overlay" id="expense-modal">
+    <div class="modal">
+      <div class="modal-header">
+        <h3>Add Expense</h3>
+        <button class="modal-close" id="expense-modal-close">✕</button>
+      </div>
+      <div class="modal-body">
+        <div id="expense-error" class="alert alert-error"></div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="exp-property">Property</label>
+            <select class="form-control" id="exp-property"></select>
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="exp-category">Category</label>
+            <select class="form-control" id="exp-category">
+              <option value="repairs">Repairs</option>
+              <option value="plumbing">Plumbing</option>
+              <option value="electrical">Electrical</option>
+              <option value="hvac">HVAC</option>
+              <option value="insurance">Insurance</option>
+              <option value="property-tax">Property Tax</option>
+              <option value="landscaping">Landscaping</option>
+              <option value="management">Management Fee</option>
+              <option value="utilities">Utilities</option>
+              <option value="other">Other</option>
+            </select>
+          </div>
+        </div>
+        <div class="form-row">
+          <div class="form-group">
+            <label class="form-label" for="exp-amount">Amount (CAD)</label>
+            <input class="form-control" type="number" id="exp-amount" min="0" step="10">
+          </div>
+          <div class="form-group">
+            <label class="form-label" for="exp-date">Date</label>
+            <input class="form-control" type="date" id="exp-date">
+          </div>
+        </div>
+        <div class="form-group">
+          <label class="form-label" for="exp-desc">Description</label>
+          <input class="form-control" type="text" id="exp-desc" placeholder="Brief description">
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="expense-cancel">Cancel</button>
+        <button class="btn btn-primary" id="expense-save">Add Expense</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="js/page-finances.js"></script>
+</body>
+</html>

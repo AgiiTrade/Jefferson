@@ -1,0 +1,160 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; img-src 'self' data:; frame-src 'none'; object-src 'none';">
+  <title>Dashboard — PNP Homes Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/firestore-store.js"></script>
+</head>
+<body>
+  <div id="loading-overlay"><div class="spinner"></div></div>
+  <button class="mobile-nav-toggle" id="nav-toggle">☰</button>
+
+  <div class="portal-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <a href="dashboard.html" class="brand">PNP <span>Homes</span></a>
+        <span class="tagline">Property Portal</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"   class="active"><span class="icon">⊞</span> Dashboard</a>
+        <a href="properties.html"         ><span class="icon">🏠</span> Properties</a>
+        <a href="tenants.html"            ><span class="icon">👥</span> Tenants</a>
+        <a href="finances.html"           ><span class="icon">💰</span> Finances</a>
+        <a href="maintenance.html"        ><span class="icon">🔧</span> Maintenance</a>
+        <a href="reports.html"            ><span class="icon">📊</span> Reports</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="sidebar-user-avatar">U</div>
+          <div>
+            <div class="user-name"  id="sidebar-user-name">Loading…</div>
+            <div class="user-email" id="sidebar-user-email"></div>
+          </div>
+        </div>
+        <button class="btn-logout" id="logout-btn">↩ Sign Out</button>
+        <div class="portal-privacy"><a href="https://pnphomes.ca/privacy" target="_blank" rel="noopener">Privacy Policy</a></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-title">
+          <h1>Dashboard</h1>
+          <p id="topbar-date"></p>
+        </div>
+        <div class="topbar-actions">
+          <a href="properties.html" class="btn btn-gold btn-sm">+ Add Property</a>
+        </div>
+      </div>
+
+      <div class="page-body">
+        <!-- Stats -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-label">Properties</div>
+            <div class="stat-value" id="stat-props">—</div>
+            <div class="stat-sub" id="stat-units">— units</div>
+          </div>
+          <div class="stat-card success">
+            <div class="stat-label">Occupancy Rate</div>
+            <div class="stat-value" id="stat-occ">—</div>
+            <div class="stat-sub" id="stat-occ-sub">— of — units</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Monthly Revenue</div>
+            <div class="stat-value" id="stat-rev">—</div>
+            <div class="stat-sub" id="stat-month">This month</div>
+          </div>
+          <div class="stat-card danger">
+            <div class="stat-label">Open Maintenance</div>
+            <div class="stat-value" id="stat-maint">—</div>
+            <div class="stat-sub">Requests pending</div>
+          </div>
+        </div>
+
+        <div class="grid-2 mb-6">
+          <!-- Active Leases / Rent Due -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Active Leases</h3>
+              <a href="tenants.html" class="btn btn-outline btn-sm">View all</a>
+            </div>
+            <div class="card-body" style="padding:0">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Tenant</th><th>Property</th><th>Rent</th><th>Lease Ends</th></tr>
+                  </thead>
+                  <tbody id="leases-tbody">
+                    <tr><td colspan="4" class="text-muted text-small" style="text-align:center;padding:20px">Loading…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+
+          <!-- Open Maintenance -->
+          <div class="card">
+            <div class="card-header">
+              <h3>Open Maintenance</h3>
+              <a href="maintenance.html" class="btn btn-outline btn-sm">View all</a>
+            </div>
+            <div class="card-body" style="padding:0">
+              <div class="table-wrap">
+                <table>
+                  <thead>
+                    <tr><th>Issue</th><th>Priority</th><th>Status</th></tr>
+                  </thead>
+                  <tbody id="maint-tbody">
+                    <tr><td colspan="3" class="text-muted text-small" style="text-align:center;padding:20px">Loading…</td></tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Monthly Summary -->
+        <div class="card">
+          <div class="card-header">
+            <h3>Monthly Summary</h3>
+            <a href="finances.html" class="btn btn-outline btn-sm">Full finances</a>
+          </div>
+          <div class="card-body">
+            <div class="stats-grid" style="margin-bottom:0">
+              <div class="stat-card">
+                <div class="stat-label">Income</div>
+                <div class="stat-value text-success" id="sum-income">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Expenses</div>
+                <div class="stat-value text-danger" id="sum-expenses">—</div>
+              </div>
+              <div class="stat-card">
+                <div class="stat-label">Net Profit</div>
+                <div class="stat-value" id="sum-profit">—</div>
+              </div>
+              <div class="stat-card gold">
+                <div class="stat-label">Est. HST (13%)</div>
+                <div class="stat-value" id="sum-hst">—</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/page-dashboard.js"></script>
+</body>
+</html>

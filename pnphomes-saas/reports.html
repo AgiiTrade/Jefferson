@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' https://www.gstatic.com; style-src 'self' https://fonts.googleapis.com; font-src https://fonts.gstatic.com; connect-src 'self' https://*.googleapis.com https://*.firebaseio.com wss://*.firebaseio.com https://*.firebaseapp.com https://identitytoolkit.googleapis.com https://securetoken.googleapis.com; img-src 'self' data:; frame-src 'none'; object-src 'none';">
+  <title>Reports — PNP Homes Portal</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;600;700&family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="css/portal.css">
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-auth-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/auth-guard.js"></script>
+  <script src="js/firestore-store.js"></script>
+</head>
+<body>
+  <div id="loading-overlay"><div class="spinner"></div></div>
+  <button class="mobile-nav-toggle" id="nav-toggle">☰</button>
+
+  <div class="portal-layout">
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-logo">
+        <a href="dashboard.html" class="brand">PNP <span>Homes</span></a>
+        <span class="tagline">Property Portal</span>
+      </div>
+      <nav class="sidebar-nav">
+        <a href="dashboard.html"          ><span class="icon">⊞</span> Dashboard</a>
+        <a href="properties.html"         ><span class="icon">🏠</span> Properties</a>
+        <a href="tenants.html"            ><span class="icon">👥</span> Tenants</a>
+        <a href="finances.html"           ><span class="icon">💰</span> Finances</a>
+        <a href="maintenance.html"        ><span class="icon">🔧</span> Maintenance</a>
+        <a href="reports.html"   class="active"><span class="icon">📊</span> Reports</a>
+      </nav>
+      <div class="sidebar-footer">
+        <div class="user-info">
+          <div class="user-avatar" id="sidebar-user-avatar">U</div>
+          <div>
+            <div class="user-name"  id="sidebar-user-name">Loading…</div>
+            <div class="user-email" id="sidebar-user-email"></div>
+          </div>
+        </div>
+        <button class="btn-logout" id="logout-btn">↩ Sign Out</button>
+        <div class="portal-privacy"><a href="https://pnphomes.ca/privacy" target="_blank" rel="noopener">Privacy Policy</a></div>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <div class="topbar">
+        <div class="topbar-title">
+          <h1>Reports</h1>
+          <p id="topbar-date"></p>
+        </div>
+        <div class="topbar-actions">
+          <button class="btn btn-outline btn-sm" id="btn-export">⬇ Export JSON</button>
+          <button class="btn btn-gold btn-sm" id="btn-print">Print Report</button>
+        </div>
+      </div>
+
+      <div class="page-body" id="reports-body">
+        <!-- Year selector -->
+        <div class="card mb-6">
+          <div class="card-body" style="display:flex;align-items:center;gap:16px;padding:16px 22px">
+            <label class="form-label" style="margin:0;white-space:nowrap">Report Year:</label>
+            <select class="form-control" id="report-year" style="max-width:140px"></select>
+          </div>
+        </div>
+
+        <!-- Occupancy -->
+        <div class="card mb-6">
+          <div class="card-header"><h3>Occupancy Overview</h3></div>
+          <div class="card-body" id="occ-body">Loading…</div>
+        </div>
+
+        <!-- Revenue by month -->
+        <div class="card mb-6">
+          <div class="card-header"><h3>Revenue by Month</h3></div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Month</th><th>Revenue</th><th>Expenses</th><th>Net Profit</th><th>HST Est.</th></tr></thead>
+                <tbody id="monthly-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+
+        <!-- Annual Summary -->
+        <div class="card mb-6">
+          <div class="card-header"><h3>Annual Income Statement</h3></div>
+          <div class="card-body" id="annual-body">Loading…</div>
+        </div>
+
+        <!-- Expense breakdown -->
+        <div class="card mb-6">
+          <div class="card-header"><h3>Expense Breakdown by Category</h3></div>
+          <div class="card-body" style="padding:0">
+            <div class="table-wrap">
+              <table>
+                <thead><tr><th>Category</th><th>Total</th><th>% of Expenses</th></tr></thead>
+                <tbody id="exp-cat-tbody"></tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+
+  <script src="js/page-reports.js"></script>
+</body>
+</html>
