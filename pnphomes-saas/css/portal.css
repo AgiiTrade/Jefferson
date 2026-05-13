@@ -507,3 +507,4 @@ tbody tr:hover td { background: var(--off-white); }
   .service-grid { grid-template-columns: 1fr; }
   .cta-section { padding: 28px 20px; }
 }
+.auth-footer-small { margin-top: 12px; font-size: 0.75em; }
