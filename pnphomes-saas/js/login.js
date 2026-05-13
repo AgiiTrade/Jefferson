@@ -26,8 +26,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     'auth/operation-not-allowed': 'Google sign-in is not enabled in Firebase Authentication. Enable it under Authentication → Sign-in method → Google.',
     'auth/unauthorized-domain': 'This domain is not authorized in Firebase Authentication. Add agiitrade.github.io, pnphomes.ca, and portal.pnphomes.ca under Authentication → Settings → Authorized domains.',
     'auth/popup-closed-by-user': 'Google sign-in was closed before finishing.',
-    'auth/popup-blocked': 'Your browser blocked Google sign-in. Open this page in Safari/Chrome, or use email/password sign-in.',
-    'auth/internal-error': 'Google sign-in redirect failed in this browser. Open this page in Safari/Chrome, or use email/password sign-in.',
+    'auth/popup-blocked': 'Google sign-in popup was blocked. Tap the ⋯ menu and open this page in Safari/Chrome, or use email/password sign-in.',
+    'auth/internal-error': 'Google sign-in is blocked by this in-app browser. Tap the ⋯ menu and open this page in Safari/Chrome, or use email/password sign-in.',
     'permission-denied': 'Signed in, but Firestore blocked profile setup. Publish the Firestore rules from pnphomes-saas/firestore.rules.'
   };
 
