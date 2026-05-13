@@ -21,6 +21,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     'auth/user-disabled': 'This account has been disabled.',
     'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
     'auth/invalid-credential': 'Invalid email or password.',
+    'auth/api-key-not-valid.-please-pass-a-valid-api-key.': 'Firebase API key is invalid. Copy the Firebase config as text from Project Settings → Your apps → SDK setup/config and paste it to Jefferson.',
+    'auth/api-key-not-valid': 'Firebase API key is invalid. Copy the Firebase config as text from Project Settings → Your apps → SDK setup/config and paste it to Jefferson.',
     'auth/operation-not-allowed': 'Google sign-in is not enabled in Firebase Authentication. Enable it under Authentication → Sign-in method → Google.',
     'auth/unauthorized-domain': 'This domain is not authorized in Firebase Authentication. Add agiitrade.github.io, pnphomes.ca, and portal.pnphomes.ca under Authentication → Settings → Authorized domains.',
     'auth/popup-closed-by-user': 'Google sign-in was closed before finishing.',

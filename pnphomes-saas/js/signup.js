@@ -10,6 +10,8 @@ document.addEventListener('DOMContentLoaded', async function () {
   const FIREBASE_ERRORS = {
     'auth/email-already-in-use': 'An account with this email already exists. Try signing in instead.',
     'auth/invalid-email': 'Please enter a valid email address.',
+    'auth/api-key-not-valid.-please-pass-a-valid-api-key.': 'Firebase API key is invalid. Copy the Firebase config as text from Project Settings → Your apps → SDK setup/config and paste it to Jefferson.',
+    'auth/api-key-not-valid': 'Firebase API key is invalid. Copy the Firebase config as text from Project Settings → Your apps → SDK setup/config and paste it to Jefferson.',
     'auth/weak-password': 'Password must be at least 6 characters.',
     'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Authentication. Enable Email/Password and Google under Authentication → Sign-in method.',
     'auth/unauthorized-domain': 'This domain is not authorized in Firebase Authentication. Add agiitrade.github.io, pnphomes.ca, and portal.pnphomes.ca under Authentication → Settings → Authorized domains.',
