@@ -16,7 +16,8 @@ document.addEventListener('DOMContentLoaded', async function () {
     'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Authentication. Enable Email/Password and Google under Authentication → Sign-in method.',
     'auth/unauthorized-domain': 'This domain is not authorized in Firebase Authentication. Add agiitrade.github.io, pnphomes.ca, and portal.pnphomes.ca under Authentication → Settings → Authorized domains.',
     'auth/popup-closed-by-user': 'Google sign-in was closed before finishing.',
-    'auth/popup-blocked': 'Your browser blocked the Google sign-in popup. Use the redirect sign-in button again.',
+    'auth/popup-blocked': 'Your browser blocked Google sign-in. Open this page in Safari/Chrome, or use email/password sign-in.',
+    'auth/internal-error': 'Google sign-in redirect failed in this browser. Open this page in Safari/Chrome, or use email/password sign-in.',
     'permission-denied': 'Account was created, but Firestore blocked profile setup. Publish the Firestore rules from pnphomes-saas/firestore.rules.'
   };
 
@@ -44,17 +45,6 @@ document.addEventListener('DOMContentLoaded', async function () {
     const provider = new firebase.auth.GoogleAuthProvider();
     provider.setCustomParameters({ prompt: 'select_account' });
     return provider;
-  }
-
-  try {
-    const redirectResult = await auth.getRedirectResult();
-    if (redirectResult && redirectResult.user) {
-      await saveUserProfile(redirectResult.user);
-      window.location.replace('dashboard.html');
-      return;
-    }
-  } catch (err) {
-    showError(friendlyError(err));
   }
 
   auth.onAuthStateChanged(function (user) {
@@ -103,10 +93,12 @@ document.addEventListener('DOMContentLoaded', async function () {
   googleBtn.addEventListener('click', async function () {
     clearMessages();
     googleBtn.disabled = true;
-    googleBtn.textContent = 'Redirecting to Google…';
+    googleBtn.textContent = 'Opening Google…';
 
     try {
-      await auth.signInWithRedirect(googleProvider());
+      const result = await auth.signInWithPopup(googleProvider());
+      await saveUserProfile(result.user);
+      window.location.replace('dashboard.html');
     } catch (err) {
       showError(friendlyError(err));
       googleBtn.disabled = false;
