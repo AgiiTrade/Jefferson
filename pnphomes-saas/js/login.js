@@ -10,11 +10,12 @@ auth.onAuthStateChanged(function (user) {
 });
 
 document.addEventListener('DOMContentLoaded', function () {
-  const form    = document.getElementById('login-form');
-  const errEl   = document.getElementById('login-error');
-  const emailEl = document.getElementById('email');
-  const passEl  = document.getElementById('password');
-  const btnEl   = document.getElementById('login-btn');
+  const form      = document.getElementById('login-form');
+  const errEl     = document.getElementById('login-error');
+  const emailEl   = document.getElementById('email');
+  const passEl    = document.getElementById('password');
+  const btnEl     = document.getElementById('login-btn');
+  const googleBtn = document.getElementById('google-login-btn');
 
   function showError(msg) {
     errEl.textContent = msg;
@@ -23,32 +24,72 @@ document.addEventListener('DOMContentLoaded', function () {
   function clearError() { errEl.classList.remove('visible'); }
 
   const FIREBASE_ERRORS = {
-    'auth/user-not-found':   'No account found with this email address.',
-    'auth/wrong-password':   'Incorrect password. Please try again.',
-    'auth/invalid-email':    'Please enter a valid email address.',
-    'auth/user-disabled':    'This account has been disabled.',
-    'auth/too-many-requests':'Too many failed attempts. Please try again later.',
-    'auth/invalid-credential': 'Invalid email or password.'
+    'auth/user-not-found': 'No account found with this email address.',
+    'auth/wrong-password': 'Incorrect password. Please try again.',
+    'auth/invalid-email': 'Please enter a valid email address.',
+    'auth/user-disabled': 'This account has been disabled.',
+    'auth/too-many-requests': 'Too many failed attempts. Please try again later.',
+    'auth/invalid-credential': 'Invalid email or password.',
+    'auth/operation-not-allowed': 'This sign-in method is not enabled in Firebase Authentication.',
+    'auth/unauthorized-domain': 'This domain is not authorized in Firebase Authentication. Add agiitrade.github.io and pnphomes.ca under Firebase Auth → Settings → Authorized domains.',
+    'auth/popup-closed-by-user': 'Google sign-in was closed before finishing.',
+    'auth/popup-blocked': 'Your browser blocked the Google sign-in popup. Allow popups and try again.',
+    'permission-denied': 'Signed in, but Firestore blocked profile setup. Publish the Firestore rules from pnphomes-saas/firestore.rules.'
   };
+
+  function friendlyError(err) {
+    console.error('PNP Homes login error:', err);
+    return FIREBASE_ERRORS[err.code] || FIREBASE_ERRORS[err.message] || `${err.message || 'Sign-in failed.'} (${err.code || 'unknown-error'})`;
+  }
+
+  async function saveUserProfile(user) {
+    await db.collection('users').doc(user.uid).set({
+      uid: user.uid,
+      userId: user.uid,
+      name: user.displayName || '',
+      email: user.email || '',
+      photoURL: user.photoURL || '',
+      updatedAt: firebase.firestore.FieldValue.serverTimestamp(),
+      createdAt: firebase.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+  }
 
   form.addEventListener('submit', async function (e) {
     e.preventDefault();
     clearError();
-    const email    = emailEl.value.trim();
+    const email = emailEl.value.trim();
     const password = passEl.value;
 
     if (!email || !password) { showError('Please enter your email and password.'); return; }
 
-    btnEl.disabled    = true;
+    btnEl.disabled = true;
     btnEl.textContent = 'Signing in…';
 
     try {
       await auth.signInWithEmailAndPassword(email, password);
       window.location.replace('dashboard.html');
     } catch (err) {
-      showError(FIREBASE_ERRORS[err.code] || 'Sign-in failed. Please try again.');
-      btnEl.disabled    = false;
+      showError(friendlyError(err));
+      btnEl.disabled = false;
       btnEl.textContent = 'Sign In';
+    }
+  });
+
+  googleBtn.addEventListener('click', async function () {
+    clearError();
+    googleBtn.disabled = true;
+    googleBtn.textContent = 'Opening Google…';
+
+    try {
+      const provider = new firebase.auth.GoogleAuthProvider();
+      provider.setCustomParameters({ prompt: 'select_account' });
+      const result = await auth.signInWithPopup(provider);
+      await saveUserProfile(result.user);
+      window.location.replace('dashboard.html');
+    } catch (err) {
+      showError(friendlyError(err));
+      googleBtn.disabled = false;
+      googleBtn.textContent = 'Continue with Google';
     }
   });
 

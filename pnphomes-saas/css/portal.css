@@ -242,8 +242,12 @@ tbody tr:hover td { background: var(--off-white); }
 .btn-danger:hover { background: #9b2c2c; color: #fff; }
 .btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text); }
 .btn-outline:hover { border-color: var(--navy); color: var(--navy); }
+.btn-google { margin-top: 0; background: #fff; }
+.btn-google::before { content: 'G'; font-weight: 800; color: #4285f4; }
 .btn-sm  { padding: 5px 12px; font-size: 0.78em; }
 .btn-full { width: 100%; justify-content: center; }
+.auth-divider { display: flex; align-items: center; gap: 12px; margin: 18px 0; color: var(--muted); font-size: 0.78em; }
+.auth-divider::before, .auth-divider::after { content: ''; flex: 1; height: 1px; background: var(--border); }
 
 /* ── FORMS ── */
 .form-group  { margin-bottom: 18px; }
