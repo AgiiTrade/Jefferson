@@ -16,12 +16,12 @@
 // DO NOT commit credentials like service account keys to git.
 
 const FIREBASE_CONFIG = {
-  apiKey:            "AIzaSyOHUazPmeRZNgVANpFQYidfCMwwpgReh1E",
+  apiKey:            "AIzaSyC0HUazPmeRZNgVANpFQYidFCWwpgReh1E",
   authDomain:        "pnphomes-97242.firebaseapp.com",
   projectId:         "pnphomes-97242",
   storageBucket:     "pnphomes-97242.firebasestorage.app",
-  messagingSenderId: "884516668546",
-  appId:             "1:884516668546:web:32a04e0bb76f5598eb3993",
+  messagingSenderId: "884516685546",
+  appId:             "1:884516685546:web:32a04e0bb76f5598eb3993",
   measurementId:     "G-YC9556DXMD"
 };
 
