@@ -26,12 +26,20 @@ const FS = {
   },
 
   // ── Properties ──
+  _sortByCreatedDesc(rows) {
+    return rows.sort((a, b) => {
+      const av = (a.createdAt && a.createdAt.toMillis) ? a.createdAt.toMillis() : 0;
+      const bv = (b.createdAt && b.createdAt.toMillis) ? b.createdAt.toMillis() : 0;
+      return bv - av;
+    });
+  },
+
   async getProperties() {
     const snap = await db.collection('properties')
       .where('userId', '==', this._uid())
-      .orderBy('createdAt', 'desc')
       .get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    return this._sortByCreatedDesc(rows);
   },
 
   async saveProperty(prop) {
@@ -55,20 +63,23 @@ const FS = {
     batch.delete(db.collection('properties').doc(id));
     for (const col of ['tenants', 'leases', 'transactions', 'maintenance']) {
       const snap = await db.collection(col)
-        .where('propertyId', '==', id)
         .where('userId', '==', uid)
         .get();
-      snap.docs.forEach(d => batch.delete(d.ref));
+      snap.docs
+        .filter(d => d.data().propertyId === id)
+        .forEach(d => batch.delete(d.ref));
     }
     await batch.commit();
   },
 
   // ── Tenants ──
   async getTenants(propertyId) {
-    let q = db.collection('tenants').where('userId', '==', this._uid());
-    if (propertyId) q = q.where('propertyId', '==', propertyId);
-    const snap = await q.orderBy('createdAt', 'desc').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await db.collection('tenants')
+      .where('userId', '==', this._uid())
+      .get();
+    let rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (propertyId) rows = rows.filter(r => r.propertyId === propertyId);
+    return this._sortByCreatedDesc(rows);
   },
 
   async saveTenant(tenant) {
@@ -93,20 +104,21 @@ const FS = {
 
   // ── Leases ──
   async getLeases(propertyId) {
-    let q = db.collection('leases').where('userId', '==', this._uid());
-    if (propertyId) q = q.where('propertyId', '==', propertyId);
-    const snap = await q.orderBy('startDate', 'desc').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await db.collection('leases')
+      .where('userId', '==', this._uid())
+      .get();
+    let rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (propertyId) rows = rows.filter(r => r.propertyId === propertyId);
+    return rows.sort((a, b) => (b.startDate || '').localeCompare(a.startDate || ''));
   },
 
   async getActiveLeases() {
     const today = new Date().toISOString().split('T')[0];
     const snap = await db.collection('leases')
       .where('userId', '==', this._uid())
-      .where('status', '==', 'active')
       .get();
     return snap.docs.map(d => ({ id: d.id, ...d.data() }))
-      .filter(l => l.endDate >= today);
+      .filter(l => l.status === 'active' && l.endDate >= today);
   },
 
   async saveLease(lease) {
@@ -132,11 +144,13 @@ const FS = {
   // ── Transactions (rent payments + expenses) ──
   async getTransactions(filters) {
     filters = filters || {};
-    let q = db.collection('transactions').where('userId', '==', this._uid());
-    if (filters.propertyId) q = q.where('propertyId', '==', filters.propertyId);
-    if (filters.type)       q = q.where('type',       '==', filters.type);
-    const snap = await q.orderBy('date', 'desc').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await db.collection('transactions')
+      .where('userId', '==', this._uid())
+      .get();
+    let rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (filters.propertyId) rows = rows.filter(r => r.propertyId === filters.propertyId);
+    if (filters.type)       rows = rows.filter(r => r.type === filters.type);
+    return rows.sort((a, b) => (b.date || '').localeCompare(a.date || ''));
   },
 
   async saveTransaction(tx) {
@@ -160,10 +174,12 @@ const FS = {
 
   // ── Maintenance ──
   async getMaintenance(propertyId) {
-    let q = db.collection('maintenance').where('userId', '==', this._uid());
-    if (propertyId) q = q.where('propertyId', '==', propertyId);
-    const snap = await q.orderBy('createdAt', 'desc').get();
-    return snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    const snap = await db.collection('maintenance')
+      .where('userId', '==', this._uid())
+      .get();
+    let rows = snap.docs.map(d => ({ id: d.id, ...d.data() }));
+    if (propertyId) rows = rows.filter(r => r.propertyId === propertyId);
+    return this._sortByCreatedDesc(rows);
   },
 
   async saveMaintenance(req) {

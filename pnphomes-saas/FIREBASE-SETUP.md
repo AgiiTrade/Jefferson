@@ -58,24 +58,14 @@ collection to documents where `userId == request.auth.uid`.
 
 ---
 
-## Step 5 — Create Required Firestore Indexes
+## Step 5 — Firestore Indexes (not required)
 
-Firestore requires composite indexes for multi-field queries. The portal uses
-queries like "get tenants WHERE userId = X AND propertyId = Y ORDER BY createdAt".
+The portal queries Firestore with a single `where('userId', '==', uid)` filter
+and does all sorting/secondary filtering client-side. This avoids needing any
+composite indexes — Firestore's default single-field indexes are enough.
 
-**Create these indexes in Firestore → Indexes → Composite:**
-
-| Collection | Fields | Order |
-|---|---|---|
-| `tenants` | `userId` ASC, `propertyId` ASC, `createdAt` DESC |
-| `leases` | `userId` ASC, `status` ASC, `endDate` ASC |
-| `transactions` | `userId` ASC, `type` ASC, `date` DESC |
-| `transactions` | `userId` ASC, `propertyId` ASC, `date` DESC |
-| `maintenance` | `userId` ASC, `propertyId` ASC, `createdAt` DESC |
-
-**Shortcut:** When you first use the portal, Firestore will log index errors in
-the browser console with a direct link to create the missing index. Click those
-links for each collection and the indexes will be created automatically.
+A typical small landlord (≤ 10 properties, ≤ 50 tenants, ≤ a few thousand
+transactions) stays well inside Firestore's read budget with this pattern.
 
 ---
 
