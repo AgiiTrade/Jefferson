@@ -1,0 +1,72 @@
+[
+  {
+    "book": "dinosaur-adventures",
+    "compressed_interior_mb": 1.75,
+    "bundle_mb": 14.7,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "under-the-sea",
+    "compressed_interior_mb": 1.44,
+    "bundle_mb": 12.94,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "space-adventures",
+    "compressed_interior_mb": 1.43,
+    "bundle_mb": 11.93,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "cute-puppies-kittens",
+    "compressed_interior_mb": 1.13,
+    "bundle_mb": 5.54,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "cool-trucks-cars",
+    "compressed_interior_mb": 1.79,
+    "bundle_mb": 13.03,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "magical-unicorns",
+    "compressed_interior_mb": 1.82,
+    "bundle_mb": 10.84,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "princess-castle",
+    "compressed_interior_mb": 2.11,
+    "bundle_mb": 13.45,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "bugs-butterflies",
+    "compressed_interior_mb": 1.64,
+    "bundle_mb": 12.23,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "abc-animal-alphabet",
+    "compressed_interior_mb": 1.54,
+    "bundle_mb": 7.57,
+    "pages": 50,
+    "includes_listing": true
+  },
+  {
+    "book": "farm-animals",
+    "compressed_interior_mb": 1.87,
+    "bundle_mb": 12.34,
+    "pages": 50,
+    "includes_listing": true
+  }
+]
