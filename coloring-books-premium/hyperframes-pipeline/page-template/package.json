@@ -1,0 +1,11 @@
+{
+  "name": "coloring-book-page-template",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "render": "node render.mjs"
+  },
+  "dependencies": {
+    "puppeteer": "^22.0.0"
+  }
+}

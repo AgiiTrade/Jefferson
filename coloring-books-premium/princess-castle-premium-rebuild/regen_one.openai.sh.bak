@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+set -uo pipefail
+PAGE_NUM="$1"
+THEME="$2"
+
+ROOT="/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/princess-castle-premium-rebuild"
+GEN="${ROOT}/generated"
+mkdir -p "$GEN"
+
+PADDED=$(printf "%02d" "$PAGE_NUM")
+OUT="${GEN}/page-${PADDED}.png"
+
+if [ -s "$OUT" ]; then
+  echo "[skip] page ${PADDED} already exists"
+  exit 0
+fi
+
+PROMPT="Black and white kids coloring book line art for KDP printable interior. Theme: ${THEME}. Single large centered cartoon hero subject filling most of the page, thick clean smooth black outlines, bold simple shapes, large open spaces inside the lines for kids to color, no shading, no grayscale, no hatching, no cross-hatching. Absolutely no text, no letters, no words, no numbers, no watermark, no signature. Plain pure white background. Kid friendly cartoon style, ages 4 to 8, portrait composition, full bleed friendly."
+
+ATTEMPTS=0
+MAX_ATTEMPTS=3
+while [ "$ATTEMPTS" -lt "$MAX_ATTEMPTS" ]; do
+  ATTEMPTS=$((ATTEMPTS+1))
+  echo "[gen] page ${PADDED} attempt ${ATTEMPTS}: ${THEME:0:80}"
+  if openclaw infer image generate \
+        --model openai/gpt-image-2 \
+        --prompt "$PROMPT" \
+        --size 1024x1536 \
+        --output "$OUT" \
+        --output-format png \
+        --json \
+        --timeout-ms 240000 >/tmp/princess_gen_out.json 2>&1; then
+    if [ -s "$OUT" ]; then
+      echo "[ok] page ${PADDED} generated"
+      exit 0
+    fi
+  fi
+  echo "[retry] page ${PADDED} failed attempt ${ATTEMPTS}"
+  tail -3 /tmp/princess_gen_out.json || true
+  sleep 15
+done
+echo "[FAIL] page ${PADDED} after ${MAX_ATTEMPTS} attempts"
+exit 1
