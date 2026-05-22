@@ -42,3 +42,9 @@ A fan-favorite gift for vehicle-obsessed kids — birthdays, holidays, road trip
 
 ## Trim & Bleed
 - Trim 8.5 × 11; cover wraparound to be confirmed.
+
+## Brand / Copyright Safety
+- Brand/imprint: PBI Creative Kids
+- Artwork position: original kid-friendly coloring pages and cover design; no licensed characters, celebrities, logos, or franchise references intentionally used.
+- Copyright notice: © 2026 PBI. All rights reserved.
+- Recommended KDP contributor/imprint field: PBI Creative Kids.

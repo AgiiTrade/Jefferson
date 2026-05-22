@@ -2,71 +2,91 @@
   {
     "book": "dinosaur-adventures",
     "compressed_interior_mb": 1.75,
-    "bundle_mb": 14.7,
+    "bundle_mb": 14.73,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "under-the-sea",
     "compressed_interior_mb": 1.44,
-    "bundle_mb": 12.94,
+    "bundle_mb": 12.97,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "space-adventures",
     "compressed_interior_mb": 1.43,
-    "bundle_mb": 11.93,
+    "bundle_mb": 11.96,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "cute-puppies-kittens",
     "compressed_interior_mb": 1.13,
-    "bundle_mb": 5.54,
+    "bundle_mb": 5.57,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "cool-trucks-cars",
     "compressed_interior_mb": 1.79,
-    "bundle_mb": 13.03,
+    "bundle_mb": 13.06,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "magical-unicorns",
     "compressed_interior_mb": 1.82,
-    "bundle_mb": 10.84,
+    "bundle_mb": 10.87,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "princess-castle",
     "compressed_interior_mb": 2.11,
-    "bundle_mb": 13.45,
+    "bundle_mb": 13.48,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "bugs-butterflies",
     "compressed_interior_mb": 1.64,
-    "bundle_mb": 12.23,
+    "bundle_mb": 12.26,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "abc-animal-alphabet",
     "compressed_interior_mb": 1.54,
-    "bundle_mb": 7.57,
+    "bundle_mb": 7.6,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   },
   {
     "book": "farm-animals",
     "compressed_interior_mb": 1.87,
-    "bundle_mb": 12.34,
+    "bundle_mb": 12.37,
     "pages": 50,
-    "includes_listing": true
+    "includes_listing": true,
+    "pbi_branding": true,
+    "cover_pdf": "cover.pdf"
   }
 ]

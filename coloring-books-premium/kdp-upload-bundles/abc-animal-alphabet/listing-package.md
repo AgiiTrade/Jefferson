@@ -36,3 +36,9 @@ Perfect for birthdays, rainy days, classroom activities, homeschool units, and c
 
 ## Pricing recommendation
 $6.99 - $8.99 paperback
+
+## Brand / Copyright Safety
+- Brand/imprint: PBI Creative Kids
+- Artwork position: original kid-friendly coloring pages and cover design; no licensed characters, celebrities, logos, or franchise references intentionally used.
+- Copyright notice: © 2026 PBI. All rights reserved.
+- Recommended KDP contributor/imprint field: PBI Creative Kids.

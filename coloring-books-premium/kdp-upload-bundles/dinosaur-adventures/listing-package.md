@@ -47,3 +47,9 @@ A wonderful gift for birthdays, road trips, rainy afternoons, or quiet time. Onc
 - Trim: 8.5 × 11 in
 - Interior: no bleed (margins frame the art); confirm in KDP previewer
 - Cover: ⚠️ current cover PDF is single 8.5×11 (front only). KDP requires full wraparound (back + spine + front + bleed). Spine for 50-page B/W is 0.125 in. Build wraparound before upload OR use KDP Cover Creator.
+
+## Brand / Copyright Safety
+- Brand/imprint: PBI Creative Kids
+- Artwork position: original kid-friendly coloring pages and cover design; no licensed characters, celebrities, logos, or franchise references intentionally used.
+- Copyright notice: © 2026 PBI. All rights reserved.
+- Recommended KDP contributor/imprint field: PBI Creative Kids.
