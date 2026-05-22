@@ -8,7 +8,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 15.78,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/dinosaur-adventures/final/dinosaur-adventures-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/dinosaur-adventures/final/dinosaur-adventures-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "under-the-sea",
@@ -19,7 +21,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 14.0,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/under-the-sea/final/under-the-sea-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/under-the-sea/final/under-the-sea-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "space-adventures",
@@ -30,7 +34,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 12.85,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/space-adventures/final/space-adventures-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/space-adventures/final/space-adventures-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "cute-puppies-kittens",
@@ -41,7 +47,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 6.37,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/cute-puppies-kittens/final/cute-puppies-kittens-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/cute-puppies-kittens/final/cute-puppies-kittens-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "cool-trucks-cars",
@@ -52,7 +60,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 13.98,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/cool-trucks-cars/final/cool-trucks-cars-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/cool-trucks-cars/final/cool-trucks-cars-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "magical-unicorns",
@@ -63,7 +73,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 11.91,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/magical-unicorns/final/magical-unicorns-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/magical-unicorns/final/magical-unicorns-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "princess-castle",
@@ -74,7 +86,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 14.5,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/princess-castle/final/princess-castle-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/princess-castle/final/princess-castle-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "bugs-butterflies",
@@ -85,7 +99,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 13.3,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/bugs-butterflies/final/bugs-butterflies-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/bugs-butterflies/final/bugs-butterflies-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "abc-animal-alphabet",
@@ -96,7 +112,9 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 8.63,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/abc-animal-alphabet/final/abc-animal-alphabet-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/abc-animal-alphabet/final/abc-animal-alphabet-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "farm-animals",
@@ -107,6 +125,8 @@
     "cover_width_inches": 17.3626,
     "cover_height_inches": 11.25,
     "bundle_mb": 13.37,
-    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/farm-animals/final/farm-animals-KDP-FULL-WRAP-PBI.pdf"
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/farm-animals/final/farm-animals-KDP-FULL-WRAP-PBI.pdf",
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   }
 ]

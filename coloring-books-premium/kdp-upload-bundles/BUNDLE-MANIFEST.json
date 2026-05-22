@@ -10,7 +10,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.0846,
-    "ink_avg": 0.1596
+    "ink_avg": 0.1596,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "under-the-sea",
@@ -23,7 +25,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.0702,
-    "ink_avg": 0.1373
+    "ink_avg": 0.1373,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "space-adventures",
@@ -36,7 +40,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.0873,
-    "ink_avg": 0.1334
+    "ink_avg": 0.1334,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "cute-puppies-kittens",
@@ -49,7 +55,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.0797,
-    "ink_avg": 0.1158
+    "ink_avg": 0.1158,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "cool-trucks-cars",
@@ -62,7 +70,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.1256,
-    "ink_avg": 0.1793
+    "ink_avg": 0.1793,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "magical-unicorns",
@@ -75,7 +85,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.0919,
-    "ink_avg": 0.1741
+    "ink_avg": 0.1741,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "princess-castle",
@@ -88,7 +100,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.1104,
-    "ink_avg": 0.1953
+    "ink_avg": 0.1953,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "bugs-butterflies",
@@ -101,7 +115,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.0913,
-    "ink_avg": 0.1609
+    "ink_avg": 0.1609,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "abc-animal-alphabet",
@@ -114,7 +130,9 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.1169,
-    "ink_avg": 0.1569
+    "ink_avg": 0.1569,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   },
   {
     "book": "farm-animals",
@@ -127,6 +145,8 @@
     "outline_safe_interior": true,
     "interior_pdf": "outline-safe enhanced interior.pdf",
     "ink_min": 0.1402,
-    "ink_avg": 0.183
+    "ink_avg": 0.183,
+    "author_pen_name": "PBI Creative Kids",
+    "imprint_brand": "PBI Creative Kids"
   }
 ]

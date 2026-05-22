@@ -51,3 +51,9 @@ A fan-favorite gift for vehicle-obsessed kids — birthdays, holidays, road trip
 
 ## Cover Format
 - `cover.pdf` is a full KDP paperback wraparound cover: back cover + spine + front cover, sized for 8.5 x 11 inch trim, 50 pages, with bleed.
+
+## Author / Pen Name
+PBI Creative Kids
+
+## Imprint / Brand
+PBI Creative Kids
