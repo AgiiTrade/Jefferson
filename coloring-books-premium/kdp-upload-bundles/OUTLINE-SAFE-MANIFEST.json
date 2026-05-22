@@ -1,0 +1,122 @@
+[
+  {
+    "book": "dinosaur-adventures",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.0846,
+    "ink_avg": 0.1596,
+    "ink_max": 0.2255,
+    "interior_mb": 2.01,
+    "bundle_mb": 15.78,
+    "pdf": "active/deploy/coloring-books-premium/dinosaur-adventures/final/dinosaur-adventures-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/dinosaur-adventures/final/dinosaur-adventures-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "under-the-sea",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.0702,
+    "ink_avg": 0.1373,
+    "ink_max": 0.1989,
+    "interior_mb": 1.73,
+    "bundle_mb": 13.99,
+    "pdf": "active/deploy/coloring-books-premium/under-the-sea/final/under-the-sea-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/under-the-sea/final/under-the-sea-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "space-adventures",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.0873,
+    "ink_avg": 0.1334,
+    "ink_max": 0.2384,
+    "interior_mb": 1.63,
+    "bundle_mb": 12.85,
+    "pdf": "active/deploy/coloring-books-premium/space-adventures/final/space-adventures-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/space-adventures/final/space-adventures-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "cute-puppies-kittens",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.0797,
+    "ink_avg": 0.1158,
+    "ink_max": 0.166,
+    "interior_mb": 1.34,
+    "bundle_mb": 6.37,
+    "pdf": "active/deploy/coloring-books-premium/cute-puppies-kittens/final/cute-puppies-kittens-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/cute-puppies-kittens/final/cute-puppies-kittens-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "cool-trucks-cars",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.1256,
+    "ink_avg": 0.1793,
+    "ink_max": 0.2331,
+    "interior_mb": 1.94,
+    "bundle_mb": 13.98,
+    "pdf": "active/deploy/coloring-books-premium/cool-trucks-cars/final/cool-trucks-cars-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/cool-trucks-cars/final/cool-trucks-cars-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "magical-unicorns",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.0919,
+    "ink_avg": 0.1741,
+    "ink_max": 0.2708,
+    "interior_mb": 2.07,
+    "bundle_mb": 11.91,
+    "pdf": "active/deploy/coloring-books-premium/magical-unicorns/final/magical-unicorns-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/magical-unicorns/final/magical-unicorns-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "princess-castle",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.1104,
+    "ink_avg": 0.1953,
+    "ink_max": 0.2863,
+    "interior_mb": 2.3,
+    "bundle_mb": 14.49,
+    "pdf": "active/deploy/coloring-books-premium/princess-castle/final/princess-castle-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/princess-castle/final/princess-castle-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "bugs-butterflies",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.0913,
+    "ink_avg": 0.1609,
+    "ink_max": 0.2121,
+    "interior_mb": 1.91,
+    "bundle_mb": 13.3,
+    "pdf": "active/deploy/coloring-books-premium/bugs-butterflies/final/bugs-butterflies-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/bugs-butterflies/final/bugs-butterflies-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "abc-animal-alphabet",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.1169,
+    "ink_avg": 0.1569,
+    "ink_max": 0.2096,
+    "interior_mb": 1.8,
+    "bundle_mb": 8.63,
+    "pdf": "active/deploy/coloring-books-premium/abc-animal-alphabet/final/abc-animal-alphabet-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/abc-animal-alphabet/final/abc-animal-alphabet-outline-safe-contact-sheet.jpg"
+  },
+  {
+    "book": "farm-animals",
+    "outline_safe": true,
+    "pages": 50,
+    "ink_min": 0.1402,
+    "ink_avg": 0.183,
+    "ink_max": 0.2308,
+    "interior_mb": 2.08,
+    "bundle_mb": 13.37,
+    "pdf": "active/deploy/coloring-books-premium/farm-animals/final/farm-animals-premium-interior-PBI-OUTLINE-SAFE.pdf",
+    "contact": "active/deploy/coloring-books-premium/farm-animals/final/farm-animals-outline-safe-contact-sheet.jpg"
+  }
+]

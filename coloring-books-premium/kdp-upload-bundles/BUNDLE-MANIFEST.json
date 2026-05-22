@@ -2,91 +2,131 @@
   {
     "book": "dinosaur-adventures",
     "compressed_interior_mb": 1.75,
-    "bundle_mb": 14.73,
+    "bundle_mb": 15.78,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.0846,
+    "ink_avg": 0.1596
   },
   {
     "book": "under-the-sea",
     "compressed_interior_mb": 1.44,
-    "bundle_mb": 12.97,
+    "bundle_mb": 13.99,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.0702,
+    "ink_avg": 0.1373
   },
   {
     "book": "space-adventures",
     "compressed_interior_mb": 1.43,
-    "bundle_mb": 11.96,
+    "bundle_mb": 12.85,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.0873,
+    "ink_avg": 0.1334
   },
   {
     "book": "cute-puppies-kittens",
     "compressed_interior_mb": 1.13,
-    "bundle_mb": 5.57,
+    "bundle_mb": 6.37,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.0797,
+    "ink_avg": 0.1158
   },
   {
     "book": "cool-trucks-cars",
     "compressed_interior_mb": 1.79,
-    "bundle_mb": 13.06,
+    "bundle_mb": 13.98,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.1256,
+    "ink_avg": 0.1793
   },
   {
     "book": "magical-unicorns",
     "compressed_interior_mb": 1.82,
-    "bundle_mb": 10.87,
+    "bundle_mb": 11.91,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.0919,
+    "ink_avg": 0.1741
   },
   {
     "book": "princess-castle",
     "compressed_interior_mb": 2.11,
-    "bundle_mb": 13.48,
+    "bundle_mb": 14.49,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.1104,
+    "ink_avg": 0.1953
   },
   {
     "book": "bugs-butterflies",
     "compressed_interior_mb": 1.64,
-    "bundle_mb": 12.26,
+    "bundle_mb": 13.3,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.0913,
+    "ink_avg": 0.1609
   },
   {
     "book": "abc-animal-alphabet",
     "compressed_interior_mb": 1.54,
-    "bundle_mb": 7.6,
+    "bundle_mb": 8.63,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.1169,
+    "ink_avg": 0.1569
   },
   {
     "book": "farm-animals",
     "compressed_interior_mb": 1.87,
-    "bundle_mb": 12.37,
+    "bundle_mb": 13.37,
     "pages": 50,
     "includes_listing": true,
     "pbi_branding": true,
-    "cover_pdf": "cover.pdf"
+    "cover_pdf": "cover.pdf",
+    "outline_safe_interior": true,
+    "interior_pdf": "outline-safe enhanced interior.pdf",
+    "ink_min": 0.1402,
+    "ink_avg": 0.183
   }
 ]
