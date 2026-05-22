@@ -53,3 +53,6 @@ A wonderful gift for birthdays, road trips, rainy afternoons, or quiet time. Onc
 - Artwork position: original kid-friendly coloring pages and cover design; no licensed characters, celebrities, logos, or franchise references intentionally used.
 - Copyright notice: © 2026 PBI. All rights reserved.
 - Recommended KDP contributor/imprint field: PBI Creative Kids.
+
+## Cover Format
+- `cover.pdf` is a full KDP paperback wraparound cover: back cover + spine + front cover, sized for 8.5 x 11 inch trim, 50 pages, with bleed.

@@ -1,0 +1,112 @@
+[
+  {
+    "book": "dinosaur-adventures",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 15.78,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/dinosaur-adventures/final/dinosaur-adventures-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "under-the-sea",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 14.0,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/under-the-sea/final/under-the-sea-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "space-adventures",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 12.85,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/space-adventures/final/space-adventures-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "cute-puppies-kittens",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 6.37,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/cute-puppies-kittens/final/cute-puppies-kittens-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "cool-trucks-cars",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 13.98,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/cool-trucks-cars/final/cool-trucks-cars-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "magical-unicorns",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 11.91,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/magical-unicorns/final/magical-unicorns-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "princess-castle",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 14.5,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/princess-castle/final/princess-castle-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "bugs-butterflies",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 13.3,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/bugs-butterflies/final/bugs-butterflies-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "abc-animal-alphabet",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 8.63,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/abc-animal-alphabet/final/abc-animal-alphabet-KDP-FULL-WRAP-PBI.pdf"
+  },
+  {
+    "book": "farm-animals",
+    "cover": "full-wrap",
+    "trim": "8.5x11",
+    "pages": 50,
+    "spine_inches": 0.1126,
+    "cover_width_inches": 17.3626,
+    "cover_height_inches": 11.25,
+    "bundle_mb": 13.37,
+    "cover_pdf": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/farm-animals/final/farm-animals-KDP-FULL-WRAP-PBI.pdf"
+  }
+]
