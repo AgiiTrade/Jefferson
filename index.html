@@ -1,164 +1,212 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<link rel="stylesheet" href="css/animations.css">
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>PlanByInnovations — All Projects</title>
-<style>
-*{margin:0;padding:0;box-sizing:border-box}
-:root{--bg:#0f172a;--card:#1e293b;--accent:#e94560;--gold:#FFD700;--text:#f1f5f9;--muted:#94a3b8}
-body{font-family:'Inter',system-ui,sans-serif;background:var(--bg);color:var(--text);min-height:100vh;padding:40px 20px}
-.container{max-width:1200px;margin:0 auto}
-header{text-align:center;margin-bottom:48px}
-header h1{font-size:2.5em;background:linear-gradient(135deg,var(--accent),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent}
-header p{color:var(--muted);margin-top:8px}
-.search{max-width:400px;margin:0 auto 32px}
-.search input{width:100%;padding:12px 16px;border-radius:8px;border:1px solid #334155;background:var(--card);color:var(--text);font-size:1em}
-.search input:focus{outline:none;border-color:var(--accent)}
-.section{margin-bottom:48px}
-.section h2{font-size:1.3em;margin-bottom:16px;display:flex;align-items:center;gap:10px;padding-bottom:8px;border-bottom:1px solid rgba(255,255,255,0.05)}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:16px}
-.card{background:var(--card);border-radius:12px;padding:20px;text-decoration:none;color:inherit;display:block;border:1px solid rgba(255,255,255,0.05);transition:all 0.2s}
-.card:hover{border-color:var(--accent);transform:translateY(-2px);box-shadow:0 8px 24px rgba(233,69,96,0.15)}
-.card h3{font-size:1em;margin-bottom:6px}
-.card p{color:var(--muted);font-size:0.85em;margin-bottom:10px}
-.card .meta{display:flex;gap:8px;flex-wrap:wrap}
-.badge{padding:3px 10px;border-radius:12px;font-size:0.7em;font-weight:600}
-.b-free{background:rgba(34,197,94,0.2);color:#22c55e}
-.b-paid{background:rgba(233,69,96,0.2);color:#e94560}
-.b-saas{background:rgba(59,130,246,0.2);color:#3b82f6}
-.b-tool{background:rgba(245,158,11,0.2);color:#f59e0b}
-.b-game{background:rgba(168,85,247,0.2);color:#a855f7}
-.b-doc{background:rgba(100,116,139,0.2);color:#94a3b8}
-.stats{display:flex;gap:24px;justify-content:center;margin-bottom:32px;flex-wrap:wrap}
-.stat{text-align:center}
-.stat .num{font-size:1.8em;font-weight:800;color:var(--gold)}
-.stat .label{font-size:0.8em;color:var(--muted)}
-footer{text-align:center;padding:40px;color:var(--muted);font-size:0.85em}
-</style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Agii.ca | AI Modernization, Oracle Integration, Custom Software</title>
+  <meta name="description" content="Agilitas Innovations Inc. helps Canadian and North American teams modernize legacy systems, connect Oracle and enterprise platforms, build software, and scale delivery teams.">
+  <link rel="canonical" href="https://agii.ca/">
+  <link rel="stylesheet" href="css/agii-site.css">
 </head>
 <body>
-<div class="container">
-<header>
-<h1 class="animate-fade-up">🍁 PlanByInnovations</h1>
-<p class="animate-fade-up delay-1">All projects — permanently hosted on GitHub Pages</p>
-</header>
+  <header class="site-header">
+    <nav class="nav" aria-label="Primary navigation">
+      <a class="brand" href="./" aria-label="Agii home">
+        <span class="brand-mark">AI</span>
+        <span>Agii.ca <small>Agilitas Innovations Inc.</small></span>
+      </a>
+      <div class="nav-links">
+        <a href="#services">Services</a>
+        <a href="ai-modernizer/">AI Modernization</a>
+        <a href="#proof">Proof</a>
+        <a href="#pricing">Engagements</a>
+        <a href="AGII-Company-Profile.html">Company Profile</a>
+      </div>
+      <a class="button" href="mailto:accounts@agii.ca?subject=Agii%20Consulting%20Assessment">Book Assessment</a>
+    </nav>
+  </header>
 
-<div class="stats">
-<div class="stat"><div class="num">30+</div><div class="label">Live Apps</div></div>
-<div class="stat"><div class="num">500+</div><div class="label">AI Prompts</div></div>
-<div class="stat"><div class="num">15</div><div class="label">Notion Templates</div></div>
-<div class="stat"><div class="num">7</div><div class="label">Proposal Templates</div></div>
-<div class="stat"><div class="num">20</div><div class="label">Strategy Docs</div></div>
-</div>
+  <main>
+    <section class="hero">
+      <div class="wrap hero-inner">
+        <div>
+          <span class="eyebrow">Enterprise consulting for modernization and integration</span>
+          <h1>Modernize critical systems without slowing the business.</h1>
+          <p class="lead">Agii helps leadership teams connect legacy platforms, automate manual workflows, deliver custom software, and add senior technical capacity where the business needs momentum.</p>
+          <div class="hero-actions">
+            <a class="button" href="mailto:accounts@agii.ca?subject=Agii%20Discovery%20Call">Start a Discovery Call</a>
+            <a class="button secondary" href="ai-modernizer/">Explore AI Modernization</a>
+          </div>
+        </div>
+        <aside class="hero-card" aria-label="Agii credibility summary">
+          <strong>Built for enterprise delivery</strong>
+          <div class="metric-list">
+            <div class="metric"><b>33+</b><span>years of combined professional technology and delivery experience</span></div>
+            <div class="metric"><b>150+</b><span>client and stakeholder environments referenced in AGII capability materials</span></div>
+            <div class="metric"><b>30+</b><span>industry domains across banking, insurance, telecom, energy, logistics, healthcare, and public sector</span></div>
+            <div class="metric"><b>8 wk</b><span>typical first-value delivery window for focused integration and automation initiatives</span></div>
+          </div>
+        </aside>
+      </div>
+    </section>
 
-<div class="search"><input type="text" placeholder="🔍 Search projects..." oninput="filterCards(this.value)"></div>
+    <div class="logo-strip" aria-label="Technology focus areas">
+      <div class="wrap">
+        <p>Enterprise platforms we commonly connect and modernize</p>
+        <div class="logo-grid">
+          <span>Oracle</span>
+          <span>Oracle PCO Cloud</span>
+          <span>Salesforce</span>
+          <span>SAP</span>
+          <span>AWS</span>
+          <span>Azure</span>
+        </div>
+      </div>
+    </div>
 
-<!-- GAMES -->
-<div class="section" id="games">
-<h2>🎮 Games</h2>
-<div class="grid">
-<a href="vocab_prototype.html" class="card"><h3>📚 Vocab Master Pro</h3><p>2,540 words, 5 levels, mobile-optimized</p><div class="meta"><span class="badge b-game">Game</span><span class="badge b-free">Free</span></div></a>
-<a href="questmind.html" class="card"><h3>🏰 QuestMind</h3><p>Wizard Academy quiz game, 3,103 questions</p><div class="meta"><span class="badge b-game">Game</span><span class="badge b-free">Free</span></div></a>
-<a href="chess-training/index.html" class="card"><h3>♟️ Chess Master Pro</h3><p>AI opponent, puzzles, lessons, ELO rating</p><div class="meta"><span class="badge b-game">Game</span><span class="badge b-paid">$9.99</span></div></a>
-<a href="chess-training/landing.html" class="card"><h3>♟️ Chess Landing Page</h3><p>Gumroad sales page for chess game</p><div class="meta"><span class="badge b-tool">Sales</span></div></a>
-</div>
-</div>
+    <section class="section" id="services">
+      <div class="wrap">
+        <div class="section-head center">
+          <span class="eyebrow">Services</span>
+          <h2>Consulting, engineering, and talent for systems that matter.</h2>
+          <p>Agii is positioned for mid-market and enterprise teams that need practical modernization, integration, analytics, and software delivery without vendor theatre.</p>
+        </div>
+        <div class="grid">
+          <article class="card">
+            <span class="card-kicker">AI Modernization</span>
+            <h3>Legacy discovery, mapping, transformation, and validation</h3>
+            <p>Modernize Siebel, COBOL, AS/400, Oracle, and custom legacy workflows — including Siebel to Oracle PCO Cloud migration paths — with an AI-assisted approach designed for auditable enterprise change.</p>
+            <a href="ai-modernizer/">View modernization platform</a>
+          </article>
+          <article class="card">
+            <span class="card-kicker">Oracle Integration</span>
+            <h3>OIC architecture and enterprise integration delivery</h3>
+            <p>Connect Oracle, Salesforce, SAP, SaaS, databases, flat files, and APIs. Replace spreadsheet handoffs and brittle point-to-point jobs with governed flows.</p>
+          </article>
+          <article class="card">
+            <span class="card-kicker">Custom Software</span>
+            <h3>Web, mobile, workflow, and internal systems</h3>
+            <p>Design and build applications that fit the operating model: portals, dashboards, automation tools, CRM extensions, internal apps, and customer-facing products.</p>
+          </article>
+          <article class="card">
+            <span class="card-kicker">Analytics</span>
+            <h3>Dashboards, data pipelines, and decision intelligence</h3>
+            <p>Turn disconnected operational data into executive dashboards, KPI systems, predictive models, and repeatable reporting pipelines.</p>
+          </article>
+          <article class="card">
+            <span class="card-kicker">Cloud and DevOps</span>
+            <h3>Modern infrastructure for stable delivery</h3>
+            <p>Cloud migration, CI/CD, observability, application hardening, deployment automation, and practical governance for teams moving faster.</p>
+          </article>
+          <article class="card">
+            <span class="card-kicker">Talent Augmentation</span>
+            <h3>Senior delivery capacity without long hiring cycles</h3>
+            <p>Add Oracle, integration, software, QA, data, and project delivery talent to existing teams for defined milestones or managed work packages.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-<!-- SAAS PRODUCTS -->
-<div class="section" id="saas">
-<h2>🚀 SaaS Products</h2>
-<div class="grid">
-<a href="student-saas/index.html" class="card"><h3>🎓 UniPrep SaaS</h3><p>Student success platform, $9.99-$49.99/mo</p><div class="meta"><span class="badge b-saas">SaaS</span><span class="badge b-paid">$9.99/mo</span></div></a>
-<a href="property-saas/index.html" class="card"><h3>🏠 RentBoss</h3><p>Property management, $29-$149/mo</p><div class="meta"><span class="badge b-saas">SaaS</span><span class="badge b-paid">$29/mo</span></div></a>
-<a href="finance/index.html" class="card"><h3>💰 FinanceHub</h3><p>Personal & business finance, tax tracking</p><div class="meta"><span class="badge b-saas">SaaS</span><span class="badge b-free">Free</span></div></a>
-</div>
-</div>
+    <section class="split-band" id="modernization">
+      <div class="wrap split">
+        <div>
+          <span class="eyebrow">AI Modernization</span>
+          <h2>A practical path from fragile legacy to modern platforms.</h2>
+          <p>Modernization fails when teams jump straight to rewrite mode. Agii starts with discovery, dependency mapping, interface inventory, and risk scoring so executives can fund the right sequence and engineers can ship safely.</p>
+          <ul class="check-list">
+            <li>Portfolio assessment for legacy applications, integrations, workflows, reports, and data dependencies — including Siebel estates targeting Oracle PCO Cloud.</li>
+            <li>AI-assisted code and process analysis with human review, documentation, and traceable acceptance criteria.</li>
+            <li>Incremental modernization roadmap covering APIs, cloud migration, refactoring, data migration, and parallel-run validation.</li>
+            <li>Delivery pods that combine architecture, integration, custom software, QA, analytics, and change management.</li>
+          </ul>
+          <div class="cta-row">
+            <a class="button" href="ai-modernizer/">Open AI Modernizer</a>
+            <a class="button secondary" href="ai-modernizer/case-studies.html">Read case studies</a>
+          </div>
+        </div>
+        <div class="panel" aria-label="Modernization workflow">
+          <div class="panel-row"><b>01</b><span><strong>Discover</strong> systems, owners, workflows, interfaces, manual steps, and failure points.</span></div>
+          <div class="panel-row"><b>02</b><span><strong>Map</strong> dependencies, data movement, controls, business rules, and risk areas.</span></div>
+          <div class="panel-row"><b>03</b><span><strong>Modernize</strong> with APIs, OIC flows, Oracle PCO Cloud target patterns, refactoring, cloud services, and custom software.</span></div>
+          <div class="panel-row"><b>04</b><span><strong>Validate</strong> through parallel runs, reconciliation, observability, and stakeholder sign-off.</span></div>
+        </div>
+      </div>
+    </section>
 
-<!-- BUSINESS TOOLS -->
-<div class="section" id="business">
-<h2>💼 Business Tools</h2>
-<div class="grid">
-<a href="sales-crm.html" class="card"><h3>📊 Sales CRM</h3><p>Lead tracking, pipeline, activity log</p><div class="meta"><span class="badge b-tool">Tool</span><span class="badge b-free">Free</span></div></a>
-<a href="agii-landing.html" class="card"><h3>⚡ Agii.ca Landing</h3><p>Optimized landing page for consulting</p><div class="meta"><span class="badge b-tool">Website</span></div></a>
-<a href="proposals/index.html" class="card"><h3>📄 Proposal Templates</h3><p>4 proposals + SOW + pricing calculator</p><div class="meta"><span class="badge b-tool">Templates</span><span class="badge b-paid">$49.99</span></div></a>
-<a href="proposals/PRICING-CALCULATOR.html" class="card"><h3>🧮 Pricing Calculator</h3><p>Interactive service pricing tool</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
-<a href="pitch-deck.html" class="card"><h3>📊 Pitch Deck</h3><p>Startup presentation template</p><div class="meta"><span class="badge b-tool">Template</span></div></a>
-<a href="crm.html" class="card"><h3>👥 CRM</h3><p>Client relationship management</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
-<a href="business-planner.html" class="card"><h3>📋 Business Planner</h3><p>Business planning template</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
-</div>
-</div>
+    <section class="proof" id="proof">
+      <div class="wrap">
+        <div class="section-head">
+          <span class="eyebrow">Proof style</span>
+          <h2>Example outcome: eliminate the hidden cost of disconnected systems.</h2>
+          <p>Use this as the sales conversation: quantify a painful workflow, integrate the source systems, automate exceptions, and make results visible to leaders.</p>
+        </div>
+        <div class="case-grid">
+          <article class="case-main">
+            <span class="tag">Case-study style engagement</span>
+            <h3>Finance and operations integration sprint</h3>
+            <p>A mid-market team relies on Oracle, Salesforce, spreadsheets, and manual approvals. Agii maps the handoffs, builds governed OIC/API integrations, creates exception dashboards, and replaces recurring manual reconciliation with monitored workflows.</p>
+            <p>The result is a measurable reduction in manual effort, fewer data errors, faster reporting, and a modernization foundation that can be extended into analytics and AI use cases.</p>
+          </article>
+          <aside class="case-aside">
+            <div class="mini-stat"><b>200+</b><span>hours per month of manual work targeted in integration assessments</span></div>
+            <div class="mini-stat"><b>80%</b><span>reduction target for repetitive data entry and status chasing</span></div>
+            <div class="mini-stat"><b>99.9%</b><span>data accuracy goal through validation, reconciliation, and observability</span></div>
+          </aside>
+        </div>
+      </div>
+    </section>
 
-<!-- COLORING BOOKS -->
-<div class="section" id="coloring">
-<h2>🎨 Coloring Books</h2>
-<div class="grid">
-<a href="coloring-books.html" class="card"><h3>🎨 Kids Coloring Books</h3><p>10 titles, 30+ print-ready PDFs for Amazon KDP</p><div class="meta"><span class="badge b-paid">Amazon KDP</span></div></a>
-</div>
-</div>
+    <section class="section" id="pricing">
+      <div class="wrap">
+        <div class="section-head center">
+          <span class="eyebrow">Engagement models</span>
+          <h2>Start focused, then scale what works.</h2>
+          <p>Commercial models are intentionally simple so buyers can approve the first step and expand once value is visible.</p>
+        </div>
+        <div class="pricing">
+          <article class="price-card">
+            <b>Assessment</b>
+            <strong>$5K-$15K</strong>
+            <p>System review, integration map, risk register, roadmap, and executive business case.</p>
+          </article>
+          <article class="price-card">
+            <b>OIC Sprint</b>
+            <strong>$15K-$75K</strong>
+            <p>Oracle Integration Cloud flows, API connectors, monitoring, error handling, and documentation.</p>
+          </article>
+          <article class="price-card">
+            <b>Build Pod</b>
+            <strong>$25K-$250K+</strong>
+            <p>Custom software, modernization, analytics, testing, release management, and stakeholder delivery.</p>
+          </article>
+          <article class="price-card">
+            <b>Managed Team</b>
+            <strong>$5K-$25K/mo</strong>
+            <p>Retainers and talent augmentation for ongoing integration, application, analytics, and support work.</p>
+          </article>
+        </div>
+      </div>
+    </section>
 
-<!-- DIGITAL PRODUCTS -->
-<div class="section" id="products">
-<h2>📦 Digital Products</h2>
-<div class="grid">
-<a href="ai-prompts/index.html" class="card"><h3>🤖 500+ AI Prompts</h3><p>ChatGPT, Midjourney, Claude prompts</p><div class="meta"><span class="badge b-paid">$19.99</span></div></a>
-<a href="notion-templates/index.html" class="card"><h3>📝 Notion Templates</h3><p>15 business & productivity templates</p><div class="meta"><span class="badge b-paid">$29.99</span></div></a>
-<a href="family-planner.html" class="card"><h3>📋 Family Planner</h3><p>75-page printable planner</p><div class="meta"><span class="badge b-paid">$4.99</span></div></a>
-<a href="meal-planner.html" class="card"><h3>🍽️ Meal Planner</h3><p>Weekly meal planning template</p><div class="meta"><span class="badge b-paid">$2.99</span></div></a>
-<a href="budget-tracker.html" class="card"><h3>💰 Budget Tracker</h3><p>Personal finance tracking</p><div class="meta"><span class="badge b-paid">$2.99</span></div></a>
-<a href="chore-chart.html" class="card"><h3>✅ Chore Chart</h3><p>Family task management</p><div class="meta"><span class="badge b-paid">$2.99</span></div></a>
-</div>
-</div>
+    <section class="cta" id="contact">
+      <div class="wrap">
+        <div>
+          <h2>Bring us one painful workflow. We will map the business case.</h2>
+          <p>Send the systems involved, the manual steps, the reporting pain, and the business owner. Agii will respond with a focused assessment path.</p>
+        </div>
+        <div class="cta-row">
+          <a class="button" href="mailto:accounts@agii.ca?subject=Agii%20Assessment%20Request">accounts@agii.ca</a>
+          <a class="button secondary" href="AGII-Company-Profile.html">Download profile page</a>
+        </div>
+      </div>
+    </section>
+  </main>
 
-<!-- WEBSITES -->
-<div class="section" id="websites">
-<h2>🌐 Websites</h2>
-<div class="grid">
-<a href="unified/index.html" class="card"><h3>🇨🇦 StudynCanada</h3><p>Education consulting + UniPrep tools</p><div class="meta"><span class="badge b-free">Free</span></div></a>
-<a href="unified/portal/login.html" class="card"><h3>🎓 Student Portal</h3><p>17 universities, recommendation engine</p><div class="meta"><span class="badge b-tool">Portal</span></div></a>
-<a href="index.html" class="card"><h3>🏠 Dashboard Hub</h3><p>This portal — all projects index</p><div class="meta"><span class="badge b-tool">Portal</span></div></a>
-</div>
-</div>
-
-<!-- EDUCATION -->
-<div class="section" id="education">
-<h2>📚 Education Tools</h2>
-<div class="grid">
-<a href="unified/uniprep/index.html" class="card"><h3>📚 UniPrep Tools</h3><p>GPA tracker, college finder, checklist</p><div class="meta"><span class="badge b-free">Free</span></div></a>
-<a href="game-test-runner.html" class="card"><h3>🧪 Game Test Runner</h3><p>QA testing for games</p><div class="meta"><span class="badge b-tool">Tool</span></div></a>
-<a href="student-saas/pricing.html" class="card"><h3>💎 UniPrep Pricing</h3><p>Subscription tiers</p><div class="meta"><span class="badge b-tool">Sales</span></div></a>
-</div>
-</div>
-
-<!-- STRATEGY DOCS -->
-<div class="section" id="strategy">
-<h2>📊 Strategy Documents</h2>
-<div class="grid">
-<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/AGII-200K-PLAN.md" class="card"><h3>🚀 $200K Revenue Plan</h3><p>Path to $200K/month</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
-<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/COLD-EMAIL-QUICKSTART.md" class="card"><h3>📧 Cold Email Guide</h3><p>5-touch email sequence</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
-<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/LINKEDIN-LEAD-GENERATION.md" class="card"><h3>💼 LinkedIn System</h3><p>Complete lead gen strategy</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
-<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/ETSY-BOOST-PLAN.md" class="card"><h3>🛒 Etsy Boost Plan</h3><p>30-day sales strategy</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
-<a href="https://github.com/AgiiTrade/Jefferson/blob/main/active/JOB-DESCRIPTIONS.md" class="card"><h3>👥 Job Descriptions</h3><p>5 roles to hire</p><div class="meta"><span class="badge b-doc">Strategy</span></div></a>
-</div>
-</div>
-
-</div>
-
-<footer>
-<p>© 2026 PlanByInnovations • All projects on GitHub Pages</p>
-<p><a href="https://github.com/AgiiTrade/Jefferson" style="color:var(--gold)">GitHub Repository</a></p>
-</footer>
-
-<script>
-function filterCards(query){
-    query=query.toLowerCase();
-    document.querySelectorAll('.card').forEach(card=>{
-        const text=card.textContent.toLowerCase();
-        card.style.display=text.includes(query)?'block':'none';
-    });
-}
-</script>
-<script src="js/scroll-reveal.js"></script>
+  <footer class="footer">
+    <div class="wrap">
+      <span>(c) 2026 Agilitas Innovations Inc. Mississauga, Ontario, Canada.</span>
+      <span><a href="ai-modernizer/">AI Modernizer</a> | <a href="agii-landing.html">Landing</a> | <a href="AGII-Company-Profile.html">Company Profile</a></span>
+    </div>
+  </footer>
 </body>
 </html>
