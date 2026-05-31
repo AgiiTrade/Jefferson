@@ -1,0 +1,140 @@
+{
+  "generated": "2026-05-31",
+  "window_start": "2026-06-02",
+  "window_end": "2026-06-29",
+  "note": "Replace all ETSY_URL_* placeholders with real Etsy listing URLs before the runner executes. Posts fire at 09:00 UTC unless platform_time_utc is overridden per entry.",
+  "posts": [
+    {
+      "id": "w1-mon-dinosaur-ig",
+      "platform": "instagram",
+      "date_utc": "2026-06-02T09:00:00Z",
+      "book_slug": "dinosaur-adventures",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/dinosaur-adventures/listing-images/dinosaur-adventures-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 1 / Monday June 2",
+      "copy_text": "50 dinosaur coloring pages and zero screens. The best afternoon your dino kid has ever had 🦕 Instant download, $4.99. Link in bio. #dinosaurcoloring #screenfreeplay #printablecoloring #kidsactivity",
+      "destination_url": "ETSY_URL_DINOSAUR_ADVENTURES"
+    },
+    {
+      "id": "w1-wed-puppies-fb",
+      "platform": "facebook",
+      "date_utc": "2026-06-04T09:00:00Z",
+      "book_slug": "cute-puppies-kittens",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/cute-puppies-kittens/listing-images/cute-puppies-kittens-etsy-mockup.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 1 / Wednesday June 4",
+      "copy_text": "Rainy day rescue: 50 puppy and kitten coloring pages, instant download, $4.99. Animal-loving kids go wild for this one. Grab it here: ETSY_URL_CUTE_PUPPIES_KITTENS #puppycoloring #rainydaykids #screenfreeplay",
+      "destination_url": "ETSY_URL_CUTE_PUPPIES_KITTENS"
+    },
+    {
+      "id": "w1-fri-abc-x",
+      "platform": "twitter",
+      "date_utc": "2026-06-06T09:00:00Z",
+      "book_slug": "abc-animal-alphabet",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/abc-animal-alphabet/listing-images/abc-animal-alphabet-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 1 / Friday June 6",
+      "copy_text": "Morning basket gold: ABC animal coloring book, 50 pages, $4.99 instant download on Etsy. A is for Alligator, Z is for 'zero complaints about school today.' #homeschoolprintable #abclearning",
+      "destination_url": "ETSY_URL_ABC_ANIMAL_ALPHABET"
+    },
+    {
+      "id": "w1b-mon-bugs-ig",
+      "platform": "instagram",
+      "date_utc": "2026-06-09T09:00:00Z",
+      "book_slug": "bugs-butterflies",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/bugs-butterflies/listing-images/bugs-butterflies-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 1 / Monday June 9",
+      "copy_text": "Spring is the season of butterflies — and this 50-page printable coloring book is the perfect screen-free way to celebrate it 🦋 Instant download, $4.99. Link in bio. #butterflycoloring #springkids #screenfreeplay",
+      "destination_url": "ETSY_URL_BUGS_BUTTERFLIES"
+    },
+    {
+      "id": "w1b-wed-trucks-fb",
+      "platform": "facebook",
+      "date_utc": "2026-06-11T09:00:00Z",
+      "book_slug": "cool-trucks-cars",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/cool-trucks-cars/listing-images/cool-trucks-cars-etsy-mockup.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 1 / Wednesday June 11",
+      "copy_text": "Road trip season survival tip: print 50 truck and car coloring pages before you leave. Single-sided, car-tray ready. $4.99 instant download on Etsy. ETSY_URL_COOL_TRUCKS_CARS #roadtripkids #trucklovers",
+      "destination_url": "ETSY_URL_COOL_TRUCKS_CARS"
+    },
+    {
+      "id": "w1b-fri-farm-x",
+      "platform": "twitter",
+      "date_utc": "2026-06-13T09:00:00Z",
+      "book_slug": "farm-animals",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/farm-animals/listing-images/farm-animals-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 1 / Friday June 13",
+      "copy_text": "Farm unit homeschool hack: 50 barnyard coloring pages = kids engaged for the whole lesson. $4.99 instant download. Cows, pigs, horses, chickens. All of them. #homeschoolprintable #farmunit",
+      "destination_url": "ETSY_URL_FARM_ANIMALS"
+    },
+    {
+      "id": "w2-mon-unicorns-ig",
+      "platform": "instagram",
+      "date_utc": "2026-06-16T09:00:00Z",
+      "book_slug": "magical-unicorns",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/magical-unicorns/listing-images/magical-unicorns-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 2 / Monday June 16",
+      "copy_text": "For the unicorn obsession that never stops: 50 magical coloring pages ready the moment you download ✨🦄 $4.99 instant download. Link in bio. #unicorncoloring #unicornkids #screenfreeplay #printablecoloring",
+      "destination_url": "ETSY_URL_MAGICAL_UNICORNS"
+    },
+    {
+      "id": "w2-wed-princess-fb",
+      "platform": "facebook",
+      "date_utc": "2026-06-18T09:00:00Z",
+      "book_slug": "princess-castle",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/princess-castle/listing-images/princess-castle-etsy-mockup.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 2 / Wednesday June 18",
+      "copy_text": "Princess birthday party table activity: handled. Download once, print for every guest. 50 pages, $4.99 total. ETSY_URL_PRINCESS_CASTLE #princessparty #kidspartyideas #birthdaypartyactivity",
+      "destination_url": "ETSY_URL_PRINCESS_CASTLE"
+    },
+    {
+      "id": "w2-fri-space-x",
+      "platform": "twitter",
+      "date_utc": "2026-06-20T09:00:00Z",
+      "book_slug": "space-adventures",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/space-adventures/listing-images/space-adventures-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 2 / Friday June 20",
+      "copy_text": "Space unit homeschool morning: 50 planet and rocket coloring pages = kids who actually want to learn about Jupiter. $4.99 instant download. #homeschoolscience #spaceunit #cozyhomeschool",
+      "destination_url": "ETSY_URL_SPACE_ADVENTURES"
+    },
+    {
+      "id": "w2b-mon-sea-ig",
+      "platform": "instagram",
+      "date_utc": "2026-06-23T09:00:00Z",
+      "book_slug": "under-the-sea",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/under-the-sea/listing-images/under-the-sea-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 2 / Monday June 23",
+      "copy_text": "50 ocean animal coloring pages — dolphins, octopus, sea turtles, mermaids. Beach trip prep starts HERE 🌊 $4.99 instant download. Link in bio. #oceancoloring #beachkids #screenfreeplay",
+      "destination_url": "ETSY_URL_UNDER_THE_SEA"
+    },
+    {
+      "id": "w2b-wed-dinosaur-fb",
+      "platform": "facebook",
+      "date_utc": "2026-06-25T09:00:00Z",
+      "book_slug": "dinosaur-adventures",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/dinosaur-adventures/listing-images/dinosaur-adventures-etsy-mockup.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 2 / Wednesday June 25",
+      "copy_text": "Homeschool dinosaur unit just got a lot more fun. 50 printable dino pages as a creative supplement — kids color while you teach paleontology. $4.99 instant download. ETSY_URL_DINOSAUR_ADVENTURES #homeschoolprintable #dinosaurunit",
+      "destination_url": "ETSY_URL_DINOSAUR_ADVENTURES"
+    },
+    {
+      "id": "w2b-fri-puppies-x",
+      "platform": "twitter",
+      "date_utc": "2026-06-27T09:00:00Z",
+      "book_slug": "cute-puppies-kittens",
+      "asset_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/individual-products/cute-puppies-kittens/listing-images/cute-puppies-kittens-etsy-cover.jpg",
+      "copy_path": "/Users/assistant/.openclaw/workspace/active/deploy/coloring-books-premium/etsy-pivot-2026-05-28/marketing/social/rotation-4week.md",
+      "copy_section": "Week 2 / Friday June 27",
+      "copy_text": "Best last-minute birthday gift: 50 puppy & kitten coloring pages, instant download, $4.99. Buy from your phone. Done in 30 seconds. Animal-loving kid's dream. #kidsbirthday #lastminutegift #giftforkids",
+      "destination_url": "ETSY_URL_CUTE_PUPPIES_KITTENS"
+    }
+  ]
+}
