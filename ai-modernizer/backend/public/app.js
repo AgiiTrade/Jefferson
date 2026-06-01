@@ -220,8 +220,369 @@ dcl-proc InvUpdMain;
      where store_no in (select distinct store_no from INVTXN);
 
   return;
-end-proc;`
+end-proc;`,
+  csharp: `using System;
+using System.Collections.Generic;
+
+namespace Agii.OrderModule
+{
+    public class OrderProcessor
+    {
+        private const double TAX_RATE = 0.08;
+
+        public double CalculateTotal(List<Dictionary<string, object>> items)
+        {
+            double total = 0;
+            foreach (var item in items)
+            {
+                double price = Convert.ToDouble(item["price"]);
+                int qty = Convert.ToInt32(item["quantity"]);
+                total += price * qty;
+            }
+            return total;
+        }
+
+        public Dictionary<string, object> ProcessOrder(
+            Dictionary<string, object> order,
+            string customerId, double discount, bool expedited)
+        {
+            double subtotal = CalculateTotal(
+                (List<Dictionary<string, object>>)order["items"]);
+            double taxed = subtotal + (subtotal * TAX_RATE);
+            double finalTotal = taxed - discount;
+            if (expedited) finalTotal += 15.00;
+
+            return new Dictionary<string, object>
+            {
+                ["customerId"] = customerId,
+                ["total"] = finalTotal,
+                ["status"] = "processed"
+            };
+        }
+    }
+}`,
+  vb: `Imports System
+
+Public Module PayrollProcessor
+
+    Public Function CalculateGrossPay(hours As Double, hourlyRate As Double) As Double
+        Dim gross As Double
+        If hours > 40 Then
+            gross = (40 * hourlyRate) + ((hours - 40) * hourlyRate * 1.5)
+        Else
+            gross = hours * hourlyRate
+        End If
+        Return gross
+    End Function
+
+    Public Sub ProcessEmployee(empId As String, hours As Double, rate As Double)
+        Dim gross As Double = CalculateGrossPay(hours, rate)
+        Dim tax As Double = gross * 0.22
+        Dim net As Double = gross - tax
+        Console.WriteLine("Emp " & empId & " net: " & net.ToString("0.00"))
+    End Sub
+
+End Module`,
+  plsql: `CREATE OR REPLACE PACKAGE BODY claims_pkg AS
+
+    PROCEDURE submit_claim (
+        p_claim_id   IN  NUMBER,
+        p_amount     IN  NUMBER,
+        p_status     OUT VARCHAR2
+    ) IS
+        v_member_id      NUMBER;
+        v_policy_status  VARCHAR2(20);
+    BEGIN
+        SELECT m.member_id, p.policy_status
+          INTO v_member_id, v_policy_status
+          FROM members m
+          JOIN policies p ON m.member_id = p.member_id
+         WHERE m.claim_id = p_claim_id;
+
+        IF v_policy_status = 'ACTIVE' AND p_amount < 50000 THEN
+            INSERT INTO claim_ledger (claim_id, member_id, amount, submitted_at)
+            VALUES (p_claim_id, v_member_id, p_amount, SYSDATE);
+            p_status := 'SUBMITTED';
+        ELSE
+            p_status := 'REJECTED';
+        END IF;
+
+        COMMIT;
+    EXCEPTION
+        WHEN NO_DATA_FOUND THEN
+            p_status := 'NOT_FOUND';
+    END submit_claim;
+
+END claims_pkg;`,
+  natural: `DEFINE DATA
+LOCAL
+01 EMPLOYEE-VIEW VIEW OF EMPLOYEES
+  02 EMP-ID         (A10)
+  02 EMP-NAME       (A30)
+  02 EMP-SALARY     (P9.2)
+  02 EMP-DEPT       (A4)
+01 #TOTAL-GROSS     (P11.2)
+01 #TAX-RATE        (P3.2) INIT <0.22>
+01 #COUNT           (I4)
+END-DEFINE
+
+READ EMPLOYEE-VIEW BY EMP-DEPT = 'PAYR'
+  ADD 1 TO #COUNT
+  ADD EMP-SALARY TO #TOTAL-GROSS
+  WRITE EMP-ID EMP-NAME EMP-SALARY
+END-READ
+
+WRITE 'TOTAL EMPLOYEES :' #COUNT
+WRITE 'TOTAL GROSS PAY :' #TOTAL-GROSS
+WRITE 'EST. TAX        :' #TOTAL-GROSS * #TAX-RATE
+END`,
+  adabas: `DEFINE DATA LOCAL
+01 POLICY-VIEW VIEW OF POLICY-FILE
+  02 POLICY-NO     (A12)
+  02 MEMBER-NO     (A10)
+  02 START-DATE    (D)
+  02 PREMIUM       (P7.2)
+  02 STATUS        (A1)
+01 #COUNT          (I4)
+01 #TOTAL-PREM     (P11.2)
+END-DEFINE
+
+FIND POLICY-VIEW WITH STATUS = 'A'
+                 AND  START-DATE > 20250101
+  ADD 1 TO #COUNT
+  ADD PREMIUM TO #TOTAL-PREM
+  DISPLAY POLICY-NO MEMBER-NO PREMIUM
+END-FIND
+
+WRITE 'ACTIVE POLICIES :' #COUNT
+WRITE 'PREMIUM TOTAL   :' #TOTAL-PREM
+END`,
+  powerbuilder: `// w_customer_entry.cb_save.clicked event
+string  ls_name, ls_email
+decimal ld_credit_limit
+integer li_rc
+
+ls_name  = sle_name.Text
+ls_email = sle_email.Text
+ld_credit_limit = dec(sle_credit.Text)
+
+IF Trim(ls_name) = "" OR Trim(ls_email) = "" THEN
+    MessageBox("Validation", "Name and email are required.")
+    RETURN
+END IF
+
+IF ld_credit_limit > 50000 THEN
+    IF MessageBox("Confirm", &
+        "Credit over 50k requires manager approval. Continue?", &
+        Question!, YesNo!) = 2 THEN
+        RETURN
+    END IF
+END IF
+
+li_rc = of_save_customer(ls_name, ls_email, ld_credit_limit)
+IF li_rc < 0 THEN
+    MessageBox("Save Failed", SQLCA.SQLErrText)
+    ROLLBACK USING SQLCA;
+ELSE
+    COMMIT USING SQLCA;
+    MessageBox("Saved", "Customer record saved.")
+END IF`,
+  delphi: `unit OrderProcessor;
+
+interface
+
+uses
+  System.SysUtils, System.Generics.Collections;
+
+type
+  TOrderItem = record
+    Price: Double;
+    Quantity: Integer;
+  end;
+
+  TOrderService = class
+  private
+    FTaxRate: Double;
+  public
+    constructor Create;
+    function CalculateTotal(const Items: TList<TOrderItem>): Double;
+    function ProcessOrder(const Items: TList<TOrderItem>;
+                          Discount: Double): Double;
+  end;
+
+implementation
+
+constructor TOrderService.Create;
+begin
+  FTaxRate := 0.08;
+end;
+
+function TOrderService.CalculateTotal(
+  const Items: TList<TOrderItem>): Double;
+var
+  Item: TOrderItem;
+begin
+  Result := 0;
+  for Item in Items do
+    Result := Result + Item.Price * Item.Quantity;
+end;
+
+function TOrderService.ProcessOrder(
+  const Items: TList<TOrderItem>; Discount: Double): Double;
+var
+  Subtotal: Double;
+begin
+  Subtotal := CalculateTotal(Items);
+  Result := Subtotal + (Subtotal * FTaxRate) - Discount;
+end;
+
+end.`,
+  classicasp: `<%@ Language=VBScript %>
+<%
+Dim conn, rs, sql, total, custId
+custId = Request.QueryString("id")
+
+Set conn = Server.CreateObject("ADODB.Connection")
+conn.Open Application("DSN")
+
+' NOTE: legacy code — uses string concatenation (SQL injection risk)
+sql = "SELECT order_id, amount FROM orders " & _
+      "WHERE customer_id = '" & custId & "'"
+Set rs = conn.Execute(sql)
+
+total = 0
+Do While Not rs.EOF
+    total = total + CDbl(rs("amount"))
+    Response.Write "<li>Order #" & rs("order_id") & _
+                   " - $" & rs("amount") & "</li>"
+    rs.MoveNext
+Loop
+rs.Close
+
+Response.Write "<p>Total: $" & total & "</p>"
+
+If total > 5000 Then
+    Response.Write "<p>VIP customer.</p>"
+End If
+
+Set rs = Nothing
+conn.Close
+Set conn = Nothing
+%>`,
+  perl: `#!/usr/bin/perl
+use strict;
+use warnings;
+use DBI;
+
+my $dbh = DBI->connect(
+    "DBI:mysql:database=billing;host=db01", "app", "secret"
+) or die "DB connect failed: $DBI::errstr";
+
+my $cust_id = $ARGV[0] || die "Usage: $0 <customer_id>\\n";
+
+my $sth = $dbh->prepare(
+    "SELECT invoice_id, amount, due_date " .
+    "FROM invoices WHERE customer_id = ? AND paid = 0"
+);
+$sth->execute($cust_id);
+
+my $total_due = 0;
+while (my $row = $sth->fetchrow_hashref) {
+    $total_due += $row->{amount};
+    printf "Invoice %s : \\$%.2f (due %s)\\n",
+        $row->{invoice_id}, $row->{amount}, $row->{due_date};
+}
+
+if ($total_due > 10000) {
+    print "Account requires collections review.\\n";
+}
+
+$sth->finish;
+$dbh->disconnect;`,
+  jcl: `//PAYROLL  JOB (ACCT123),'MONTHLY PAYROLL',CLASS=A,MSGCLASS=X,
+//             NOTIFY=&SYSUID,REGION=4M
+//*------------------------------------------------------------------*
+//* MONTHLY PAYROLL CALCULATION + REPORT
+//*------------------------------------------------------------------*
+//STEP010  EXEC PGM=PAYCALC,PARM='MONTH=05'
+//STEPLIB  DD DSN=PROD.PAYROLL.LOADLIB,DISP=SHR
+//EMPIN    DD DSN=PROD.PAYROLL.EMPLOYEE,DISP=SHR
+//TAXIN    DD DSN=PROD.PAYROLL.TAXTABLE(0),DISP=SHR
+//PAYOUT   DD DSN=PROD.PAYROLL.PAYSLIPS(+1),
+//            DISP=(NEW,CATLG,DELETE),
+//            UNIT=SYSDA,SPACE=(CYL,(50,10),RLSE)
+//SYSOUT   DD SYSOUT=*
+//*
+//STEP020  EXEC PGM=SORT,COND=(0,LT,STEP010)
+//SORTIN   DD DSN=PROD.PAYROLL.PAYSLIPS(0),DISP=SHR
+//SORTOUT  DD DSN=PROD.PAYROLL.SORTED,DISP=(,CATLG)
+//SYSIN    DD *
+  SORT FIELDS=(1,10,CH,A)
+/*
+//*
+//STEP030  EXEC PGM=PAYRPT,COND=(0,LT)
+//RPTIN    DD DSN=PROD.PAYROLL.SORTED,DISP=SHR
+//RPTOUT   DD SYSOUT=*
+//SYSOUT   DD SYSOUT=*`,
+  copybook: `      *>------------------------------------------------------------*
+      *>  CUSTOMER MASTER RECORD LAYOUT                              *
+      *>  USED BY: PAYROLL, BILLING, CRM                             *
+      *>------------------------------------------------------------*
+       01  CUSTOMER-RECORD.
+           05  CUST-ID                  PIC X(10).
+           05  CUST-NAME-INFO.
+               10  CUST-FIRST-NAME      PIC X(20).
+               10  CUST-LAST-NAME       PIC X(25).
+           05  CUST-ADDRESS.
+               10  CUST-STREET          PIC X(30).
+               10  CUST-CITY            PIC X(20).
+               10  CUST-STATE           PIC X(02).
+               10  CUST-ZIP             PIC X(10).
+           05  CUST-CONTACT.
+               10  CUST-PHONE           PIC X(15).
+               10  CUST-EMAIL           PIC X(50).
+           05  CUST-FINANCIAL.
+               10  CUST-CREDIT-LIMIT    PIC S9(7)V99 COMP-3.
+               10  CUST-BALANCE-DUE     PIC S9(7)V99 COMP-3.
+               10  CUST-LAST-PAYMENT    PIC S9(7)V99 COMP-3.
+           05  CUST-STATUS              PIC X(01).
+               88  CUST-ACTIVE              VALUE 'A'.
+               88  CUST-INACTIVE            VALUE 'I'.
+               88  CUST-DELINQUENT          VALUE 'D'.
+           05  CUST-DATES.
+               10  CUST-DATE-OPENED     PIC 9(08).
+               10  CUST-DATE-LAST-ORDER PIC 9(08).`
 };
+
+const LANG_SAMPLE_KEY = {
+  auto: 'javascript',
+  javascript: 'javascript',
+  python: 'python',
+  cobol: 'cobol',
+  java: 'java',
+  csharp: 'csharp',
+  vb: 'vb',
+  sql: 'sql',
+  plsql: 'plsql',
+  rpg: 'rpg',
+  natural: 'natural',
+  adabas: 'adabas',
+  powerbuilder: 'powerbuilder',
+  siebel: 'siebel',
+  curam: 'curam',
+  delphi: 'delphi',
+  classicasp: 'classicasp',
+  perl: 'perl',
+  jcl: 'jcl',
+  copybook: 'copybook'
+};
+
+function isKnownSampleText(text) {
+  if (!text) return true;
+  const trimmed = text.trim();
+  if (!trimmed) return true;
+  return Object.values(SAMPLE_SNIPPETS).some(s => s.trim() === trimmed);
+}
 
 let lastAnalysis = null;
 let progressTimer = null;
@@ -982,13 +1343,13 @@ async function loadActivityTicker() {
     const data = await res.json();
     const rows = data.analyses || [];
     if (!rows.length) {
-      container.innerHTML = '<p style="color:#555;text-align:center;padding:16px">No analyses yet. Be the first, try the demo below.</p>';
+      container.innerHTML = '<p style="color:#8b95a7;text-align:center;padding:16px">No recent live analyses in the last 14 days. Run the demo below to create a fresh result.</p>';
       return;
     }
     container.innerHTML = rows.map(r => {
       const scoreColor = (r.modernization_score || 50) >= 70 ? 'var(--success)' : (r.modernization_score || 50) >= 40 ? 'var(--warning)' : 'var(--highlight)';
       const ago = timeAgo(r.created_at);
-      const name = r.filename || `${r.language || 'code'} snippet`;
+      const name = r.filename || `${formatLanguageName(r.language || 'code')} demo analysis`;
       return `<div class="activity-row">
         <span class="activity-lang">${escapeHtml(r.language || '?')}</span>
         <span class="activity-name">${escapeHtml(name)}</span>
@@ -1029,7 +1390,7 @@ async function loadAnalytics() {
 
 function renderAnalyticsBars(container, rows) {
   if (!rows.length) {
-    container.innerHTML = '<p class="analytics-empty">No analytics yet.</p>';
+    container.innerHTML = '<p class="analytics-empty">No recent analytics yet.</p>';
     return;
   }
   const max = Math.max(...rows.map(r => Number(r.count) || 0), 1);
@@ -1064,7 +1425,7 @@ function renderTrendChart(container, rows) {
 
 function renderTopRun(container, topRun) {
   if (!topRun) {
-    container.innerHTML = '<p class="analytics-empty">No scored analyses yet.</p>';
+    container.innerHTML = '<p class="analytics-empty">No recent scored analyses yet. Run the demo below to create a fresh benchmark.</p>';
     return;
   }
   const score = Number(topRun.modernization_score) || 0;
@@ -1077,6 +1438,24 @@ function renderTopRun(container, topRun) {
       <p><strong>Captured:</strong> ${escapeHtml(timeAgo(topRun.created_at))}</p>
       <p>Use this section as a live signal of what teams are analyzing and how modernization quality is trending.</p>
     </div>`;
+}
+
+function formatLanguageName(language) {
+  const map = {
+    cobol: 'COBOL',
+    siebel: 'Siebel',
+    curam: 'IBM Cúram',
+    javascript: 'JavaScript',
+    python: 'Python',
+    java: 'Java',
+    csharp: 'C#',
+    vb: 'VB',
+    sql: 'SQL',
+    plsql: 'PL/SQL',
+    rpg: 'RPG'
+  };
+  const key = String(language || '').toLowerCase();
+  return map[key] || String(language || 'Code').replace(/\b\w/g, char => char.toUpperCase());
 }
 
 function formatDayLabel(day) {
@@ -1143,5 +1522,17 @@ document.addEventListener('DOMContentLoaded', () => {
   document.getElementById('demoCode')?.addEventListener('input', () => { if (!document.getElementById('demoCode').value.trim()) lastUploadedFilename = ''; });
   document.getElementById('demoCode')?.addEventListener('keydown', (e) => {
     if ((e.ctrlKey || e.metaKey) && e.key === 'Enter') runDemo();
+  });
+
+  document.getElementById('langSelect')?.addEventListener('change', (e) => {
+    const code = document.getElementById('demoCode');
+    if (!code) return;
+    if (!isKnownSampleText(code.value)) return;
+    const key = LANG_SAMPLE_KEY[e.target.value] || 'javascript';
+    const snippet = SAMPLE_SNIPPETS[key];
+    if (snippet) {
+      code.value = snippet;
+      lastUploadedFilename = `${key}-sample.txt`;
+    }
   });
 });
