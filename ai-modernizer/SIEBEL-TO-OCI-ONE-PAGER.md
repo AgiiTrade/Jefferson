@@ -1,87 +1,99 @@
 # Siebel → Oracle OCI Cloud Modernization
-### A one-page brief from Agii.ca AI Modernizer
+### One-page use case + Q&A for Agii AI Modernizer
 
 ---
 
-## The opportunity
+## Verified Oracle availability
 
-Siebel CRM is end-of-life on most upgrade roadmaps. Customers who already run on Oracle have two practical OCI destinations:
+Yes — **Oracle OCI is a real and supported destination for Siebel CRM modernization**. Oracle publishes a dedicated **“Siebel CRM on Oracle Cloud Infrastructure (OCI)”** page. Oracle states that teams can use **Siebel Cloud Manager** to migrate and operate Siebel CRM environments on OCI, and that Siebel Cloud Manager can deploy Siebel CRM environments on OCI for **demo, testing, development, and production**. Oracle also highlights cloud-native observability and logging for Siebel environments on OCI.
 
-| Path | Target on OCI | Best when… |
-|---|---|---|
-| **Lift & shift** | Siebel CRM on OCI Compute (Marketplace image) | You need to retire on-prem data centres fast, keep Siebel as-is for now, and pay only OCI consumption. |
-| **Replatform** | Oracle APEX + Autonomous Database on OCI, integrated via OIC | Custom Siebel extensions / public-sector case workflows that need to stay Oracle-native but ditch the Siebel runtime. |
-| **Replace** | Oracle Fusion CX (Sales / Service Cloud) on OCI | Standard CRM use cases — sales, service, marketing — where you can adopt SaaS and retire customization. |
-
-Most real engagements end up as a **mix**: lift-and-shift the runtime to OCI on day 1, then incrementally retire modules into Fusion CX or APEX over 12–24 months.
+Source checked: Oracle Docs — `https://docs.oracle.com/cd/G15000_01/SiebelInfoPortal/oci.html`
 
 ---
 
-## Why OCI specifically (not AWS/Azure)
+## The business opportunity
 
-1. **Native Oracle DB + Autonomous DB** on OCI = no data-egress tax, zero re-licensing of Oracle DB, BYOL credits apply.
-2. **"Siebel on OCI" Marketplace image** is a supported, Oracle-blessed lift-and-shift target — no platform-port risk.
-3. **OIC (Oracle Integration Cloud)** has out-of-the-box Siebel adapters — fastest integration glue for hybrid cutover.
-4. **Public-sector compliance**: OCI Government Regions (Canada included) cover federal/provincial workloads that AWS GovCloud doesn't.
-5. **Cost**: Oracle Universal Credits + Support Rewards typically beat AWS/Azure for Oracle-heavy estates by 25–40%.
+Many enterprises still run critical CRM, case-management, claims, customer-service, and public-sector workflows on Siebel. They may not be ready for a full rip-and-replace, but they do need lower infrastructure risk, better automation, stronger observability, and a path toward modern Oracle cloud services.
 
----
+Agii AI Modernizer should position this as a practical **Siebel → Oracle OCI Cloud upgrade path**:
 
-## What Agii AI Modernizer does for this path
-
-Same 4-phase pipeline we use for AS/400 → AWS, applied to Siebel → OCI:
-
-1. **Discover** — parse SIF, eScript, configuration trees, integration objects, workflows → structured AST.
-2. **Map** — AI-assisted target mapping: workflow → OIC integration, eScript → APEX/PLSQL or Fusion CX customization, repository objects → Autonomous DB schema.
-3. **Transform** — generate OCI-ready artifacts: APEX apps, OIC flows, Autonomous DB DDL, Terraform for the OCI tenancy, Fusion CX configuration packs.
-4. **Verify** — side-by-side regression suite + evidence pack for Oracle license / audit / steering committee.
-
-Pilot deliverable in 30 days: working OCI tenancy, 1 representative Siebel module migrated end-to-end, ROI + cutover plan.
+1. **Move** existing Siebel environments onto OCI using Oracle-supported cloud patterns.
+2. **Modernize** integrations with Oracle Integration Cloud (OIC), APIs, logging, and security controls.
+3. **Replatform** selected custom workflows into Oracle APEX, Autonomous Database, Fusion CX, or Oracle public-sector case-management patterns.
+4. **Retire** legacy Siebel modules gradually after parity testing and business sign-off.
 
 ---
 
-## Q&A — what stakeholders usually ask
+## Use cases to lead with
 
-**Q. Is Oracle OCI actually a real, current product?**
-Yes. OCI = Oracle Cloud Infrastructure, Oracle's IaaS/PaaS competitor to AWS/Azure/GCP. Toronto and Montreal regions are GA; Canadian Government region also available.
+### 1. Insurance CRM / claims modernization
+- **Current state:** Siebel CRM handles customer 360, claims intake, policy servicing, and service requests.
+- **OCI target:** Siebel on OCI as a bridge, OIC for integrations, Autonomous Database for analytics, and Fusion Service / APEX for selected workflows.
+- **Buyer value:** Lower infrastructure risk, faster claims workflow modernization, and a measurable path away from unsupported customizations.
 
-**Q. Will Oracle support Siebel on OCI?**
-Yes — Oracle publishes Siebel reference architectures on OCI and ships supported Marketplace images. Premier Support continues; Sustaining Support runs through 2034 per current Oracle policy.
+### 2. Public-sector case management
+- **Current state:** Siebel Public Sector, Oracle Forms, PL/SQL, BPEL/BPM, and manual approval workflows.
+- **OCI target:** Siebel Cloud Manager on OCI, OIC adapters, Oracle case-management/Fusion/PCO-style workflows, audit logs, and accessibility/compliance evidence.
+- **Buyer value:** Modern case intake and routing while preserving Oracle compliance posture and minimizing disruption.
 
-**Q. Do we have to re-license Oracle Database?**
-No. BYOL applies, and Universal Credits / Support Rewards typically reduce net cloud spend on Oracle-heavy estates.
+### 3. Telecom / utilities service operations
+- **Current state:** Siebel CRM/order/service modules connected to billing, field service, portals, and data warehouses.
+- **OCI target:** Lift-and-shift runtime to OCI first, then modernize integrations and high-change modules in waves.
+- **Buyer value:** Avoid “big bang” migration risk while reducing data-center dependency and brittle point-to-point integrations.
 
-**Q. How is this different from your existing "Siebel → Salesforce" track?**
-Salesforce is a *replacement* track (rip-and-replace SaaS). OCI is the *Oracle-native modernization* track — same data, same compliance posture, modern runtime. Customers who can't or won't leave Oracle pick this one.
-
-**Q. What about Siebel → Oracle PCO Cloud (public-sector case management)?**
-PCO is a Fusion application running on OCI. So "Siebel → PCO" is a *specialization of* Siebel → OCI, focused on public-sector case workflows (e.g. ServiceOntario, MPBSD). We treat PCO as one of the target options inside the OCI track.
-
-**Q. How long does a real migration take?**
-30-day pilot. 6–9 months for a mid-size Siebel estate (≤2,000 business components) to first production cutover. 12–24 months for the full retirement.
-
-**Q. What's the typical ROI story?**
-- Eliminate on-prem Siebel infrastructure: $400K–$1.2M/yr depending on footprint
-- Cut Siebel customization maintenance: 40–60% reduction in BAU dev hours
-- Avoid forced Salesforce re-licensing for departments that don't need it
-- OCI Universal Credits offset 25–40% of net new cloud cost vs AWS/Azure
-
-**Q. Who on the customer side needs to be at the table?**
-CIO/CTO sponsor, Siebel platform lead, Oracle license/procurement, security/compliance, and one business owner per Siebel module in scope.
+### 4. Financial services relationship management
+- **Current state:** Siebel custom extensions support wealth, banking, onboarding, or complaint workflows.
+- **OCI target:** Autonomous Database, APEX/custom services, OIC integration layer, and controlled migration roadmap.
+- **Buyer value:** Keep Oracle-native controls and auditability while modernizing high-cost custom logic.
 
 ---
 
-## Use cases we'll lead with
+## What Agii AI Modernizer adds
 
-1. **Insurance — Atlantic Insurance pattern** — Siebel claims + customer 360 → Fusion Service Cloud on OCI, Autonomous DB for analytics, OIC for legacy adapters.
-2. **Public sector — ServiceOntario / MPBSD pattern** — Siebel Public Sector → Oracle PCO (case management) on OCI, with Canadian sovereign region.
-3. **Telco / Utilities** — Siebel CRM + order management → Fusion CX + Oracle OIC, lift-and-shift Siebel runtime to OCI as bridge during the 18-month transition.
-4. **Financial services** — Siebel Wealth/Banking custom extensions → APEX on Autonomous DB, retire Siebel workflow engine, keep Oracle compliance posture.
+**Discovery:** Parse Siebel SIF, eScript, workflows, applets/views, business components, integration objects, PL/SQL, XML/BPEL, and runbooks.
+
+**Mapping:** Generate source-to-target mappings for screens, business rules, entities, integrations, reports, batch jobs, and controls.
+
+**Transformation:** Produce OCI-ready modernization assets: target architecture, OIC integration plan, APEX/Autonomous DB scaffolds, Fusion CX/PCO workflow mappings, test plans, and phased roadmap.
+
+**Validation:** Run parity checks between old Siebel behavior and new target workflows, producing executive evidence packs for steering committees, audit, security, and procurement.
 
 ---
 
-## Next step
+## Stakeholder Q&A
 
-30-day paid pilot: 1 Siebel module, migrated end-to-end to OCI, with evidence pack and ROI model. Fixed scope, fixed price.
+**Q. Is Oracle OCI actually available for Siebel?**  
+Yes. Oracle documents Siebel CRM on OCI and Siebel Cloud Manager for deploying, migrating, and operating Siebel environments on OCI.
 
-*Contact: accounts@agii.ca · https://agii.ca/ai-modernizer*
+**Q. Does this mean we must replace Siebel immediately?**  
+No. The safest path is often staged: move Siebel to OCI first, then modernize modules into Fusion CX, Oracle APEX, Autonomous DB, or public-sector case workflows over time.
+
+**Q. Why not go directly to Salesforce?**  
+Salesforce is a valid replacement path, but OCI is better when the customer wants to stay Oracle-native, preserve Oracle licensing/compliance posture, reuse OIC/Oracle DB skills, or avoid a full CRM SaaS rewrite.
+
+**Q. What is the first paid pilot?**  
+A 30-day pilot: assess one Siebel module, map integrations and data, produce OCI target architecture, generate one target workflow/scaffold, and deliver ROI + cutover evidence.
+
+**Q. Who needs to be involved?**  
+CIO/CTO sponsor, Siebel platform owner, Oracle/cloud architect, security/compliance, integration lead, and one business owner for the selected module.
+
+**Q. What makes this fundable?**  
+It converts an abstract modernization problem into concrete artifacts: inventory, risk score, migration roadmap, target architecture, test plan, and business case.
+
+---
+
+## Recommended offer
+
+**Siebel → Oracle OCI Cloud Modernization Assessment**  
+Fixed-scope 30-day engagement covering one critical Siebel module.
+
+**Deliverables:**
+- Siebel system inventory and dependency map
+- OCI readiness assessment
+- Siebel Cloud Manager / OCI migration path
+- OIC integration modernization plan
+- Target workflow prototype or scaffold
+- Risk register and compliance evidence outline
+- 12-month phased roadmap and ROI model
+
+**CTA:** Book a 30-minute Siebel-to-OCI assessment with Agii.ca.
