@@ -33,7 +33,7 @@ Agii AI Modernizer should position this as a practical **Siebel → Oracle OCI C
 
 ### 2. Public-sector case management
 - **Current state:** Siebel Public Sector, Oracle Forms, PL/SQL, BPEL/BPM, and manual approval workflows.
-- **OCI target:** Siebel Cloud Manager on OCI, OIC adapters, Oracle case-management/Fusion/PCO-style workflows, audit logs, and accessibility/compliance evidence.
+- **OCI target:** Siebel Cloud Manager on OCI, OIC adapters, Oracle case-management / Fusion workflows on OCI, audit logs, and accessibility/compliance evidence.
 - **Buyer value:** Modern case intake and routing while preserving Oracle compliance posture and minimizing disruption.
 
 ### 3. Telecom / utilities service operations
@@ -54,7 +54,7 @@ Agii AI Modernizer should position this as a practical **Siebel → Oracle OCI C
 
 **Mapping:** Generate source-to-target mappings for screens, business rules, entities, integrations, reports, batch jobs, and controls.
 
-**Transformation:** Produce OCI-ready modernization assets: target architecture, OIC integration plan, APEX/Autonomous DB scaffolds, Fusion CX/PCO workflow mappings, test plans, and phased roadmap.
+**Transformation:** Produce OCI-ready modernization assets: target architecture, OIC integration plan, APEX/Autonomous DB scaffolds, Fusion CX workflow mappings on OCI, test plans, and phased roadmap.
 
 **Validation:** Run parity checks between old Siebel behavior and new target workflows, producing executive evidence packs for steering committees, audit, security, and procurement.
 
