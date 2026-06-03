@@ -1870,9 +1870,58 @@ function fleeBattle(){
 }
 
 
+// ============ ACHIEVEMENTS SYSTEM ============
+const ACHIEVEMENTS = [
+  {id:'first_win',      icon:'⚔️', name:'First Victory',     desc:'Win your first battle',           check:s=>(s.wins||0)>=1},
+  {id:'win_10',         icon:'🛡️', name:'Battle Hardened',   desc:'Win 10 battles',                  check:s=>(s.wins||0)>=10},
+  {id:'win_50',         icon:'🏆', name:'Champion',          desc:'Win 50 battles',                  check:s=>(s.wins||0)>=50},
+  {id:'win_100',        icon:'👑', name:'Legendary Hero',    desc:'Win 100 battles',                 check:s=>(s.wins||0)>=100},
+  {id:'q_50',           icon:'📘', name:'Curious Mind',      desc:'Answer 50 questions',             check:s=>(s.totalQuestions||0)>=50},
+  {id:'q_250',          icon:'📚', name:'Bookworm',          desc:'Answer 250 questions',            check:s=>(s.totalQuestions||0)>=250},
+  {id:'q_1000',         icon:'🧠', name:'Wizard Scholar',    desc:'Answer 1000 questions',           check:s=>(s.totalQuestions||0)>=1000},
+  {id:'streak_3',       icon:'🔥', name:'On Fire',           desc:'Reach a 3-answer streak',         check:s=>(s.maxStreak||0)>=3},
+  {id:'streak_7',       icon:'💥', name:'Combo King',        desc:'Reach a 7-answer streak',         check:s=>(s.maxStreak||0)>=7},
+  {id:'streak_15',      icon:'⚡', name:'Unstoppable',       desc:'Reach a 15-answer streak',        check:s=>(s.maxStreak||0)>=15},
+  {id:'gold_100',       icon:'🪙', name:'Coin Collector',    desc:'Earn 100 total gold',             check:s=>(s.totalGold||s.gold||0)>=100},
+  {id:'gold_500',       icon:'💰', name:'Treasure Hunter',   desc:'Earn 500 total gold',             check:s=>(s.totalGold||s.gold||0)>=500},
+  {id:'gold_2000',      icon:'💎', name:'Wealthy Wizard',    desc:'Earn 2000 total gold',            check:s=>(s.totalGold||s.gold||0)>=2000},
+  {id:'lv_5',           icon:'⭐', name:'Apprentice',        desc:'Reach Level 5',                   check:s=>(s.lv||1)>=5},
+  {id:'lv_10',          icon:'🌟', name:'Mage',              desc:'Reach Level 10',                  check:s=>(s.lv||1)>=10},
+  {id:'lv_25',          icon:'✨', name:'Archmage',          desc:'Reach Level 25',                  check:s=>(s.lv||1)>=25},
+  {id:'subj_2',         icon:'🎓', name:'Well Rounded',      desc:'Play 2 different subjects',       check:s=>(s.subjectsPlayed||[]).length>=2},
+  {id:'subj_4',         icon:'🧪', name:'Renaissance Wizard',desc:'Play all 4 subjects',             check:s=>(s.subjectsPlayed||[]).length>=4},
+  {id:'daily_3',        icon:'📅', name:'Habit Forming',     desc:'3-day login streak',              check:s=>(s.streak||0)>=3},
+  {id:'daily_7',        icon:'🗓️', name:'Weekly Wizard',     desc:'7-day login streak',              check:s=>(s.streak||0)>=7},
+  {id:'daily_30',       icon:'🌙', name:'Moon Phase',        desc:'30-day login streak',             check:s=>(s.streak||0)>=30},
+  {id:'pet',            icon:'🐾', name:'Pet Friend',        desc:'Own a pet',                       check:s=>!!s.pet || (s.pets||[]).length>=1},
+];
+
+function checkAchievements(){
+  if(!S.achievements) S.achievements = [];
+  const newly = [];
+  for(const a of ACHIEVEMENTS){
+    if(!S.achievements.includes(a.id) && a.check(S)){
+      S.achievements.push(a.id);
+      newly.push(a);
+    }
+  }
+  if(newly.length) doSave();
+  return newly;
+}
+
+function showAchievementPopup(a){
+  const el = document.createElement('div');
+  el.style.cssText = 'position:fixed;top:14%;left:50%;transform:translateX(-50%);z-index:260;background:linear-gradient(135deg,rgba(245,158,11,.95),rgba(124,58,237,.95));color:#fff;padding:14px 22px;border-radius:18px;border:2px solid rgba(255,255,255,.4);box-shadow:0 18px 60px rgba(0,0,0,.55),0 0 50px rgba(251,191,36,.45);text-align:center;font-weight:700;max-width:300px;animation:levelUp .9s cubic-bezier(.16,1,.3,1) forwards;';
+  el.innerHTML = '<div style="font-size:1.8em;">'+a.icon+'</div><div style="font-size:.7em;letter-spacing:.18em;text-transform:uppercase;opacity:.85;margin-top:4px;">Achievement Unlocked</div><div style="font-size:1.1em;margin-top:4px;">'+a.name+'</div><div style="font-size:.8em;opacity:.9;margin-top:2px;font-weight:500;">'+a.desc+'</div>';
+  document.body.appendChild(el);
+  try{ if(navigator.vibrate) navigator.vibrate([30,20,60]); }catch(e){}
+  setTimeout(()=>{ el.style.transition='opacity .4s'; el.style.opacity='0'; setTimeout(()=>el.remove(), 450); }, 2600);
+}
 
 
 function showAchievements(){
+  // Re-check in case stats qualify from prior sessions
+  checkAchievements();
   // Update stats
   document.getElementById('s-streak').textContent = S.streak || 0;
   document.getElementById('s-wins').textContent = S.wins || 0;
