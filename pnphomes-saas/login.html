@@ -24,6 +24,9 @@
       <h2 class="auth-title">Welcome back</h2>
       <p class="auth-subtitle">Sign in to your portal account</p>
 
+      <div id="inapp-warning" class="alert alert-error">
+        Google sign-in is blocked in this app browser. Use email/password below, or open this page in Safari/Chrome.
+      </div>
       <div id="login-error" class="alert alert-error"></div>
 
       <form id="login-form" novalidate>
@@ -49,10 +52,11 @@
         <a href="signup.html">Create an account</a>
       </div>
       <div class="auth-footer auth-footer-small">
-        <a href="https://pnphomes.ca/privacy" target="_blank" rel="noopener">Privacy Policy</a>
+        <a href="privacy.html">Privacy Policy</a>
       </div>
     </div>
   </div>
-  <script src="js/login.js?v=20260513-3"></script>
+  <script src="js/auth-browser.js?v=20260611-1"></script>
+  <script src="js/login.js?v=20260611-1"></script>
 </body>
 </html>

@@ -23,11 +23,19 @@ document.addEventListener('DOMContentLoaded', async function () {
 
   function friendlyError(err) {
     console.error('PNP Homes signup error:', err);
-    return FIREBASE_ERRORS[err.code] || FIREBASE_ERRORS[err.message] || `${err.message || 'Sign-up failed.'} (${err.code || 'unknown-error'})`;
+    const browserMsg = window.PNPAuthBrowser && window.PNPAuthBrowser.googleErrorMessage(err);
+    return browserMsg || FIREBASE_ERRORS[err.code] || FIREBASE_ERRORS[err.message] || `${err.message || 'Sign-up failed.'} (${err.code || 'unknown-error'})`;
   }
 
   function showError(msg) { errEl.textContent = msg; errEl.classList.add('visible'); okEl.classList.remove('visible'); }
   function clearMessages() { errEl.classList.remove('visible'); okEl.classList.remove('visible'); }
+
+  if (window.PNPAuthBrowser) {
+    window.PNPAuthBrowser.applyAuthBrowserUi({
+      warningId: 'inapp-warning',
+      googleButtonId: 'google-signup-btn'
+    });
+  }
 
   async function saveUserProfile(user, name) {
     await db.collection('users').doc(user.uid).set({
@@ -90,19 +98,58 @@ document.addEventListener('DOMContentLoaded', async function () {
     }
   });
 
+  // Capture result when Google redirects back after authentication
+  auth.getRedirectResult().then(async function (result) {
+    if (result && result.user) {
+      try {
+        await saveUserProfile(result.user);
+        window.location.replace('dashboard.html');
+      } catch (err) {
+        showError(friendlyError(err));
+      }
+    }
+  }).catch(function (err) {
+    if (err.code && err.code !== 'auth/cancelled-popup-request') {
+      showError(friendlyError(err));
+    }
+  });
+
   googleBtn.addEventListener('click', async function () {
     clearMessages();
     googleBtn.disabled = true;
     googleBtn.textContent = 'Opening Google…';
 
     try {
+      if (window.PNPAuthBrowser && window.PNPAuthBrowser.isInAppBrowser) {
+        showError(window.PNPAuthBrowser.inAppMessage());
+        return;
+      }
+
+      if (window.PNPAuthBrowser && window.PNPAuthBrowser.shouldUseRedirectForGoogle()) {
+        googleBtn.textContent = 'Redirecting to Google…';
+        await auth.signInWithRedirect(googleProvider());
+        return;
+      }
+
       const result = await auth.signInWithPopup(googleProvider());
       await saveUserProfile(result.user);
       window.location.replace('dashboard.html');
     } catch (err) {
-      showError(friendlyError(err));
-      googleBtn.disabled = false;
-      googleBtn.textContent = 'Continue with Google';
+      // Popup was blocked — fall back to redirect only in real browsers, not in app webviews.
+      if ((err.code === 'auth/popup-blocked' || err.code === 'auth/cancelled-popup-request') && !(window.PNPAuthBrowser && window.PNPAuthBrowser.isInAppBrowser)) {
+        googleBtn.textContent = 'Redirecting to Google…';
+        try {
+          await auth.signInWithRedirect(googleProvider());
+        } catch (redirectErr) {
+          showError(friendlyError(redirectErr));
+          googleBtn.disabled = false;
+          googleBtn.textContent = 'Continue with Google';
+        }
+      } else {
+        showError(friendlyError(err));
+        googleBtn.disabled = false;
+        googleBtn.textContent = 'Continue with Google';
+      }
     }
   });
 
