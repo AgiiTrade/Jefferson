@@ -61,3 +61,10 @@ Risk notes:
 - Reconcile legacy data quality defects early.
 - Keep rollback plan until user acceptance is complete.`;
 }
+
+
+document.addEventListener('DOMContentLoaded', () => {
+  const path = location.pathname;
+  const protectedRoute = path.includes('/ai-modernizer-demo/dashboard/') || path.includes('/ai-modernizer-demo/demos/');
+  if (protectedRoute) requireAuth();
+});
