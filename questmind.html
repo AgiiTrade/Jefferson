@@ -365,6 +365,83 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 .mon-pack{display:flex;gap:4px;justify-content:center;align-items:center;min-height:82px;}
 .mini-mon{font-size:2.8em;filter:drop-shadow(0 8px 18px rgba(0,0,0,.65));animation:monsterIdle 1.7s ease-in-out infinite;}
 
+
+
+/* === QuestMind Premium Map Upgrade v3 === */
+#map{background:#071225!important;overflow:hidden;}
+#map::before{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:
+ radial-gradient(circle at 50% 6%,rgba(248,113,113,.20),transparent 18%),
+ radial-gradient(circle at 23% 73%,rgba(16,185,129,.19),transparent 24%),
+ radial-gradient(circle at 76% 63%,rgba(124,58,237,.18),transparent 22%),
+ radial-gradient(circle at 30% 43%,rgba(45,212,191,.16),transparent 20%),
+ linear-gradient(180deg,#071225 0%,#12284a 48%,#071b24 100%);}
+#map::after{content:"";position:absolute;inset:0;z-index:1;pointer-events:none;background:
+ radial-gradient(circle at center,transparent 42%,rgba(0,0,0,.52) 100%),
+ radial-gradient(circle,rgba(255,255,255,.34) 1px,transparent 1.6px),
+ radial-gradient(circle,rgba(125,211,252,.24) 1px,transparent 1.5px);background-size:100% 100%,88px 88px,137px 137px;opacity:.9;animation:mapDrift 18s linear infinite;}
+@keyframes mapDrift{0%{background-position:0 0,0 0,0 0}100%{background-position:0 0,88px -88px,-137px 137px}}
+.map-wrap{z-index:3;}
+.map-canvas{z-index:4;}
+.map-header{position:absolute;top:54px;left:50%;transform:translateX(-50%);z-index:12;text-align:center;pointer-events:none;}
+.map-title{font-size:1.55em;font-weight:900;letter-spacing:.04em;text-shadow:0 0 18px rgba(125,211,252,.55),0 3px 16px rgba(0,0,0,.7);}
+.map-sub{font-size:.78em;color:#bfe7ff;opacity:.9;margin-top:2px;text-shadow:0 2px 8px #000;}
+.map-terrain{position:absolute;border-radius:999px;filter:blur(18px);opacity:.75;z-index:2;pointer-events:none;}
+.terrain-meadow{width:260px;height:150px;left:50%;bottom:92px;transform:translateX(-50%);background:rgba(74,222,128,.24)}
+.terrain-forest{width:220px;height:150px;left:10%;bottom:170px;background:rgba(16,185,129,.18)}
+.terrain-caves{width:220px;height:145px;right:8%;bottom:210px;background:rgba(129,140,248,.18)}
+.terrain-swamp{width:210px;height:145px;left:7%;top:34%;background:rgba(45,212,191,.18)}
+.terrain-mountain{width:240px;height:160px;right:9%;top:18%;background:rgba(186,230,253,.16)}
+.terrain-dragon{width:300px;height:160px;left:50%;top:5%;transform:translateX(-50%);background:rgba(248,113,113,.20)}
+.map-path{position:absolute;inset:0;z-index:3;pointer-events:none;overflow:visible;}
+.map-path path{fill:none;stroke:rgba(147,197,253,.48);stroke-width:4;stroke-linecap:round;stroke-dasharray:10 12;filter:drop-shadow(0 0 9px rgba(96,165,250,.65));animation:pathFlow 1.6s linear infinite;}
+.map-path .path-glow{stroke:rgba(251,191,36,.18);stroke-width:12;stroke-dasharray:none;filter:blur(6px);}
+@keyframes pathFlow{to{stroke-dashoffset:-22}}
+.zone{min-width:94px;display:flex;flex-direction:column;align-items:center;gap:3px;animation:zoneFloat 4.5s ease-in-out infinite!important;}
+@keyframes zoneFloat{0%,100%{margin-top:0}50%{margin-top:-7px}}
+.zone-node{width:70px;height:70px;border-radius:50%;display:grid;place-items:center;background:radial-gradient(circle at 35% 25%,rgba(255,255,255,.22),rgba(255,255,255,.05) 55%,rgba(2,6,23,.72));border:1px solid rgba(255,255,255,.22);box-shadow:0 16px 35px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.18);position:relative;}
+.zone-node::before{content:"";position:absolute;inset:-8px;border-radius:50%;border:1px solid currentColor;opacity:.28;filter:blur(.3px);}
+.zone-i{font-size:2.65em!important;line-height:1;filter:drop-shadow(0 4px 12px rgba(0,0,0,.8));}
+.zone-n{font-size:.78em!important;font-weight:900!important;padding:4px 9px;border-radius:999px;background:rgba(3,10,22,.74);border:1px solid rgba(255,255,255,.11);box-shadow:0 8px 24px rgba(0,0,0,.28);}
+.zone-l{font-size:.64em!important;opacity:1!important;color:#dbeafe;padding:2px 8px;border-radius:999px;background:rgba(15,23,42,.68);border:1px solid rgba(148,163,184,.16);}
+.zone-unlocked .zone-l{color:#bbf7d0;border-color:rgba(34,197,94,.28);}
+.zone-current .zone-node{animation:zonePulse 1.8s ease-in-out infinite;border-color:rgba(190,242,100,.85);}
+@keyframes zonePulse{0%,100%{box-shadow:0 0 20px rgba(132,204,22,.45),0 18px 35px rgba(0,0,0,.44)}50%{box-shadow:0 0 42px rgba(190,242,100,.9),0 18px 35px rgba(0,0,0,.44)}}
+.zone-badge{position:absolute;top:-13px;right:0;background:linear-gradient(135deg,#bef264,#22c55e);color:#052e16;border-radius:999px;padding:3px 7px;font-size:.56em;font-weight:900;box-shadow:0 8px 20px rgba(34,197,94,.35);}
+.zone.locked{opacity:.72!important;filter:none!important;}
+.zone.locked .zone-node{filter:grayscale(.85) brightness(.72);opacity:.72;}
+.zone.locked .zone-l{color:#cbd5e1;}
+.zone-meadow{color:#a3e635}.zone-forest{color:#34d399}.zone-caves{color:#a78bfa}.zone-swamp{color:#2dd4bf}.zone-mountain{color:#bfdbfe}.zone-tower{color:#facc15}.zone-dragon{color:#fb7185}
+.zone:hover{transform:translate(-50%,-50%) scale(1.13)!important;z-index:30;}
+.map-hint{position:absolute;left:50%;bottom:90px;transform:translateX(-50%);z-index:40;padding:9px 15px;border-radius:999px;background:rgba(3,10,22,.76);border:1px solid rgba(125,211,252,.28);box-shadow:0 16px 35px rgba(0,0,0,.35),0 0 25px rgba(56,189,248,.13);backdrop-filter:blur(14px);font-size:.78em;color:#e0f2fe;white-space:nowrap;}
+.map-nav{left:50%!important;bottom:12px!important;width:auto!important;transform:translateX(-50%);padding:9px!important;border-radius:24px;background:rgba(3,10,22,.76)!important;border:1px solid rgba(255,255,255,.13);box-shadow:0 18px 55px rgba(0,0,0,.48),inset 0 1px 0 rgba(255,255,255,.1);backdrop-filter:blur(18px);gap:8px!important;}
+.map-nav .btn{min-width:86px;height:44px;margin:0!important;padding:0 12px!important;border-radius:16px!important;background:linear-gradient(180deg,rgba(255,255,255,.10),rgba(255,255,255,.035))!important;border:1px solid rgba(180,220,255,.22)!important;box-shadow:inset 0 1px 0 rgba(255,255,255,.12);}
+.map-nav .btn:hover{transform:translateY(-2px);border-color:rgba(125,211,252,.58)!important;}
+@media(max-width:520px){.map-header{top:66px}.map-title{font-size:1.2em}.zone-node{width:58px;height:58px}.zone-i{font-size:2.1em!important}.zone{min-width:78px}.map-nav{width:calc(100% - 18px)!important;bottom:8px!important}.map-nav .btn{flex:1;min-width:0;font-size:.70em!important;padding:0 4px!important}.map-hint{bottom:76px;font-size:.72em}.zone-n{font-size:.68em!important}.zone-l{font-size:.56em!important}}
+
+
+/* === QuestMind Premium Map spacing polish v3.1 === */
+.map-header{top:62px!important;}
+.zone-node{width:74px;height:74px;}
+.zone-n{font-size:.84em!important;padding:5px 10px;}
+.zone-l{font-size:.70em!important;padding:3px 9px;}
+.map-hint{bottom:74px!important;}
+.terrain-meadow{bottom:142px!important;}
+.terrain-dragon{top:10%!important;}
+.map-nav{bottom:calc(10px + env(safe-area-inset-bottom))!important;}
+@media(max-width:520px){.map-header{top:58px!important}.map-title{font-size:1.08em!important}.map-sub{font-size:.68em!important}.zone-node{width:56px;height:56px}.zone-i{font-size:2em!important}.zone-n{font-size:.66em!important;padding:3px 7px}.zone-l{font-size:.56em!important}.map-hint{bottom:70px!important;max-width:92%;white-space:normal;text-align:center;padding:7px 11px}.map-nav{bottom:calc(6px + env(safe-area-inset-bottom))!important}}
+
+
+/* === QuestMind map header anti-overlap v3.2 === */
+.map-header{top:56px!important;padding:5px 12px;border-radius:999px;background:rgba(3,10,22,.42);border:1px solid rgba(125,211,252,.16);backdrop-filter:blur(10px);}
+.map-title{font-size:1.05em!important;line-height:1.05;}
+.map-sub{display:none!important;}
+@media(max-width:520px){.map-header{top:55px!important}.map-title{font-size:.86em!important}}
+
+
+/* === QuestMind map bottom clearance v3.3 === */
+.map-hint{bottom:70px!important;font-size:.74em!important;padding:7px 13px!important;}
+@media(max-width:520px){.map-hint{bottom:64px!important;font-size:.66em!important}}
+
 </style>
 </head>
 <body>
@@ -599,7 +676,7 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
   <div class="map-wrap">
     <div class="map-canvas" id="map-canvas"></div>
     <div class="map-p" id="map-p"><svg width="40" height="48"><use href="#wizard"/></svg></div>
-    <div style="position:absolute;bottom:80px;left:50%;transform:translateX(-50%);font-size:.8em;opacity:.5;">Tap a zone to battle!</div>
+    <div class="map-hint">✨ Tap a glowing zone to battle — unlock the path to Dragon’s Lair!</div>
   </div>
   <div class="map-nav">
     <button class="btn btn-o btn-sm" onclick="showScreen('subjects')">📚 Change Mode</button>
@@ -809,9 +886,10 @@ function showXpGain(amt){
   setTimeout(()=>el.remove(), 1150);
 }
 
-function startRandomBattle() {
-  const zoneIndex = S.zone || 0;
-  spawnEnemy(zoneIndex);
+function startRandomBattle(zoneIndex) {
+  const zi = Number.isInteger(zoneIndex) ? zoneIndex : (S.zone || 0);
+  S.zone = zi;
+  spawnEnemy(zi);
 }
 
 function backToMap() {
@@ -1548,19 +1626,28 @@ const MONS = [
 function buildMap(){
   const c = document.getElementById('map-canvas');
   c.innerHTML = '';
-  const pos = [{x:50,y:85},{x:25,y:70},{x:65,y:55},{x:30,y:40},{x:70,y:30},{x:50,y:18},{x:50,y:5}];
-  
+  const pos = [{x:50,y:67},{x:22,y:62},{x:74,y:56},{x:27,y:47},{x:76,y:40},{x:50,y:34},{x:50,y:23}];
+  const zoneClasses = ['zone-meadow','zone-forest','zone-caves','zone-swamp','zone-mountain','zone-tower','zone-dragon'];
+  c.insertAdjacentHTML('beforeend', `
+    <div class="map-header"><div class="map-title">Quest Map</div><div class="map-sub">Choose your next challenge</div></div>
+    <div class="map-terrain terrain-meadow"></div><div class="map-terrain terrain-forest"></div><div class="map-terrain terrain-caves"></div><div class="map-terrain terrain-swamp"></div><div class="map-terrain terrain-mountain"></div><div class="map-terrain terrain-dragon"></div>
+    <svg class="map-path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
+      <path class="path-glow" d="M50 67 C35 66 22 66 22 62 C22 57 64 62 74 56 C84 53 25 53 27 47 C31 42 67 45 76 40 C82 36 54 39 50 34 C47 30 49 27 50 23"/>
+      <path d="M50 67 C35 66 22 66 22 62 C22 57 64 62 74 56 C84 53 25 53 27 47 C31 42 67 45 76 40 C82 36 54 39 50 34 C47 30 49 27 50 23"/>
+    </svg>`);
   ZONES.forEach((z,i)=>{
     const p = pos[i];
     const el = document.createElement('div');
     const unlocked = S.lv >= z.lv;
-    el.className = 'zone' + (unlocked ? ' zone-unlocked' : ' locked');
+    const current = i === Math.max(0, Math.min(ZONES.length-1, S.highestZone ? S.highestZone-1 : 0));
+    el.className = `zone ${zoneClasses[i]} ${unlocked ? 'zone-unlocked' : 'locked'} ${current && unlocked ? 'zone-current' : ''}`;
     el.style.cssText = `left:${p.x}%;top:${p.y}%;position:absolute;transform:translate(-50%,-50%);animation-delay:${i*0.15}s;`;
-    el.innerHTML = `<div class="zone-i">${z.ic}</div><div class="zone-n">${z.nm}</div><div class="zone-l">${unlocked?'⚔️ Fight!':'🔒 Lv.'+z.lv}</div>`;
-    if(unlocked) el.onclick = () => { el.classList.add('zone-tap'); setTimeout(()=>el.classList.remove('zone-tap'), 260); startRandomBattle(); };
+    el.innerHTML = `<div class="zone-node"><div class="zone-i">${z.ic}</div>${current && unlocked ? '<div class="zone-badge">START</div>' : ''}</div><div class="zone-n">${z.nm}</div><div class="zone-l">${unlocked?'⚔️ Fight':'🔒 Lv.'+z.lv}</div>`;
+    if(unlocked) el.onclick = () => { el.classList.add('zone-tap'); setTimeout(()=>el.classList.remove('zone-tap'), 260); startRandomBattle(i); };
     c.appendChild(el);
   });
-  
+  const player = document.getElementById('map-p');
+  if(player){ const zi=Math.max(0, Math.min(pos.length-1, S.zone||0)); player.style.left=pos[zi].x+'%'; player.style.top=pos[zi].y+'%'; player.style.display='none'; }
   document.getElementById('h-nm').textContent = S.displayName || S.name;
   document.getElementById('h-gd').textContent = '💰 ' + S.gold;
   document.getElementById('h-lv').textContent = 'Lv.' + S.lv;
