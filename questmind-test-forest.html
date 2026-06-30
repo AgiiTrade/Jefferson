@@ -474,6 +474,20 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 .zone-tower .zone-node{box-shadow:0 20px 46px rgba(0,0,0,.62),0 0 46px rgba(253,230,138,.95),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -12px 28px rgba(0,0,0,.38)!important;}
 .zone-dragon .zone-node{box-shadow:0 20px 46px rgba(0,0,0,.62),0 0 44px rgba(251,113,133,.95),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -12px 28px rgba(0,0,0,.38)!important;}
 
+
+
+/* === QuestMind adaptive music controls v1 === */
+.music-toggle{position:fixed;right:12px;top:68px;z-index:290;border:1px solid rgba(255,255,255,.22);background:rgba(2,6,23,.76);color:#fff;border-radius:999px;padding:8px 11px;font-family:'Fredoka',sans-serif;font-weight:800;font-size:.72em;box-shadow:0 12px 30px rgba(0,0,0,.42),0 0 18px rgba(125,211,252,.16);backdrop-filter:blur(14px);cursor:pointer;}
+.music-toggle.on{border-color:rgba(251,191,36,.55);box-shadow:0 12px 30px rgba(0,0,0,.42),0 0 26px rgba(251,191,36,.32);}
+.music-toast{position:fixed;left:50%;top:88px;transform:translateX(-50%);z-index:291;background:rgba(2,6,23,.86);border:1px solid rgba(251,191,36,.35);border-radius:999px;color:#fff;padding:8px 13px;font-size:.72em;font-weight:700;box-shadow:0 14px 35px rgba(0,0,0,.45);animation:fadeIn .25s ease;pointer-events:none;}
+@media(max-width:520px){.music-toggle{top:72px;right:8px;font-size:.66em;padding:7px 9px}.music-toast{top:106px;max-width:86%;text-align:center}}
+
+
+/* === QuestMind battle bottom safe spacing v1 === */
+#battle .spell-grid{margin-bottom:52px!important;}
+#battle .item-panel{margin-bottom:8px!important;}
+@media(max-height:680px){#battle .spell-grid{transform:scale(.94);transform-origin:top center;margin-bottom:58px!important;}}
+
 </style>
 </head>
 <body>
@@ -2471,6 +2485,91 @@ document.addEventListener('DOMContentLoaded', function() {
   window.winBattle=function(){const zone=S.zone||0; const bonusXp=50+zone*18+(B.boss?60:0); const bonusGold=20+Math.floor(Math.random()*30)+zone*12+(B.boss?80:0); S.xp+=bonusXp; S.gold+=bonusGold; S.totalGold=(S.totalGold||0)+bonusGold; S.statPts=(S.statPts||0)+1+(B.boss?2:0); oldWin(); document.getElementById('r-xp').textContent='+'+(bonusXp+50); document.getElementById('r-gold').textContent='+'+bonusGold; saveGame();};
   const oldBuy=window.buyItem;
   window.buyItem=function(type,cost){ if(type==='mana'){ if(S.gold<cost){alert('Not enough gold!');return;} S.gold-=cost; S.manaPotions=(S.manaPotions||0)+1; alert('💎 Bought Mana Potion!'); updateHUD(); saveGame(); return;} return oldBuy(type,cost); };
+})();
+
+
+// === QuestMind adaptive Unreal-style music engine v1 ===
+(function(){
+  if(window.QMUSIC) return;
+  const scale = {home:[261.63,329.63,392,523.25], map:[196,261.63,329.63,392,493.88], battle:[130.81,196,233.08,261.63,311.13], boss:[98,146.83,196,261.63,311.13]};
+  const state={ctx:null,master:null,enabled:localStorage.getItem('qm_music')!=='off',mode:'home',timer:null,step:0,started:false};
+  function ctx(){
+    if(!state.ctx){
+      state.ctx=new (window.AudioContext||window.webkitAudioContext)();
+      state.master=state.ctx.createGain(); state.master.gain.value=state.enabled?0.055:0; state.master.connect(state.ctx.destination);
+    }
+    if(state.ctx.state==='suspended') state.ctx.resume();
+    return state.ctx;
+  }
+  function tone(freq,dur,type='sine',vol=.12,delay=0){
+    const c=ctx(), now=c.currentTime+delay, osc=c.createOscillator(), g=c.createGain();
+    osc.type=type; osc.frequency.setValueAtTime(freq,now);
+    g.gain.setValueAtTime(0.0001,now); g.gain.exponentialRampToValueAtTime(vol,now+.035); g.gain.exponentialRampToValueAtTime(0.0001,now+dur);
+    osc.connect(g); g.connect(state.master); osc.start(now); osc.stop(now+dur+.05);
+  }
+  function noiseHit(vol=.06,dur=.12){
+    const c=ctx(), len=Math.floor(c.sampleRate*dur), buffer=c.createBuffer(1,len,c.sampleRate), data=buffer.getChannelData(0);
+    for(let i=0;i<len;i++) data[i]=(Math.random()*2-1)*(1-i/len);
+    const src=c.createBufferSource(), g=c.createGain(); src.buffer=buffer; g.gain.value=vol; src.connect(g); g.connect(state.master); src.start();
+  }
+  function tick(){
+    if(!state.enabled || !state.started) return;
+    const mode=state.mode, notes=scale[mode]||scale.home, s=state.step++;
+    const root=notes[s%notes.length], fifth=notes[(s+2)%notes.length];
+    if(mode==='home'){
+      tone(root,1.8,'sine',.045,0); tone(fifth*2,1.2,'triangle',.025,.04);
+    } else if(mode==='map'){
+      tone(root,2.1,'triangle',.05,0); if(s%2===0) tone(fifth*2,1.0,'sine',.035,.18);
+    } else if(mode==='battle'){
+      tone(root,0.28,'sawtooth',.055,0); tone(fifth,0.22,'square',.03,.22); if(s%4===0) noiseHit(.025,.08);
+    } else if(mode==='boss'){
+      tone(root,0.42,'sawtooth',.07,0); tone(root/2,0.75,'triangle',.06,0); tone(fifth*2,0.25,'square',.035,.18); if(s%3===0) noiseHit(.04,.10);
+    }
+  }
+  function setMode(mode){ state.mode=mode||'home'; }
+  function start(){
+    state.started=true; ctx(); clearInterval(state.timer); state.timer=setInterval(tick, state.mode==='boss'?420:state.mode==='battle'?520:900); tick(); updateBtn(); toast('🎵 Adaptive game music on');
+  }
+  function stop(){ if(state.master) state.master.gain.setTargetAtTime(0,state.ctx.currentTime,.08); state.enabled=false; localStorage.setItem('qm_music','off'); updateBtn(); }
+  function enable(){ state.enabled=true; localStorage.setItem('qm_music','on'); if(state.master) state.master.gain.setTargetAtTime(.055,state.ctx.currentTime,.08); start(); }
+  function toggle(){ state.enabled?stop():enable(); }
+  function updateBtn(){ const b=document.getElementById('music-toggle'); if(b){b.textContent=state.enabled?'🎵 Music':'🔇 Music'; b.classList.toggle('on',!!state.enabled);} }
+  function toast(msg){ const old=document.querySelector('.music-toast'); if(old) old.remove(); const el=document.createElement('div'); el.className='music-toast'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),1700); }
+  function ensureBtn(){
+    if(document.getElementById('music-toggle')) return;
+    const b=document.createElement('button'); b.id='music-toggle'; b.className='music-toggle'; b.onclick=(e)=>{e.stopPropagation();toggle();}; document.body.appendChild(b); updateBtn();
+  }
+  window.QMUSIC={start,stop,enable,toggle,setMode,toast,state};
+  document.addEventListener('DOMContentLoaded',ensureBtn);
+  setTimeout(ensureBtn,50);
+  // Browsers require a gesture before audio can start; first tap/click unlocks it.
+  document.addEventListener('pointerdown',()=>{ if(state.enabled && !state.started) start(); },{once:true,capture:true});
+  const originalShow=window.showScreen;
+  window.showScreen=function(id){
+    if(originalShow) originalShow(id);
+    if(id==='battle') setMode((typeof B!=='undefined'&&B.boss)?'boss':'battle');
+    else if(id==='map'||id==='subjects') setMode('map');
+    else setMode('home');
+    return undefined;
+  };
+  const wrapLater=()=>{
+    if(window.beginBattle && !window.beginBattle.__musicWrapped){
+      const old=window.beginBattle;
+      window.beginBattle=function(){ const r=old.apply(this,arguments); setMode((typeof B!=='undefined'&&B.boss)?'boss':'battle'); setTimeout(()=>setMode((typeof B!=='undefined'&&B.boss)?'boss':'battle'),80); return r; };
+      window.beginBattle.__musicWrapped=true;
+    }
+    if(window.winBattle && !window.winBattle.__musicWrapped){
+      const oldW=window.winBattle;
+      window.winBattle=function(){ tone(523.25,0.35,'triangle',.08); tone(659.25,0.5,'triangle',.06,.12); tone(783.99,0.7,'triangle',.05,.24); return oldW.apply(this,arguments); };
+      window.winBattle.__musicWrapped=true;
+    }
+    if(window.loseBattle && !window.loseBattle.__musicWrapped){
+      const oldL=window.loseBattle;
+      window.loseBattle=function(){ tone(196,0.45,'sawtooth',.06); tone(130.81,0.8,'triangle',.05,.16); return oldL.apply(this,arguments); };
+      window.loseBattle.__musicWrapped=true;
+    }
+  };
+  setTimeout(wrapLater,300); setTimeout(wrapLater,1200);
 })();
 
 </script>
