@@ -5,7 +5,7 @@
 <link rel="stylesheet" href="css/game-graphics.css">
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,user-scalable=no,maximum-scale=1.0">
-<title>QuestMind Area Test — Mountain</title>
+<title>QuestMind: Wizard Academy — PBI Creative Kids</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Fredoka:wght@400;500;600;700&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent;}
@@ -344,6 +344,26 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 .walk-obstacle{position:absolute;font-size:1.5em;z-index:2}
 .walk-npc{position:absolute;font-size:1.8em;z-index:8;cursor:pointer}
 .walk-npc:hover::after{content:'💬';position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.8em}
+
+
+/* === QuestMind Epic Upgrade: Unreal-inspired browser graphics === */
+.epic-bg{background:radial-gradient(circle at 20% 20%,rgba(124,58,237,.35),transparent 28%),radial-gradient(circle at 82% 28%,rgba(14,165,233,.25),transparent 32%),linear-gradient(145deg,#090a1f,#14163a 45%,#24113a);}
+#battle::before{content:"";position:absolute;inset:0;z-index:-1;background:radial-gradient(circle at 50% 38%,rgba(255,255,255,.08),transparent 20%),linear-gradient(120deg,rgba(124,58,237,.22),rgba(14,165,233,.18),rgba(245,158,11,.12));filter:saturate(1.35);animation:arenaPulse 5s ease-in-out infinite;}
+#battle::after{content:"";position:absolute;inset:0;z-index:-1;background-image:linear-gradient(rgba(255,255,255,.035) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.035) 1px,transparent 1px);background-size:42px 42px;mask-image:radial-gradient(circle at center,black,transparent 72%);}
+@keyframes arenaPulse{0%,100%{filter:hue-rotate(0deg) brightness(1)}50%{filter:hue-rotate(18deg) brightness(1.18)}}
+@keyframes bossPhaseBlast{0%{transform:scale(.4);opacity:.95}100%{transform:scale(3.2);opacity:0}}
+@keyframes cinematicHit{0%{transform:translateX(0) scale(1)}35%{transform:translateX(-12px) scale(1.12);filter:brightness(2.2) saturate(1.8)}100%{transform:translateX(0) scale(1)}}
+@keyframes spellProjectile{0%{transform:translate(-180px,30px) scale(.45);opacity:0}25%{opacity:1}100%{transform:translate(180px,-30px) scale(1.25);opacity:0}}
+.epic-card{background:linear-gradient(135deg,rgba(15,23,42,.92),rgba(49,46,129,.78));border:1px solid rgba(255,255,255,.18);box-shadow:0 25px 80px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.12);backdrop-filter:blur(18px);}
+.mon.epic-mon{filter:drop-shadow(0 16px 35px rgba(0,0,0,.85)) drop-shadow(0 0 20px rgba(99,102,241,.45));}
+.mon.epic-hit{animation:cinematicHit .42s ease!important;}
+.phase-ring{position:fixed;top:38%;left:50%;width:160px;height:160px;border:4px solid #f59e0b;border-radius:50%;z-index:230;pointer-events:none;animation:bossPhaseBlast .8s ease-out forwards;box-shadow:0 0 50px #f59e0b;}
+.typed-answer{width:100%;padding:12px 14px;border-radius:14px;border:2px solid rgba(255,255,255,.18);background:rgba(15,23,42,.82);color:#fff;font-size:1em;text-align:center;outline:none;}
+.item-panel{display:flex;gap:8px;justify-content:center;flex-wrap:wrap;margin:6px auto 0;}
+.item-chip{border:1px solid rgba(255,255,255,.18);background:rgba(15,23,42,.75);border-radius:999px;padding:8px 12px;color:#fff;font-size:.78em;cursor:pointer;box-shadow:0 8px 22px rgba(0,0,0,.25);}
+.item-chip:hover{transform:translateY(-1px);border-color:#fbbf24;}
+.mon-pack{display:flex;gap:4px;justify-content:center;align-items:center;min-height:82px;}
+.mini-mon{font-size:2.8em;filter:drop-shadow(0 8px 18px rgba(0,0,0,.65));animation:monsterIdle 1.7s ease-in-out infinite;}
 
 </style>
 </head>
@@ -870,7 +890,7 @@ function screenShake(){
 }
 
 // ============ GAME STATE ============
-const SK = 'qm_area_test_mountain';
+const SK = 'qm_save';
 const S = {
   name:'Wizard',wins:0,streak:0,achievements:[],totalQuestions:0,maxStreak:0,totalGold:50,subjectsPlayed:[],itemsBought:0,highestZone:0, av:'🧙‍♂️', lv:1, xp:0, xpNeed:100,
   hp:100, maxHp:100, mp:50, maxMp:50, atk:15, def:5,
@@ -2218,52 +2238,134 @@ document.addEventListener('DOMContentLoaded', function() {
   initGradeButtons();
 });
 
+
+// === QuestMind Epic Upgrade v2: feedback implementation layer ===
+(function(){
+  const oldSave = window.save || window.saveGame || window.doSave || function(){try{localStorage.setItem('qm_save',JSON.stringify(S));}catch(e){}};
+  window.save = window.saveGame = window.doSave = function(){try{localStorage.setItem('qm_save',JSON.stringify(S));}catch(e){console.warn('Save failed',e);}};
+  const zoneMonsterSets = [
+    [{nm:'Meadow Sprite',emo:'🧚',hp:65},{nm:'Moss Slime',emo:'🟢',hp:70},{nm:'Acorn Imp',emo:'🌰',hp:75}],
+    [{nm:'Forest Goblin',emo:'👺',hp:95},{nm:'Thorn Wolf',emo:'🐺',hp:105},{nm:'Venom Spider',emo:'🕷️',hp:90}],
+    [{nm:'Cave Bat',emo:'🦇',hp:120},{nm:'Stone Golem',emo:'🪨',hp:150},{nm:'Crystal Ghost',emo:'👻',hp:130}],
+    [{nm:'Swamp Gator',emo:'🐊',hp:165},{nm:'Bog Witch',emo:'🧙‍♀️',hp:150},{nm:'Mud Hydra',emo:'🐍',hp:180}],
+    [{nm:'Frost Yeti',emo:'🧊',hp:210},{nm:'Mountain Roc',emo:'🦅',hp:190},{nm:'Lava Drake',emo:'🔥',hp:220}],
+    [{nm:'Tower Sentinel',emo:'🤖',hp:250},{nm:'Arcane Knight',emo:'🛡️',hp:260},{nm:'Storm Mage',emo:'⚡',hp:235}],
+    [{nm:'Dragon Whelp',emo:'🐲',hp:290},{nm:'Lair Demon',emo:'👹',hp:310},{nm:'Ancient Dragon',emo:'🐉',hp:340}]
+  ];
+  const zoneBosses = [
+    {nm:'King Bloomroot',emo:'🌳',hp:190},{nm:'Fangthorn Alpha',emo:'🐺',hp:260},{nm:'Crystal Colossus',emo:'💎',hp:330},
+    {nm:'Swamp Leviathan',emo:'🐊',hp:420},{nm:'Inferno Yeti',emo:'🔥',hp:520},{nm:'Archmage Sentinel',emo:'🧙‍♂️',hp:650},{nm:'Elder Dragon',emo:'🐉',hp:820}
+  ];
+  function normalize(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9π√°.+\-\/ ]/g,'').replace(/\s+/g,' ')}
+  function answerText(q){return q && q.a ? q.a[q.c] : ''}
+  function questionKey(q){return normalize((q&&q.q)||'')}
+  function enrichTyped(q){
+    const clone = JSON.parse(JSON.stringify(q||{q:'2 + 2 = ?',a:['4'],c:0}));
+    clone.typed = Math.random() < 0.38;
+    clone.accept = [answerText(clone), normalize(answerText(clone))];
+    return clone;
+  }
+  window.getQuestion = function(){
+    const subject=S.subject||'math', grade=S.grade||3;
+    let pool=[];
+    if(grade<=2) pool=[...(Q[subject]?.easy||[])];
+    else if(grade<=5) pool=[...(Q[subject]?.easy||[]).slice(0,12),...(Q[subject]?.medium||[])];
+    else if(grade<=8) pool=[...(Q[subject]?.medium||[]),...(Q[subject]?.hard||[])];
+    else pool=[...(Q[subject]?.hard||[]),...(Q[subject]?.medium||[]).slice(0,12)];
+    pool=pool.filter(q=>!window.questionMatchesSubject || questionMatchesSubject(q,subject));
+    if(!pool.length) pool=[{q:'What is 2 + 2?',a:['4','3','5','6'],c:0}];
+    S.questionHistory=S.questionHistory||{};
+    const hist=S.questionHistory[subject]=S.questionHistory[subject]||[];
+    let fresh=pool.filter(q=>!hist.includes(questionKey(q)));
+    if(!fresh.length){hist.length=0; fresh=pool.slice();}
+    const q=fresh[Math.floor(Math.random()*fresh.length)];
+    hist.push(questionKey(q));
+    if(hist.length>Math.min(40,pool.length)) hist.splice(0,hist.length-Math.min(40,pool.length));
+    saveGame();
+    return enrichTyped(q);
+  };
+  function syncBars(){
+    const hp=Math.max(0,S.hp||0), mp=Math.max(0,S.mp||0);
+    ['b-player-hp','h-hp'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.width=Math.max(0,Math.min(100,hp/(S.maxHp||100)*100))+'%'});
+    ['b-player-mp','h-mp'].forEach(id=>{const e=document.getElementById(id);if(e)e.style.width=Math.max(0,Math.min(100,mp/(S.maxMp||50)*100))+'%'});
+    const ht=document.getElementById('b-player-hp-text'); if(ht) ht.textContent=Math.max(0,Math.floor(hp));
+    const mt=document.getElementById('b-player-mp-text'); if(mt) mt.textContent=Math.max(0,Math.floor(mp));
+  }
+  function selectedMonsters(zi,isBoss){
+    if(isBoss) return [Object.assign({},zoneBosses[zi]||zoneBosses[0])];
+    const set=zoneMonsterSets[zi]||zoneMonsterSets[0];
+    const count=1+Math.floor(Math.random()*Math.min(3,set.length));
+    return set.slice().sort(()=>Math.random()-.5).slice(0,count).map(x=>Object.assign({},x));
+  }
+  window.beginBattle = function(zi, boost){
+    S.zone=zi||0; S.hp=Math.min(S.maxHp||100, S.hp||S.maxHp||100); S.mp=Math.min(S.maxMp||50, S.mp||S.maxMp||50);
+    const isBoss = !!boost || Math.random()<0.28 || zi>=6;
+    const mons=selectedMonsters(zi,isBoss); const zoneScale=1+(zi*.28); const phase=isBoss?1:0;
+    const totalHp=Math.floor(mons.reduce((a,m)=>a+(m.hp||80),0)*zoneScale*(isBoss?1.55:1));
+    B={active:true,mon:mons[0],monsters:mons,monHp:totalHp,monMaxHp:totalHp,boss:isBoss,bossPhase:phase,spell:null,currentQ:null,qTimer:null,qTime:15,correct:0,asked:0,canAct:true,answered:false,currentStreak:0};
+    showScreen('battle'); document.getElementById('battle').classList.add('epic-bg');
+    const monEl=document.getElementById('b-mon'); monEl.className='mon epic-mon '+(isBoss?'mon-boss':'');
+    monEl.innerHTML='<div class="mon-pack">'+mons.map((m,i)=>`<span class="mini-mon" style="animation-delay:${i*.22}s">${m.emo}</span>`).join('')+'</div>';
+    document.getElementById('b-mon-nm').textContent=(isBoss?'👑 ':'')+mons.map(m=>m.nm).join(' + ')+(isBoss?' Phase 1/3':'');
+    document.getElementById('b-mon-hp').style.width='100%';
+    document.getElementById('b-msg').textContent=isBoss?'👑 Boss battle! Choose an attack to reveal the question.':'⚔️ Monsters appeared! Choose an attack to reveal the question.';
+    document.getElementById('q-card').style.display='none';
+    document.getElementById('b-player-nm').textContent=S.displayName||S.name||'Wizard';
+    document.getElementById('b-player-lv').textContent='Lv.'+(S.lv||1);
+    updateBattleXpBar(); syncBars(); buildSpellPanel();
+  };
+  function buildSpellPanel(){
+    const spells=[{id:'fire',icon:'🔥',name:'Fire Bolt',cost:10},{id:'ice',icon:'❄️',name:'Ice Shard',cost:10},{id:'thunder',icon:'⚡',name:'Thunder',cost:15},{id:'heal',icon:'💚',name:'Heal',cost:12}];
+    document.getElementById('spells').innerHTML=spells.map(s=>`<div class="spell epic-card" onclick="castSpell('${s.id}')"><div class="s-icon">${s.icon}</div><div class="s-name">${s.name}</div><div class="s-cost">${s.cost} MP</div></div>`).join('')+`<div class="item-panel"><button class="item-chip" onclick="useBattleItem('potion')">🧪 Potion x${S.potions||0}</button><button class="item-chip" onclick="useBattleItem('mana')">💎 Mana x${S.manaPotions||0}</button><button class="item-chip" onclick="useBattleItem('stat')">⭐ Stats ${S.statPts||0}</button></div>`;
+  }
+  window.castSpell=function(id){
+    if(!B.active||!B.canAct) return; const costs={fire:10,ice:10,thunder:15,heal:12};
+    if((S.mp||0)<costs[id]){document.getElementById('b-msg').textContent='Not enough MP — use a mana potion or another spell.';return;}
+    S.mp-=costs[id]; B.spell=id; B.canAct=false; syncBars();
+    if(id==='heal'){const heal=24+Math.floor((S.lv||1)*3);S.hp=Math.min(S.maxHp,S.hp+heal);showSpellEffect('heal');showDmgNum(heal,true,true);document.getElementById('b-msg').textContent=`Healed ${heal} HP. Monster prepares a counter!`;syncBars();setTimeout(monsterCounter,700);return;}
+    document.getElementById('b-msg').textContent='Cast '+id+'! Answer to strike.'; showQuestion();
+  };
+  window.showQuestion=function(){
+    if(!B.active) return; const q=getQuestion(); B.currentQ=q; B.answered=false; document.getElementById('q-card').style.display='block'; document.getElementById('q-text').textContent=q.q+(q.typed?'  ✍️ Type it':'');
+    if(q.typed){document.getElementById('q-opts').innerHTML=`<input id="typed-answer" class="typed-answer" placeholder="Type answer" autocomplete="off"><button class="btn btn-p btn-sm" style="margin-top:8px;width:100%" onclick="answerTyped()">Submit Answer</button>`;setTimeout(()=>document.getElementById('typed-answer')?.focus(),50);}
+    else{const idx=q.a.map((_,i)=>i).sort(()=>Math.random()-.5);B.shuffledCorrect=idx.indexOf(q.c);document.getElementById('q-opts').innerHTML=idx.map((orig,i)=>`<div class="q-opt" onclick="answer(${i})">${q.a[orig]}</div>`).join('');}
+    B.qTime=B.boss?12:15; const max=B.qTime; clearInterval(B.qTimer); document.getElementById('q-timer').style.width='100%'; B.qTimer=setInterval(()=>{B.qTime-=.1;document.getElementById('q-timer').style.width=(B.qTime/max*100)+'%';if(B.qTime<=0){clearInterval(B.qTimer); q.typed?answerTyped(true):answer(-1)}},100);
+  };
+  window.answerTyped=function(timeout){const val=timeout?'':document.getElementById('typed-answer')?.value; const ok=!timeout && (B.currentQ.accept||[]).map(normalize).includes(normalize(val)); resolveAnswer(ok);};
+  window.answer=function(idx){if(!B.currentQ||B.currentQ.typed){return answerTyped(false)} resolveAnswer(idx===B.shuffledCorrect,idx);};
+  function resolveAnswer(isCorrect,idx){
+    if(B.answered) return; B.answered=true; clearInterval(B.qTimer); B.asked++; S.totalQuestions=(S.totalQuestions||0)+1;
+    document.querySelectorAll('.q-opt').forEach((o,i)=>{if(i===B.shuffledCorrect)o.classList.add('correct');else if(i===idx)o.classList.add('wrong');o.style.pointerEvents='none'});
+    if(isCorrect){B.correct++;B.currentStreak=(B.currentStreak||0)+1;S.maxStreak=Math.max(S.maxStreak||0,B.currentStreak);let dmg=(S.atk||15)+Math.floor(Math.random()*10)+(B.boss?5:0); if(B.spell)dmg=Math.floor(dmg*1.55); B.monHp-=dmg; showSpellEffect(B.spell||'fire'); showDmgNum(dmg,false,false); document.getElementById('b-mon').classList.add('epic-hit'); setTimeout(()=>document.getElementById('b-mon')?.classList.remove('epic-hit'),430); spawnBattleParticles('#fbbf24',26); document.getElementById('b-msg').textContent=`Correct! ${dmg} damage.`; S.xp+=10+S.zone*2; showXpGain(10+S.zone*2);} 
+    else{B.currentStreak=0; document.getElementById('b-msg').textContent='Wrong — small damage, monster attacks!'; monsterCounter(true);}
+    document.getElementById('b-mon-hp').style.width=Math.max(0,B.monHp/B.monMaxHp*100)+'%'; updateBattleXpBar(); syncBars();
+    if(B.boss && B.monHp>0){const pct=B.monHp/B.monMaxHp; const newPhase=pct<.34?3:pct<.67?2:1; if(newPhase>B.bossPhase){B.bossPhase=newPhase; B.monHp+=Math.floor(B.monMaxHp*.12); const r=document.createElement('div');r.className='phase-ring';document.body.appendChild(r);setTimeout(()=>r.remove(),900);document.getElementById('b-mon-nm').textContent=document.getElementById('b-mon-nm').textContent.replace(/Phase \d\/3/,'Phase '+newPhase+'/3');document.getElementById('b-msg').textContent='Boss phase '+newPhase+'! Harder questions incoming!';}}
+    if(B.monHp<=0){setTimeout(winBattle,700);return} if(S.hp<=0){setTimeout(loseBattle,700);return}
+    setTimeout(()=>{if(B.active){B.canAct=true;B.spell=null;document.getElementById('q-card').style.display='none';document.getElementById('b-msg').textContent='Choose your next attack or use an item.';buildSpellPanel();}},900);
+  }
+  function monsterCounter(wrongOnly){const dmg=Math.max(1, Math.floor((wrongOnly?3:5)+S.zone*1.8+(B.boss?B.bossPhase*3:0)-((S.def||0)*.35))); S.hp-=dmg; showDmgNum(dmg,true,false); screenShake(); document.getElementById('b-mon-attack').textContent='💥 '+dmg+' damage'; setTimeout(()=>document.getElementById('b-mon-attack').textContent='',1200); syncBars();}
+  window.useBattleItem=function(type){if(!B.active)return; if(type==='potion'){if((S.potions||0)<=0){document.getElementById('b-msg').textContent='No health potions.';return;}S.potions--;S.hp=Math.min(S.maxHp,S.hp+35);document.getElementById('b-msg').textContent='🧪 Potion used: +35 HP';}
+    if(type==='mana'){if((S.manaPotions||0)<=0){document.getElementById('b-msg').textContent='No mana potions.';return;}S.manaPotions--;S.mp=Math.min(S.maxMp,S.mp+30);document.getElementById('b-msg').textContent='💎 Mana potion used: +30 MP';}
+    if(type==='stat') return showStatAllocator(); syncBars(); buildSpellPanel(); saveGame();};
+  function showStatAllocator(){const pts=S.statPts||0;if(!pts){document.getElementById('b-msg').textContent='No stat points yet. Beat monsters to earn them.';return;} const pick=prompt(`Spend ${pts} stat point(s): type hp, mana, or attack`,'attack'); if(!pick)return; if(/^hp/i.test(pick)){S.maxHp+=10;S.hp+=10;} else if(/^mana|mp/i.test(pick)){S.maxMp+=8;S.mp+=8;} else {S.atk+=3;} S.statPts=Math.max(0,pts-1); document.getElementById('b-msg').textContent='⭐ Stat upgraded!'; syncBars(); buildSpellPanel(); saveGame();}
+  const oldWin=window.winBattle;
+  window.winBattle=function(){const zone=S.zone||0; const bonusXp=50+zone*18+(B.boss?60:0); const bonusGold=20+Math.floor(Math.random()*30)+zone*12+(B.boss?80:0); S.xp+=bonusXp; S.gold+=bonusGold; S.totalGold=(S.totalGold||0)+bonusGold; S.statPts=(S.statPts||0)+1+(B.boss?2:0); oldWin(); document.getElementById('r-xp').textContent='+'+(bonusXp+50); document.getElementById('r-gold').textContent='+'+bonusGold; saveGame();};
+  const oldBuy=window.buyItem;
+  window.buyItem=function(type,cost){ if(type==='mana'){ if(S.gold<cost){alert('Not enough gold!');return;} S.gold-=cost; S.manaPotions=(S.manaPotions||0)+1; alert('💎 Bought Mana Potion!'); updateHUD(); saveGame(); return;} return oldBuy(type,cost); };
+})();
+
 </script>
 <script src="js/scroll-reveal.js"></script>
 
 <script>
-// ============ AREA TEST DEEP LINK ============
-// Temporary tester-only page. Does not change the main QuestMind game.
-(function() {
-  const TEST_ZONE = 4;
-  const TEST_ZONE_NAME = 'Mountain';
-  document.addEventListener('DOMContentLoaded', function() {
-    setTimeout(function() {
-      try {
-        Object.assign(S, {
-          username: 'area_tester',
-          displayName: 'Area Tester',
-          name: 'Area Tester',
-          grade: 3,
-          subject: 'math',
-          lv: Math.max(25, (ZONES[TEST_ZONE] && ZONES[TEST_ZONE].lv) || 1),
-          xp: 0,
-          xpNeed: 100,
-          hp: 100,
-          maxHp: 100,
-          mp: 50,
-          maxMp: 50,
-          atk: 15,
-          def: 5,
-          gold: 999,
-          zone: TEST_ZONE,
-          lastLogin: Date.now()
-        });
-        localStorage.setItem(SK, JSON.stringify(S));
-        updateHomeScreen();
-        buildMap();
-        beginBattle(TEST_ZONE);
-        const msg = document.getElementById('b-msg');
-        if (msg) msg.textContent = 'TEST LINK: ' + TEST_ZONE_NAME + ' area battle loaded.';
-      } catch (e) {
-        console.error('Area test deep link failed', e);
-        alert('Area test link failed to load: ' + e.message);
-      }
-    }, 200);
-  });
-})();
+window.addEventListener('load',()=>{
+  try{
+    Object.assign(S,{username:'area_test_mountain',displayName:'Area Tester',grade:5,subject:'math',lv:25,hp:140,maxHp:140,mp:100,maxMp:100,atk:28,def:10,gold:500,potions:3,manaPotions:3,statPts:3});
+    localStorage.setItem('qm_save', JSON.stringify(S));
+    setTimeout(()=>beginBattle(4,0),450);
+  }catch(e){console.error('area test bootstrap failed', e);}
+});
 </script>
-
 </body>
 </html>
 <!-- Updated Wed Mar 25 18:50:47 EDT 2026 -->
