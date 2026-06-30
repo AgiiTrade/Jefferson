@@ -442,6 +442,38 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 .map-hint{bottom:70px!important;font-size:.74em!important;padding:7px 13px!important;}
 @media(max-width:520px){.map-hint{bottom:64px!important;font-size:.66em!important}}
 
+
+
+/* === QuestMind map image visibility boost v3.4 === */
+.zone{min-width:116px!important;}
+.zone-node{width:88px!important;height:88px!important;background:
+  radial-gradient(circle at 34% 25%,rgba(255,255,255,.42),rgba(255,255,255,.16) 34%,rgba(15,23,42,.86) 72%),
+  currentColor!important;border:2px solid rgba(255,255,255,.38)!important;box-shadow:
+  0 20px 46px rgba(0,0,0,.62),
+  0 0 36px currentColor,
+  inset 0 2px 0 rgba(255,255,255,.35),
+  inset 0 -12px 28px rgba(0,0,0,.38)!important;}
+.zone-node::before{inset:-12px!important;border:2px solid currentColor!important;opacity:.46!important;box-shadow:0 0 22px currentColor;}
+.zone-node::after{content:"";position:absolute;inset:8px;border-radius:50%;background:radial-gradient(circle at 38% 24%,rgba(255,255,255,.32),transparent 30%);pointer-events:none;}
+.zone-i{font-size:3.25em!important;transform:translateY(-1px);filter:
+  drop-shadow(0 5px 0 rgba(0,0,0,.38))
+  drop-shadow(0 10px 18px rgba(0,0,0,.90))
+  drop-shadow(0 0 14px currentColor)!important;text-shadow:0 3px 0 rgba(0,0,0,.55),0 0 18px #fff;z-index:2;position:relative;}
+.zone-n{font-size:.92em!important;color:#fff!important;background:rgba(2,6,23,.88)!important;border:1px solid rgba(255,255,255,.26)!important;text-shadow:0 2px 4px #000,0 0 10px currentColor;}
+.zone-l{font-size:.76em!important;color:#fff!important;background:rgba(2,6,23,.82)!important;border:1px solid rgba(255,255,255,.22)!important;text-shadow:0 1px 3px #000;}
+.zone.locked{opacity:.88!important;}
+.zone.locked .zone-node{filter:grayscale(.35) brightness(.95)!important;opacity:.95!important;}
+.zone.locked .zone-i{opacity:.96!important;}
+.map-path path{stroke:rgba(191,219,254,.78)!important;stroke-width:5!important;filter:drop-shadow(0 0 12px rgba(147,197,253,.95)) drop-shadow(0 0 22px rgba(251,191,36,.25))!important;}
+.map-path .path-glow{stroke:rgba(251,191,36,.28)!important;stroke-width:16!important;}
+@media(max-width:520px){.zone{min-width:86px!important}.zone-node{width:66px!important;height:66px!important}.zone-i{font-size:2.45em!important}.zone-n{font-size:.72em!important}.zone-l{font-size:.60em!important}.map-path path{stroke-width:4!important}.map-path .path-glow{stroke-width:12!important}}
+
+
+/* === QuestMind tower visibility and spacing v3.5 === */
+.zone-tower{color:#fde68a!important;}
+.zone-tower .zone-node{box-shadow:0 20px 46px rgba(0,0,0,.62),0 0 46px rgba(253,230,138,.95),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -12px 28px rgba(0,0,0,.38)!important;}
+.zone-dragon .zone-node{box-shadow:0 20px 46px rgba(0,0,0,.62),0 0 44px rgba(251,113,133,.95),inset 0 2px 0 rgba(255,255,255,.35),inset 0 -12px 28px rgba(0,0,0,.38)!important;}
+
 </style>
 </head>
 <body>
@@ -1611,7 +1643,7 @@ function initGradeButtons(){
 // ============ MAP ============
 const ZONES = [
   {nm:"Meadow",ic:"🌿",lv:1},{nm:"Forest",ic:"🌲",lv:3},{nm:"Caves",ic:"🕳️",lv:5},
-  {nm:"Swamp",ic:"🐊",lv:8},{nm:"Mountain",ic:"🏔️",lv:12},{nm:"Tower",ic:"🗼",lv:16},{nm:"Dragon's Lair",ic:"🐉",lv:20}
+  {nm:"Swamp",ic:"🐊",lv:8},{nm:"Mountain",ic:"🏔️",lv:12},{nm:"Tower",ic:"🏯",lv:16},{nm:"Dragon's Lair",ic:"🐉",lv:20}
 ];
 const MONS = [
   {nm:"Slime",ic:'<svg width=\"60\" height=\"60\"><circle cx=\"30\" cy=\"35\" r=\"22\" fill=\"#22c55e\" stroke=\"#15803d\" stroke-width=\"2\"/><circle cx=\"30\" cy=\"30\" r=\"18\" fill=\"#4ade80\" opacity=\".5\"/><circle cx=\"23\" cy=\"30\" r=\"4\" fill=\"#fff\"/><circle cx=\"23\" cy=\"30\" r=\"2\" fill=\"#1e293b\"/><circle cx=\"37\" cy=\"30\" r=\"4\" fill=\"#fff\"/><circle cx=\"37\" cy=\"30\" r=\"2\" fill=\"#1e293b\"/><path d=\"M25 40 Q30 45 35 40\" fill=\"none\" stroke=\"#1e293b\" stroke-width=\"1.5\"/></svg>'},
@@ -1626,14 +1658,14 @@ const MONS = [
 function buildMap(){
   const c = document.getElementById('map-canvas');
   c.innerHTML = '';
-  const pos = [{x:50,y:67},{x:22,y:62},{x:74,y:56},{x:27,y:47},{x:76,y:40},{x:50,y:34},{x:50,y:23}];
+  const pos = [{x:50,y:67},{x:22,y:62},{x:74,y:56},{x:27,y:47},{x:76,y:42},{x:50,y:38},{x:50,y:20}];
   const zoneClasses = ['zone-meadow','zone-forest','zone-caves','zone-swamp','zone-mountain','zone-tower','zone-dragon'];
   c.insertAdjacentHTML('beforeend', `
     <div class="map-header"><div class="map-title">Quest Map</div><div class="map-sub">Choose your next challenge</div></div>
     <div class="map-terrain terrain-meadow"></div><div class="map-terrain terrain-forest"></div><div class="map-terrain terrain-caves"></div><div class="map-terrain terrain-swamp"></div><div class="map-terrain terrain-mountain"></div><div class="map-terrain terrain-dragon"></div>
     <svg class="map-path" viewBox="0 0 100 100" preserveAspectRatio="none" aria-hidden="true">
-      <path class="path-glow" d="M50 67 C35 66 22 66 22 62 C22 57 64 62 74 56 C84 53 25 53 27 47 C31 42 67 45 76 40 C82 36 54 39 50 34 C47 30 49 27 50 23"/>
-      <path d="M50 67 C35 66 22 66 22 62 C22 57 64 62 74 56 C84 53 25 53 27 47 C31 42 67 45 76 40 C82 36 54 39 50 34 C47 30 49 27 50 23"/>
+      <path class="path-glow" d="M50 67 C35 66 22 66 22 62 C22 57 64 62 74 56 C84 53 25 53 27 47 C31 43 67 47 76 42 C82 38 54 43 50 38 C47 32 49 25 50 20"/>
+      <path d="M50 67 C35 66 22 66 22 62 C22 57 64 62 74 56 C84 53 25 53 27 47 C31 43 67 47 76 42 C82 38 54 43 50 38 C47 32 49 25 50 20"/>
     </svg>`);
   ZONES.forEach((z,i)=>{
     const p = pos[i];
