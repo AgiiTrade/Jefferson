@@ -488,6 +488,39 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 #battle .item-panel{margin-bottom:8px!important;}
 @media(max-height:680px){#battle .spell-grid{transform:scale(.94);transform-origin:top center;margin-bottom:58px!important;}}
 
+
+/* === QuestMind UE 5.8 Cinematic Upgrade v2 === */
+:root{--ue-neon:#7dd3fc;--ue-violet:#a78bfa;--ue-amber:#fbbf24;}
+body.ue-cinematic #map,body.ue-cinematic #battle{perspective:900px;transform-style:preserve-3d;}
+body.ue-cinematic .screen.active{animation:ueCameraIn .55s cubic-bezier(.16,1,.3,1) both;}
+@keyframes ueCameraIn{0%{opacity:.45;transform:translateY(22px) scale(.96) rotateX(5deg)}100%{opacity:1;transform:translateY(0) scale(1) rotateX(0)}}
+.ue-hud{position:fixed;left:12px;top:68px;z-index:289;display:flex;gap:7px;align-items:center;background:linear-gradient(135deg,rgba(2,6,23,.78),rgba(30,41,59,.64));border:1px solid rgba(125,211,252,.34);box-shadow:0 12px 35px rgba(0,0,0,.45),0 0 22px rgba(125,211,252,.18);border-radius:999px;padding:7px 10px;color:#fff;font-size:.68em;font-weight:800;letter-spacing:.02em;backdrop-filter:blur(14px)}
+.ue-hud b{color:var(--ue-neon);text-shadow:0 0 10px rgba(125,211,252,.7)}
+.ue-toggle{border:0;border-radius:999px;background:linear-gradient(135deg,#0ea5e9,#7c3aed);color:white;font-family:'Fredoka',sans-serif;font-weight:900;font-size:.72em;padding:7px 10px;box-shadow:0 9px 22px rgba(14,165,233,.28);cursor:pointer}
+.ue-toggle.off{background:rgba(15,23,42,.82);border:1px solid rgba(255,255,255,.18);box-shadow:none}
+.ue-scanlines{position:fixed;inset:0;z-index:3;pointer-events:none;opacity:.18;background:linear-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:100% 4px;mix-blend-mode:overlay;animation:ueScan 10s linear infinite}
+@keyframes ueScan{from{background-position:0 0}to{background-position:0 100px}}
+.ue-vignette{position:fixed;inset:0;z-index:4;pointer-events:none;background:radial-gradient(circle at 50% 44%,transparent 35%,rgba(2,6,23,.28) 66%,rgba(0,0,0,.62) 100%)}
+body:not(.ue-cinematic) .ue-vignette,body:not(.ue-cinematic) .ue-scanlines{display:none}
+body.ue-cinematic .map-canvas{transform:rotateX(4deg) scale(1.03);filter:saturate(1.28) contrast(1.08);}
+body.ue-cinematic .zone-node{transform:translateZ(34px);animation:ueNodeFloat 2.8s ease-in-out infinite!important;}
+@keyframes ueNodeFloat{0%,100%{translate:0 0}50%{translate:0 -7px}}
+body.ue-cinematic .map-terrain{filter:blur(.2px) saturate(1.35) brightness(1.08)}
+body.ue-cinematic #battle{background:radial-gradient(circle at 50% 30%,rgba(125,211,252,.18),transparent 26%),linear-gradient(-45deg,#070b1f,#20103e,#071e2f,#3b155f)!important;background-size:220% 220%!important;animation:battleBgShift 5s ease infinite!important;}
+body.ue-cinematic #battle::before{opacity:.96;filter:saturate(1.6) contrast(1.1)}
+body.ue-cinematic #b-player,body.ue-cinematic #b-mon{transform-style:preserve-3d;filter:drop-shadow(0 18px 20px rgba(0,0,0,.65)) drop-shadow(0 0 18px rgba(125,211,252,.26));}
+body.ue-cinematic #b-mon{animation:ueEnemyHover 2.2s ease-in-out infinite;}
+@keyframes ueEnemyHover{0%,100%{transform:translateY(0) rotateY(-3deg)}50%{transform:translateY(-9px) rotateY(4deg)}}
+body.ue-cinematic #b-player{animation:ueHeroIdle 2.6s ease-in-out infinite;}
+@keyframes ueHeroIdle{0%,100%{transform:translateY(0) rotateY(3deg)}50%{transform:translateY(-5px) rotateY(-4deg)}}
+body.ue-cinematic .q-card,body.ue-cinematic .spell{box-shadow:0 18px 46px rgba(0,0,0,.42),inset 0 1px 0 rgba(255,255,255,.14),0 0 24px rgba(124,58,237,.14)!important;border-color:rgba(125,211,252,.25)!important;}
+body.ue-cinematic .spell:hover{transform:translateY(-3px) scale(1.02);box-shadow:0 18px 46px rgba(0,0,0,.5),0 0 30px rgba(251,191,36,.22)!important}
+.ue-combat-log{position:fixed;left:50%;bottom:70px;transform:translateX(-50%);z-index:255;min-width:min(92vw,420px);max-width:520px;background:linear-gradient(135deg,rgba(15,23,42,.86),rgba(49,46,129,.70));border:1px solid rgba(125,211,252,.32);border-radius:18px;padding:10px 13px;box-shadow:0 18px 48px rgba(0,0,0,.55);font-size:.78em;font-weight:800;text-align:center;pointer-events:none;animation:ueLogIn .28s ease both}
+@keyframes ueLogIn{from{opacity:0;transform:translate(-50%,12px)}to{opacity:1;transform:translate(-50%,0)}}
+.ue-cutscene-banner{position:fixed;left:50%;top:18%;transform:translateX(-50%);z-index:292;padding:13px 18px;border-radius:20px;background:linear-gradient(135deg,rgba(2,6,23,.88),rgba(88,28,135,.78));border:1px solid rgba(251,191,36,.45);box-shadow:0 20px 70px rgba(0,0,0,.55),0 0 45px rgba(251,191,36,.22);font-weight:900;text-align:center;animation:ueBanner .9s ease both}
+@keyframes ueBanner{0%{opacity:0;scale:.88;filter:blur(4px)}18%,78%{opacity:1;scale:1;filter:blur(0)}100%{opacity:0;scale:1.05}}
+@media(max-width:520px){.ue-hud{top:110px;left:8px;font-size:.58em}.ue-toggle{font-size:.62em;padding:6px 8px}.ue-combat-log{bottom:62px;font-size:.68em}.ue-cutscene-banner{top:16%;width:86%;font-size:.86em}}
+
 </style>
 </head>
 <body>
@@ -2570,6 +2603,57 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
   setTimeout(wrapLater,300); setTimeout(wrapLater,1200);
+})();
+
+
+
+// === QuestMind UE 5.8 Cinematic Upgrade v2 ===
+(function(){
+  if(window.QM_UNREAL_V2) return; window.QM_UNREAL_V2=true;
+  const state={enabled:localStorage.getItem('qm_unreal_mode')!=='off'};
+  function ensureOverlay(){
+    if(!document.querySelector('.ue-vignette')){
+      const v=document.createElement('div');v.className='ue-vignette';document.body.appendChild(v);
+      const s=document.createElement('div');s.className='ue-scanlines';document.body.appendChild(s);
+    }
+    if(!document.getElementById('ue-hud')){
+      const hud=document.createElement('div');hud.id='ue-hud';hud.className='ue-hud';
+      hud.innerHTML='<b>UE 5.8</b><span>Cinematic</span><button id="ue-toggle" class="ue-toggle">ON</button>';
+      document.body.appendChild(hud);
+      document.getElementById('ue-toggle').onclick=(e)=>{e.stopPropagation();toggle();};
+    }
+    apply();
+  }
+  function apply(){
+    document.body.classList.toggle('ue-cinematic',state.enabled);
+    const b=document.getElementById('ue-toggle'); if(b){b.textContent=state.enabled?'ON':'OFF';b.classList.toggle('off',!state.enabled);}
+  }
+  function toggle(){state.enabled=!state.enabled;localStorage.setItem('qm_unreal_mode',state.enabled?'on':'off');apply();toast(state.enabled?'🎮 Unreal cinematic mode on':'Cinematic mode off');}
+  function toast(msg){
+    const old=document.querySelector('.ue-combat-log'); if(old) old.remove();
+    const el=document.createElement('div');el.className='ue-combat-log';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1800);
+  }
+  function banner(msg){
+    if(!state.enabled) return; const old=document.querySelector('.ue-cutscene-banner'); if(old) old.remove();
+    const el=document.createElement('div');el.className='ue-cutscene-banner';el.innerHTML=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),920);
+  }
+  function logBattle(msg){ if(state.enabled) toast(msg); }
+  document.addEventListener('DOMContentLoaded',ensureOverlay); setTimeout(ensureOverlay,100);
+  const install=()=>{
+    if(window.showScreen && !window.showScreen.__ueWrapped){
+      const old=window.showScreen; window.showScreen=function(id){const r=old.apply(this,arguments);ensureOverlay(); if(id==='map') banner('🗺️ Cinematic world map'); if(id==='battle') banner('⚔️ Battle camera locked'); return r;}; window.showScreen.__ueWrapped=true;
+    }
+    if(window.beginBattle && !window.beginBattle.__ueWrapped){
+      const old=window.beginBattle; window.beginBattle=function(zi){const r=old.apply(this,arguments); const zone=(typeof ZONES!=='undefined'&&ZONES[zi])?ZONES[zi].nm:'Zone'; banner('⚔️ '+zone+' encounter'); logBattle('Choose a spell. Questions reveal after attack — no instant quiz spam.'); return r;}; window.beginBattle.__ueWrapped=true;
+    }
+    if(window.answer && !window.answer.__ueWrapped){
+      const old=window.answer; window.answer=function(idx){const before=(typeof B!=='undefined'&&B.monHp)||0; const r=old.apply(this,arguments); setTimeout(()=>{try{const after=(typeof B!=='undefined'&&B.monHp)||0; if(after<before) logBattle('✅ Hit confirmed: '+Math.round(before-after)+' damage'); else logBattle('⚠️ Counterattack — recover and choose next spell');}catch(e){}},80); return r;}; window.answer.__ueWrapped=true;
+    }
+    if(window.answerTyped && !window.answerTyped.__ueWrapped){
+      const old=window.answerTyped; window.answerTyped=function(){const before=(typeof B!=='undefined'&&B.monHp)||0; const r=old.apply(this,arguments); setTimeout(()=>{try{const after=(typeof B!=='undefined'&&B.monHp)||0; if(after<before) logBattle('✅ Typed-answer strike: '+Math.round(before-after)+' damage'); else logBattle('⚠️ Monster resisted — try the next spell');}catch(e){}},80); return r;}; window.answerTyped.__ueWrapped=true;
+    }
+  };
+  setTimeout(install,250); setTimeout(install,1200); setTimeout(install,2500);
 })();
 
 </script>
