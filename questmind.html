@@ -597,6 +597,22 @@ body.qm-no-emoji .s-icon,body.qm-no-emoji .zone-i,body.qm-no-emoji .home-wizard{
 .no-emoji-note{position:fixed;left:50%;top:34px;transform:translateX(-50%);z-index:287;background:rgba(2,6,23,.72);border:1px solid rgba(125,211,252,.25);border-radius:999px;padding:5px 10px;color:#dff7ff;font-size:.58em;font-weight:900;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(12px);}
 @media(max-width:520px){.no-emoji-note{top:34px;font-size:.50em}}
 
+
+/* === QuestMind animation-only visual pass v2 === */
+body.qm-no-emoji .asset3d .mark{display:none!important;}
+.spell-anim{--c1:#fbbf24;--c2:#fb7185;position:relative;display:block;width:48px;height:48px;margin:0 auto 4px;border-radius:18px;background:radial-gradient(circle at 34% 24%,rgba(255,255,255,.95),rgba(255,255,255,.18) 18%,transparent 30%),linear-gradient(145deg,var(--c1),var(--c2) 68%,#0f172a);box-shadow:inset 0 2px 0 rgba(255,255,255,.32),inset 0 -12px 18px rgba(0,0,0,.32),0 12px 26px rgba(0,0,0,.38),0 0 24px color-mix(in srgb,var(--c1),transparent 38%);transform-style:preserve-3d;animation:spellModelIdle 1.8s ease-in-out infinite;}
+.spell-anim::before{content:"";position:absolute;inset:-7px;border-radius:22px;border:1px solid color-mix(in srgb,var(--c1),transparent 25%);opacity:.68;animation:spellRing 1.35s linear infinite;}
+.spell-anim::after{content:"";position:absolute;left:20%;right:20%;bottom:-8px;height:9px;border-radius:50%;background:radial-gradient(ellipse,rgba(0,0,0,.55),transparent 70%);transform:rotateX(70deg);}
+.spell-anim i{position:absolute;width:9px;height:9px;border-radius:50%;background:#fff;box-shadow:0 0 14px #fff,0 0 26px var(--c1);animation:spellParticle 1.1s ease-in-out infinite;}
+.spell-anim i:nth-child(1){left:9px;top:8px;animation-delay:0s}.spell-anim i:nth-child(2){right:8px;top:18px;animation-delay:.2s}.spell-anim i:nth-child(3){left:22px;bottom:7px;animation-delay:.42s}
+.spell-anim.fire{--c1:#fb7185;--c2:#f97316}.spell-anim.ice{--c1:#bae6fd;--c2:#0284c7}.spell-anim.thunder{--c1:#fde047;--c2:#7c3aed}.spell-anim.heal{--c1:#86efac;--c2:#059669}
+@keyframes spellModelIdle{0%,100%{transform:translateY(0) rotateX(8deg) rotateY(-11deg)}50%{transform:translateY(-5px) rotateX(13deg) rotateY(13deg)}}
+@keyframes spellRing{0%{transform:rotateZ(0deg) scale(.96);opacity:.3}50%{opacity:.85}100%{transform:rotateZ(360deg) scale(1.08);opacity:.3}}
+@keyframes spellParticle{0%,100%{transform:translate3d(0,0,10px) scale(.6);opacity:.45}50%{transform:translate3d(4px,-7px,18px) scale(1.25);opacity:1}}
+body.qm-no-emoji .spell .s-icon{font-size:0!important;line-height:0;}
+body.qm-no-emoji .spell{min-height:122px;display:flex;flex-direction:column;justify-content:center;}
+body.qm-no-emoji .zone-i .asset3d,body.qm-no-emoji .home-wizard .asset3d,body.qm-no-emoji .subject-btn .asset3d{animation:ueAssetFloat 1.55s ease-in-out infinite!important;}
+
 </style>
 </head>
 <body>
@@ -614,14 +630,6 @@ body.qm-no-emoji .s-icon,body.qm-no-emoji .zone-i,body.qm-no-emoji .home-wizard{
     @keyframes wizBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
     @keyframes wizStarPulse { 0%,100%{r:4;opacity:1} 50%{r:6;opacity:.7} }
     @keyframes wizSway { 0%,100%{transform:rotate(0deg)} 33%{transform:rotate(1deg)} 66%{transform:rotate(-1deg)} }
-
-
-/* === QuestMind no-emoji animation pass v1 === */
-body.qm-no-emoji .qm3d-label::after{content:" · ANIMATED MODE";}
-body.qm-no-emoji .s-icon,body.qm-no-emoji .zone-i,body.qm-no-emoji .home-wizard{font-family:inherit;}
-.no-emoji-note{position:fixed;left:50%;top:34px;transform:translateX(-50%);z-index:287;background:rgba(2,6,23,.72);border:1px solid rgba(125,211,252,.25);border-radius:999px;padding:5px 10px;color:#dff7ff;font-size:.58em;font-weight:900;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(12px);}
-@media(max-width:520px){.no-emoji-note{top:34px;font-size:.50em}}
-
 </style>
   <g class="wiz-hat">
     <polygon points="50,5 30,45 70,45" fill="#7c3aed" stroke="#4c1d95" stroke-width="2"/>
@@ -2566,8 +2574,10 @@ document.addEventListener('DOMContentLoaded', function() {
     document.getElementById('b-player-lv').textContent='Lv.'+(S.lv||1);
     updateBattleXpBar(); syncBars(); buildSpellPanel();
   };
+
+  function spellAnim(id){return `<span class="spell-anim ${id}"><i></i><i></i><i></i></span>`;}
   function buildSpellPanel(){
-    const spells=[{id:'fire',icon:asset3d('fire','▲'),name:'Flame Strike',cost:10},{id:'ice',icon:asset3d('ice','◆'),name:'Frost Strike',cost:10},{id:'thunder',icon:asset3d('thunder','✦'),name:'Storm Strike',cost:15},{id:'heal',icon:asset3d('heal','✚'),name:'Heal Pulse',cost:12}];
+    const spells=[{id:'fire',icon:spellAnim('fire'),name:'Flame Strike',cost:10},{id:'ice',icon:spellAnim('ice'),name:'Frost Strike',cost:10},{id:'thunder',icon:spellAnim('thunder'),name:'Storm Strike',cost:15},{id:'heal',icon:spellAnim('heal'),name:'Heal Pulse',cost:12}];
     document.getElementById('spells').innerHTML=spells.map(s=>`<div class="spell epic-card" onclick="castSpell('${s.id}')"><div class="s-icon">${s.icon}</div><div class="s-name">${s.name}</div><div class="s-cost">${s.cost} MP</div></div>`).join('')+`<div class="item-panel"><button class="item-chip" onclick="useBattleItem('potion')">Potion x${S.potions||0}</button><button class="item-chip" onclick="useBattleItem('mana')">Mana x${S.manaPotions||0}</button><button class="item-chip" onclick="useBattleItem('stat')">Stats ${S.statPts||0}</button></div>`;
   }
   window.castSpell=function(id){
