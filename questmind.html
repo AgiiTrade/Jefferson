@@ -537,6 +537,44 @@ body.ue-cinematic .spell:hover{transform:translateY(-3px) scale(1.02);box-shadow
 .asset3d.subject-math{--asset:#60a5fa;--asset2:#1d4ed8;--glow:rgba(96,165,250,.62)}.asset3d.subject-english{--asset:#34d399;--asset2:#047857;--glow:rgba(52,211,153,.62)}.asset3d.subject-science{--asset:#fbbf24;--asset2:#b45309;--glow:rgba(251,191,36,.62)}.asset3d.subject-geography{--asset:#a78bfa;--asset2:#6d28d9;--glow:rgba(167,139,250,.62)}
 .home-wizard .asset3d{font-size:1.45em}.map-p .asset3d{font-size:1.4em}.zone-i .asset3d{font-size:1em}.subject-btn .asset3d{font-size:1.25em}.spell .asset3d{font-size:1.3em}#b-player .asset3d{font-size:3.2em}#b-mon>.asset3d{font-size:1em}.mon-pack .asset3d{font-size:1em}.ach-card .asset3d{font-size:1.45em}.pet-asset{font-size:2em}#battle > div:nth-of-type(2){padding-top:54px!important;}@media(max-height:700px){#battle > div:nth-of-type(2){padding-top:44px!important;}}.asset3d.float-model{animation:ueAssetFloat 2.5s ease-in-out infinite}@keyframes ueAssetFloat{0%,100%{transform:translateY(0) rotateY(-6deg)}50%{transform:translateY(-.06em) rotateY(8deg)}}
 
+
+
+/* === QuestMind map spacing fix v4 === */
+#map{--map-top-safe:96px;--map-bottom-safe:112px;}
+#map .map-header{top:58px!important;max-width:86vw;}
+#map .map-canvas{padding-top:var(--map-top-safe);padding-bottom:var(--map-bottom-safe);}
+#map .zone{min-width:104px!important;gap:2px!important;}
+#map .zone-node{width:74px!important;height:74px!important;}
+#map .zone-i{font-size:2.15em!important;}
+#map .zone-n{font-size:.78em!important;padding:4px 8px!important;max-width:112px;white-space:normal!important;line-height:1.05!important;}
+#map .zone-l{font-size:.66em!important;padding:3px 8px!important;}
+#map .zone-badge{top:-9px!important;right:-2px!important;font-size:.50em!important;padding:2px 6px!important;}
+#map .map-hint{bottom:72px!important;max-width:min(92vw,620px)!important;white-space:normal!important;text-align:center!important;line-height:1.15!important;}
+#map .map-nav{bottom:calc(8px + env(safe-area-inset-bottom))!important;max-width:calc(100vw - 18px)!important;}
+#map .map-nav .btn{height:38px!important;min-width:78px!important;font-size:.72em!important;padding:0 9px!important;}
+#map .map-path path{stroke-width:3.2!important;opacity:.72!important;}
+#map .map-path .path-glow{stroke-width:10!important;opacity:.55!important;}
+#map .map-terrain{opacity:.48!important;filter:blur(22px)!important;}
+@media(max-width:700px){
+  #map{--map-top-safe:88px;--map-bottom-safe:126px;}
+  #map .map-header{top:52px!important;padding:4px 9px!important;}
+  #map .zone{min-width:78px!important;}
+  #map .zone-node{width:52px!important;height:52px!important;}
+  #map .zone-i{font-size:1.55em!important;}
+  #map .zone-n{font-size:.60em!important;padding:3px 6px!important;max-width:82px;}
+  #map .zone-l{font-size:.52em!important;padding:2px 5px!important;}
+  #map .map-hint{bottom:78px!important;font-size:.60em!important;padding:6px 9px!important;}
+  #map .map-nav{display:grid!important;grid-template-columns:repeat(4,1fr);gap:5px!important;width:calc(100vw - 12px)!important;padding:6px!important;border-radius:18px!important;}
+  #map .map-nav .btn{min-width:0!important;height:34px!important;font-size:.57em!important;padding:0 2px!important;}
+}
+@media(max-height:680px){
+  #map .map-header{display:none!important;}
+  #map .map-hint{display:none!important;}
+  #map .zone-node{width:60px!important;height:60px!important;}
+  #map .zone-i{font-size:1.8em!important;}
+  #map .map-nav .btn{height:34px!important;}
+}
+
 </style>
 </head>
 <body>
@@ -555,6 +593,9 @@ body.ue-cinematic .spell:hover{transform:translateY(-3px) scale(1.02);box-shadow
     @keyframes wizStarPulse { 0%,100%{r:4;opacity:1} 50%{r:6;opacity:.7} }
     @keyframes wizSway { 0%,100%{transform:rotate(0deg)} 33%{transform:rotate(1deg)} 66%{transform:rotate(-1deg)} }
   
+
+
+
 
 
 </style>
@@ -1725,7 +1766,7 @@ const MONS = [
 function buildMap(){
   const c = document.getElementById('map-canvas');
   c.innerHTML = '';
-  const pos = [{x:50,y:67},{x:22,y:62},{x:74,y:56},{x:27,y:47},{x:76,y:42},{x:50,y:38},{x:50,y:20}];
+  const pos = [{x:50,y:72},{x:21,y:61},{x:77,y:61},{x:24,y:45},{x:78,y:43},{x:50,y:36},{x:50,y:24}];
   const zoneClasses = ['zone-meadow','zone-forest','zone-caves','zone-swamp','zone-mountain','zone-tower','zone-dragon'];
   c.insertAdjacentHTML('beforeend', `
     <div class="map-header"><div class="map-title">Quest Map</div><div class="map-sub">Choose your next challenge</div></div>
