@@ -2847,6 +2847,125 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('DOMContentLoaded',()=>setTimeout(scrub,80)); setTimeout(scrub,400); setInterval(()=>scrub(),2500);
 })();
 
+
+// === QuestMind Intelligent Learning + Battle System v1 (Fable 5 request implementation) ===
+(function(){
+  if(window.QM_INTELLIGENCE_V1) return; window.QM_INTELLIGENCE_V1=true;
+  const css=document.createElement('style');
+  css.textContent=`
+    .qmi-panel{margin:8px auto 0;width:92%;max-width:380px;display:grid;gap:7px;font-size:.78em;color:rgba(255,255,255,.78)}
+    .qmi-row{display:flex;gap:6px;flex-wrap:wrap;justify-content:center;align-items:center}
+    .qmi-pill{padding:5px 8px;border:1px solid rgba(125,211,252,.32);background:rgba(14,165,233,.12);border-radius:999px;color:#dff7ff;font-weight:700;letter-spacing:.02em}
+    .qmi-action{border:1px solid rgba(251,191,36,.38);background:linear-gradient(135deg,rgba(124,58,237,.22),rgba(14,165,233,.16));color:#fff;border-radius:10px;padding:7px 9px;font-family:inherit;font-weight:700;cursor:pointer}
+    .qmi-action:active{transform:scale(.96)}
+    .qmi-action[disabled]{opacity:.42;cursor:not-allowed}
+    .qmi-explain{display:none;margin-top:7px;padding:9px 10px;border-left:3px solid #7dd3fc;background:rgba(255,255,255,.07);border-radius:10px;line-height:1.25}
+    .qmi-explain.show{display:block;animation:slideUp .22s ease both}
+    .qmi-mastery{position:fixed;right:10px;bottom:58px;z-index:58;max-width:220px;padding:8px 10px;border:1px solid rgba(125,211,252,.28);background:rgba(5,10,30,.72);backdrop-filter:blur(10px);border-radius:14px;font-size:.72em;color:#dff7ff;box-shadow:0 14px 38px rgba(0,0,0,.35)}
+    .qmi-meter{height:5px;background:rgba(255,255,255,.12);border-radius:99px;overflow:hidden;margin-top:5px}.qmi-meter i{display:block;height:100%;background:linear-gradient(90deg,#7dd3fc,#a78bfa,#fbbf24);width:0%}
+    .qmi-tactical{box-shadow:0 0 0 2px rgba(251,191,36,.25),0 0 22px rgba(251,191,36,.18)!important}
+  `;
+  document.head.appendChild(css);
+
+  const clamp=(n,a,b)=>Math.max(a,Math.min(b,n));
+  const norm=x=>String(x??'').trim().toLowerCase().replace(/[^a-z0-9π√°.+\-\/ ]/g,'').replace(/\s+/g,' ');
+  function qm(){S.qm=S.qm||{version:1,mastery:{},seen:{},focus:3,shield:0,hints:0,comboBest:0};return S.qm;}
+  function masteryKey(){return (S.subject||'math')+'-g'+(S.grade||3)}
+  function profile(){const q=qm(),k=masteryKey();q.mastery[k]=q.mastery[k]||{seen:0,correct:0,streak:0,missTags:{},last:[]};return q.mastery[k];}
+  function masteryPct(m=profile()){return m.seen?Math.round((m.correct/m.seen)*100):50}
+  function dominantWeakness(m=profile()){let best='core';Object.entries(m.missTags||{}).forEach(([k,v])=>{if(!best||v>(m.missTags[best]||0))best=k});return best;}
+  function explain(q){return q.explain||('Best answer: '+((q.a&&q.a[q.c])||q.accept?.[0]||'')+'.');}
+  function typed(q){q.typed=true;q.accept=[q.answer, norm(q.answer)].filter(Boolean);q.a=[q.answer];q.c=0;return q}
+  function mc(q,a,c,ex,tags,diff){return {q,a,c,explain:ex,tags:tags||['core'],difficulty:diff||2};}
+  const GEN={
+    math(g,m){
+      const weak=dominantWeakness(m); let a,b,ans,q;
+      if(g<=2){a=2+Math.floor(Math.random()*9); b=2+Math.floor(Math.random()*9); ans=a+b; q=mc(`${a} + ${b} = ?`,[ans,ans+1,ans-1,ans+2].map(String),0,`${a} plus ${b} equals ${ans}.`,['addition'],1);}
+      else if(g<=5){a=3+Math.floor(Math.random()*10); b=2+Math.floor(Math.random()*9); ans=a*b; q=mc(`${a} × ${b} = ?`,[ans,ans+b,ans-a,ans+1].map(String),0,`Think of ${a} groups of ${b}. The product is ${ans}.`,['multiplication'],2);}
+      else if(g<=8){a=2+Math.floor(Math.random()*9); b=4+Math.floor(Math.random()*18); ans=b-a; q=typed({q:`Solve for x: x + ${a} = ${b}`,answer:String(ans),explain:`Subtract ${a} from both sides: x = ${b-a}.`,tags:['algebra'],difficulty:3});}
+      else {a=2+Math.floor(Math.random()*6); b=1+Math.floor(Math.random()*9); const c=2+Math.floor(Math.random()*9); ans=a*c+b; q=typed({q:`If f(x) = ${a}x + ${b}, what is f(${c})?`,answer:String(ans),explain:`Substitute ${c}: ${a}×${c}+${b} = ${ans}.`,tags:['functions'],difficulty:4});}
+      if(weak==='multiplication'&&g>2){a=6+Math.floor(Math.random()*7);b=6+Math.floor(Math.random()*7);ans=a*b;q=typed({q:`Mastery challenge: ${a} × ${b} = ?`,answer:String(ans),explain:`${a} times ${b} is ${ans}.`,tags:['multiplication'],difficulty:3});}
+      return q;
+    },
+    english(g,m){
+      const bank=[
+        mc('Which word is the verb in: The wizard studies at night?',['wizard','studies','night','the'],1,'A verb shows action. “Studies” is the action.',['grammar'],2),
+        mc('Choose the strongest synonym for brave.',['tired','courageous','silent','careful'],1,'Courageous means brave.',['vocabulary'],2),
+        mc('Which sentence uses a comma correctly?',['After the quest we rested.','After the quest, we rested.','After, the quest we rested.','After the, quest we rested.'],1,'Introductory phrases usually take a comma.',['punctuation'],3),
+        typed({q:'Type the plural of “child”.',answer:'children',explain:'Child has an irregular plural: children.',tags:['plural'],difficulty:2})
+      ]; return bank[Math.floor(Math.random()*bank.length)];
+    },
+    science(g,m){
+      const bank=[
+        mc('What do plants use to make food?',['sound','photosynthesis','gravity','rust'],1,'Plants use photosynthesis to turn light, water, and carbon dioxide into food.',['life science'],2),
+        mc('Which force pulls objects toward Earth?',['magnetism','friction','gravity','evaporation'],2,'Gravity pulls masses toward each other.',['physics'],2),
+        typed({q:'What gas do humans breathe in to survive?',answer:'oxygen',explain:'Humans need oxygen for cellular respiration.',tags:['biology'],difficulty:1}),
+        mc('Which is a conductor of electricity?',['rubber','copper','glass','wood'],1,'Copper lets electric charge move easily.',['electricity'],3)
+      ]; return bank[Math.floor(Math.random()*bank.length)];
+    },
+    geography(g,m){
+      const bank=[
+        mc('Which country has Ottawa as its capital?',['Canada','Australia','India','Brazil'],0,'Ottawa is the capital of Canada.',['capitals'],1),
+        mc('Which continent is Egypt in?',['Asia','Africa','Europe','South America'],1,'Egypt is in northeastern Africa.',['continents'],2),
+        typed({q:'Type the capital of France.',answer:'paris',explain:'Paris is the capital of France.',tags:['capitals'],difficulty:1}),
+        mc('Which ocean is west of British Columbia?',['Atlantic','Pacific','Indian','Arctic'],1,'British Columbia faces the Pacific Ocean.',['maps'],2)
+      ]; return bank[Math.floor(Math.random()*bank.length)];
+    }
+  };
+  const oldGet=window.getQuestion;
+  window.getQuestion=function(){
+    const subject=S.subject||'math', g=S.grade||3, m=profile();
+    let q;
+    if(Math.random()<0.62 && GEN[subject]) q=GEN[subject](g,m); else q=oldGet?oldGet():GEN.math(g,m);
+    q.tags=q.tags||[subject]; q.difficulty=q.difficulty||2; q.explain=q.explain||explain(q);
+    const key=norm(q.q); qm().seen[subject]=qm().seen[subject]||[]; const seen=qm().seen[subject];
+    if(seen.includes(key) && GEN[subject]) q=GEN[subject](g,m);
+    seen.push(norm(q.q)); if(seen.length>80) seen.splice(0,seen.length-80);
+    q.accept=q.accept||[(q.a&&q.a[q.c])||q.answer].map(norm);
+    return q;
+  };
+
+  function ensureMastery(){
+    let el=document.getElementById('qmi-mastery'); if(!el){el=document.createElement('div');el.id='qmi-mastery';el.className='qmi-mastery';document.body.appendChild(el);} const m=profile(),pct=masteryPct(m);
+    el.innerHTML=`<b>Adaptive QuestMind</b><div>${S.subject||'math'} mastery ${pct}% · streak ${m.streak||0}</div><div class="qmi-meter"><i style="width:${pct}%"></i></div><div>Focus ${qm().focus||0} · Weak spot: ${dominantWeakness(m)}</div>`;
+  }
+  function addQuestionTools(){
+    const card=document.getElementById('q-card'); if(!card||!B.currentQ) return;
+    let panel=document.getElementById('qmi-panel'); if(panel) panel.remove(); panel=document.createElement('div'); panel.id='qmi-panel'; panel.className='qmi-panel';
+    const q=B.currentQ,m=profile(),pct=masteryPct(m); const diff=['warm-up','standard','challenge','boss','expert'][clamp((q.difficulty||2)-1,0,4)];
+    panel.innerHTML=`<div class="qmi-row"><span class="qmi-pill">${diff}</span><span class="qmi-pill">${(q.tags||['core']).join(' · ')}</span><span class="qmi-pill">Mastery ${pct}%</span></div><div class="qmi-row"><button class="qmi-action" onclick="QMI.useHint()">Smart Hint</button><button class="qmi-action" onclick="QMI.useFocus()">Focus Strike</button><button class="qmi-action" onclick="QMI.useShield()">Arc Shield</button></div><div id="qmi-explain" class="qmi-explain"></div>`;
+    card.appendChild(panel); ensureMastery();
+  }
+  const oldShow=window.showQuestion;
+  window.showQuestion=function(){const r=oldShow&&oldShow.apply(this,arguments); setTimeout(addQuestionTools,30); return r;};
+
+  function currentAnswerCorrect(idx){const q=B.currentQ;if(!q)return false;if(q.typed){const v=document.getElementById('typed-answer')?.value;return (q.accept||[]).map(norm).includes(norm(v));}return idx===B.shuffledCorrect;}
+  function tuneAttack(isCorrect){
+    if(!isCorrect) return ()=>{}; const base=S.atk||15; let mult=1;
+    const spell=B.spell||'fire', zone=ZONES?.[S.zone||0]?.kind||'';
+    if((spell==='fire'&&/forest|swamp|meadow/.test(zone))||(spell==='ice'&&/fire|dragon|mountain/.test(zone))||(spell==='thunder'&&/tower|wyvern|mountain/.test(zone))) mult+=.22;
+    const st=profile().streak||0; if(st>=2) mult+=Math.min(.35,st*.07); if(qm().focusActive){mult+=.45; qm().focusActive=false;}
+    S.atk=Math.max(1,Math.floor(base*mult)); return ()=>{S.atk=base;};
+  }
+  function record(isCorrect){
+    const m=profile(),q=B.currentQ||{}; m.seen++; if(isCorrect){m.correct++;m.streak=(m.streak||0)+1;} else {m.streak=0;(q.tags||['core']).forEach(t=>m.missTags[t]=(m.missTags[t]||0)+1)}
+    qm().comboBest=Math.max(qm().comboBest||0,m.streak||0); if(isCorrect && (m.streak||0)%3===0) qm().focus=(qm().focus||0)+1;
+    saveGame&&saveGame(); setTimeout(()=>{ensureMastery(); const ex=document.getElementById('qmi-explain'); if(ex){ex.innerHTML=(isCorrect?'Good move. ':'Learn this. ')+explain(q); ex.classList.add('show');}},80);
+  }
+  const oldAnswer=window.answer;
+  window.answer=function(idx){const ok=currentAnswerCorrect(idx); const restore=tuneAttack(ok); if(qm().shield){const oldDef=S.def||0; S.def=oldDef+qm().shield; qm().shield=0; setTimeout(()=>{S.def=oldDef;},950);} const r=oldAnswer&&oldAnswer.apply(this,arguments); restore(); record(ok); return r;};
+  const oldTyped=window.answerTyped;
+  window.answerTyped=function(timeout){const ok=!timeout&&currentAnswerCorrect(0); const restore=tuneAttack(ok); const r=oldTyped&&oldTyped.apply(this,arguments); restore(); record(ok); return r;};
+  window.QMI={
+    useHint(){const q=B.currentQ,ex=document.getElementById('qmi-explain'); if(!q||!ex)return; qm().hints=(qm().hints||0)+1; const ans=(q.a&&q.a[q.c])||q.answer||''; ex.innerHTML=`Hint: ${q.tags?.[0]||'core'} question. ${q.typed?'Think of the exact term.':'Eliminate answers that do not fit.'} ${String(ans).length<=3?'The answer is short.':''}`; ex.classList.add('show'); saveGame();},
+    useFocus(){if((qm().focus||0)<=0){const ex=document.getElementById('qmi-explain'); if(ex){ex.textContent='Earn Focus by building 3-answer streaks.';ex.classList.add('show');}return;} qm().focus--; qm().focusActive=true; document.getElementById('q-card')?.classList.add('qmi-tactical'); ensureMastery(); saveGame();},
+    useShield(){qm().shield=6+Math.floor((S.lv||1)/2); const ex=document.getElementById('qmi-explain'); if(ex){ex.textContent='Arc Shield ready: next counterattack is reduced.';ex.classList.add('show');} ensureMastery();}
+  };
+  const oldBegin=window.beginBattle;
+  window.beginBattle=function(){const r=oldBegin&&oldBegin.apply(this,arguments); setTimeout(()=>{ensureMastery(); const msg=document.getElementById('b-msg'); if(msg)msg.textContent+=' Smart mode active: use Hint, Focus, and Shield at the right time.';},120); return r;};
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(ensureMastery,200)); setInterval(()=>{if(document.getElementById('battle')?.classList.contains('active'))ensureMastery();},2500);
+})();
+
 </script>
 <script src="js/scroll-reveal.js"></script>
 </body>
