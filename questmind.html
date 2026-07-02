@@ -575,6 +575,21 @@ body.ue-cinematic .spell:hover{transform:translateY(-3px) scale(1.02);box-shadow
   #map .map-nav .btn{height:34px!important;}
 }
 
+
+/* === QuestMind Real WebGL 3D Layer v1 (Three.js Path A) === */
+.qm3d-stage{position:relative;width:118px;height:118px;margin:0 auto -8px;pointer-events:none;z-index:2;filter:drop-shadow(0 18px 28px rgba(0,0,0,.55));}
+.qm3d-stage canvas{width:100%!important;height:100%!important;display:block;border-radius:22px;}
+.qm3d-label{position:fixed;right:12px;top:108px;z-index:288;background:linear-gradient(135deg,rgba(2,6,23,.86),rgba(30,64,175,.72));border:1px solid rgba(125,211,252,.35);border-radius:999px;padding:7px 10px;color:#dff7ff;font-size:.62em;font-weight:900;letter-spacing:.08em;text-transform:uppercase;box-shadow:0 12px 32px rgba(0,0,0,.42),0 0 22px rgba(56,189,248,.22);backdrop-filter:blur(14px);}
+body.qm-webgl #b-player>.asset3d,body.qm-webgl #b-mon>.mon-pack{display:none!important;}
+body.qm-webgl #b-player{min-height:112px;}
+body.qm-webgl #b-mon{min-height:112px;font-size:1em!important;display:grid;place-items:center;}
+.qm3d-map-layer{position:absolute;inset:0;z-index:2;pointer-events:none;opacity:.72;mix-blend-mode:screen;}
+.qm3d-map-layer canvas{width:100%!important;height:100%!important;display:block;}
+body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px currentColor,inset 0 2px 0 rgba(255,255,255,.42)!important;}
+.qm3d-burst{position:fixed;left:50%;top:42%;width:150px;height:150px;transform:translate(-50%,-50%);z-index:235;pointer-events:none;border-radius:50%;background:radial-gradient(circle,rgba(251,191,36,.8),rgba(125,211,252,.45) 34%,transparent 68%);animation:qm3dBurst .55s ease-out forwards;filter:blur(1px);}
+@keyframes qm3dBurst{0%{scale:.25;opacity:1}100%{scale:2.8;opacity:0}}
+@media(max-width:520px){.qm3d-stage{width:86px;height:86px}.qm3d-label{top:142px;right:8px;font-size:.54em;padding:6px 8px}}
+
 </style>
 </head>
 <body>
@@ -592,11 +607,6 @@ body.ue-cinematic .spell:hover{transform:translateY(-3px) scale(1.02);box-shadow
     @keyframes wizBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
     @keyframes wizStarPulse { 0%,100%{r:4;opacity:1} 50%{r:6;opacity:.7} }
     @keyframes wizSway { 0%,100%{transform:rotate(0deg)} 33%{transform:rotate(1deg)} 66%{transform:rotate(-1deg)} }
-  
-
-
-
-
 
 </style>
   <g class="wiz-hat">
@@ -859,7 +869,7 @@ body.ue-cinematic .spell:hover{transform:translateY(-3px) scale(1.02);box-shadow
       </div>
       <div id="b-player-lv-hint" style="font-size:.65em;color:var(--gold);font-weight:700;margin-top:2px;height:14px;text-shadow:0 0 8px rgba(251,191,36,.6);"></div>
     </div>
-    
+
     <!-- Monster -->
     <div style="text-align:center;min-width:120px;">
       <div id="b-mon" class="mon"><svg width="80" height="80"><use href="#goblin"/></svg></div>
@@ -919,6 +929,7 @@ body.ue-cinematic .spell:hover{transform:translateY(-3px) scale(1.02);box-shadow
 </div>
 
 
+<script src="https://unpkg.com/three@0.160.0/build/three.min.js"></script>
 <script>
 
 // ============ SCREEN MANAGEMENT ============
@@ -1579,12 +1590,12 @@ function getQuestion(){
   const subject = S.subject || 'math';
   const grade = S.grade || 3;
   let pool = [];
-  
+
   if(grade <= 2) pool = [...(Q[subject].easy||[]), ...(Q[subject].easy||[]).slice(0,5), ...(Q[subject].medium||[]).slice(0,5)];
   else if(grade <= 5) pool = [...(Q[subject].easy||[]).slice(0,5), ...(Q[subject].medium||[]), ...(Q[subject].medium||[]).slice(0,5)];
   else if(grade <= 8) pool = [...(Q[subject].medium||[]).slice(0,5), ...(Q[subject].hard||[]), ...(Q[subject].hard||[]).slice(0,5)];
   else pool = [...(Q[subject].hard||[]), ...(Q[subject].hard||[]), ...(Q[subject].medium||[]).slice(0,5)];
-  
+
   const cleanPool = pool.filter(q => questionMatchesSubject(q, subject));
   return shuffle(cleanPool.length ? cleanPool : pool)[0] || {q:"What is 2+2?",a:["4","3","5","6"],c:0};
 }
@@ -1615,12 +1626,12 @@ function doSignup(){
   const pass = document.getElementById('reg-pass').value;
   const pass2 = document.getElementById('reg-pass2').value;
   const err = document.getElementById('reg-err');
-  
+
   if(!user || !pass){err.textContent='Username and password required';return;}
   if(user.length < 3){err.textContent='Username must be 3+ characters';return;}
   if(pass.length < 4){err.textContent='Password must be 4+ characters';return;}
   if(pass !== pass2){err.textContent='Passwords don\'t match';return;}
-  
+
   S.username = user;
   S.displayName = user;
   S.lastLogin = Date.now();
@@ -1632,9 +1643,9 @@ function doLogin(){
   const user = document.getElementById('login-user').value.trim().toLowerCase();
   const pass = document.getElementById('login-pass').value;
   const err = document.getElementById('login-err');
-  
+
   if(!user || !pass){err.textContent='Enter username and password';return;}
-  
+
   // Check local save
   const saved = localStorage.getItem(SK);
   if(saved){
@@ -1650,7 +1661,7 @@ function doLogin(){
       return;
     }
   }
-  
+
   // Try server
   fetch(API+'/api/auth/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username:user,password:pass})})
     .then(r=>r.json()).then(data=>{
@@ -1742,7 +1753,7 @@ function initGradeButtons(){
     {g:6,label:"Grade 6-8",desc:"Algebra, science, literature"},
     {g:9,label:"Grade 9+",desc:"Advanced everything!"}
   ];
-  container.innerHTML = grades.map(grade => 
+  container.innerHTML = grades.map(grade =>
     `<button class="grade-btn" onclick="selectGrade(${grade.g})"><b>${grade.label}</b><span style="font-size:.75em;opacity:.7">${grade.desc}</span></button>`
   ).join('');
 }
@@ -1810,7 +1821,7 @@ function beginBattle(zi){
   S.zone = zi;
   const mon = MONS[Math.min(zi, MONS.length-1)];
   const hpMult = 1 + (zi * 0.5);
-  
+
   B = {
     active:true, mon:mon,
     monHp: Math.floor(80 * hpMult),
@@ -1818,7 +1829,7 @@ function beginBattle(zi){
     spell:null, qTimer:null, qTime:15,
     correct:0, asked:0, canAct:true
   };
-  
+
   // Set player
   document.getElementById('b-player').innerHTML = asset3d('wizard','✦','float-model');
   document.getElementById('b-player-nm').textContent = S.name || 'Wizard';
@@ -1826,7 +1837,7 @@ function beginBattle(zi){
   document.getElementById('b-player-hp-text').textContent = S.hp;
   document.getElementById('b-player-mp').style.width = (S.mp/S.maxMp*100)+'%';
   document.getElementById('b-player-mp-text').textContent = S.mp;
-  
+
   // Set monster
   document.getElementById('b-mon').innerHTML = asset3d(mon.kind, mon.mark, 'float-model');
   document.getElementById('b-mon').classList.remove('mon-enter');
@@ -1837,10 +1848,10 @@ function beginBattle(zi){
   document.getElementById('b-mon-attack').textContent = '';
   document.getElementById('b-player-attack').textContent = '';
   document.getElementById('b-msg').textContent = `A wild ${mon.nm} appears!`;
-  
+
   // Update HUD
   updateHUD();
-  
+
   // Build spells
   const spells = [
     {id:'fire',icon:asset3d('fire','🔥'),name:'Fire Bolt',cost:10,sub:'math'},
@@ -1848,25 +1859,25 @@ function beginBattle(zi){
     {id:'thunder',icon:asset3d('thunder','⚡'),name:'Thunder',cost:15,sub:'science'},
     {id:'heal',icon:asset3d('heal','✚'),name:'Heal',cost:12,sub:'heal'}
   ];
-  
-  document.getElementById('spells').innerHTML = spells.map(s => 
+
+  document.getElementById('spells').innerHTML = spells.map(s =>
     `<div class="spell" onclick="castSpell('${s.id}')" id="sp-${s.id}">
       <div class="s-icon">${s.icon}</div>
       <div class="s-name">${s.name}</div>
       <div class="s-cost">${s.cost} MP</div>
     </div>`
   ).join('');
-  
+
   showScreen('battle');
   setTimeout(()=>showQuestion(), 500);
 }
 
 function castSpell(id){
   if(!B.canAct || !B.active) return;
-  
+
   const costs = {fire:10,ice:10,thunder:15,heal:12};
   if(S.mp < costs[id]){document.getElementById('b-msg').textContent='Not enough MP!';return;}
-  
+
   // Heal is instant, others need question
   if(id === 'heal'){
     S.mp -= costs.heal;
@@ -1879,7 +1890,7 @@ function castSpell(id){
     setTimeout(()=>{B.canAct=true;showQuestion();}, 1000);
     return;
   }
-  
+
   S.mp -= costs[id];
   B.spell = id;
   showQuestion();
@@ -1887,21 +1898,21 @@ function castSpell(id){
 
 function showQuestion(){
   if(!B.active) return;
-  
+
   const q = getQuestion();
   B.currentQ = q;
   B.canAct = false;
-  
+
   document.getElementById('q-text').textContent = q.q;
   // Shuffle answers and track correct index
   const shuffledIndices = q.a.map((_, i) => i).sort(() => Math.random() - 0.5);
   const correctShuffledIdx = shuffledIndices.indexOf(q.c);
   B.shuffledCorrect = correctShuffledIdx;
-  
-  document.getElementById('q-opts').innerHTML = shuffledIndices.map((origIdx, displayIdx) => 
+
+  document.getElementById('q-opts').innerHTML = shuffledIndices.map((origIdx, displayIdx) =>
     `<div class="q-opt" onclick="answer(${displayIdx})">${q.a[origIdx]}</div>`
   ).join('');
-  
+
   // Timer
   B.qTime = 15;
   document.getElementById('q-timer').style.width = '100%';
@@ -1920,19 +1931,19 @@ function answer(idx){
   if(B.answered) return;
   B.answered = true;
   clearInterval(B.qTimer);
-  
+
   const q = B.currentQ;
   const opts = document.querySelectorAll('.q-opt');
   // Check if selected option is the correct one (using stored mapping)
   const isCorrect = idx === B.shuffledCorrect;
-  
+
   // Show correct/wrong styling
   opts.forEach((o,i) => {
     if(i === B.shuffledCorrect) o.classList.add('correct');
     else if(i === idx) o.classList.add('wrong');
     o.style.pointerEvents = 'none';
   });
-  
+
   B.asked++;
   S.totalQuestions = (S.totalQuestions||0) + 1;
   if(isCorrect){
@@ -1942,7 +1953,7 @@ function answer(idx){
   } else {
     B.currentStreak = 0;
   }
-  
+
   // Calculate damage
   let dmg = 0;
   if(isCorrect){
@@ -1975,13 +1986,13 @@ function answer(idx){
     const player = document.getElementById('b-player');
     if(player){player.style.animation='shake .3s ease';setTimeout(()=>player.style.animation='',300);}
   }
-  
+
   // Update player bars
   document.getElementById('b-player-hp').style.width = Math.max(0, S.hp/S.maxHp*100)+'%';
   document.getElementById('b-player-hp-text').textContent = Math.max(0, S.hp);
   document.getElementById('b-player-mp').style.width = Math.max(0, S.mp/S.maxMp*100)+'%';
   document.getElementById('b-player-mp-text').textContent = S.mp;
-  
+
   // Check win/lose
   if(B.monHp <= 0){
     setTimeout(()=>winBattle(), 800);
@@ -1991,11 +2002,11 @@ function answer(idx){
     setTimeout(()=>loseBattle(), 800);
     return;
   }
-  
+
   // Show next button after answering
   const nextBtnContainer = document.getElementById('next-btn-container');
   if(nextBtnContainer) nextBtnContainer.style.display = 'block';
-  
+
   // Next question
   B.answered = false;
   B.spell = null;
@@ -2045,7 +2056,7 @@ function winBattle(){
   const newAchs = checkAchievements();
   setTimeout(()=>{newAchs.forEach(a=>showAchievementPopup(a));}, 1000);
   S.xp += 50;
-  
+
   // Level up check
   while(S.xp >= S.xpNeed){
     S.xp -= S.xpNeed;
@@ -2059,10 +2070,10 @@ function winBattle(){
     S.atk += 2;
     S.def += 1;
   }
-  
+
   S.mp = Math.min(S.maxMp, S.mp + Math.floor(S.maxMp * 0.3));
   doSave();
-  
+
   document.getElementById('r-title').textContent = boostResultTitle();
   document.getElementById('r-icon').textContent = B.monMaxHp > 200 ? '👑' : '🏆';
   document.getElementById('r-icon').classList.add('victory-bounce');
@@ -2080,7 +2091,7 @@ function loseBattle(){
   S.gold = Math.max(0, S.gold - 10);
   S.xp += 5;
   doSave();
-  
+
   document.getElementById('r-title').textContent = ' Defeated!';
   document.getElementById('r-icon').textContent = '💀';
   document.getElementById('r-icon').classList.remove('victory-bounce');
@@ -2176,14 +2187,14 @@ function showAchievements(){
   document.getElementById('s-gold').textContent = S.totalGold || S.gold || 0;
   document.getElementById('s-level').textContent = S.lv || 1;
   document.getElementById('s-streakbest').textContent = S.maxStreak || 0;
-  
+
   // Update achievement list
   const list = document.getElementById('ach-list');
   list.innerHTML = ACHIEVEMENTS.map(a => {
     const unlocked = (S.achievements||[]).includes(a.id);
     return '<div class="ach-card ' + (unlocked?'unlocked':'locked') + '"><div class="ach-icon">' + a.icon + '</div><div class="ach-name">' + a.name + '</div><div class="ach-desc">' + a.desc + '</div></div>';
   }).join('');
-  
+
   document.getElementById('ach-count').textContent = (S.achievements||[]).length + '/' + ACHIEVEMENTS.length + ' Unlocked';
   showScreen('achievements');
 }
@@ -2353,7 +2364,7 @@ function showBattlePets(){
     overlay = document.createElement('div');
     overlay.id = 'battle-pets';
     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:60;display:flex;align-items:center;justify-content:center;';
-    
+
     const pets = [
       {id:'dragon',ic:asset3d('dragon','◇','pet float-model'),nm:'Fire Dragon',desc:'+10% damage'},
       {id:'phoenix',ic:asset3d('fire','◆','pet float-model'),nm:'Phoenix',desc:'Auto-heal 5 HP/turn'},
@@ -2362,7 +2373,7 @@ function showBattlePets(){
       {id:'cat',ic:asset3d('heal','✶','pet float-model'),nm:'Lucky Cat',desc:'+20% gold earned'},
       {id:'turtle',ic:asset3d('golem','▣','pet float-model'),nm:'Stone Turtle',desc:'+15% defense'}
     ];
-    
+
     overlay.innerHTML = `
       <div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:400px;max-height:80vh;overflow-y:auto;">
         <h2 style="text-align:center;margin-bottom:15px;">🐾 Battle Pets</h2>
@@ -2563,7 +2574,7 @@ document.addEventListener('DOMContentLoaded', function() {
   function resolveAnswer(isCorrect,idx){
     if(B.answered) return; B.answered=true; clearInterval(B.qTimer); B.asked++; S.totalQuestions=(S.totalQuestions||0)+1;
     document.querySelectorAll('.q-opt').forEach((o,i)=>{if(i===B.shuffledCorrect)o.classList.add('correct');else if(i===idx)o.classList.add('wrong');o.style.pointerEvents='none'});
-    if(isCorrect){B.correct++;B.currentStreak=(B.currentStreak||0)+1;S.maxStreak=Math.max(S.maxStreak||0,B.currentStreak);let dmg=(S.atk||15)+Math.floor(Math.random()*10)+(B.boss?5:0); if(B.spell)dmg=Math.floor(dmg*1.55); B.monHp-=dmg; showSpellEffect(B.spell||'fire'); showDmgNum(dmg,false,false); document.getElementById('b-mon').classList.add('epic-hit'); setTimeout(()=>document.getElementById('b-mon')?.classList.remove('epic-hit'),430); spawnBattleParticles('#fbbf24',26); document.getElementById('b-msg').textContent=`Correct! ${dmg} damage.`; S.xp+=10+S.zone*2; showXpGain(10+S.zone*2);} 
+    if(isCorrect){B.correct++;B.currentStreak=(B.currentStreak||0)+1;S.maxStreak=Math.max(S.maxStreak||0,B.currentStreak);let dmg=(S.atk||15)+Math.floor(Math.random()*10)+(B.boss?5:0); if(B.spell)dmg=Math.floor(dmg*1.55); B.monHp-=dmg; showSpellEffect(B.spell||'fire'); showDmgNum(dmg,false,false); document.getElementById('b-mon').classList.add('epic-hit'); setTimeout(()=>document.getElementById('b-mon')?.classList.remove('epic-hit'),430); spawnBattleParticles('#fbbf24',26); document.getElementById('b-msg').textContent=`Correct! ${dmg} damage.`; S.xp+=10+S.zone*2; showXpGain(10+S.zone*2);}
     else{B.currentStreak=0; document.getElementById('b-msg').textContent='Wrong — small damage, monster attacks!'; monsterCounter(true);}
     document.getElementById('b-mon-hp').style.width=Math.max(0,B.monHp/B.monMaxHp*100)+'%'; updateBattleXpBar(); syncBars();
     if(B.boss && B.monHp>0){const pct=B.monHp/B.monMaxHp; const newPhase=pct<.34?3:pct<.67?2:1; if(newPhase>B.bossPhase){B.bossPhase=newPhase; B.monHp+=Math.floor(B.monMaxHp*.12); const r=document.createElement('div');r.className='phase-ring';document.body.appendChild(r);setTimeout(()=>r.remove(),900);document.getElementById('b-mon-nm').textContent=document.getElementById('b-mon-nm').textContent.replace(/Phase \d\/3/,'Phase '+newPhase+'/3');document.getElementById('b-msg').textContent='Boss phase '+newPhase+'! Harder questions incoming!';}}
@@ -2715,6 +2726,86 @@ document.addEventListener('DOMContentLoaded', function() {
     }
   };
   setTimeout(install,250); setTimeout(install,1200); setTimeout(install,2500);
+})();
+
+
+// === QuestMind Real WebGL 3D Layer v1 (Three.js Path A) ===
+(function(){
+  if(window.QM_WEBGL3D) return; window.QM_WEBGL3D=true;
+  const rigs=[]; let mapRig=null;
+  const colors={hero:0x7c3aed,monster:0xef4444,fire:0xff5a2f,ice:0x7dd3fc,thunder:0xfbbf24,heal:0x22c55e};
+  function hasThree(){return !!window.THREE;}
+  function mat(c,rough=.42,metal=.18){return new THREE.MeshStandardMaterial({color:c,roughness:rough,metalness:metal,emissive:c,emissiveIntensity:.05});}
+  function stage(id,parent){
+    if(!parent) return null;
+    let el=document.getElementById(id);
+    if(!el){el=document.createElement('div');el.id=id;el.className='qm3d-stage';parent.prepend(el);} return el;
+  }
+  function makeRenderer(el){
+    const r=new THREE.WebGLRenderer({alpha:true,antialias:true,powerPreference:'high-performance'});
+    r.setPixelRatio(Math.min(2,window.devicePixelRatio||1));
+    r.setSize(el.clientWidth||118,el.clientHeight||118,false); el.appendChild(r.domElement); return r;
+  }
+  function heroRig(el){
+    el.innerHTML=''; const scene=new THREE.Scene(); const cam=new THREE.PerspectiveCamera(35,1,.1,50); cam.position.set(0,1.2,6);
+    const renderer=makeRenderer(el); scene.add(new THREE.HemisphereLight(0xdff7ff,0x24113a,1.3)); const key=new THREE.DirectionalLight(0xffffff,1.2); key.position.set(3,4,5); scene.add(key);
+    const g=new THREE.Group(); scene.add(g);
+    const body=new THREE.Mesh(new THREE.CapsuleGeometry(.55,1.05,8,18),mat(0x2563eb,.36,.25)); body.position.y=-.25; g.add(body);
+    const head=new THREE.Mesh(new THREE.SphereGeometry(.38,28,18),mat(0xfde68a,.48,.05)); head.position.y=.72; g.add(head);
+    const hat=new THREE.Mesh(new THREE.ConeGeometry(.48,1.0,5),mat(0x7c3aed,.32,.32)); hat.position.y=1.35; hat.rotation.z=-.12; g.add(hat);
+    const brim=new THREE.Mesh(new THREE.TorusGeometry(.42,.055,12,42),mat(0xa78bfa,.28,.4)); brim.position.y=.97; brim.rotation.x=Math.PI/2; g.add(brim);
+    const staff=new THREE.Group(); const pole=new THREE.Mesh(new THREE.CylinderGeometry(.035,.045,1.7,10),mat(0x92400e,.5,.05)); pole.position.y=.15; staff.add(pole); const orb=new THREE.Mesh(new THREE.IcosahedronGeometry(.18,2),mat(0xfbbf24,.24,.45)); orb.position.y=1.08; staff.add(orb); staff.position.set(.72,-.22,.12); staff.rotation.z=-.18; g.add(staff);
+    return {type:'hero',scene,cam,renderer,g,staff,t:Math.random()*10,pulse(){staff.scale.set(1.25,1.25,1.25); setTimeout(()=>staff.scale.set(1,1,1),260)}};
+  }
+  function monsterRig(el,kind){
+    el.innerHTML=''; const scene=new THREE.Scene(); const cam=new THREE.PerspectiveCamera(35,1,.1,50); cam.position.set(0,1,6);
+    const renderer=makeRenderer(el); scene.add(new THREE.HemisphereLight(0xffffff,0x16051f,1.15)); const key=new THREE.DirectionalLight(0xffedd5,1.45); key.position.set(-3,4,5); scene.add(key);
+    const g=new THREE.Group(); scene.add(g); const base=(kind==='boss'||kind==='dragon'||kind==='wyvern')?0xef4444:(kind==='golem'?0xa8a29e:0x22c55e);
+    const body=new THREE.Mesh(new THREE.SphereGeometry(.78,34,24),mat(base,.38,.2)); body.scale.set(1.05,.9,.9); g.add(body);
+    const jaw=new THREE.Mesh(new THREE.BoxGeometry(.62,.18,.28),mat(0x111827,.46,.04)); jaw.position.set(0,-.25,.62); g.add(jaw);
+    const eyeMat=mat(0xfef08a,.2,.25); [-.28,.28].forEach(x=>{const e=new THREE.Mesh(new THREE.SphereGeometry(.105,16,10),eyeMat); e.position.set(x,.18,.7); g.add(e);});
+    [-.42,.42].forEach(x=>{const h=new THREE.Mesh(new THREE.ConeGeometry(.13,.42,5),mat(0xf8fafc,.35,.1)); h.position.set(x,.62,.08); h.rotation.z=x<0?.35:-.35; g.add(h);});
+    const spikes=new THREE.Group(); for(let i=0;i<5;i++){const sp=new THREE.Mesh(new THREE.ConeGeometry(.08,.28,5),mat(0xffedd5,.4,.08)); sp.position.set(-.48+i*.24,.74-i*.03,-.15); spikes.add(sp);} g.add(spikes);
+    return {type:'monster',scene,cam,renderer,g,t:Math.random()*10,hit(){g.scale.set(1.22,.82,1.22); setTimeout(()=>g.scale.set(1,1,1),220)}};
+  }
+  function map3d(){
+    if(!hasThree()) return; const wrap=document.querySelector('#map .map-wrap'); if(!wrap||mapRig) return;
+    const el=document.createElement('div'); el.className='qm3d-map-layer'; wrap.prepend(el);
+    const scene=new THREE.Scene(); const cam=new THREE.PerspectiveCamera(55,1,.1,80); cam.position.set(0,7,10); cam.lookAt(0,0,0);
+    const renderer=new THREE.WebGLRenderer({alpha:true,antialias:true}); renderer.setPixelRatio(Math.min(1.5,window.devicePixelRatio||1)); el.appendChild(renderer.domElement);
+    scene.add(new THREE.HemisphereLight(0xe0f2fe,0x08111f,1.1)); const key=new THREE.DirectionalLight(0xffffff,1); key.position.set(3,8,5); scene.add(key);
+    const g=new THREE.Group(); scene.add(g);
+    for(let i=0;i<7;i++){const geo=new THREE.CylinderGeometry(.55+i*.04,.75+i*.05,.22,32); const m=mat([0x22c55e,0x0ea5e9,0x7c3aed,0xf59e0b,0xef4444][i%5],.55,.08); const node=new THREE.Mesh(geo,m); node.position.set((i-3)*1.15,Math.sin(i)*.2,(i%2?-.6:.7)); node.userData.phase=i*.8; g.add(node);}
+    const lineMat=new THREE.MeshBasicMaterial({color:0x7dd3fc,transparent:true,opacity:.36}); for(let i=0;i<6;i++){const link=new THREE.Mesh(new THREE.BoxGeometry(1.15,.035,.035),lineMat); link.position.set((i-2.5)*1.15,0,(i%2?0.05:.05)); link.rotation.y=(i%2?.55:-.55); g.add(link);}
+    mapRig={el,scene,cam,renderer,g,t:0}; rigs.push(mapRig); resizeAll();
+  }
+  function ensure(){
+    const labelId='qm3d-label'; if(!document.getElementById(labelId)){const l=document.createElement('div');l.id=labelId;l.className='qm3d-label';l.textContent=hasThree()?'Real WebGL 3D':'3D fallback';document.body.appendChild(l);}
+    if(!hasThree()) return; document.body.classList.add('qm-webgl');
+    const h=stage('qm3d-hero',document.getElementById('b-player')); if(h&&!h.dataset.ready){rigs.push(heroRig(h)); h.dataset.ready='1';}
+    const m=stage('qm3d-monster',document.getElementById('b-mon')); if(m&&!m.dataset.ready){rigs.push(monsterRig(m)); m.dataset.ready='1';}
+    map3d(); resizeAll();
+  }
+  function resizeAll(){
+    rigs.forEach(r=>{const el=r.renderer.domElement.parentElement; const w=el.clientWidth||118,h=el.clientHeight||118; r.renderer.setSize(w,h,false); r.cam.aspect=w/h; r.cam.updateProjectionMatrix();});
+    if(mapRig){const rect=mapRig.el.getBoundingClientRect(); mapRig.renderer.setSize(rect.width||innerWidth,rect.height||innerHeight,false); mapRig.cam.aspect=(rect.width||innerWidth)/(rect.height||innerHeight); mapRig.cam.updateProjectionMatrix();}
+  }
+  function loop(){
+    const now=performance.now()/1000;
+    rigs.forEach(r=>{r.t=(r.t||0)+.016; if(r.g){r.g.rotation.y=Math.sin(now*1.25+r.t)*.22; r.g.position.y=Math.sin(now*2+r.t)*.08; if(r.type==='monster')r.g.rotation.z=Math.sin(now*1.7)*.05;} if(r.staff)r.staff.rotation.z=-.18+Math.sin(now*5)*.08; if(r.g&&r.g.children)r.g.children.forEach((c,i)=>{if(c.geometry&&/Icosahedron/.test(c.geometry.type||''))c.rotation.y+=.04}); r.renderer.render(r.scene,r.cam);});
+    if(mapRig){mapRig.t+=.01; mapRig.g.rotation.y=Math.sin(now*.18)*.16; mapRig.g.children.forEach((c,i)=>{c.position.y+=(Math.sin(now*1.5+(c.userData.phase||i))*.002); c.rotation.y+=.004}); mapRig.renderer.render(mapRig.scene,mapRig.cam);} requestAnimationFrame(loop);
+  }
+  function burst(){const b=document.createElement('div');b.className='qm3d-burst';document.body.appendChild(b);setTimeout(()=>b.remove(),650); rigs.filter(r=>r.type==='hero').forEach(r=>r.pulse&&r.pulse()); rigs.filter(r=>r.type==='monster').forEach(r=>r.hit&&r.hit());}
+  function startLoop(){ if(window.QM3D_LOOP_STARTED) return; window.QM3D_LOOP_STARTED=true; loop(); }
+  window.QM3D={ensure,burst,resize:resizeAll};
+  window.addEventListener('resize',resizeAll);
+  document.addEventListener('DOMContentLoaded',()=>{setTimeout(ensure,120);setTimeout(startLoop,160);}); setTimeout(ensure,500); setTimeout(startLoop,700);
+  const install=()=>{
+    if(window.showScreen&&!window.showScreen.__qm3d){const old=window.showScreen; window.showScreen=function(id){const r=old.apply(this,arguments); setTimeout(ensure,60); return r;}; window.showScreen.__qm3d=true;}
+    if(window.beginBattle&&!window.beginBattle.__qm3d){const old=window.beginBattle; window.beginBattle=function(){const r=old.apply(this,arguments); setTimeout(()=>{const m=document.getElementById('qm3d-monster'); if(m){m.dataset.ready=''; m.remove();} ensure();},80); return r;}; window.beginBattle.__qm3d=true;}
+    if(window.showSpellEffect&&!window.showSpellEffect.__qm3d){const old=window.showSpellEffect; window.showSpellEffect=function(){burst(); return old.apply(this,arguments);}; window.showSpellEffect.__qm3d=true;}
+  };
+  setTimeout(install,300); setTimeout(install,1200); setTimeout(install,2600);
 })();
 
 </script>
