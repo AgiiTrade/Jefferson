@@ -343,7 +343,7 @@ body{font-family:'Fredoka',sans-serif;background:var(--dark);color:#fff;overflow
 .walk-btn.down{grid-column:2;grid-row:2}
 .walk-obstacle{position:absolute;font-size:1.5em;z-index:2}
 .walk-npc{position:absolute;font-size:1.8em;z-index:8;cursor:pointer}
-.walk-npc:hover::after{content:'💬';position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.8em}
+.walk-npc:hover::after{content:'';position:absolute;top:-20px;left:50%;transform:translateX(-50%);font-size:.8em}
 
 
 /* === QuestMind Epic Upgrade: Unreal-inspired browser graphics === */
@@ -590,6 +590,13 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 @keyframes qm3dBurst{0%{scale:.25;opacity:1}100%{scale:2.8;opacity:0}}
 @media(max-width:520px){.qm3d-stage{width:86px;height:86px}.qm3d-label{top:142px;right:8px;font-size:.54em;padding:6px 8px}}
 
+
+/* === QuestMind no-emoji animation pass v1 === */
+body.qm-no-emoji .qm3d-label::after{content:" · ANIMATED MODE";}
+body.qm-no-emoji .s-icon,body.qm-no-emoji .zone-i,body.qm-no-emoji .home-wizard{font-family:inherit;}
+.no-emoji-note{position:fixed;left:50%;top:34px;transform:translateX(-50%);z-index:287;background:rgba(2,6,23,.72);border:1px solid rgba(125,211,252,.25);border-radius:999px;padding:5px 10px;color:#dff7ff;font-size:.58em;font-weight:900;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(12px);}
+@media(max-width:520px){.no-emoji-note{top:34px;font-size:.50em}}
+
 </style>
 </head>
 <body>
@@ -607,6 +614,13 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
     @keyframes wizBob { 0%,100%{transform:translateY(0)} 50%{transform:translateY(-3px)} }
     @keyframes wizStarPulse { 0%,100%{r:4;opacity:1} 50%{r:6;opacity:.7} }
     @keyframes wizSway { 0%,100%{transform:rotate(0deg)} 33%{transform:rotate(1deg)} 66%{transform:rotate(-1deg)} }
+
+
+/* === QuestMind no-emoji animation pass v1 === */
+body.qm-no-emoji .qm3d-label::after{content:" · ANIMATED MODE";}
+body.qm-no-emoji .s-icon,body.qm-no-emoji .zone-i,body.qm-no-emoji .home-wizard{font-family:inherit;}
+.no-emoji-note{position:fixed;left:50%;top:34px;transform:translateX(-50%);z-index:287;background:rgba(2,6,23,.72);border:1px solid rgba(125,211,252,.25);border-radius:999px;padding:5px 10px;color:#dff7ff;font-size:.58em;font-weight:900;letter-spacing:.08em;text-transform:uppercase;backdrop-filter:blur(12px);}
+@media(max-width:520px){.no-emoji-note{top:34px;font-size:.50em}}
 
 </style>
   <g class="wiz-hat">
@@ -710,31 +724,31 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 <div id="home" class="screen active">
   <div style="text-align:center;margin-bottom:30px;">
     <div class="home-wizard"><span class="asset3d wizard float-model"><span class="mark">✦</span></span></div>
-    <h1 class="home-title" style="font-size:2.2em;">QuestMind ⚡</h1>
-    <div style="color:rgba(255,255,255,.5);font-size:.9em;">Wizard Academy · All images upgraded to 3D</div>
+    <h1 class="home-title" style="font-size:2.2em;">QuestMind</h1>
+    <div style="color:rgba(255,255,255,.5);font-size:.9em;">Wizard Academy · Animated 3D Mode</div>
     <div style="margin-top:10px;font-size:.7em;letter-spacing:.2em;text-transform:uppercase;color:var(--gold);font-weight:700;opacity:.8;">a PBI Creative Kids game</div>
   </div>
   <div id="auth-options">
-    <button class="btn btn-p" style="width:200px;" onclick="showScreen('login-screen')">🔑 Login</button>
-    <button class="btn btn-g" style="width:200px;margin-top:10px;" onclick="showScreen('signup-screen')">📝 Sign Up</button>
+    <button class="btn btn-p" style="width:200px;" onclick="showScreen('login-screen')">Login</button>
+    <button class="btn btn-g" style="width:200px;margin-top:10px;" onclick="showScreen('signup-screen')">Sign Up</button>
   </div>
   <div id="logged-in-options" style="display:none;">
     <div style="text-align:center;margin-bottom:20px;">
-      <span style="font-size:1.5em">🧙</span><br>
+      <span style="font-size:1.5em"></span><br>
       <span id="display-name" style="font-weight:700;color:var(--gold);font-size:1.2em;"></span><br>
       <span id="user-grade" style="font-size:.8em;opacity:.7;"></span>
     </div>
-    <button class="btn btn-p" style="width:200px;" onclick="showScreen('subjects')">⚡ Start Adventure</button>
-    <button class="btn btn-o btn-sm" style="width:200px;margin-top:10px;" onclick="showAchievements()">🏆 Achievements</button>
-    <button class="btn btn-o btn-sm" style="width:200px;margin-top:10px;" onclick="doLogout()">🚪 Logout</button>
+    <button class="btn btn-p" style="width:200px;" onclick="showScreen('subjects')"> Start Adventure</button>
+    <button class="btn btn-o btn-sm" style="width:200px;margin-top:10px;" onclick="showAchievements()"> Achievements</button>
+    <button class="btn btn-o btn-sm" style="width:200px;margin-top:10px;" onclick="doLogout()"> Logout</button>
   </div>
 </div>
 
 <!-- LOGIN SCREEN -->
 <div id="login-screen" class="screen">
   <div class="card">
-    <h2>🔑 Login</h2>
-    <button class="social-btn btn-google" onclick="socialLogin('google')">🔵 Continue with Google</button>
+    <h2>Login</h2>
+    <button class="social-btn btn-google" onclick="socialLogin('google')"> Continue with Google</button>
     <button class="social-btn btn-apple" onclick="socialLogin('apple')">⚫ Continue with Apple</button>
     <div style="text-align:center;margin:15px 0;opacity:.5;font-size:.85em;">— or login with username —</div>
     <input class="in" id="login-user" placeholder="Username" maxlength="20">
@@ -748,8 +762,8 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 <!-- SIGNUP SCREEN -->
 <div id="signup-screen" class="screen">
   <div class="card">
-    <h2>📝 Create Account</h2>
-    <button class="social-btn btn-google" onclick="socialLogin('google')">🔵 Continue with Google</button>
+    <h2> Create Account</h2>
+    <button class="social-btn btn-google" onclick="socialLogin('google')"> Continue with Google</button>
     <button class="social-btn btn-apple" onclick="socialLogin('apple')">⚫ Continue with Apple</button>
     <div style="text-align:center;margin:15px 0;opacity:.5;font-size:.85em;">— or create with username —</div>
     <input class="in" id="reg-user" placeholder="Choose username (3+ chars)" maxlength="20">
@@ -775,7 +789,7 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 <!-- GRADE SELECTION -->
 <div id="grade-screen" class="screen">
   <div class="card">
-    <h2>📚 What Grade Are You In?</h2>
+    <h2> What Grade Are You In?</h2>
     <p style="text-align:center;font-size:.8em;opacity:.7;margin-bottom:15px;">Questions will match your level</p>
     <div id="grade-buttons" style="display:flex;flex-direction:column;gap:5px;"></div>
     <button class="btn btn-o btn-sm" style="width:100%;margin-top:15px;" onclick="showScreen('display-screen')">← Back</button>
@@ -785,7 +799,7 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 <!-- SUBJECT SELECTION -->
 <div id="subjects" class="screen">
   <div style="text-align:center;padding:20px;width:100%;max-width:400px;margin:0 auto;">
-    <h2 style="margin-bottom:20px;">📚 Choose Your Quest</h2>
+    <h2 style="margin-bottom:20px;"> Choose Your Quest</h2>
     <button class="subject-btn math" onclick="selectSubject('math')">
       <span class="icon"><span class="asset3d subject-math"><span class="mark">Σ</span></span></span>
       <div class="info"><span class="name">Math World</span><span class="desc">Numbers, Algebra, Geometry</span></div>
@@ -810,28 +824,28 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 <div id="map" class="screen">
   <div class="hud">
     <div style="display:flex;align-items:center;gap:8px;">
-      <span style="font-size:1.5em">🧙</span>
+      <span style="font-size:1.5em"></span>
       <div>
         <div style="font-weight:600;font-size:.9em;" id="h-nm">Wizard</div>
-        <div style="display:flex;align-items:center;gap:4px"><span style="font-size:.65em">❤️</span><div class="bar-c"><div class="bar-f bar-hp" id="h-hp" style="width:100%"></div></div></div>
-        <div style="display:flex;align-items:center;gap:4px"><span style="font-size:.65em">💧</span><div class="bar-c"><div class="bar-f bar-mp" id="h-mp" style="width:100%"></div></div></div>
+        <div style="display:flex;align-items:center;gap:4px"><span style="font-size:.65em">HP</span><div class="bar-c"><div class="bar-f bar-hp" id="h-hp" style="width:100%"></div></div></div>
+        <div style="display:flex;align-items:center;gap:4px"><span style="font-size:.65em">MP</span><div class="bar-c"><div class="bar-f bar-mp" id="h-mp" style="width:100%"></div></div></div>
       </div>
     </div>
     <div style="text-align:right;">
-      <div style="font-weight:700;color:var(--gold);" id="h-gd">💰 0</div>
+      <div style="font-weight:700;color:var(--gold);" id="h-gd">Gold  0</div>
       <div style="font-size:.75em;" id="h-lv">Lv.1</div>
     </div>
   </div>
   <div class="map-wrap">
     <div class="map-canvas" id="map-canvas"></div>
     <div class="map-p" id="map-p"><span class="asset3d wizard float-model"><span class="mark">✦</span></span></div>
-    <div class="map-hint">✨ Tap a glowing zone to battle — unlock the path to Dragon’s Lair!</div>
+    <div class="map-hint">Tap an animated zone to battle — unlock the path to Dragon’s Lair.</div>
   </div>
   <div class="map-nav">
-    <button class="btn btn-o btn-sm" onclick="showScreen('subjects')">📚 Change Mode</button>
-    <button class="btn btn-o btn-sm" onclick="showBattleShop()">🛒 Shop</button>
-    <button class="btn btn-o btn-sm" onclick="showBattlePets()">🐾 Pets</button>
-    <button class="btn btn-o btn-sm" onclick="showScreen('home')">🏠 Menu</button>
+    <button class="btn btn-o btn-sm" onclick="showScreen('subjects')">Change Mode</button>
+    <button class="btn btn-o btn-sm" onclick="showBattleShop()">Shop</button>
+    <button class="btn btn-o btn-sm" onclick="showBattlePets()">Pets</button>
+    <button class="btn btn-o btn-sm" onclick="showScreen('home')">Menu</button>
   </div>
 </div>
 
@@ -839,7 +853,7 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 <!-- EXPLORATION -->
 <!-- BATTLE -->
 <div id="battle" class="screen">
-  <div class="brand-tag">⚔ PBI Creative Kids ⚔</div>
+  <div class="brand-tag">PBI Creative Kids</div>
   <div style="display:flex;justify-content:space-between;align-items:flex-start;padding:10px 20px;">
     <!-- Back Button -->
     <div style="position:absolute;top:10px;left:10px;">
@@ -850,12 +864,12 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
       <div id="b-player" style="transition:all .3s;"><span class="asset3d wizard float-model"><span class="mark">✦</span></span></div>
       <div style="font-weight:600;font-size:.85em;margin-bottom:3px;" id="b-player-nm">Wizard</div>
       <div style="display:flex;align-items:center;gap:4px;justify-content:center;margin-bottom:2px;">
-        <span style="font-size:.7em">❤️</span>
+        <span style="font-size:.7em">HP</span>
         <div class="bar-c" style="width:70px;height:10px;"><div class="bar-f bar-hp" id="b-player-hp" style="width:100%"></div></div>
         <span style="font-size:.65em" id="b-player-hp-text">100</span>
       </div>
       <div style="display:flex;align-items:center;gap:4px;justify-content:center;">
-        <span style="font-size:.7em">💧</span>
+        <span style="font-size:.7em">MP</span>
         <div class="bar-c" style="width:70px;height:10px;"><div class="bar-f bar-mp" id="b-player-mp" style="width:100%"></div></div>
         <span style="font-size:.65em" id="b-player-mp-text">50</span>
       </div>
@@ -886,10 +900,10 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
   </div>
   <div class="spell-grid" id="spells"></div>
   <div style="position:fixed;bottom:10px;left:10px;">
-    <button class="btn btn-o btn-sm" onclick="fleeBattle()">🏃 Flee</button>
+    <button class="btn btn-o btn-sm" onclick="fleeBattle()">Flee</button>
   </div>
   <div style="position:fixed;bottom:10px;right:10px;" id="next-btn-container" style="display:none;">
-    <button class="btn btn-p btn-sm" onclick="manualNextQuestion()" id="next-btn">Next →</button>
+    <button class="btn btn-p btn-sm" onclick="manualNextQuestion()" id="next-btn">Next</button>
   </div>
 </div>
 
@@ -897,30 +911,30 @@ body.qm-webgl .zone-node{box-shadow:0 22px 52px rgba(0,0,0,.66),0 0 32px current
 <div id="results" class="screen results">
   <div class="res-card">
     <h2 id="r-title"> Victory!</h2>
-    <div style="font-size:3em;margin:10px 0;" id="r-icon">🏆</div>
+    <div style="font-size:3em;margin:10px 0;" id="r-icon"></div>
     <div class="res-row"><span>XP Earned</span><span id="r-xp" style="color:var(--gold);">+0</span></div>
     <div class="res-row"><span>Gold Earned</span><span id="r-gold" style="color:var(--gold);">+0</span></div>
     <div class="res-row"><span>Questions</span><span id="r-correct">0/0</span></div>
-    <button class="btn btn-p" onclick="backToMap()" style="margin-top:15px;width:100%;">🗺️ Continue</button>
+    <button class="btn btn-p" onclick="backToMap()" style="margin-top:15px;width:100%;">Continue</button>
   </div>
 </div>
 
 <!-- ACHIEVEMENTS -->
 <div id="achievements" class="screen" style="background:var(--dark);overflow-y:auto;padding:20px;">
   <div style="text-align:center;margin-bottom:20px;">
-    <h2>🏆 Achievements & Stats</h2>
+    <h2> Achievements & Stats</h2>
     <div style="color:var(--gold);font-weight:600;margin-top:5px;" id="ach-count">0/22 Unlocked</div>
   </div>
   <div style="max-width:400px;margin:0 auto;">
     <div class="card" style="margin-bottom:15px;">
-      <h3 style="margin-bottom:8px;">📊 Your Stats</h3>
+      <h3 style="margin-bottom:8px;"> Your Stats</h3>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;font-size:.85em;">
-        <div>🔥 Streak: <strong id="s-streak">0</strong> days</div>
-        <div>⚔️ Wins: <strong id="s-wins">0</strong></div>
-        <div>📚 Questions: <strong id="s-questions">0</strong></div>
-        <div>💰 Total Gold: <strong id="s-gold">0</strong></div>
-        <div>🏆 Level: <strong id="s-level">1</strong></div>
-        <div>🔥 Best Streak: <strong id="s-streakbest">0</strong></div>
+        <div> Streak: <strong id="s-streak">0</strong> days</div>
+        <div>Wins: <strong id="s-wins">0</strong></div>
+        <div> Questions: <strong id="s-questions">0</strong></div>
+        <div>Gold  Total Gold: <strong id="s-gold">0</strong></div>
+        <div> Level: <strong id="s-level">1</strong></div>
+        <div> Best Streak: <strong id="s-streakbest">0</strong></div>
       </div>
     </div>
     <div id="ach-list" style="display:grid;grid-template-columns:1fr 1fr;gap:8px;"></div>
@@ -966,7 +980,7 @@ function showDmgNum(dmg, isPlayer, isCorrect){
 }
 
 function showSpellEffect(type){
-  const icons = {fire:'🔥', ice:'❄️', thunder:'⚡', heal:'💚'};
+  const icons = {fire:'▲', ice:'◆', thunder:'✦', heal:'✚'};
   const cls = {fire:'attack-fire', ice:'attack-ice', thunder:'attack-lightning', heal:'attack-fire'};
   const el = document.createElement('div');
   el.className = cls[type] || 'attack-fire';
@@ -985,7 +999,7 @@ function popLevelUp(){
   el.className = 'level-up';
   el.style.cssText = 'position:fixed;top:18%;left:50%;transform:translateX(-50%);z-index:250;';
   el.innerHTML = `
-    <div class="level-up-title">⭐ LEVEL UP! ⭐</div>
+    <div class="level-up-title">LEVEL UP! ⭐</div>
     <div class="level-up-sub">Lv.${S.lv} unlocked · +10 HP · +5 MP · +2 ATK</div>
   `;
   document.body.appendChild(el);
@@ -1014,7 +1028,7 @@ function updateBattleXpBar(){
   if(hint){
     const remaining = S.xpNeed - S.xp;
     if(pct >= 75 && pct < 100){
-      hint.textContent = `⚡ ${remaining} XP to Lv.${S.lv+1}!`;
+      hint.textContent = ` ${remaining} XP to Lv.${S.lv+1}!`;
       bar.classList.add('almost-lv');
     } else if(pct >= 50){
       hint.textContent = `${remaining} XP to next level`;
@@ -1120,7 +1134,7 @@ function screenShake(){
 // ============ GAME STATE ============
 const SK = 'qm_save';
 const S = {
-  name:'Wizard',wins:0,streak:0,achievements:[],totalQuestions:0,maxStreak:0,totalGold:50,subjectsPlayed:[],itemsBought:0,highestZone:0, av:'🧙‍♂️', lv:1, xp:0, xpNeed:100,
+  name:'Wizard',wins:0,streak:0,achievements:[],totalQuestions:0,maxStreak:0,totalGold:50,subjectsPlayed:[],itemsBought:0,highestZone:0, av:'‍♂', lv:1, xp:0, xpNeed:100,
   hp:100, maxHp:100, mp:50, maxMp:50, atk:15, def:5,
   gold:50, zone:0, potions:2,
   subject:'math', grade:3,
@@ -1793,14 +1807,14 @@ function buildMap(){
     const current = i === Math.max(0, Math.min(ZONES.length-1, S.highestZone ? S.highestZone-1 : 0));
     el.className = `zone ${zoneClasses[i]} ${unlocked ? 'zone-unlocked' : 'locked'} ${current && unlocked ? 'zone-current' : ''}`;
     el.style.cssText = `left:${p.x}%;top:${p.y}%;position:absolute;transform:translate(-50%,-50%);animation-delay:${i*0.15}s;`;
-    el.innerHTML = `<div class="zone-node"><div class="zone-i">${asset3d(z.kind,z.ic,'float-model')}</div>${current && unlocked ? '<div class="zone-badge">START</div>' : ''}</div><div class="zone-n">${z.nm}</div><div class="zone-l">${unlocked?'⚔️ Fight':'🔒 Lv.'+z.lv}</div>`;
+    el.innerHTML = `<div class="zone-node"><div class="zone-i">${asset3d(z.kind,z.ic,'float-model')}</div>${current && unlocked ? '<div class="zone-badge">START</div>' : ''}</div><div class="zone-n">${z.nm}</div><div class="zone-l">${unlocked?'Fight':' Lv.'+z.lv}</div>`;
     if(unlocked) el.onclick = () => { el.classList.add('zone-tap'); setTimeout(()=>el.classList.remove('zone-tap'), 260); startRandomBattle(i); };
     c.appendChild(el);
   });
   const player = document.getElementById('map-p');
   if(player){ const zi=Math.max(0, Math.min(pos.length-1, S.zone||0)); player.style.left=pos[zi].x+'%'; player.style.top=pos[zi].y+'%'; player.style.display='none'; }
   document.getElementById('h-nm').textContent = S.displayName || S.name;
-  document.getElementById('h-gd').textContent = '💰 ' + S.gold;
+  document.getElementById('h-gd').textContent = 'Gold  ' + S.gold;
   document.getElementById('h-lv').textContent = 'Lv.' + S.lv;
   document.getElementById('h-hp').style.width = (S.hp/S.maxHp*100) + '%';
   document.getElementById('h-mp').style.width = (S.mp/S.maxMp*100) + '%';
@@ -1854,10 +1868,10 @@ function beginBattle(zi){
 
   // Build spells
   const spells = [
-    {id:'fire',icon:asset3d('fire','🔥'),name:'Fire Bolt',cost:10,sub:'math'},
-    {id:'ice',icon:asset3d('ice','❄'),name:'Ice Shard',cost:10,sub:'english'},
-    {id:'thunder',icon:asset3d('thunder','⚡'),name:'Thunder',cost:15,sub:'science'},
-    {id:'heal',icon:asset3d('heal','✚'),name:'Heal',cost:12,sub:'heal'}
+    {id:'fire',icon:asset3d('fire','▲'),name:'Flame Strike',cost:10,sub:'math'},
+    {id:'ice',icon:asset3d('ice','◆'),name:'Frost Strike',cost:10,sub:'english'},
+    {id:'thunder',icon:asset3d('thunder','✦'),name:'Storm Strike',cost:15,sub:'science'},
+    {id:'heal',icon:asset3d('heal','✚'),name:'Heal Pulse',cost:12,sub:'heal'}
   ];
 
   document.getElementById('spells').innerHTML = spells.map(s =>
@@ -1878,7 +1892,7 @@ function castSpell(id){
   const costs = {fire:10,ice:10,thunder:15,heal:12};
   if(S.mp < costs[id]){document.getElementById('b-msg').textContent='Not enough MP!';return;}
 
-  // Heal is instant, others need question
+  // Heal Pulse is instant, others need question
   if(id === 'heal'){
     S.mp -= costs.heal;
     const heal = 20 + Math.floor(S.lv * 2);
@@ -1974,12 +1988,12 @@ function answer(idx){
     S.xp += 10;
     showXpGain(10);
     updateBattleXpBar();
-    document.getElementById('b-player-attack').textContent = '⚔️ ' + dmg + ' damage!';
+    document.getElementById('b-player-attack').textContent = '' + dmg + ' damage!';
     setTimeout(()=>{document.getElementById('b-player-attack').textContent='';},1500);
   } else {
     const dmgTaken = Math.max(1, 10 - S.def + Math.floor(Math.random() * 5));
     S.hp -= dmgTaken;
-    document.getElementById('b-msg').textContent = '❌ Wrong! Monster hits you for ' + dmgTaken + ' damage!';
+    document.getElementById('b-msg').textContent = 'Wrong! Monster hits you for ' + dmgTaken + ' damage!';
     // Show player damage number
     showDmgNum(dmgTaken, false, true);
     // Shake player
@@ -2033,7 +2047,7 @@ function manualNextQuestion(){
 
 function winBattle(){
   // Spawn confetti
-  const emojis = ['🎉','⭐','✨','🏆','💎','🎊','💫','🌟'];
+  const emojis = ['','⭐','✨','','','','',''];
   for(let i=0;i<15;i++){
     setTimeout(()=>{
       const el=document.createElement('div');
@@ -2075,7 +2089,7 @@ function winBattle(){
   doSave();
 
   document.getElementById('r-title').textContent = boostResultTitle();
-  document.getElementById('r-icon').textContent = B.monMaxHp > 200 ? '👑' : '🏆';
+  document.getElementById('r-icon').textContent = B.monMaxHp > 200 ? 'Victory' : 'Victory';
   document.getElementById('r-icon').classList.add('victory-bounce');
   document.getElementById('r-xp').textContent = '+' + 50;
   document.getElementById('r-gold').textContent = '+' + goldEarned;
@@ -2093,7 +2107,7 @@ function loseBattle(){
   doSave();
 
   document.getElementById('r-title').textContent = ' Defeated!';
-  document.getElementById('r-icon').textContent = '💀';
+  document.getElementById('r-icon').textContent = 'Defeated';
   document.getElementById('r-icon').classList.remove('victory-bounce');
   document.getElementById('r-xp').textContent = '+5';
   document.getElementById('r-gold').textContent = '-10';
@@ -2130,28 +2144,28 @@ function fleeBattle(){
 
 // ============ ACHIEVEMENTS SYSTEM ============
 const ACHIEVEMENTS = [
-  {id:'first_win',      icon:'⚔️', name:'First Victory',     desc:'Win your first battle',           check:s=>(s.wins||0)>=1},
-  {id:'win_10',         icon:'🛡️', name:'Battle Hardened',   desc:'Win 10 battles',                  check:s=>(s.wins||0)>=10},
-  {id:'win_50',         icon:'🏆', name:'Champion',          desc:'Win 50 battles',                  check:s=>(s.wins||0)>=50},
-  {id:'win_100',        icon:'👑', name:'Legendary Hero',    desc:'Win 100 battles',                 check:s=>(s.wins||0)>=100},
-  {id:'q_50',           icon:'📘', name:'Curious Mind',      desc:'Answer 50 questions',             check:s=>(s.totalQuestions||0)>=50},
-  {id:'q_250',          icon:'📚', name:'Bookworm',          desc:'Answer 250 questions',            check:s=>(s.totalQuestions||0)>=250},
-  {id:'q_1000',         icon:'🧠', name:'Wizard Scholar',    desc:'Answer 1000 questions',           check:s=>(s.totalQuestions||0)>=1000},
-  {id:'streak_3',       icon:'🔥', name:'On Fire',           desc:'Reach a 3-answer streak',         check:s=>(s.maxStreak||0)>=3},
-  {id:'streak_7',       icon:'💥', name:'Combo King',        desc:'Reach a 7-answer streak',         check:s=>(s.maxStreak||0)>=7},
-  {id:'streak_15',      icon:'⚡', name:'Unstoppable',       desc:'Reach a 15-answer streak',        check:s=>(s.maxStreak||0)>=15},
-  {id:'gold_100',       icon:'🪙', name:'Coin Collector',    desc:'Earn 100 total gold',             check:s=>(s.totalGold||s.gold||0)>=100},
-  {id:'gold_500',       icon:'💰', name:'Treasure Hunter',   desc:'Earn 500 total gold',             check:s=>(s.totalGold||s.gold||0)>=500},
-  {id:'gold_2000',      icon:'💎', name:'Wealthy Wizard',    desc:'Earn 2000 total gold',            check:s=>(s.totalGold||s.gold||0)>=2000},
+  {id:'first_win',      icon:'▲', name:'First Victory',     desc:'Win your first battle',           check:s=>(s.wins||0)>=1},
+  {id:'win_10',         icon:'▣', name:'Battle Hardened',   desc:'Win 10 battles',                  check:s=>(s.wins||0)>=10},
+  {id:'win_50',         icon:'◇', name:'Champion',          desc:'Win 50 battles',                  check:s=>(s.wins||0)>=50},
+  {id:'win_100',        icon:'◆', name:'Legendary Hero',    desc:'Win 100 battles',                 check:s=>(s.wins||0)>=100},
+  {id:'q_50',           icon:'◆', name:'Curious Mind',      desc:'Answer 50 questions',             check:s=>(s.totalQuestions||0)>=50},
+  {id:'q_250',          icon:'◆', name:'Bookworm',          desc:'Answer 250 questions',            check:s=>(s.totalQuestions||0)>=250},
+  {id:'q_1000',         icon:'✦', name:'Wizard Scholar',    desc:'Answer 1000 questions',           check:s=>(s.totalQuestions||0)>=1000},
+  {id:'streak_3',       icon:'◆', name:'On Fire',           desc:'Reach a 3-answer streak',         check:s=>(s.maxStreak||0)>=3},
+  {id:'streak_7',       icon:'◆', name:'Combo King',        desc:'Reach a 7-answer streak',         check:s=>(s.maxStreak||0)>=7},
+  {id:'streak_15',      icon:'◆', name:'Unstoppable',       desc:'Reach a 15-answer streak',        check:s=>(s.maxStreak||0)>=15},
+  {id:'gold_100',       icon:'◆', name:'Coin Collector',    desc:'Earn 100 total gold',             check:s=>(s.totalGold||s.gold||0)>=100},
+  {id:'gold_500',       icon:'Gold ', name:'Treasure Hunter',   desc:'Earn 500 total gold',             check:s=>(s.totalGold||s.gold||0)>=500},
+  {id:'gold_2000',      icon:'◆', name:'Wealthy Wizard',    desc:'Earn 2000 total gold',            check:s=>(s.totalGold||s.gold||0)>=2000},
   {id:'lv_5',           icon:'⭐', name:'Apprentice',        desc:'Reach Level 5',                   check:s=>(s.lv||1)>=5},
-  {id:'lv_10',          icon:'🌟', name:'Mage',              desc:'Reach Level 10',                  check:s=>(s.lv||1)>=10},
+  {id:'lv_10',          icon:'◆', name:'Mage',              desc:'Reach Level 10',                  check:s=>(s.lv||1)>=10},
   {id:'lv_25',          icon:'✨', name:'Archmage',          desc:'Reach Level 25',                  check:s=>(s.lv||1)>=25},
-  {id:'subj_2',         icon:'🎓', name:'Well Rounded',      desc:'Play 2 different subjects',       check:s=>(s.subjectsPlayed||[]).length>=2},
-  {id:'subj_4',         icon:'🧪', name:'Renaissance Wizard',desc:'Play all 4 subjects',             check:s=>(s.subjectsPlayed||[]).length>=4},
-  {id:'daily_3',        icon:'📅', name:'Habit Forming',     desc:'3-day login streak',              check:s=>(s.streak||0)>=3},
-  {id:'daily_7',        icon:'🗓️', name:'Weekly Wizard',     desc:'7-day login streak',              check:s=>(s.streak||0)>=7},
-  {id:'daily_30',       icon:'🌙', name:'Moon Phase',        desc:'30-day login streak',             check:s=>(s.streak||0)>=30},
-  {id:'pet',            icon:'🐾', name:'Pet Friend',        desc:'Own a pet',                       check:s=>!!s.pet || (s.pets||[]).length>=1},
+  {id:'subj_2',         icon:'◆', name:'Well Rounded',      desc:'Play 2 different subjects',       check:s=>(s.subjectsPlayed||[]).length>=2},
+  {id:'subj_4',         icon:'◆', name:'Renaissance Wizard',desc:'Play all 4 subjects',             check:s=>(s.subjectsPlayed||[]).length>=4},
+  {id:'daily_3',        icon:'◆', name:'Habit Forming',     desc:'3-day login streak',              check:s=>(s.streak||0)>=3},
+  {id:'daily_7',        icon:'◆', name:'Weekly Wizard',     desc:'7-day login streak',              check:s=>(s.streak||0)>=7},
+  {id:'daily_30',       icon:'◆', name:'Moon Phase',        desc:'30-day login streak',             check:s=>(s.streak||0)>=30},
+  {id:'pet',            icon:'◆', name:'Pet Friend',        desc:'Own a pet',                       check:s=>!!s.pet || (s.pets||[]).length>=1},
 ];
 
 function checkAchievements(){
@@ -2204,13 +2218,13 @@ function showAchievements(){
 let EXP = {active:false,zone:0,px:50,py:50,enemies:[],spawnTimer:null,moving:false};
 
 const ZONE_THEMES = {
-  0:{name:'Enchanted Forest',bg:'linear-gradient(180deg,#1a3a2a,#2d5a3a)',enemies:['🦇','🕷️','🐍','🐸'],obstacles:['🌲','🌳','🪨','🍄']},
-  1:{name:'Dark Cave',bg:'linear-gradient(180deg,#1a1a2e,#2d2d4a)',enemies:['🦇','🕷️','💀','👻'],obstacles:['🪨','💎','⛏️','⬛']},
-  2:{name:'Dragon Mountain',bg:'linear-gradient(180deg,#3a1a1a,#5a2a2a)',enemies:['🐉','🔥','🦎','🦅'],obstacles:['🌋','⛰️','🪨','🔥']},
-  3:{name:'Mystic Lake',bg:'linear-gradient(180deg,#1a2a3a,#2a4a6a)',enemies:['🐟','🐊','🦦','🦆'],obstacles:['🌊','🪨','🌿','🏝️']},
-  4:{name:'Ancient Castle',bg:'linear-gradient(180deg,#2a2a3a,#4a4a5a)',enemies:['👹','👺','🤖','🦹'],obstacles:['🏰','👑','🗡️','🛡️']},
-  5:{name:'Crystal Cavern',bg:'linear-gradient(180deg,#2a1a3a,#4a2a5a)',enemies:['💎','🔮','👾','✨'],obstacles:['💎','🔮','🪨','💠']},
-  6:{name:'Sky Tower',bg:'linear-gradient(180deg,#1a3a5a,#3a6a9a)',enemies:['🦅','☁️','⚡','🌟'],obstacles:['🗼','⛅','🌤️','☁️']},
+  0:{name:'Enchanted Forest',bg:'linear-gradient(180deg,#1a3a2a,#2d5a3a)',enemies:['','','',''],obstacles:['','','','']},
+  1:{name:'Dark Cave',bg:'linear-gradient(180deg,#1a1a2e,#2d2d4a)',enemies:['','','',''],obstacles:['','','⛏','⬛']},
+  2:{name:'Dragon Mountain',bg:'linear-gradient(180deg,#3a1a1a,#5a2a2a)',enemies:['','','',''],obstacles:['','⛰','','']},
+  3:{name:'Mystic Lake',bg:'linear-gradient(180deg,#1a2a3a,#2a4a6a)',enemies:['','','',''],obstacles:['','','','']},
+  4:{name:'Ancient Castle',bg:'linear-gradient(180deg,#2a2a3a,#4a4a5a)',enemies:['','','',''],obstacles:['','','','']},
+  5:{name:'Crystal Cavern',bg:'linear-gradient(180deg,#2a1a3a,#4a2a5a)',enemies:['','','','✨'],obstacles:['','','','']},
+  6:{name:'Sky Tower',bg:'linear-gradient(180deg,#1a3a5a,#3a6a9a)',enemies:['','','',''],obstacles:['','','','']},
 };
 
 
@@ -2235,14 +2249,14 @@ beginBattle = function(zi, boost){
     B.monHp = Math.floor(B.monHp * 1.5);
     B.monMaxHp = B.monHp;
     if(monEl) monEl.classList.add('mon-elite');
-    document.getElementById('b-msg').textContent = '⭐ RARE ENEMY appeared! Better rewards!';
+    document.getElementById('b-msg').textContent = 'RARE ENEMY appeared! Better rewards!';
   }
   if(boost >= 3){
     B.monHp = Math.floor(B.monHp * 2.2);
     B.monMaxHp = B.monHp;
     if(monEl) monEl.classList.add('mon-boss');
     document.getElementById('b-mon-nm').textContent += ' BOSS';
-    document.getElementById('b-msg').textContent = '👑 BOSS BATTLE! Big danger, big rewards!';
+    document.getElementById('b-msg').textContent = 'BOSS BATTLE! Big danger, big rewards!';
     spawnBattleParticles('#f59e0b', 28);
   }
 };
@@ -2267,7 +2281,7 @@ function showStreakPopup(info){
   if(!info || info.streak <= 1) return;
   const popup = document.createElement("div");
   popup.style.cssText = "position:fixed;top:15%;left:50%;transform:translate(-50%,-50%);background:linear-gradient(135deg,#ef4444,#f97316);color:#fff;padding:15px 25px;border-radius:12px;text-align:center;z-index:200;";
-  popup.innerHTML = "<div style=font-size:2em>🔥</div><div style=font-weight:700>" + info.streak + " Day Streak!</div>" + (info.bonus > 0 ? "<div style=font-size:.85em>+" + info.bonus + " gold!</div>" : "");
+  popup.innerHTML = "<div style=font-size:2em></div><div style=font-weight:700>" + info.streak + " Day Streak!</div>" + (info.bonus > 0 ? "<div style=font-size:.85em>+" + info.bonus + " gold!</div>" : "");
   document.body.appendChild(popup);
   setTimeout(()=>popup.remove(), 3000);
 }
@@ -2282,26 +2296,26 @@ function showBattleShop(){
     overlay.style.cssText = 'position:fixed;top:0;left:0;width:100%;height:100%;background:rgba(0,0,0,.8);z-index:60;display:flex;align-items:center;justify-content:center;';
     overlay.innerHTML = `
       <div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:350px;max-height:80vh;overflow-y:auto;">
-        <h2 style="text-align:center;margin-bottom:15px;">🛒 Battle Shop</h2>
-        <div style="text-align:center;margin-bottom:10px;color:var(--gold);font-weight:600;">💰 Gold: ${S.gold}</div>
+        <h2 style="text-align:center;margin-bottom:15px;">Battle Shop</h2>
+        <div style="text-align:center;margin-bottom:10px;color:var(--gold);font-weight:600;">Gold  Gold: ${S.gold}</div>
         <div style="display:grid;gap:10px;">
           <div class="spell" onclick="buyItem('potion',20)" style="display:flex;align-items:center;gap:12px;padding:12px;">
-            <span style="font-size:1.8em">🧪</span>
-            <div><div style="font-weight:600;">Health Potion</div><div style="font-size:.75em;opacity:.7;">+30 HP</div></div>
+            <span style="font-size:1.8em"></span>
+            <div><div style="font-weight:600;">Heal Pulseth Potion</div><div style="font-size:.75em;opacity:.7;">+30 HP</div></div>
             <div style="margin-left:auto;color:var(--gold);">20g</div>
           </div>
           <div class="spell" onclick="buyItem('mana',20)" style="display:flex;align-items:center;gap:12px;padding:12px;">
-            <span style="font-size:1.8em">💎</span>
+            <span style="font-size:1.8em"></span>
             <div><div style="font-weight:600;">Mana Potion</div><div style="font-size:.75em;opacity:.7;">+25 MP</div></div>
             <div style="margin-left:auto;color:var(--gold);">20g</div>
           </div>
           <div class="spell" onclick="buyItem('sword',50)" style="display:flex;align-items:center;gap:12px;padding:12px;">
-            <span style="font-size:1.8em">⚔️</span>
+            <span style="font-size:1.8em">▲</span>
             <div><div style="font-weight:600;">Attack Boost</div><div style="font-size:.75em;opacity:.7;">+5 ATK permanently</div></div>
             <div style="margin-left:auto;color:var(--gold);">50g</div>
           </div>
           <div class="spell" onclick="buyItem('shield',50)" style="display:flex;align-items:center;gap:12px;padding:12px;">
-            <span style="font-size:1.8em">🛡️</span>
+            <span style="font-size:1.8em"></span>
             <div><div style="font-weight:600;">Defense Boost</div><div style="font-size:.75em;opacity:.7;">+3 DEF permanently</div></div>
             <div style="margin-left:auto;color:var(--gold);">50g</div>
           </div>
@@ -2332,19 +2346,19 @@ function buyItem(type, cost){
   switch(type){
     case 'potion':
       S.potions = (S.potions||0) + 1;
-      alert('🧪 Bought Health Potion! (' + S.potions + ' in inventory)');
+      alert('Bought Health Potion! (' + S.potions + ' in inventory)');
       break;
     case 'mana':
       S.mp = Math.min(S.maxMp, S.mp + 25);
-      alert('💎 Mana restored +25!');
+      alert('Mana restored +25!');
       break;
     case 'sword':
       S.atk += 5;
-      alert('⚔️ Attack increased to ' + S.atk + '!');
+      alert('Attack increased to ' + S.atk + '!');
       break;
     case 'shield':
       S.def += 3;
-      alert('🛡️ Defense increased to ' + S.def + '!');
+      alert(' Defense increased to ' + S.def + '!');
       break;
     case 'revive':
       S.hasRevive = true;
@@ -2354,7 +2368,7 @@ function buyItem(type, cost){
   updateHUD(); save();
   // Update shop
   const shopGold = document.querySelector('#battle-shop div[style*="text-align:center"]');
-  if(shopGold) shopGold.innerHTML = '<div style="text-align:center;margin-bottom:10px;color:var(--gold);font-weight:600;">💰 Gold: ' + S.gold + '</div>';
+  if(shopGold) shopGold.innerHTML = '<div style="text-align:center;margin-bottom:10px;color:var(--gold);font-weight:600;">Gold  Gold: ' + S.gold + '</div>';
 }
 
 // ============ BATTLE PETS ============
@@ -2376,7 +2390,7 @@ function showBattlePets(){
 
     overlay.innerHTML = `
       <div style="background:var(--card);border:2px solid var(--border);border-radius:16px;padding:24px;width:90%;max-width:400px;max-height:80vh;overflow-y:auto;">
-        <h2 style="text-align:center;margin-bottom:15px;">🐾 Battle Pets</h2>
+        <h2 style="text-align:center;margin-bottom:15px;">Battle Pets</h2>
         <div style="text-align:center;margin-bottom:10px;color:var(--gold);">Active: ${S.activePet ? (pets.find(p=>p.id===S.activePet)?.ic || 'None') : 'None'}</div>
         <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
           ${pets.map(p => `
@@ -2384,7 +2398,7 @@ function showBattlePets(){
               <div style="font-size:2em">${p.ic}</div>
               <div style="font-weight:600;font-size:.85em;">${p.nm}</div>
               <div style="font-size:.7em;opacity:.7;">${p.desc}</div>
-              <div style="font-size:.65em;color:var(--teal);margin-top:4px;">${S.unlockedPets?.includes(p.id)?'✅ Owned':'🔒 Locked'}</div>
+              <div style="font-size:.65em;color:var(--teal);margin-top:4px;">${S.unlockedPets?.includes(p.id)?'Owned':' Locked'}</div>
             </div>
           `).join('')}
         </div>
@@ -2411,7 +2425,7 @@ function selectPet(id){
   }
   S.activePet = id;
   closeBattlePets();
-  alert('Pet equipped! Your pet will help in battle!');
+  alert('Animated companion equipped. It will help in battle.');
 }
 
 // ============ PET BONUS IN BATTLE ============
@@ -2434,7 +2448,7 @@ beginBattle = function(zi, boost){
   applyPetBonus();
   // Show pet in battle
   if(S.activePet){
-    const petEmojis = {dragon:'🐉',phoenix:'🦅',wolf:'🐺',fairy:'🧚',cat:'🐱',turtle:'🐢'};
+    const petEmojis = {dragon:'◇',phoenix:'▲',wolf:'◈',fairy:'✦',cat:'●',turtle:'▣'};
     const playerDiv = document.getElementById('b-player');
     if(playerDiv && petEmojis[S.activePet]){
       const petEl = document.createElement('span');
@@ -2486,13 +2500,13 @@ document.addEventListener('DOMContentLoaded', function() {
     [{nm:'Forest Goblin',kind:'goblin',mark:'☠',hp:95},{nm:'Thorn Wolf',kind:'ghost',mark:'◈',hp:105},{nm:'Venom Spider',kind:'demon',mark:'✣',hp:90}],
     [{nm:'Cave Bat',kind:'ghost',mark:'◌',hp:120},{nm:'Stone Golem',kind:'golem',mark:'▣',hp:150},{nm:'Crystal Ghost',kind:'caves',mark:'◆',hp:130}],
     [{nm:'Swamp Gator',kind:'swamp',mark:'≈',hp:165},{nm:'Bog Witch',kind:'wizard',mark:'✦',hp:150},{nm:'Mud Hydra',kind:'demon',mark:'♆',hp:180}],
-    [{nm:'Frost Yeti',kind:'ice',mark:'❄',hp:210},{nm:'Mountain Roc',kind:'mountain',mark:'△',hp:190},{nm:'Lava Drake',kind:'fire',mark:'🔥',hp:220}],
-    [{nm:'Tower Sentinel',kind:'tower',mark:'⌂',hp:250},{nm:'Arcane Knight',kind:'golem',mark:'▣',hp:260},{nm:'Storm Mage',kind:'thunder',mark:'⚡',hp:235}],
+    [{nm:'Frost Yeti',kind:'ice',mark:'',hp:210},{nm:'Mountain Roc',kind:'mountain',mark:'△',hp:190},{nm:'Lava Drake',kind:'fire',mark:'▲',hp:220}],
+    [{nm:'Tower Sentinel',kind:'tower',mark:'⌂',hp:250},{nm:'Arcane Knight',kind:'golem',mark:'▣',hp:260},{nm:'Storm Mage',kind:'thunder',mark:'✦',hp:235}],
     [{nm:'Dragon Whelp',kind:'wyvern',mark:'⟐',hp:290},{nm:'Lair Demon',kind:'demon',mark:'♆',hp:310},{nm:'Ancient Dragon',kind:'dragon',mark:'◇',hp:340}]
   ];
   const zoneBosses = [
     {nm:'King Bloomroot',kind:'forest',mark:'▲',hp:190},{nm:'Fangthorn Alpha',kind:'ghost',mark:'◈',hp:260},{nm:'Crystal Colossus',kind:'caves',mark:'◆',hp:330},
-    {nm:'Swamp Leviathan',kind:'swamp',mark:'≈',hp:420},{nm:'Inferno Yeti',kind:'fire',mark:'🔥',hp:520},{nm:'Archmage Sentinel',kind:'wizard',mark:'✦',hp:650},{nm:'Elder Dragon',kind:'dragon',mark:'◇',hp:820}
+    {nm:'Swamp Leviathan',kind:'swamp',mark:'≈',hp:420},{nm:'Inferno Yeti',kind:'fire',mark:'',hp:520},{nm:'Archmage Sentinel',kind:'wizard',mark:'✦',hp:650},{nm:'Elder Dragon',kind:'dragon',mark:'◇',hp:820}
   ];
   function normalize(s){return String(s||'').trim().toLowerCase().replace(/[^a-z0-9π√°.+\-\/ ]/g,'').replace(/\s+/g,' ')}
   function answerText(q){return q && q.a ? q.a[q.c] : ''}
@@ -2544,27 +2558,27 @@ document.addEventListener('DOMContentLoaded', function() {
     showScreen('battle'); document.getElementById('battle').classList.add('epic-bg');
     const monEl=document.getElementById('b-mon'); monEl.className='mon epic-mon '+(isBoss?'mon-boss':'');
     monEl.innerHTML='<div class="mon-pack">'+mons.map((m,i)=>`<span class="mini-mon" style="animation-delay:${i*.22}s">${asset3d(m.kind,m.mark,'float-model')}</span>`).join('')+'</div>';
-    document.getElementById('b-mon-nm').textContent=(isBoss?'👑 ':'')+mons.map(m=>m.nm).join(' + ')+(isBoss?' Phase 1/3':'');
+    document.getElementById('b-mon-nm').textContent=(isBoss?'':'')+mons.map(m=>m.nm).join(' + ')+(isBoss?' Phase 1/3':'');
     document.getElementById('b-mon-hp').style.width='100%';
-    document.getElementById('b-msg').textContent=isBoss?'👑 Boss battle! Choose an attack to reveal the question.':'⚔️ Monsters appeared! Choose an attack to reveal the question.';
+    document.getElementById('b-msg').textContent=isBoss?'Boss battle. Choose an attack to reveal the question.':'Animated enemies appeared. Choose an attack to reveal the question.';
     document.getElementById('q-card').style.display='none';
     document.getElementById('b-player-nm').textContent=S.displayName||S.name||'Wizard';
     document.getElementById('b-player-lv').textContent='Lv.'+(S.lv||1);
     updateBattleXpBar(); syncBars(); buildSpellPanel();
   };
   function buildSpellPanel(){
-    const spells=[{id:'fire',icon:asset3d('fire','🔥'),name:'Fire Bolt',cost:10},{id:'ice',icon:asset3d('ice','❄'),name:'Ice Shard',cost:10},{id:'thunder',icon:asset3d('thunder','⚡'),name:'Thunder',cost:15},{id:'heal',icon:asset3d('heal','✚'),name:'Heal',cost:12}];
-    document.getElementById('spells').innerHTML=spells.map(s=>`<div class="spell epic-card" onclick="castSpell('${s.id}')"><div class="s-icon">${s.icon}</div><div class="s-name">${s.name}</div><div class="s-cost">${s.cost} MP</div></div>`).join('')+`<div class="item-panel"><button class="item-chip" onclick="useBattleItem('potion')">🧪 Potion x${S.potions||0}</button><button class="item-chip" onclick="useBattleItem('mana')">💎 Mana x${S.manaPotions||0}</button><button class="item-chip" onclick="useBattleItem('stat')">⭐ Stats ${S.statPts||0}</button></div>`;
+    const spells=[{id:'fire',icon:asset3d('fire','▲'),name:'Flame Strike',cost:10},{id:'ice',icon:asset3d('ice','◆'),name:'Frost Strike',cost:10},{id:'thunder',icon:asset3d('thunder','✦'),name:'Storm Strike',cost:15},{id:'heal',icon:asset3d('heal','✚'),name:'Heal Pulse',cost:12}];
+    document.getElementById('spells').innerHTML=spells.map(s=>`<div class="spell epic-card" onclick="castSpell('${s.id}')"><div class="s-icon">${s.icon}</div><div class="s-name">${s.name}</div><div class="s-cost">${s.cost} MP</div></div>`).join('')+`<div class="item-panel"><button class="item-chip" onclick="useBattleItem('potion')">Potion x${S.potions||0}</button><button class="item-chip" onclick="useBattleItem('mana')">Mana x${S.manaPotions||0}</button><button class="item-chip" onclick="useBattleItem('stat')">Stats ${S.statPts||0}</button></div>`;
   }
   window.castSpell=function(id){
     if(!B.active||!B.canAct) return; const costs={fire:10,ice:10,thunder:15,heal:12};
     if((S.mp||0)<costs[id]){document.getElementById('b-msg').textContent='Not enough MP — use a mana potion or another spell.';return;}
     S.mp-=costs[id]; B.spell=id; B.canAct=false; syncBars();
-    if(id==='heal'){const heal=24+Math.floor((S.lv||1)*3);S.hp=Math.min(S.maxHp,S.hp+heal);showSpellEffect('heal');showDmgNum(heal,true,true);document.getElementById('b-msg').textContent=`Healed ${heal} HP. Monster prepares a counter!`;syncBars();setTimeout(monsterCounter,700);return;}
+    if(id==='heal'){const heal=24+Math.floor((S.lv||1)*3);S.hp=Math.min(S.maxHp,S.hp+heal);showSpellEffect('heal');showDmgNum(heal,true,true);document.getElementById('b-msg').textContent=`Heal Pulseed ${heal} HP. Monster prepares a counter!`;syncBars();setTimeout(monsterCounter,700);return;}
     document.getElementById('b-msg').textContent='Cast '+id+'! Answer to strike.'; showQuestion();
   };
   window.showQuestion=function(){
-    if(!B.active) return; const q=getQuestion(); B.currentQ=q; B.answered=false; document.getElementById('q-card').style.display='block'; document.getElementById('q-text').textContent=q.q+(q.typed?'  ✍️ Type it':'');
+    if(!B.active) return; const q=getQuestion(); B.currentQ=q; B.answered=false; document.getElementById('q-card').style.display='block'; document.getElementById('q-text').textContent=q.q+(q.typed?'  ✍ Type it':'');
     if(q.typed){document.getElementById('q-opts').innerHTML=`<input id="typed-answer" class="typed-answer" placeholder="Type answer" autocomplete="off"><button class="btn btn-p btn-sm" style="margin-top:8px;width:100%" onclick="answerTyped()">Submit Answer</button>`;setTimeout(()=>document.getElementById('typed-answer')?.focus(),50);}
     else{const idx=q.a.map((_,i)=>i).sort(()=>Math.random()-.5);B.shuffledCorrect=idx.indexOf(q.c);document.getElementById('q-opts').innerHTML=idx.map((orig,i)=>`<div class="q-opt" onclick="answer(${i})">${q.a[orig]}</div>`).join('');}
     B.qTime=B.boss?12:15; const max=B.qTime; clearInterval(B.qTimer); document.getElementById('q-timer').style.width='100%'; B.qTimer=setInterval(()=>{B.qTime-=.1;document.getElementById('q-timer').style.width=(B.qTime/max*100)+'%';if(B.qTime<=0){clearInterval(B.qTimer); q.typed?answerTyped(true):answer(-1)}},100);
@@ -2581,15 +2595,15 @@ document.addEventListener('DOMContentLoaded', function() {
     if(B.monHp<=0){setTimeout(winBattle,700);return} if(S.hp<=0){setTimeout(loseBattle,700);return}
     setTimeout(()=>{if(B.active){B.canAct=true;B.spell=null;document.getElementById('q-card').style.display='none';document.getElementById('b-msg').textContent='Choose your next attack or use an item.';buildSpellPanel();}},900);
   }
-  function monsterCounter(wrongOnly){const dmg=Math.max(1, Math.floor((wrongOnly?3:5)+S.zone*1.8+(B.boss?B.bossPhase*3:0)-((S.def||0)*.35))); S.hp-=dmg; showDmgNum(dmg,true,false); screenShake(); document.getElementById('b-mon-attack').textContent='💥 '+dmg+' damage'; setTimeout(()=>document.getElementById('b-mon-attack').textContent='',1200); syncBars();}
-  window.useBattleItem=function(type){if(!B.active)return; if(type==='potion'){if((S.potions||0)<=0){document.getElementById('b-msg').textContent='No health potions.';return;}S.potions--;S.hp=Math.min(S.maxHp,S.hp+35);document.getElementById('b-msg').textContent='🧪 Potion used: +35 HP';}
-    if(type==='mana'){if((S.manaPotions||0)<=0){document.getElementById('b-msg').textContent='No mana potions.';return;}S.manaPotions--;S.mp=Math.min(S.maxMp,S.mp+30);document.getElementById('b-msg').textContent='💎 Mana potion used: +30 MP';}
+  function monsterCounter(wrongOnly){const dmg=Math.max(1, Math.floor((wrongOnly?3:5)+S.zone*1.8+(B.boss?B.bossPhase*3:0)-((S.def||0)*.35))); S.hp-=dmg; showDmgNum(dmg,true,false); screenShake(); document.getElementById('b-mon-attack').textContent=dmg+' damage'; setTimeout(()=>document.getElementById('b-mon-attack').textContent='',1200); syncBars();}
+  window.useBattleItem=function(type){if(!B.active)return; if(type==='potion'){if((S.potions||0)<=0){document.getElementById('b-msg').textContent='No health potions.';return;}S.potions--;S.hp=Math.min(S.maxHp,S.hp+35);document.getElementById('b-msg').textContent='Potion used: +35 HP';}
+    if(type==='mana'){if((S.manaPotions||0)<=0){document.getElementById('b-msg').textContent='No mana potions.';return;}S.manaPotions--;S.mp=Math.min(S.maxMp,S.mp+30);document.getElementById('b-msg').textContent='Mana potion used: +30 MP';}
     if(type==='stat') return showStatAllocator(); syncBars(); buildSpellPanel(); saveGame();};
-  function showStatAllocator(){const pts=S.statPts||0;if(!pts){document.getElementById('b-msg').textContent='No stat points yet. Beat monsters to earn them.';return;} const pick=prompt(`Spend ${pts} stat point(s): type hp, mana, or attack`,'attack'); if(!pick)return; if(/^hp/i.test(pick)){S.maxHp+=10;S.hp+=10;} else if(/^mana|mp/i.test(pick)){S.maxMp+=8;S.mp+=8;} else {S.atk+=3;} S.statPts=Math.max(0,pts-1); document.getElementById('b-msg').textContent='⭐ Stat upgraded!'; syncBars(); buildSpellPanel(); saveGame();}
+  function showStatAllocator(){const pts=S.statPts||0;if(!pts){document.getElementById('b-msg').textContent='No stat points yet. Beat monsters to earn them.';return;} const pick=prompt(`Spend ${pts} stat point(s): type hp, mana, or attack`,'attack'); if(!pick)return; if(/^hp/i.test(pick)){S.maxHp+=10;S.hp+=10;} else if(/^mana|mp/i.test(pick)){S.maxMp+=8;S.mp+=8;} else {S.atk+=3;} S.statPts=Math.max(0,pts-1); document.getElementById('b-msg').textContent='Stat upgraded!'; syncBars(); buildSpellPanel(); saveGame();}
   const oldWin=window.winBattle;
   window.winBattle=function(){const zone=S.zone||0; const bonusXp=50+zone*18+(B.boss?60:0); const bonusGold=20+Math.floor(Math.random()*30)+zone*12+(B.boss?80:0); S.xp+=bonusXp; S.gold+=bonusGold; S.totalGold=(S.totalGold||0)+bonusGold; S.statPts=(S.statPts||0)+1+(B.boss?2:0); oldWin(); document.getElementById('r-xp').textContent='+'+(bonusXp+50); document.getElementById('r-gold').textContent='+'+bonusGold; saveGame();};
   const oldBuy=window.buyItem;
-  window.buyItem=function(type,cost){ if(type==='mana'){ if(S.gold<cost){alert('Not enough gold!');return;} S.gold-=cost; S.manaPotions=(S.manaPotions||0)+1; alert('💎 Bought Mana Potion!'); updateHUD(); saveGame(); return;} return oldBuy(type,cost); };
+  window.buyItem=function(type,cost){ if(type==='mana'){ if(S.gold<cost){alert('Not enough gold!');return;} S.gold-=cost; S.manaPotions=(S.manaPotions||0)+1; alert('Bought Mana Potion!'); updateHUD(); saveGame(); return;} return oldBuy(type,cost); };
 })();
 
 
@@ -2633,12 +2647,12 @@ document.addEventListener('DOMContentLoaded', function() {
   }
   function setMode(mode){ state.mode=mode||'home'; }
   function start(){
-    state.started=true; ctx(); clearInterval(state.timer); state.timer=setInterval(tick, state.mode==='boss'?420:state.mode==='battle'?520:900); tick(); updateBtn(); toast('🎵 Adaptive game music on');
+    state.started=true; ctx(); clearInterval(state.timer); state.timer=setInterval(tick, state.mode==='boss'?420:state.mode==='battle'?520:900); tick(); updateBtn(); toast('Adaptive game music on');
   }
   function stop(){ if(state.master) state.master.gain.setTargetAtTime(0,state.ctx.currentTime,.08); state.enabled=false; localStorage.setItem('qm_music','off'); updateBtn(); }
   function enable(){ state.enabled=true; localStorage.setItem('qm_music','on'); if(state.master) state.master.gain.setTargetAtTime(.055,state.ctx.currentTime,.08); start(); }
   function toggle(){ state.enabled?stop():enable(); }
-  function updateBtn(){ const b=document.getElementById('music-toggle'); if(b){b.textContent=state.enabled?'🎵 Music':'🔇 Music'; b.classList.toggle('on',!!state.enabled);} }
+  function updateBtn(){ const b=document.getElementById('music-toggle'); if(b){b.textContent=state.enabled?'Music':'Music'; b.classList.toggle('on',!!state.enabled);} }
   function toast(msg){ const old=document.querySelector('.music-toast'); if(old) old.remove(); const el=document.createElement('div'); el.className='music-toast'; el.textContent=msg; document.body.appendChild(el); setTimeout(()=>el.remove(),1700); }
   function ensureBtn(){
     if(document.getElementById('music-toggle')) return;
@@ -2700,7 +2714,7 @@ document.addEventListener('DOMContentLoaded', function() {
     document.body.classList.toggle('ue-cinematic',state.enabled);
     const b=document.getElementById('ue-toggle'); if(b){b.textContent=state.enabled?'ON':'OFF';b.classList.toggle('off',!state.enabled);}
   }
-  function toggle(){state.enabled=!state.enabled;localStorage.setItem('qm_unreal_mode',state.enabled?'on':'off');apply();toast(state.enabled?'🎮 Unreal cinematic mode on':'Cinematic mode off');}
+  function toggle(){state.enabled=!state.enabled;localStorage.setItem('qm_unreal_mode',state.enabled?'on':'off');apply();toast(state.enabled?'Unreal cinematic mode on':'Cinematic mode off');}
   function toast(msg){
     const old=document.querySelector('.ue-combat-log'); if(old) old.remove();
     const el=document.createElement('div');el.className='ue-combat-log';el.textContent=msg;document.body.appendChild(el);setTimeout(()=>el.remove(),1800);
@@ -2713,16 +2727,16 @@ document.addEventListener('DOMContentLoaded', function() {
   document.addEventListener('DOMContentLoaded',ensureOverlay); setTimeout(ensureOverlay,100);
   const install=()=>{
     if(window.showScreen && !window.showScreen.__ueWrapped){
-      const old=window.showScreen; window.showScreen=function(id){const r=old.apply(this,arguments);ensureOverlay(); if(id==='map') banner('🗺️ Cinematic world map'); if(id==='battle') banner('⚔️ Battle camera locked'); return r;}; window.showScreen.__ueWrapped=true;
+      const old=window.showScreen; window.showScreen=function(id){const r=old.apply(this,arguments);ensureOverlay(); if(id==='map') banner('Cinematic world map'); if(id==='battle') banner('Battle camera locked'); return r;}; window.showScreen.__ueWrapped=true;
     }
     if(window.beginBattle && !window.beginBattle.__ueWrapped){
-      const old=window.beginBattle; window.beginBattle=function(zi){const r=old.apply(this,arguments); const zone=(typeof ZONES!=='undefined'&&ZONES[zi])?ZONES[zi].nm:'Zone'; banner('⚔️ '+zone+' encounter'); logBattle('Choose a spell. Questions reveal after attack — no instant quiz spam.'); return r;}; window.beginBattle.__ueWrapped=true;
+      const old=window.beginBattle; window.beginBattle=function(zi){const r=old.apply(this,arguments); const zone=(typeof ZONES!=='undefined'&&ZONES[zi])?ZONES[zi].nm:'Zone'; banner(''+zone+' encounter'); logBattle('Choose a spell. Questions reveal after attack — no instant quiz spam.'); return r;}; window.beginBattle.__ueWrapped=true;
     }
     if(window.answer && !window.answer.__ueWrapped){
-      const old=window.answer; window.answer=function(idx){const before=(typeof B!=='undefined'&&B.monHp)||0; const r=old.apply(this,arguments); setTimeout(()=>{try{const after=(typeof B!=='undefined'&&B.monHp)||0; if(after<before) logBattle('✅ Hit confirmed: '+Math.round(before-after)+' damage'); else logBattle('⚠️ Counterattack — recover and choose next spell');}catch(e){}},80); return r;}; window.answer.__ueWrapped=true;
+      const old=window.answer; window.answer=function(idx){const before=(typeof B!=='undefined'&&B.monHp)||0; const r=old.apply(this,arguments); setTimeout(()=>{try{const after=(typeof B!=='undefined'&&B.monHp)||0; if(after<before) logBattle('Hit confirmed: '+Math.round(before-after)+' damage'); else logBattle('Counterattack — recover and choose next spell');}catch(e){}},80); return r;}; window.answer.__ueWrapped=true;
     }
     if(window.answerTyped && !window.answerTyped.__ueWrapped){
-      const old=window.answerTyped; window.answerTyped=function(){const before=(typeof B!=='undefined'&&B.monHp)||0; const r=old.apply(this,arguments); setTimeout(()=>{try{const after=(typeof B!=='undefined'&&B.monHp)||0; if(after<before) logBattle('✅ Typed-answer strike: '+Math.round(before-after)+' damage'); else logBattle('⚠️ Monster resisted — try the next spell');}catch(e){}},80); return r;}; window.answerTyped.__ueWrapped=true;
+      const old=window.answerTyped; window.answerTyped=function(){const before=(typeof B!=='undefined'&&B.monHp)||0; const r=old.apply(this,arguments); setTimeout(()=>{try{const after=(typeof B!=='undefined'&&B.monHp)||0; if(after<before) logBattle('Typed-answer strike: '+Math.round(before-after)+' damage'); else logBattle('Monster resisted — try the next spell');}catch(e){}},80); return r;}; window.answerTyped.__ueWrapped=true;
     }
   };
   setTimeout(install,250); setTimeout(install,1200); setTimeout(install,2500);
@@ -2806,6 +2820,21 @@ document.addEventListener('DOMContentLoaded', function() {
     if(window.showSpellEffect&&!window.showSpellEffect.__qm3d){const old=window.showSpellEffect; window.showSpellEffect=function(){burst(); return old.apply(this,arguments);}; window.showSpellEffect.__qm3d=true;}
   };
   setTimeout(install,300); setTimeout(install,1200); setTimeout(install,2600);
+})();
+
+
+// === QuestMind no-emoji animation pass v1 ===
+(function(){
+  if(window.QM_NO_EMOJI) return; window.QM_NO_EMOJI=true;
+  const emojiRE=/[\u{1F300}-\u{1FAFF}\uFE0F]/gu;
+  function cleanTextNode(n){ if(n.nodeType===3 && emojiRE.test(n.nodeValue)){ n.nodeValue=n.nodeValue.replace(emojiRE,'').replace(/\uFE0F/g,'').replace(/\s{2,}/g,' '); } }
+  function scrub(root=document.body){
+    document.body.classList.add('qm-no-emoji');
+    const walker=document.createTreeWalker(root,NodeFilter.SHOW_TEXT);
+    const nodes=[]; while(walker.nextNode()) nodes.push(walker.currentNode); nodes.forEach(cleanTextNode);
+    if(!document.querySelector('.no-emoji-note')){const n=document.createElement('div');n.className='no-emoji-note';n.textContent='No emoji assets · WebGL animation only';document.body.appendChild(n);}
+  }
+  document.addEventListener('DOMContentLoaded',()=>setTimeout(scrub,80)); setTimeout(scrub,400); setInterval(()=>scrub(),2500);
 })();
 
 </script>
